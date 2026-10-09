@@ -20,6 +20,7 @@ credential = AzureKeyCredential(admin_key)
 azure_openai_endpoint = os.environ["AZURE_OPENAI_ENDPOINT"]
 
 LOG_FILE = str(Path(__file__).parent / "index-creation.log")
+INDEX_NAMES = ("cocoarynth-documents-index", "cocoarynth-engineering-practices-index")
 
 def log_message(message, log_file=LOG_FILE):
     """Write message to log file with timestamp"""
@@ -153,6 +154,20 @@ async def restore_index(endpoint: str, index_name: str, index_file: str, records
 
 
 async def main():
+    snapshot_root = Path(__file__).parent.parent / "data" / "index-data"
+    missing = [
+        f"{index_name}-{suffix}"
+        for index_name in INDEX_NAMES
+        for suffix in ("index.json", "exported.jsonl")
+        if not (snapshot_root / f"{index_name}-{suffix}").is_file()
+    ]
+    if missing:
+        raise FileNotFoundError(
+            "Cocoarynth snapshots have not been captured. Run infra/create-index-snapshots.py "
+            "and scripts/export-search-index.py before enabling restoration. "
+            f"Missing snapshot files: {', '.join(missing)}"
+        )
+
     # Initialize log file
     log_message("="*80)
     log_message("Foundry IQ (Azure AI Search) Index Restoration Script - Starting")
@@ -162,31 +177,16 @@ async def main():
     
     results = {}
     
-    # Restore supplier evidence index
-    log_message("\n--- Processing supplier-evidence index ---")
-    results['supplier-evidence'] = await restore_index(
-        endpoint,
-        "supplier-evidence",
-        "supplier-evidence-index.json",
-        "supplier-evidence-exported.jsonl",
-        azure_openai_endpoint,
-        credential
-    )
-    
-    # Add delay between operations to avoid rate limiting
-    log_message("Waiting 3 seconds before processing next index...")
-    await asyncio.sleep(3)
-    
-    # Restore sourcing documents index
-    log_message("\n--- Processing sourcing-documents index ---")
-    results['sourcing-documents'] = await restore_index(
-        endpoint,
-        "sourcing-documents",
-        "sourcing-documents-index.json",
-        "sourcing-documents-exported.jsonl",
-        azure_openai_endpoint,
-        credential
-    )
+    for index_name in INDEX_NAMES:
+        log_message(f"\n--- Processing {index_name} ---")
+        results[index_name] = await restore_index(
+            endpoint,
+            index_name,
+            f"{index_name}-index.json",
+            f"{index_name}-exported.jsonl",
+            azure_openai_endpoint,
+            credential
+        )
     
     # Summary
     log_message("\n" + "="*80)

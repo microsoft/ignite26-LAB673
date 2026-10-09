@@ -1,0 +1,17 @@
+{
+  "cocoarynth-documents-index": [
+    "documents/adr-immutable-origin-passport-snapshots.pdf",
+    "documents/mapayca-markets-traceability-pilot-requirements.pdf",
+    "documents/origin-passport-support-runbook.pdf",
+    "documents/wholesale-traceability-data-sharing-policy.pdf"
+  ],
+  "cocoarynth-engineering-practices-index": [
+    "documents/engineering-practices/cocoarynth-api-design-export-contracts-guide.pdf",
+    "documents/engineering-practices/cocoarynth-engineering-culture-presentation.pdf",
+    "documents/engineering-practices/cocoarynth-product-ui-accessibility-guide.pdf",
+    "documents/engineering-practices/cocoarynth-react-typescript-engineering-guide.pdf"
+  ],
+  "file-source": [
+    "documents/wholesale-traceability-data-sharing-policy.pdf"
+  ]
+}

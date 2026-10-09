@@ -19,7 +19,7 @@ load_dotenv(override=True)
 
 REPO_ROOT = Path(__file__).parents[1]
 OUTPUT_ROOT = REPO_ROOT / "data" / "index-data"
-INDEX_NAMES = ("supplier-evidence", "sourcing-documents")
+INDEX_NAMES = ("cocoarynth-documents-index", "cocoarynth-engineering-practices-index")
 FIELDS = (
     "chunk_id",
     "parent_id",

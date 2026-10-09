@@ -28,9 +28,11 @@ Use the existing Windows lab image with Azure CLI and Python available. The opti
 3. Run that deployment action after the download action. It signs in with the lab service principal, resolves the attendee object ID, and launches [deploy-background.ps1](deploy-background.ps1). The foreground action exits while provisioning continues.
 4. Monitor `C:\Users\LabUser\Desktop\lifecycle-log.txt`. Wait for `Lab setup completed successfully.` before releasing the environment to the attendee. A background launch alone does not mean setup succeeded.
 
-The background script reuses the foreground Azure CLI login and passes Bicep outputs to [setup-knowledge.ps1](setup-knowledge.ps1). That script prepares the local virtual environment, writes `.env`, configures Content Understanding, and restores the committed `supplier-evidence` and `sourcing-documents` indexes by default. Knowledge sources and knowledge bases are left for [the first notebook](../src/notebooks/part1-standard-foundry-iq-kb.ipynb).
+The background script reuses the foreground Azure CLI login and passes Bicep outputs to [setup-knowledge.ps1](setup-knowledge.ps1). That script prepares the local virtual environment, writes `.env`, configures Content Understanding, and restores `cocoarynth-documents-index` and `cocoarynth-engineering-practices-index` by default. Knowledge sources and knowledge bases are left for [the first notebook](../src/notebooks/part1-standard-foundry-iq-kb.ipynb).
 
-Set `$env:RESTORE_INDEX_SNAPSHOTS = "false"` in the lifecycle action before launching the background script only when attendees should build their own ingestion pipeline. Re-running restoration replaces records in those two indexes with the committed snapshots.
+Cocoarynth snapshots have not been captured yet. Complete [the one-time ingestion and export](../deploy_yourself.md#prepare-the-cocoarynth-indexes) and include the new snapshot files before releasing a Skillable environment. Missing snapshots stop setup before restoration writes; the old Caldova snapshots are not a fallback.
+
+Set `$env:RESTORE_INDEX_SNAPSHOTS = "false"` in the lifecycle action before launching the background script only for initial snapshot capture or a deliberate live-ingestion exercise. Re-running restoration replaces records in the two Cocoarynth indexes with the captured snapshots. Disabling restoration does not delete existing indexes.
 
 ## Self-paced deployment
 
@@ -44,9 +46,8 @@ Snapshot restoration runs during provisioning by default. The other data tools a
 
 | Tool | Purpose |
 | --- | --- |
-| [create-knowledge.py](create-knowledge.py) | Restore the two committed index snapshots, bypassing Blob ingestion and Content Understanding |
-| [create-index-snapshots.py](create-index-snapshots.py) | Upload PDFs and build Blob data sources, Content Understanding skillsets, embedding skills, indexes, and indexers |
-| [sync-caldova-data.py](../scripts/sync-caldova-data.py) | Refresh PDF corpora from a local checkout of the Caldova data repository; Fabric JSON synchronization was removed |
+| [create-knowledge.py](create-knowledge.py) | Restore the two Cocoarynth index snapshots, bypassing Blob ingestion and Content Understanding |
+| [create-index-snapshots.py](create-index-snapshots.py) | Upload the eight Cocoarynth PDFs and build Blob data sources, Content Understanding skillsets, embedding skills, indexes, and indexers |
 | [export-search-index.py](../scripts/export-search-index.py) | Export portable index definitions and document/vector snapshots |
 | [validate-index-snapshots.py](../scripts/validate-index-snapshots.py) | Validate committed snapshots without Azure access |
 
@@ -54,15 +55,15 @@ After provisioning, use the virtual environment created by setup. On macOS/Linux
 
 ```sh
 .venv/bin/python infra/create-index-snapshots.py
-.venv/bin/python scripts/export-search-index.py supplier-evidence sourcing-documents
+.venv/bin/python scripts/export-search-index.py
 .venv/bin/python scripts/validate-index-snapshots.py
 ```
 
 On the Windows lab VM, use `.venv\Scripts\python.exe` instead. The upload tool authenticates to Blob Storage with `DefaultAzureCredential`; sign in as the attendee who received Blob Data Contributor, rather than relying on a different service principal's management-plane access.
 
-The live-indexing tool clears existing corpus blobs and index records before rebuilding them. Run it only against disposable lab resources. Its compatibility with the target serverless preview and Content Understanding configuration still needs an Azure deployment rehearsal. Snapshot restoration is a separate alternative, not proof that live ingestion works.
+The live-indexing tool clears only the selected Cocoarynth corpus prefixes and their index records before rebuilding them. Run it only against disposable lab resources. Its compatibility with the target serverless preview and Content Understanding configuration still needs an Azure deployment rehearsal. Snapshot restoration is a separate alternative, not proof that live ingestion works.
 
-To refresh the local PDF inputs, run `scripts/sync-caldova-data.py` with the path to a checkout of [pamelafox/aitour27-caldova-data](https://github.com/pamelafox/aitour27-caldova-data). Review refreshed PDFs, manifest, provenance, and snapshots together before committing.
+The current PDF manifest and source revision are in [Cocoarynth data guidance](../data/README.md). The legacy `sync-caldova-data.py` script and old Caldova assets remain unchanged for reference and are not part of the active lab flow.
 
 ## Cleanup
 
@@ -81,5 +82,7 @@ Imported from [ILL344](https://github.com/microsoft/aitour27-ILL344-turning-data
 - Scoped Search-to-Foundry managed-identity roles to the Foundry account rather than the subscription.
 - Enabled index restoration by default and imported the first notebook with Foundry-only prerequisites and repository-relative asset lookup.
 - Excluded Fabric/Work IQ provisioning, email seeding, Fabric JSON, legacy datasets, and the later notebooks.
+
+The active corpus and two indexed sources now follow [the Cocoarynth developer KB lab](https://github.com/pamelas-organization/developer-kb-for-github-copilot) at revision `1cdf35934462a46752da542f0c856ac82b475075`. Adaptations retain the existing single-container Blob layout, portable citation fields without image projections, and notebook answer synthesis. See [provenance](../data/cocoarynth/provenance.json).
 
 No cloud resources have been provisioned or deployment credentials stored in this repository as part of this import.

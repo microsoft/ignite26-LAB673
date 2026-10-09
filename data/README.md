@@ -1,11 +1,12 @@
 # Data
 
-This folder contains optional Caldova inputs and portable Search index snapshots imported from [ILL344](https://github.com/microsoft/aitour27-ILL344-turning-data-into-agent-ready-knowledge-with-microsoft-iq) at commit `dc74ce12fc9c4d1fc9c49fcd7b0c5cbf482cbcca`.
+The active lab corpus is Cocoarynth, a fictional chocolate retailer. Documents were imported from [the developer KB lab](https://github.com/pamelas-organization/developer-kb-for-github-copilot) at commit `1cdf35934462a46752da542f0c856ac82b475075`.
 
-- `caldova/pdfs/`: 37 PDFs, selected by [corpora.json](caldova/corpora.json): 25 supplier-evidence documents, 11 sourcing documents, and one reserved file-source document.
-- [provenance.json](caldova/provenance.json): the original Caldova data repository and revision.
-- `index-data/`: index definitions and document/vector snapshots for `supplier-evidence` and `sourcing-documents`.
+- [Cocoarynth manifest](cocoarynth/corpora.json): four product/traceability PDFs and four engineering-practice PDFs, with the data-sharing policy also selected for the file-source exercise.
+- [Cocoarynth provenance](cocoarynth/provenance.json): source repository, revision, ingestion references, and deliberate adaptations.
+- `cocoarynth/documents/`: the eight original PDFs and their eight editable HTML sources. PDFs are the indexed inputs; HTML sources are retained for editing and provenance.
+- `index-data/`: the destination for portable Cocoarynth index definitions and document/vector snapshots after the maintainer capture step.
 
-Provisioning restores the two index snapshots by default. It does not upload PDFs or run live ingestion; the first notebook uploads the reserved purchasing-policy PDF as a file knowledge source. See [infrastructure guidance](../infra/README.md#optional-data-tools) for restoration, live ingestion, and refresh workflows.
+No Cocoarynth snapshots have been captured yet. Follow [index preparation](../deploy_yourself.md#prepare-the-cocoarynth-indexes) to ingest the PDFs once and export real text/vector snapshots. Provisioning then restores the two Cocoarynth indexes by default, without running Content Understanding. The first notebook separately uploads the data-sharing policy as a file knowledge source.
 
-Fabric/OneLake JSON inputs and unrelated legacy datasets were not imported. The content is fictional sample data; review it before adapting it to this lab's scenario.
+The previous `caldova/` inputs and `supplier-evidence`/`sourcing-documents` snapshots are retained unchanged for reference. They are not used by the adapted notebook, ingestion, restoration, or export scripts. Review and remove them separately when finalizing the repository; they are not substitutes for Cocoarynth snapshots.

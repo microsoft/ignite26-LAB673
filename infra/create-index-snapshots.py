@@ -1,4 +1,4 @@
-"""Build the maintainer-only Caldova Search indexing pipelines."""
+"""Build the Cocoarynth Search indexing pipelines for snapshot capture or lab setup."""
 
 import asyncio
 import json
@@ -21,7 +21,7 @@ from dotenv import load_dotenv
 load_dotenv(override=True)
 
 REPO_ROOT = Path(__file__).parents[1]
-DATA_ROOT = REPO_ROOT / "data" / "caldova"
+DATA_ROOT = REPO_ROOT / "data" / "cocoarynth"
 CORPORA_PATH = DATA_ROOT / "corpora.json"
 CONTAINER_NAME = "knowledge"
 SEARCH_API_VERSION = "2026-05-01-preview"
@@ -29,7 +29,11 @@ EMBEDDING_DIMENSIONS = 3072
 SEMANTIC_CONFIGURATION_NAME = "semantic-configuration"
 VECTOR_PROFILE_NAME = "vector-search-profile"
 INDEXER_POLL_SECONDS = 10
-CORPUS_COUNTS = {"supplier-evidence": 25, "sourcing-documents": 11}
+INDEXER_TIMEOUT_SECONDS = 30 * 60
+CORPUS_COUNTS = {
+    "cocoarynth-documents-index": 4,
+    "cocoarynth-engineering-practices-index": 4,
+}
 
 
 def load_corpora() -> dict[str, list[Path]]:
@@ -37,7 +41,7 @@ def load_corpora() -> dict[str, list[Path]]:
         manifest = json.loads(CORPORA_PATH.read_text(encoding="utf-8"))
     except (FileNotFoundError, json.JSONDecodeError) as error:
         raise RuntimeError(
-            "The Caldova corpus is missing or invalid. Run scripts/sync-caldova-data.py."
+            "The Cocoarynth corpus manifest is missing or invalid."
         ) from error
 
     selected: dict[str, list[Path]] = {}
@@ -52,7 +56,14 @@ def load_corpora() -> dict[str, list[Path]]:
             raise RuntimeError(
                 f"Corpus '{corpus_name}' must contain {expected_count} unique PDFs."
             )
-        paths = [DATA_ROOT / path for path in relative_paths]
+        if indexed_paths.intersection(relative_paths):
+            raise RuntimeError(f"Corpus '{corpus_name}' overlaps another indexed corpus.")
+        paths = [(DATA_ROOT / relative_path).resolve() for relative_path in relative_paths]
+        if any(
+            not pdf_path.is_relative_to(DATA_ROOT.resolve()) or pdf_path.suffix != ".pdf"
+            for pdf_path in paths
+        ):
+            raise RuntimeError(f"Corpus '{corpus_name}' must contain local PDF paths.")
         missing = [str(path) for path in paths if not path.is_file()]
         if missing:
             raise RuntimeError(f"Corpus '{corpus_name}' has missing files: {missing}")
@@ -60,10 +71,10 @@ def load_corpora() -> dict[str, list[Path]]:
         indexed_paths.update(relative_paths)
 
     file_sources = manifest.get("file-source")
-    if file_sources != ["pdfs/CAL-POL-PUR-001.pdf"]:
-        raise RuntimeError("The file-source corpus must reserve only CAL-POL-PUR-001.pdf.")
-    if indexed_paths.intersection(file_sources):
-        raise RuntimeError("The reserved file source overlaps an indexed corpus.")
+    if file_sources != ["documents/wholesale-traceability-data-sharing-policy.pdf"]:
+        raise RuntimeError("The file-source exercise must use the data-sharing policy PDF.")
+    if not (DATA_ROOT / file_sources[0]).is_file():
+        raise RuntimeError("The file-source policy PDF is missing.")
     return selected
 
 
@@ -215,7 +226,7 @@ def build_pipeline(
                         "chunkingProperties": {
                             "method": "semantic",
                             "unit": "tokens",
-                            "maximumLength": 2000,
+                            "maximumLength": 700,
                         },
                         "extractionOptions": ["locationMetadata"],
                         "inputs": [{"name": "file_data", "source": "/document/file_data"}],
@@ -304,6 +315,7 @@ async def upload_pdfs(
         for blob_name in stale_blobs:
             await container.delete_blob(blob_name)
         for pdf_path in pdfs:
+            print(f"{corpus_name}: uploading {pdf_path.name}", flush=True)
             blob = container.get_blob_client(f"{corpus_name}/{pdf_path.name}")
             with pdf_path.open("rb") as pdf_file:
                 await blob.upload_blob(pdf_file, overwrite=True)
@@ -311,7 +323,9 @@ async def upload_pdfs(
 
 
 async def clear_index(endpoint: str, index_name: str, credential: Any) -> int:
-    async with SearchClient(endpoint, index_name, credential) as client:
+    async with SearchClient(
+        endpoint=endpoint, index_name=index_name, credential=credential
+    ) as client:
         results = await client.search("*", select=["chunk_id"])
         documents = [{"chunk_id": result["chunk_id"]} async for result in results]
         for offset in range(0, len(documents), 1000):
@@ -342,37 +356,66 @@ async def put_resource(
 async def wait_for_indexer(
     client: SearchIndexerClient, indexer_name: str, started_after: datetime
 ) -> tuple[int, int]:
-    while True:
-        indexer_status = await client.get_indexer_status(indexer_name)
-        result = indexer_status.last_result
-        if result is None or result.start_time is None or result.start_time < started_after:
-            await asyncio.sleep(INDEXER_POLL_SECONDS)
-            continue
-        status = getattr(result.status, "value", result.status)
-        if status == "success":
-            if result.failed_item_count:
-                raise RuntimeError(
-                    f"Indexer '{indexer_name}' reported {result.failed_item_count} failures."
+    try:
+        async with asyncio.timeout(INDEXER_TIMEOUT_SECONDS):
+            while True:
+                indexer_status = await client.get_indexer_status(indexer_name)
+                result = indexer_status.last_result
+                if result is None or result.start_time is None or result.start_time < started_after:
+                    print(f"{indexer_name}: waiting for the new run to start", flush=True)
+                    await asyncio.sleep(INDEXER_POLL_SECONDS)
+                    continue
+                status = getattr(result.status, "value", result.status)
+                print(
+                    f"{indexer_name}: status={status}, processed={result.item_count}, "
+                    f"failed={result.failed_item_count}",
+                    flush=True,
                 )
-            if not result.item_count:
-                raise RuntimeError(f"Indexer '{indexer_name}' completed without indexing items.")
-            return result.item_count, result.failed_item_count
-        if status not in {"inProgress", "reset"}:
-            raise RuntimeError(
-                f"Indexer '{indexer_name}' ended with '{status}': "
-                f"{result.error_message or 'no error message'}"
-            )
-        await asyncio.sleep(INDEXER_POLL_SECONDS)
+                if status == "success":
+                    if result.failed_item_count:
+                        raise RuntimeError(
+                            f"Indexer '{indexer_name}' reported {result.failed_item_count} failures."
+                        )
+                    if not result.item_count:
+                        raise RuntimeError(f"Indexer '{indexer_name}' completed without indexing items.")
+                    return result.item_count, result.failed_item_count
+                if status not in {"inProgress", "reset"}:
+                    raise RuntimeError(
+                        f"Indexer '{indexer_name}' ended with '{status}': "
+                        f"{result.error_message or 'no error message'}"
+                    )
+                await asyncio.sleep(INDEXER_POLL_SECONDS)
+    except TimeoutError as error:
+        raise TimeoutError(
+            f"Indexer '{indexer_name}' did not finish within "
+            f"{INDEXER_TIMEOUT_SECONDS // 60} minutes. The server-side run may still be active; "
+            "check its execution status before rebuilding the corpus."
+        ) from error
 
 
 async def wait_until_idle(client: SearchIndexerClient, indexer_name: str) -> None:
-    while True:
-        indexer_status = await client.get_indexer_status(indexer_name)
-        result = indexer_status.last_result
-        status = getattr(result.status, "value", result.status) if result else None
-        if status != "inProgress":
-            return
-        await asyncio.sleep(INDEXER_POLL_SECONDS)
+    try:
+        async with asyncio.timeout(INDEXER_TIMEOUT_SECONDS):
+            while True:
+                indexer_status = await client.get_indexer_status(indexer_name)
+                result = indexer_status.last_result
+                if result is None:
+                    return
+                status = getattr(result.status, "value", result.status)
+                if status != "inProgress":
+                    return
+                print(
+                    f"{indexer_name}: waiting for an existing run, "
+                    f"processed={result.item_count}, failed={result.failed_item_count}",
+                    flush=True,
+                )
+                await asyncio.sleep(INDEXER_POLL_SECONDS)
+    except TimeoutError as error:
+        raise TimeoutError(
+            f"Indexer '{indexer_name}' is still running after "
+            f"{INDEXER_TIMEOUT_SECONDS // 60} minutes. The server-side run was not cancelled; "
+            "check its execution status before rebuilding the corpus."
+        ) from error
 
 
 async def main() -> None:
@@ -381,7 +424,7 @@ async def main() -> None:
     storage_name = os.environ.get("INDEXING_STORAGE_ACCOUNT_NAME", "")
     if not storage_id or not storage_name:
         raise RuntimeError(
-            "Indexing storage is not deployed. Set DEPLOY_INDEXING_STORAGE=true and provision."
+            "Indexing storage outputs are missing. Provision the lab environment first."
         )
     openai_endpoint = os.environ["AZURE_OPENAI_ENDPOINT"]
     chat_deployment = os.environ.get("AZURE_OPENAI_CHATGPT_DEPLOYMENT", "gpt-5.4")
@@ -402,10 +445,13 @@ async def main() -> None:
 
     try:
         for index_name, pdfs in corpora.items():
+            print(f"{index_name}: preparing {len(pdfs)} PDFs", flush=True)
             uploaded = await upload_pdfs(storage_name, identity_credential, index_name, pdfs)
             index = build_index(index_name, openai_endpoint, embedding_deployment)
+            print(f"{index_name}: creating or updating the index", flush=True)
             async with SearchIndexClient(endpoint, search_credential) as index_client:
                 await index_client.create_or_update_index(index)
+            print(f"{index_name}: clearing previous document chunks", flush=True)
             removed = await clear_index(endpoint, index_name, search_credential)
             pipeline = build_pipeline(
                 index_name,
@@ -417,19 +463,24 @@ async def main() -> None:
             )
             async with SearchIndexerClient(endpoint, search_credential) as indexer_client:
                 for collection, (name, payload) in pipeline.items():
+                    print(f"{index_name}: configuring {collection}/{name}", flush=True)
                     await put_resource(indexer_client, endpoint, collection, name, payload)
                 indexer_name = pipeline["indexers"][0]
+                print(f"{indexer_name}: checking for an existing run", flush=True)
                 await wait_until_idle(indexer_client, indexer_name)
+                print(f"{indexer_name}: resetting the indexer", flush=True)
                 await indexer_client.reset_indexer(indexer_name)
                 await wait_until_idle(indexer_client, indexer_name)
                 started_after = datetime.now(UTC) - timedelta(seconds=5)
+                print(f"{indexer_name}: starting a new run", flush=True)
                 await indexer_client.run_indexer(indexer_name)
                 indexed, failed = await wait_for_indexer(
                     indexer_client, indexer_name, started_after
                 )
             print(
                 f"{index_name}: uploaded {uploaded} PDFs, removed {removed} stale chunks, "
-                f"indexed {indexed} items with {failed} failures."
+                f"indexed {indexed} items with {failed} failures.",
+                flush=True,
             )
     finally:
         await identity_credential.close()
