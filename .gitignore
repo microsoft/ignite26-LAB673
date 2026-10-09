@@ -427,3 +427,8 @@ FodyWeavers.xsd
 *.msix
 *.msm
 *.msp
+
+.azure/
+.venv/
+__pycache__/
+*.pyc

@@ -1,0 +1,2 @@
+-r ../../infra/requirements.txt
+ipykernel==7.2.0
