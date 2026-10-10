@@ -125,7 +125,7 @@ if ($LASTEXITCODE -ne 0) { throw "Azure sign-in failed." }
 az config set core.only_show_errors=yes --only-show-errors
 az config set bicep.use_binary_from_path=false --only-show-errors
 
-$resourceGroupName = "@lab.CloudResourceGroup(REPLACE_WITH_SKILLABLE_RESOURCE_GROUP_NAME).Name"
+$resourceGroupName = "@lab.CloudResourceGroup(Lab673-ResourceGroup).Name"
 $bicepFilePath = "C:\Users\LabUser\Desktop\ignite26-LAB673\infra\main.bicep"
 
 if (-not (Test-Path $bicepFilePath)) {
