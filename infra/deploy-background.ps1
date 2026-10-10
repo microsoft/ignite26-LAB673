@@ -31,8 +31,21 @@ try {
     foreach ($property in $outputs.PSObject.Properties) {
         [Environment]::SetEnvironmentVariable($property.Name, [string]$property.Value.value, "Process")
     }
+    $searchAdminKey = az rest --method POST `
+        --url "https://management.azure.com/subscriptions/$env:AZURE_SUBSCRIPTION_ID/resourceGroups/$env:AZURE_RESOURCE_GROUP/providers/Microsoft.Search/searchServices/$env:AZURE_SEARCH_SERVICE_NAME/listAdminKeys?api-version=2026-09-01-preview" `
+        --query primaryKey -o tsv
+    if ($LASTEXITCODE -ne 0 -or [string]::IsNullOrWhiteSpace($searchAdminKey)) {
+        throw "Could not retrieve the Search admin key."
+    }
+    $openaiKey = az cognitiveservices account keys list `
+        -g $env:AZURE_RESOURCE_GROUP -n $env:AZURE_OPENAI_SERVICE_NAME --query key1 -o tsv
+    if ($LASTEXITCODE -ne 0 -or [string]::IsNullOrWhiteSpace($openaiKey)) {
+        throw "Could not retrieve the Foundry API key."
+    }
     Write-LabLog "Resources deployed. Preparing the lab environment."
-    & (Join-Path $PSScriptRoot "setup-knowledge.ps1") *>> $logFile
+    & (Join-Path $PSScriptRoot "setup-knowledge.ps1") `
+        -SearchAdminKey $searchAdminKey `
+        -OpenAIKey $openaiKey *>> $logFile
     Write-LabLog "Lab setup completed successfully."
 } catch {
     Write-LabLog "Lab setup FAILED: $($_.Exception.Message)"

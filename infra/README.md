@@ -15,6 +15,8 @@ This folder provisions the Foundry IQ portion of LAB673 for Skillable and self-p
 
 Search's region and serverless SKU are fixed in [main.bicep](main.bicep). The `location` parameter controls Foundry and Storage independently. The Skillable flow uses `westus3`, preserving the source lab's Foundry location; Content Understanding is supported there, not in West Central US. Self-paced deployment should also select a Content Understanding-supported region.
 
+The Skillable lifecycle action passes `resourcePrefix="lab673"`, matching the Bicep default used by self-paced deployments. The repository and Desktop folder remain `ignite26-LAB673`. The target Azure policies must allow these resource names; other policy constraints still apply.
+
 The upstream repo recorded insufficient serverless capacity in West Central US on October 5, 2026. Availability and model quota must be checked in the target subscription before delivery. These files deliberately do not fall back to another Search region or a dedicated SKU.
 
 Content Understanding is a capability of the Foundry account, not an additional Azure resource or standalone model deployment. [setup-content-understanding.py](setup-content-understanding.py) configures model-name mappings and the prebuilt completion, mini-completion, and embedding aliases. Both completion aliases reuse the lab LLM, avoiding extra deployments. Individual analyzers must support the selected model; see [model deployment options](https://learn.microsoft.com/azure/ai-services/content-understanding/concepts/models-deployments).
@@ -28,7 +30,7 @@ Use the existing Windows lab image with Azure CLI and Python available. The opti
 3. Run that deployment action after the download action. Like the original ILL344 action, it writes its embedded background script to `C:\Users\LabUser\Desktop\deploy-background.ps1`, signs in with the lab service principal, resolves the attendee object ID, and launches that generated script. The foreground action exits while provisioning continues; the repository's separate `infra/deploy-background.ps1` is not used by this action.
 4. Monitor `C:\Users\LabUser\Desktop\lifecycle-log.txt`. Wait for `=== Background deploy script completed ===` before releasing the environment to the attendee. A background launch alone does not mean setup succeeded.
 
-The background script reuses the foreground Azure CLI login and passes Bicep outputs to [setup-knowledge.ps1](setup-knowledge.ps1). That script prepares the local virtual environment, writes `.env`, configures Content Understanding, and restores `cocoarynth-documents-index` and `cocoarynth-engineering-practices-index` by default. Knowledge sources and knowledge bases are left for [the first notebook](../src/notebooks/part1-standard-foundry-iq-kb.ipynb).
+The background script reuses the foreground Azure CLI login, retrieves Search and Foundry API keys directly with `az rest` and `az cognitiveservices account keys list`, and passes the keys to [setup-knowledge.ps1](setup-knowledge.ps1). That script writes `.env` from the keys and inherited Bicep outputs using PowerShell, prepares the local virtual environment, configures Content Understanding, and restores `cocoarynth-documents-index` and `cocoarynth-engineering-practices-index` by default. Skillable setup does not use Python's `AzureCliCredential`; self-paced deployment retains its `azd` credential flow. Knowledge sources and knowledge bases are left for [the first notebook](../src/notebooks/part1-standard-foundry-iq-kb.ipynb).
 
 Cocoarynth snapshots have not been captured yet. Complete [the one-time ingestion and export](../deploy_yourself.md#prepare-the-cocoarynth-indexes) and include the new snapshot files before releasing a Skillable environment. Missing snapshots stop setup before restoration writes; the old Caldova snapshots are not a fallback.
 
@@ -67,9 +69,9 @@ The current PDF manifest and source revision are in [Cocoarynth data guidance](.
 
 ## Cleanup
 
-[lifecycle_teardown_cogservices.ps1](lifecycle_teardown_cogservices.ps1) accepts a required `ResourceGroupName` and only deletes and purges `lab673-foundry-*` accounts in that group, including their projects and model deployments. It does not enumerate or purge unrelated subscription-wide accounts, and it does not delete Azure ML workspaces. Run it before Skillable removes the resource group if the lab requires immediate model-quota recovery. The Windows image needs the Az PowerShell modules used by this action.
+[lifecycle_teardown_cogservices.ps1](lifecycle_teardown_cogservices.ps1) accepts a required `ResourceGroupName` and an optional `ResourcePrefix` (default `lab673`), matching the Skillable deployment action. For resources from earlier `ill344`-prefixed deployments, pass `-ResourcePrefix ill344` instead. It only deletes and purges `<ResourcePrefix>-foundry-*` accounts in the specified group, including their projects and model deployments. It does not enumerate or purge unrelated subscription-wide accounts, and it does not delete Azure ML workspaces. Run it before Skillable removes the resource group if the lab requires immediate model-quota recovery. The Windows image needs the Az PowerShell modules used by this action.
 
-Skillable's resource-group cleanup removes Search and Storage. For self-paced use, `azd down` removes the resource group; Foundry soft-delete may require explicit purge before reusing the same resource names. If a custom `resourcePrefix` is used, review the cleanup name filter before running it.
+Skillable's resource-group cleanup removes Search and Storage. For self-paced use, `azd down` removes the resource group; Foundry soft-delete may require explicit purge before reusing the same resource names. If a custom `resourcePrefix` is used, pass that same prefix to the cleanup script.
 
 ## Source and adaptations
 

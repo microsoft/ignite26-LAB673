@@ -1,5 +1,6 @@
 param(
-    [Parameter(Mandatory=$true)][string]$ResourceGroupName
+    [Parameter(Mandatory=$true)][string]$ResourceGroupName,
+    [ValidatePattern('^[a-z0-9]{3,8}$')][string]$ResourcePrefix = "lab673"
 )
 
 $ErrorActionPreference = "Stop"
@@ -8,7 +9,7 @@ if (-not $subscriptionId) { throw "Sign in to the lab subscription before cleanu
 $accounts = @(Get-AzResource -ResourceType "Microsoft.CognitiveServices/accounts" -ResourceGroupName $ResourceGroupName)
 
 foreach ($account in $accounts) {
-    if ($account.Name -notlike "lab673-foundry-*") { continue }
+    if ($account.Name -notlike "${ResourcePrefix}-foundry-*") { continue }
     $accountName = $account.Name
     $accountLocation = $account.Location
     $projects = Get-AzResource -ResourceType "Microsoft.CognitiveServices/accounts/projects" -ResourceGroupName $ResourceGroupName

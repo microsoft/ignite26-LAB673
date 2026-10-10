@@ -32,6 +32,7 @@ $deploymentOutput = az deployment group create `
   --resource-group $resourceGroupName `
   --template-file $bicepFilePath `
   --parameters principalId="$labUserObjectId" `
+    --parameters resourcePrefix="lab673" `
   --parameters foundryDeploymentSuffix="$foundryDeploymentSuffix" `
   --parameters location="westus3" `
   --query properties.outputs -o json 2>&1
@@ -64,6 +65,23 @@ $env:AZURE_PRINCIPAL_ID = $labUserObjectId
 $env:AZURE_TENANT_ID = $tenantId
 $env:RESTORE_INDEX_SNAPSHOTS = "true"
 
+$searchName = $outs.AZURE_SEARCH_SERVICE_NAME.value
+$openaiName = $outs.AZURE_OPENAI_SERVICE_NAME.value
+Log "Fetching Search and Foundry API keys..."
+$searchAdminKey = az rest --method POST `
+    --url "https://management.azure.com/subscriptions/$subscriptionId/resourceGroups/$resourceGroupName/providers/Microsoft.Search/searchServices/$searchName/listAdminKeys?api-version=2026-09-01-preview" `
+    --query primaryKey -o tsv
+if ($LASTEXITCODE -ne 0 -or [string]::IsNullOrWhiteSpace($searchAdminKey)) {
+        Log "ERROR: Could not retrieve the Search admin key."
+        exit 1
+}
+$openaiKey = az cognitiveservices account keys list `
+    -g $resourceGroupName -n $openaiName --query key1 -o tsv
+if ($LASTEXITCODE -ne 0 -or [string]::IsNullOrWhiteSpace($openaiKey)) {
+        Log "ERROR: Could not retrieve the Foundry API key."
+        exit 1
+}
+
 $localInfraPath = "C:\Users\LabUser\Desktop\ignite26-LAB673\infra"
 $setupLocal = Join-Path $localInfraPath "setup-knowledge.ps1"
 
@@ -73,7 +91,9 @@ if (-not (Test-Path $setupLocal)) {
 }
 
 Log "Running setup-knowledge.ps1..."
-powershell -ExecutionPolicy Bypass -File $setupLocal *>> $logFile
+powershell -ExecutionPolicy Bypass -File $setupLocal `
+    -SearchAdminKey $searchAdminKey `
+    -OpenAIKey $openaiKey *>> $logFile
 if ($LASTEXITCODE -ne 0) {
     Log "ERROR: setup-knowledge.ps1 failed (exit $LASTEXITCODE)."
     exit 1
