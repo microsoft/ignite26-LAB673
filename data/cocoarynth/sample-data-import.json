@@ -1,0 +1,659 @@
+{
+  "schema_version": 1,
+  "source_identity": {
+    "directory_name": "cocarynth-graph-data",
+    "revision": null,
+    "revision_status": "Unborn local Git repository; source files were untracked. Source hashes identify imported bytes."
+  },
+  "source_inventory_count": 488,
+  "imported_source_file_count": 42,
+  "files": [
+    {
+      "source_path": "sample-data-v2\\data\\records.json",
+      "path": "data\\cocoarynth\\records.json",
+      "source_sha256": "51c91617aaabad187c0d84c9a9c5ca0f46d2ba24d06c5f643c23f4ea12df4065",
+      "bytes": 122144
+    },
+    {
+      "source_path": "sample-data-v2\\pdf-edition\\documents\\d01-field-log.pdf",
+      "path": "data\\cocoarynth\\documents\\d01-field-log.pdf",
+      "source_sha256": "077677c3453dbfdfd93c111b415967047a557b633af7c91e89ed8ac881fc1e8b",
+      "bytes": 132736
+    },
+    {
+      "source_path": "sample-data-v2\\pdf-edition\\documents\\d02-archive-card.pdf",
+      "path": "data\\cocoarynth\\documents\\d02-archive-card.pdf",
+      "source_sha256": "6c84cb35d2771fa1f375a08bc287726b55941092fadea1c54e987786c0c42163",
+      "bytes": 98583
+    },
+    {
+      "source_path": "sample-data-v2\\pdf-edition\\documents\\d03-custody-statement.pdf",
+      "path": "data\\cocoarynth\\documents\\d03-custody-statement.pdf",
+      "source_sha256": "d9b29dca58c0ba067fb8adc7a3f85a86499d6cc0e5658e3a0d35f4f52ec27d91",
+      "bytes": 67766
+    },
+    {
+      "source_path": "sample-data-v2\\pdf-edition\\documents\\d04-drying-notebook.pdf",
+      "path": "data\\cocoarynth\\documents\\d04-drying-notebook.pdf",
+      "source_sha256": "662ddb53a6554d1622a73678fec43bfc8052fabc30b08db3f82fb56e4c6db1a6",
+      "bytes": 98647
+    },
+    {
+      "source_path": "sample-data-v2\\pdf-edition\\documents\\d05-review-request.pdf",
+      "path": "data\\cocoarynth\\documents\\d05-review-request.pdf",
+      "source_sha256": "862fd5f3533bc3853a00c8a9ff716be07c9b1321613b78ec5e6730d00e4aaef1",
+      "bytes": 67418
+    },
+    {
+      "source_path": "sample-data-v2\\pdf-edition\\documents\\d06-sensory-note.pdf",
+      "path": "data\\cocoarynth\\documents\\d06-sensory-note.pdf",
+      "source_sha256": "bc0e40d5eb095f9e1d991ea54c31da98d6513a090ed6817936ddb1da0378480e",
+      "bytes": 98648
+    },
+    {
+      "source_path": "sample-data-v2\\pdf-edition\\documents\\d07-routing-card.pdf",
+      "path": "data\\cocoarynth\\documents\\d07-routing-card.pdf",
+      "source_sha256": "399b8b77fc5302937845208a8d5901d7d3a16b9105b1985f3959bcb55e8bdd6f",
+      "bytes": 99049
+    },
+    {
+      "source_path": "sample-data-v2\\pdf-edition\\documents\\d08-nonconformance-report.pdf",
+      "path": "data\\cocoarynth\\documents\\d08-nonconformance-report.pdf",
+      "source_sha256": "8736e7784bc4db32a2803acd8543566ee83e47f28fdbe5b73e7f2f1b88c832fd",
+      "bytes": 67371
+    },
+    {
+      "source_path": "sample-data-v2\\pdf-edition\\documents\\d09-quality-report.pdf",
+      "path": "data\\cocoarynth\\documents\\d09-quality-report.pdf",
+      "source_sha256": "7fa4d57a9115c697bbeb17e6f05d1c4a197933b1a18bf1a2bf5d104d8a107f79",
+      "bytes": 70765
+    },
+    {
+      "source_path": "sample-data-v2\\pdf-edition\\documents\\d10-production-traveler.pdf",
+      "path": "data\\cocoarynth\\documents\\d10-production-traveler.pdf",
+      "source_sha256": "e742380a2f762ce0ab347f8a6a420a7d47a7067d1b9ede796b822ecbbef49e27",
+      "bytes": 68859
+    },
+    {
+      "source_path": "sample-data-v2\\pdf-edition\\documents\\d11-packing-sheet.pdf",
+      "path": "data\\cocoarynth\\documents\\d11-packing-sheet.pdf",
+      "source_sha256": "56d245c9581421bcb92fee2e01a988eb9af90e348b8820926f4a4a19898cad29",
+      "bytes": 67574
+    },
+    {
+      "source_path": "sample-data-v2\\pdf-edition\\documents\\d12-formulation-memo.pdf",
+      "path": "data\\cocoarynth\\documents\\d12-formulation-memo.pdf",
+      "source_sha256": "2c7a89c13f71cb1472e9483ca649e4770ce02702cda32ec03ab6a67d1a16e110",
+      "bytes": 67426
+    },
+    {
+      "source_path": "sample-data-v2\\pdf-edition\\documents\\d13-rework-ticket.pdf",
+      "path": "data\\cocoarynth\\documents\\d13-rework-ticket.pdf",
+      "source_sha256": "445c6590e01c5b3a733a157ee6f1df1fcb27f4a4c16d430f9c93eba5b900fb74",
+      "bytes": 68117
+    },
+    {
+      "source_path": "sample-data-v2\\pdf-edition\\documents\\d14-shift-handover.pdf",
+      "path": "data\\cocoarynth\\documents\\d14-shift-handover.pdf",
+      "source_sha256": "4974dfb05fd6db45185911dcf65a1f2cc4db3c6db7852202cc06e9af9ad0514b",
+      "bytes": 67534
+    },
+    {
+      "source_path": "sample-data-v2\\pdf-edition\\documents\\d15-wip-tag.pdf",
+      "path": "data\\cocoarynth\\documents\\d15-wip-tag.pdf",
+      "source_sha256": "bdf697b9748e77b429e57889ad4029f3663769aab868b5c52f199b57a49cf867",
+      "bytes": 68522
+    },
+    {
+      "source_path": "sample-data-v2\\pdf-edition\\documents\\d16-label-review.pdf",
+      "path": "data\\cocoarynth\\documents\\d16-label-review.pdf",
+      "source_sha256": "bd56a00af553862abc1c2702ab34d4b377ca11016bdb51d851bb9096a4879e67",
+      "bytes": 67600
+    },
+    {
+      "source_path": "sample-data-v2\\pdf-edition\\documents\\d17-inventory-review.pdf",
+      "path": "data\\cocoarynth\\documents\\d17-inventory-review.pdf",
+      "source_sha256": "04d6dd2ef62dac142e3da39d887a66277485ce40f9e793a26048a17be8eca171",
+      "bytes": 69212
+    },
+    {
+      "source_path": "sample-data-v2\\pdf-edition\\documents\\d18-stock-card.pdf",
+      "path": "data\\cocoarynth\\documents\\d18-stock-card.pdf",
+      "source_sha256": "3141f6b539340605b64dcb0738d1c5b401e1be95e063b586d8565bc9fb81adc2",
+      "bytes": 66746
+    },
+    {
+      "source_path": "sample-data-v2\\pdf-edition\\documents\\d19-stock-summary.pdf",
+      "path": "data\\cocoarynth\\documents\\d19-stock-summary.pdf",
+      "source_sha256": "cc879572b31f08fd5cc37c36beb25d5c6d82b39db2f865af0137be47996fff75",
+      "bytes": 68520
+    },
+    {
+      "source_path": "sample-data-v2\\pdf-edition\\documents\\d20-dispatch-receipt.pdf",
+      "path": "data\\cocoarynth\\documents\\d20-dispatch-receipt.pdf",
+      "source_sha256": "88d9c34642495c705f71442dfe0138ea268afe1fbaada5d16346d045f88afeb8",
+      "bytes": 67746
+    },
+    {
+      "source_path": "sample-data-v2\\pdf-edition\\documents\\d21-receipt-acknowledgment.pdf",
+      "path": "data\\cocoarynth\\documents\\d21-receipt-acknowledgment.pdf",
+      "source_sha256": "9bc1112239f1d98fc197378024f4c94a396aa0f328f0aa0a1f0db4bca74bf3de",
+      "bytes": 67726
+    },
+    {
+      "source_path": "sample-data-v2\\pdf-edition\\documents\\d22-shipment-close.pdf",
+      "path": "data\\cocoarynth\\documents\\d22-shipment-close.pdf",
+      "source_sha256": "3c95537e53159a4a1130d343c7eb7c73be2bbe646412c703ad3abd0711bf4b39",
+      "bytes": 67243
+    },
+    {
+      "source_path": "sample-data-v2\\pdf-edition\\documents\\d23-support-timeline.pdf",
+      "path": "data\\cocoarynth\\documents\\d23-support-timeline.pdf",
+      "source_sha256": "bc24a54ce398a09256930a3efdbbae21eaf74ea1b22290cbf6d6adb00b71893c",
+      "bytes": 100428
+    },
+    {
+      "source_path": "sample-data-v2\\pdf-edition\\documents\\d24-issuance-register.pdf",
+      "path": "data\\cocoarynth\\documents\\d24-issuance-register.pdf",
+      "source_sha256": "1dbf2fc6c4718e283b9b40141f0000427f1bb7e18f2a33bd781ec1f3d01449bc",
+      "bytes": 99518
+    },
+    {
+      "source_path": "sample-data-v2\\pdf-edition\\documents\\d25-sourcing-decision.pdf",
+      "path": "data\\cocoarynth\\documents\\d25-sourcing-decision.pdf",
+      "source_sha256": "3a4e14cfb5a549c5c4f7b90f470e6b3321884f43064d92e91d819f25991258b7",
+      "bytes": 100338
+    },
+    {
+      "source_path": "sample-data-v2\\pdf-edition\\documents\\d26-assurance-review.pdf",
+      "path": "data\\cocoarynth\\documents\\d26-assurance-review.pdf",
+      "source_sha256": "302fb9878e830f4e2fb240fee25fe078c9a59ab5df4cba9e5aa9bab4b4e23e44",
+      "bytes": 67515
+    },
+    {
+      "source_path": "sample-data-v2\\pdf-edition\\documents\\d27-integration-exception.pdf",
+      "path": "data\\cocoarynth\\documents\\d27-integration-exception.pdf",
+      "source_sha256": "58274990e3df2376d688c20cfdbea22b14e0f63cf1177caac1c5cdd9c94f98a0",
+      "bytes": 100230
+    },
+    {
+      "source_path": "sample-data-v2\\pdf-edition\\documents\\d28-order-note.pdf",
+      "path": "data\\cocoarynth\\documents\\d28-order-note.pdf",
+      "source_sha256": "2f3774a8f7d712d12bf52f871b79e8e00ec9dc0571c7d6197e5097ce6275a469",
+      "bytes": 97969
+    },
+    {
+      "source_path": "sample-data-v2\\pdf-edition\\documents\\d29-governance-decision.pdf",
+      "path": "data\\cocoarynth\\documents\\d29-governance-decision.pdf",
+      "source_sha256": "dea0daa0e4dec1b672d3b15712e11ba8976ff2d7f9168ddf1b466a9ef2e96954",
+      "bytes": 98893
+    },
+    {
+      "source_path": "sample-data-v2\\pdf-edition\\documents\\d30-control-reference.pdf",
+      "path": "data\\cocoarynth\\documents\\d30-control-reference.pdf",
+      "source_sha256": "50476c89b8f3599ff4a74e4a9984d596a9312a6ed44f46bed246ec1b40fa63ad",
+      "bytes": 99559
+    },
+    {
+      "source_path": "sample-data-v2\\pdf-edition\\documents\\d31-capability-reference.pdf",
+      "path": "data\\cocoarynth\\documents\\d31-capability-reference.pdf",
+      "source_sha256": "877135267bae03dd99283385646e532a36fc06924ad51a0996f2c6942a05f824",
+      "bytes": 100745
+    },
+    {
+      "source_path": "sample-data-v2\\pdf-edition\\documents\\d32-technical-letter.pdf",
+      "path": "data\\cocoarynth\\documents\\d32-technical-letter.pdf",
+      "source_sha256": "4b3312bb40b9a9be0cfa324030fc1854dec38810468762d25aff9058b0d7f2d9",
+      "bytes": 67082
+    },
+    {
+      "source_path": "sample-data-v2\\pdf-edition\\documents\\d33-sourcing-dossier.pdf",
+      "path": "data\\cocoarynth\\documents\\d33-sourcing-dossier.pdf",
+      "source_sha256": "9fd926a3b39247fcadd3590fa0e6d9a6fce101a8a0ff7a21d7d7f3e0bcfdeca8",
+      "bytes": 99243
+    },
+    {
+      "source_path": "sample-data-v2\\pdf-edition\\documents\\d34-training-case.pdf",
+      "path": "data\\cocoarynth\\documents\\d34-training-case.pdf",
+      "source_sha256": "9bc5b3336af051aa69c6edb6b33a7aee077074cea81105a870c48f0192412694",
+      "bytes": 67651
+    },
+    {
+      "source_path": "sample-data-v2\\single-sample\\production-closeout.pdf",
+      "path": "data\\cocoarynth\\documents\\production-closeout.pdf",
+      "source_sha256": "ee0ef6acfadc8d9fdddc739b295cf913b65f36113a4d1196541508b22d3ca4fe",
+      "bytes": 46137
+    },
+    {
+      "source_path": "sample-data-v2\\sources.json",
+      "path": "data\\cocoarynth\\sample-sources.json",
+      "source_sha256": "38797bda5c0c9d1a7311b2f2209ee62b8010651a07e2a16f83e4335dcb5280e1",
+      "bytes": 11099
+    },
+    {
+      "source_path": "sample-data-v2\\variety-samples\\pdfs\\collection-notebook.pdf",
+      "path": "data\\cocoarynth\\documents\\collection-notebook.pdf",
+      "source_sha256": "39553612cf23a6b66f30532c9655435c06aefb5a742b4029ecbfafc0a3b6d893",
+      "bytes": 107921
+    },
+    {
+      "source_path": "sample-data-v2\\variety-samples\\pdfs\\integration-brief.pdf",
+      "path": "data\\cocoarynth\\documents\\integration-brief.pdf",
+      "source_sha256": "2adaaf3ced960148969444382f5fea21111d03d7db2e54f3644d6b44bed5b294",
+      "bytes": 71163
+    },
+    {
+      "source_path": "sample-data-v2\\variety-samples\\pdfs\\receipt-case.pdf",
+      "path": "data\\cocoarynth\\documents\\receipt-case.pdf",
+      "source_sha256": "3c9b903d73a107ae87d248faa9dde89514b80cb3f0a15c47db88f67015f0db6f",
+      "bytes": 48185
+    },
+    {
+      "source_path": "sample-data-v2\\variety-samples\\pdfs\\sharing-decision.pdf",
+      "path": "data\\cocoarynth\\documents\\sharing-decision.pdf",
+      "source_sha256": "bf89bf6ddf7d3a14d4295cedcf8e8c2a2875c3392a4c053e86ed06e4a0d62eba",
+      "bytes": 108467
+    },
+    {
+      "source_path": "sample-data-v2\\variety-samples\\pdfs\\wip-handoff.pdf",
+      "path": "data\\cocoarynth\\documents\\wip-handoff.pdf",
+      "source_sha256": "b5d97b170ec988e4744c1aaf632702021e8aafcbb58a9d7c54c9f20b32e56553",
+      "bytes": 48627
+    }
+  ],
+  "deduplicated_source_paths": [
+    "sample-data-v2\\pdf-edition\\source-provenance.json",
+    "sample-data-v2\\variety-samples\\source-provenance.json"
+  ],
+  "canonical_files": {
+    "data\\caldova\\corpora.json": "3f4736f1069d7a393916505ca4ae1eed8828f47d7605a355a3626b88a405dc48",
+    "data\\caldova\\pdfs\\AMD-MSA-SUM-2026-01.pdf": "b4d155ff380d6097ccb24c17f63ac23757d2bc7bf8de3dca6600d629a4672c59",
+    "data\\caldova\\pdfs\\CAL-MAP-EVD-001.pdf": "e3159abed6e78ae9a7c7065f695c8fed87d563cf01d7ea7001c1a8e1b3c1dea8",
+    "data\\caldova\\pdfs\\CAL-MAP-SUP-001.pdf": "82ac8412696256b0e3b3662c2be2799021e9c672474c386a9ae42f5445ed3536",
+    "data\\caldova\\pdfs\\CAL-POL-PUR-001.pdf": "a92c4ee0fbb08885e45f8d5dda214d79aebcb0b9695d2163c50b2d54faa3db50",
+    "data\\caldova\\pdfs\\COA-MD-1026-A.pdf": "62a16ee484ca01696129cc0f8a3b6787b1b69b6df5b6869fb57f69892bc0399b",
+    "data\\caldova\\pdfs\\DEV-BPB-1026.pdf": "1af9a62b450d2815f976cd6dbcf0392f36a460db5679821ab8e380e90af30eeb",
+    "data\\caldova\\pdfs\\EXC-VC-1026-04.pdf": "87c606fbeeaf10ff573985d481c47f3dba3b9ed7e3efe506b797615ad302af1c",
+    "data\\caldova\\pdfs\\FIR-KDA-1026.pdf": "227fe0c893b99810dfa3e80db0c59b5cde1cdb8497c3be32e640738ba839f183",
+    "data\\caldova\\pdfs\\GMP-INS-BPB-2027-01.pdf": "3be66eda6d2077ed90e5c04e088d982295c3b2af9a83fda0273ad22421cbedbb",
+    "data\\caldova\\pdfs\\INV-SUP-001-2026-10.pdf": "01a777cefa43ed90c41c177c6f2c3162c493e0d10839a23f9b9dd28cfc8fed44",
+    "data\\caldova\\pdfs\\INV-SUP-002-2026-10.pdf": "ec2d78c9c70a2df562e66d7cc2de3d9869188fa6f9fa53103f212898714af9ea",
+    "data\\caldova\\pdfs\\INV-SUP-003-2026-10.pdf": "4d474664301589fde87cb5362f8b3b190cf44cfb061205f631fa0d76456cae7b",
+    "data\\caldova\\pdfs\\INV-SUP-004-2026-10.pdf": "2b39746a4650f5f77e7d5cc6cc265d712ee22e86b8dafaf5c39bd8278c3d3cb7",
+    "data\\caldova\\pdfs\\INV-SUP-005-2026-10.pdf": "1a9bcd73c11011d385f11af6cb340aedf148ec59bbe545b5dbb6e2060f3fbd36",
+    "data\\caldova\\pdfs\\INV-SUP-006-2026-10.pdf": "15a3cc6aaac41523b3608cd75a19db556c79122d3196582e2b1831e1c0a2b5b4",
+    "data\\caldova\\pdfs\\INV-SUP-007-2026-10.pdf": "41f1c0ca900b81c464f3518b738dc5f1de5d7b2b49c6fc9477ba7fa18b1cc23f",
+    "data\\caldova\\pdfs\\INV-SUP-008-2026-10.pdf": "771f08bfbbdd8114482d3e3834c5410c57143dfa9ccc3521031f07256793ed38",
+    "data\\caldova\\pdfs\\INV-SUP-009-2026-Q4.pdf": "4f768431c50570d97f9016ff121c11ecf6512d3171bb7acbac00d21909264367",
+    "data\\caldova\\pdfs\\INV-SUP-010-2026-10.pdf": "34a7ff33590b3756e5ed24d738e27bab82ffb1f467c2b745e5ca0a7ca70bb72d",
+    "data\\caldova\\pdfs\\INV-SUP-011-2026-10.pdf": "fc05978b5691b7969d359945689e53967f6f16e9e477bccd0042c8b41dc2141a",
+    "data\\caldova\\pdfs\\INV-SUP-012-2026-10.pdf": "15a09906a2b2d0d084c9f7ac704786b673d3d4e6901dcf8ab054a55b7f1e54af",
+    "data\\caldova\\pdfs\\INV-SUP-013-2026-10.pdf": "a9eb09678553586de7f177db6418aebb5ce6df091bf0bc00b04c9650c387d565",
+    "data\\caldova\\pdfs\\INV-SUP-014-2026-10.pdf": "b7f62ef3f09b088997cd01771cd38a153fce08966e16af6a438dff786bc79d2d",
+    "data\\caldova\\pdfs\\INV-SUP-015-2026-10.pdf": "7efd61f8eed8d9bfb86e1575381095ccda5821db82d5a615c5a52918f53e2602",
+    "data\\caldova\\pdfs\\MSA-CAL-AST-2024-011.pdf": "4a140a4a06c40d9586976a2d08af03bda72f107b35b9b24a465ecd00f3fba3b7",
+    "data\\caldova\\pdfs\\MSA-CAL-ATL-2025-004.pdf": "ddf78715b73dfd6ee1dbf33ffa0abe86c8e6bf74ffa2ba89b1b7f7c1ddd5e2bc",
+    "data\\caldova\\pdfs\\MSA-CAL-SUM-2024-017.pdf": "296c67b984f1f46c270db651f2912b8acddd6f64a6ecc743a24f3343c7fa6464",
+    "data\\caldova\\pdfs\\NCR-KDA-1026-07.pdf": "541118ee1748cd7090d09b458162ebde5e62073c158385925cbcdf5027119813",
+    "data\\caldova\\pdfs\\PO-CAL-SUM-2026-1108.pdf": "f3e3736c89b7e507b0cde1451735b75eea1320b49ddc36e50d26fabf6897a691",
+    "data\\caldova\\pdfs\\RFP-CAL-OSD-2026-01.pdf": "c1639d794cf91a91c6b6409faac7ee644e5a17edfcd755fef147421b6c3d7d5c",
+    "data\\caldova\\pdfs\\RSP-AST-2026-01.pdf": "e200be1a14dd878685e1061e1c98577cfe167e3f57d24f23f238ca4e37e6f64a",
+    "data\\caldova\\pdfs\\RSP-ATL-2026-01.pdf": "149047ca79754c370f8a001e4d674273f4b06de3f866ac0a6f74d7857b5b206c",
+    "data\\caldova\\pdfs\\RSP-SUM-2026-01.pdf": "3a7fde1cbcbb503c96f539abe61dd87f87889949d4d868123f417f891afb1b79",
+    "data\\caldova\\pdfs\\TL-VCL-1026.pdf": "e7457dad436819054d1e51938ae416e7dbe163561e3351917c3e13c62ea379ef",
+    "data\\caldova\\pdfs\\UTL-BPB-1026.pdf": "d654ce6c3c8155fb478c3fad2d6959a1081e92707ab2b64c6235bc2d1f61361b",
+    "data\\caldova\\pdfs\\YLD-MAW-1026.pdf": "7a3b3b0b2127aca2ba19f8906bda280d04035e986a6c9733b3152887eab1b349",
+    "data\\caldova\\pdfs\\YTA-MAW-1026-04.pdf": "e02c2c8374157bf332eb9071e060038a32598c3e0e53b56c082e2581e509b6cc",
+    "data\\caldova\\provenance.json": "f7bfbe06d5f47ac5518f75d016eded223df46d78e0ff109ea5c02aa673bdb525",
+    "data\\cocoarynth\\corpora.json": "49bac23db3c1490f8c1c106dd6d2c5bf0c9a154b57ff8f179acc8c950c3beb38",
+    "data\\cocoarynth\\documents\\adr-immutable-origin-passport-snapshots.pdf": "198634c17773a00f33ff80a28b02d6f15e3e57b55a801f7cba67ccbffbc933fe",
+    "data\\cocoarynth\\documents\\engineering-practices\\cocoarynth-api-design-export-contracts-guide.pdf": "105446f7837b4805ef0eeae433636175b5fc31853f0f71cdd697de45bf107527",
+    "data\\cocoarynth\\documents\\engineering-practices\\cocoarynth-engineering-culture-presentation.pdf": "0f8dba2c29271e4239e7d8b9ef18da9e4021550132f41e98849dd4e6d83c1df1",
+    "data\\cocoarynth\\documents\\engineering-practices\\cocoarynth-product-ui-accessibility-guide.pdf": "a6e704efdd0bc9ac139d3e4832cff62fd33eda7c7257e2f39c8c5b32f3a8baa0",
+    "data\\cocoarynth\\documents\\engineering-practices\\cocoarynth-react-typescript-engineering-guide.pdf": "9e56d8c4e2c3186bc315dd1ac4a08943396a717c41ab718e39b5aea8f922eac3",
+    "data\\cocoarynth\\documents\\engineering-practices\\source\\cocoarynth-api-design-export-contracts-guide.html": "d11eef4572156b88d092205b5f15834d86449f7b066ebdc3220e62a266f5d8dd",
+    "data\\cocoarynth\\documents\\engineering-practices\\source\\cocoarynth-engineering-culture-presentation.html": "347b6f9b2dc84757a6824cdb8b066249cd933168192b071b04e0b75377a75f40",
+    "data\\cocoarynth\\documents\\engineering-practices\\source\\cocoarynth-product-ui-accessibility-guide.html": "8b6b974ed518a15e6fe19bc49ae907b78a233f00b3d3c7a43524e79936240a0a",
+    "data\\cocoarynth\\documents\\engineering-practices\\source\\cocoarynth-react-typescript-engineering-guide.html": "0675c7be89393f4a266902bdf1ae6f3f356786a965306f907d5cd3abe79c953b",
+    "data\\cocoarynth\\documents\\mapayca-markets-traceability-pilot-requirements.pdf": "48dbd7ccbf726f76c517f87f7df8ffb715865b9fa0ecd34b572767734fb736e9",
+    "data\\cocoarynth\\documents\\origin-passport-support-runbook.pdf": "7e5c9230f9ce3c09dfa57f06cdc9cd3a443edb134f6377b21dbd39f0979b7332",
+    "data\\cocoarynth\\documents\\source\\adr-immutable-origin-passport-snapshots.html": "97422f890274f70fce966be4cc424d7c73db0e14883d592270cbdff28ca6b8ad",
+    "data\\cocoarynth\\documents\\source\\mapayca-markets-traceability-pilot-requirements.html": "b6c1efcfd3da4544280338b9cafa588ed01d1848810bce4e90e3cd73eae87eb0",
+    "data\\cocoarynth\\documents\\source\\origin-passport-support-runbook.html": "57f21f2cf44349b960ccdd16228ee72bd1fffe8d68f09bf3324ee00761b220a2",
+    "data\\cocoarynth\\documents\\source\\wholesale-traceability-data-sharing-policy.html": "abdd6735733d996b2ebd68af253c2bd27228cc1d12e68d7ca44f07a13971c59c",
+    "data\\cocoarynth\\documents\\wholesale-traceability-data-sharing-policy.pdf": "7f80478384b548becc7f3b789ad194f266097f1ee445e6163cda687b52684d71",
+    "data\\cocoarynth\\provenance.json": "897ecf9e839045bb2824c261b846aca03190ef2c196251fb07c55d0d1f89a2b8",
+    "data\\index-data\\cocoarynth-documents-index-exported.jsonl": "f06add52233b6708e08213e0fd80de08626855f71fd2e0508892fdc2e042481b",
+    "data\\index-data\\cocoarynth-documents-index-index.json": "8884740a3520732887c9baf242639b8d63ded5cf7f6bff0fea344b536fe41309",
+    "data\\index-data\\cocoarynth-engineering-practices-index-exported.jsonl": "f58ac345f355c26999c4059f027638274beb99891c07099c3901ac32b76e4e52",
+    "data\\index-data\\cocoarynth-engineering-practices-index-index.json": "cfd10909682b2c453652188a7c843ea42a71d3a5e6b9579cebad59eadbdff931",
+    "data\\index-data\\sourcing-documents-exported.jsonl": "e4067dbcdef5c7f56cbf64dc7082962bf9c16784d2fe03c8d273dac36a550460",
+    "data\\index-data\\sourcing-documents-index.json": "464fa93adaf99426fc43cd283b62ebfb5da62ddcf95e8d8fef4e9a6702a9cab0",
+    "data\\index-data\\supplier-evidence-exported.jsonl": "5fb3ee7fe8bf41a787f5fcc47e9fedf99031e8b99604ac19e238f98429184fd7",
+    "data\\index-data\\supplier-evidence-index.json": "298ec40b6ac8630448deb62a1cbcb3b7857ca22d19d8b32fe10289a9b286f248",
+    "infra\\create-index-snapshots.py": "10a545a0a1d66004eac9be4f5b053d854f2889d57d673873231000f2671743c0",
+    "infra\\create-knowledge.py": "e3dcb93ee9ca71870287f9a3b6247a4acb83fb9ef14281c4ec64d57b544264d1",
+    "infra\\deploy-background.ps1": "5c710ac1f4965f5359436fd4addc9904f6bd9953627d224b8ad370707b5c7a7a",
+    "infra\\hooks\\postprovision.ps1": "26c324d89573ab87ff1432ae145ec3740b9e83a2d964685656afe228f824079f",
+    "infra\\hooks\\postprovision.sh": "f2d9f853651687fcc609a35a051a971831a66abd5342ada3e5dbd19de0e25962",
+    "infra\\lifecycle_bicep_deployment.ps1": "ef59d05a5375a8ac5fd5509cc43e28e63c8be27c0806a57c2366b9fc20af076e",
+    "infra\\lifecycle_github_repo_download.ps1": "a46799dc27ff283afb8ba1c7f4c0062c99883bfc2f4600c03aee4788f57b4bf3",
+    "infra\\lifecycle_teardown_cogservices.ps1": "63a74551b84a53a42048bf7b9f53fc8700691bf6ffabbf5d40b7479255d0b4a6",
+    "infra\\main.bicep": "cb53607ab37a7f350c6c2af3f7a662ab85fa4b355008a6406e02d883f6da6a7e",
+    "infra\\main.parameters.json": "770ad4bcf5b0c7ddda41871faa509e79b1d2346ccc87350e7c9209026dea4294",
+    "infra\\README.md": "5437cc1231e8ba5186a925c0bcbd11707accd5fd9d67b71fa8f9275c3d042774",
+    "infra\\requirements.txt": "0b122ceeb4daf47dc2f2ca85b3981485f85f7f8f4c0e5efcc749e312c04e6961",
+    "infra\\setup-content-understanding.py": "5e0ef1858a8bbb69dfefc1d94504d3536a9e13e4605be2ed648a0011e941e196",
+    "infra\\setup-env.py": "37ae4712c3def8a97bde3e6422badc02052fecea76ecf6ed132b84a08e0afd79",
+    "infra\\setup-knowledge.ps1": "c76b525a40f702d9786972b302dbc37994c2b81c60a57f7d4cdb34b33bda0594",
+    "scripts\\export-search-index.py": "ba0f0498112e4d567884a5bda97278708a52f19550e40be43ec1b8b47b2bba7e",
+    "scripts\\sync-caldova-data.py": "6b0e9da084f986518629d664aab698f80c1410e5c0940dff29cb9a6e4653df96",
+    "scripts\\validate-index-snapshots.py": "5ccdd1e117d82c87c4d2e86071092eda9fa8d6154a2d525723d1851b4c187f51",
+    "src\\notebooks\\part1-standard-foundry-iq-kb.ipynb": "ac3ece1c8077019d89ea7845a3595a621444fb27bdf312c6d4d509dfed9f6902",
+    "src\\notebooks\\requirements.txt": "c9f2d74c0894d71f15ebf9e5f6a7fbcc3b7c21c069c1a51c26a20a75c824e8f9",
+    "src\\README.md": "9ec915b5bec593faa8dfba68f2e46b2541e298c68597c8ac78a7f7541b4b6793"
+  },
+  "adaptations": [
+    "Finished PDFs placed directly alongside canonical product documents; no supplemental folder or added ingestion selection.",
+    "records.json and sample-sources.json copied unchanged.",
+    "document-manifest.json maps 40 finished PDFs to records; original authoring-source paths/hashes are provenance only, with included=false.",
+    "Read-only domain validator ported without generator or authored document dependencies.",
+    "One shared source manifest replaces duplicate provenance copies.",
+    "Pin exact imported JSON bytes with narrow .gitattributes rules; canonical text checks tolerate only CRLF/LF checkout normalization."
+  ],
+  "finished_document_count": 40,
+  "excluded_categories": [
+    "Editable Markdown/HTML document sources, preview HTML, generator templates and inputs, and renderer source per user instruction.",
+    "Derived extraction text, raster previews and collected folio (duplicate reading forms, not additional records).",
+    "Earlier story corpus and ledger: superseded scenario generation with different dry-bean accounting; not merged with v2.",
+    "Cloud receipts, service/account identities, embedding vectors, native state and logs, unapproved ontologies, and original cloud tooling.",
+    "Copied workshop reference text: existing canonical lab PDFs already cover those four references.",
+    ".git, caches, environments, installed package/font binaries, credentials, private/customer artifacts and unrelated tooling."
+  ],
+  "excluded_source_paths": [
+    "sample-data-v2\\.gitignore",
+    "sample-data-v2\\data\\document-manifest.json",
+    "sample-data-v2\\documents\\d01.md",
+    "sample-data-v2\\documents\\d02.md",
+    "sample-data-v2\\documents\\d03.md",
+    "sample-data-v2\\documents\\d04.md",
+    "sample-data-v2\\documents\\d05.md",
+    "sample-data-v2\\documents\\d06.md",
+    "sample-data-v2\\documents\\d07.md",
+    "sample-data-v2\\documents\\d08.md",
+    "sample-data-v2\\documents\\d09.md",
+    "sample-data-v2\\documents\\d10.md",
+    "sample-data-v2\\documents\\d11.md",
+    "sample-data-v2\\documents\\d12.md",
+    "sample-data-v2\\documents\\d13.md",
+    "sample-data-v2\\documents\\d14.md",
+    "sample-data-v2\\documents\\d15.md",
+    "sample-data-v2\\documents\\d16.md",
+    "sample-data-v2\\documents\\d17.md",
+    "sample-data-v2\\documents\\d18.md",
+    "sample-data-v2\\documents\\d19.md",
+    "sample-data-v2\\documents\\d20.md",
+    "sample-data-v2\\documents\\d21.md",
+    "sample-data-v2\\documents\\d22.md",
+    "sample-data-v2\\documents\\d23.md",
+    "sample-data-v2\\documents\\d24.md",
+    "sample-data-v2\\documents\\d25.md",
+    "sample-data-v2\\documents\\d26.md",
+    "sample-data-v2\\documents\\d27.md",
+    "sample-data-v2\\documents\\d28.md",
+    "sample-data-v2\\documents\\d29.md",
+    "sample-data-v2\\documents\\d30.md",
+    "sample-data-v2\\documents\\d31.md",
+    "sample-data-v2\\documents\\d32.md",
+    "sample-data-v2\\documents\\d33.md",
+    "sample-data-v2\\documents\\d34.md",
+    "sample-data-v2\\documents.py",
+    "sample-data-v2\\evidence\\delivery-check.json",
+    "sample-data-v2\\evidence\\generation.json",
+    "sample-data-v2\\evidence\\quality.json",
+    "sample-data-v2\\generate.py",
+    "sample-data-v2\\pdf-edition\\.gitignore",
+    "sample-data-v2\\pdf-edition\\build_pdfs.py",
+    "sample-data-v2\\pdf-edition\\cocoarynth-data-folio.pdf",
+    "sample-data-v2\\pdf-edition\\corpus.jsonl",
+    "sample-data-v2\\pdf-edition\\evidence\\generation.json",
+    "sample-data-v2\\pdf-edition\\evidence\\verification.json",
+    "sample-data-v2\\pdf-edition\\evidence\\visual-review.json",
+    "sample-data-v2\\pdf-edition\\extracted-text\\d01.txt",
+    "sample-data-v2\\pdf-edition\\extracted-text\\d02.txt",
+    "sample-data-v2\\pdf-edition\\extracted-text\\d03.txt",
+    "sample-data-v2\\pdf-edition\\extracted-text\\d04.txt",
+    "sample-data-v2\\pdf-edition\\extracted-text\\d05.txt",
+    "sample-data-v2\\pdf-edition\\extracted-text\\d06.txt",
+    "sample-data-v2\\pdf-edition\\extracted-text\\d07.txt",
+    "sample-data-v2\\pdf-edition\\extracted-text\\d08.txt",
+    "sample-data-v2\\pdf-edition\\extracted-text\\d09.txt",
+    "sample-data-v2\\pdf-edition\\extracted-text\\d10.txt",
+    "sample-data-v2\\pdf-edition\\extracted-text\\d11.txt",
+    "sample-data-v2\\pdf-edition\\extracted-text\\d12.txt",
+    "sample-data-v2\\pdf-edition\\extracted-text\\d13.txt",
+    "sample-data-v2\\pdf-edition\\extracted-text\\d14.txt",
+    "sample-data-v2\\pdf-edition\\extracted-text\\d15.txt",
+    "sample-data-v2\\pdf-edition\\extracted-text\\d16.txt",
+    "sample-data-v2\\pdf-edition\\extracted-text\\d17.txt",
+    "sample-data-v2\\pdf-edition\\extracted-text\\d18.txt",
+    "sample-data-v2\\pdf-edition\\extracted-text\\d19.txt",
+    "sample-data-v2\\pdf-edition\\extracted-text\\d20.txt",
+    "sample-data-v2\\pdf-edition\\extracted-text\\d21.txt",
+    "sample-data-v2\\pdf-edition\\extracted-text\\d22.txt",
+    "sample-data-v2\\pdf-edition\\extracted-text\\d23.txt",
+    "sample-data-v2\\pdf-edition\\extracted-text\\d24.txt",
+    "sample-data-v2\\pdf-edition\\extracted-text\\d25.txt",
+    "sample-data-v2\\pdf-edition\\extracted-text\\d26.txt",
+    "sample-data-v2\\pdf-edition\\extracted-text\\d27.txt",
+    "sample-data-v2\\pdf-edition\\extracted-text\\d28.txt",
+    "sample-data-v2\\pdf-edition\\extracted-text\\d29.txt",
+    "sample-data-v2\\pdf-edition\\extracted-text\\d30.txt",
+    "sample-data-v2\\pdf-edition\\extracted-text\\d31.txt",
+    "sample-data-v2\\pdf-edition\\extracted-text\\d32.txt",
+    "sample-data-v2\\pdf-edition\\extracted-text\\d33.txt",
+    "sample-data-v2\\pdf-edition\\extracted-text\\d34.txt",
+    "sample-data-v2\\pdf-edition\\pdf-manifest.json",
+    "sample-data-v2\\pdf-edition\\previews\\contact-sheet-01.png",
+    "sample-data-v2\\pdf-edition\\previews\\contact-sheet-02.png",
+    "sample-data-v2\\pdf-edition\\previews\\contact-sheet-03.png",
+    "sample-data-v2\\pdf-edition\\previews\\d01-page-01.png",
+    "sample-data-v2\\pdf-edition\\previews\\d01-page-02.png",
+    "sample-data-v2\\pdf-edition\\previews\\d01-page-03.png",
+    "sample-data-v2\\pdf-edition\\previews\\d09-page-01.png",
+    "sample-data-v2\\pdf-edition\\previews\\d09-page-02.png",
+    "sample-data-v2\\pdf-edition\\previews\\d10-page-01.png",
+    "sample-data-v2\\pdf-edition\\previews\\d13-page-01.png",
+    "sample-data-v2\\pdf-edition\\previews\\d15-page-01.png",
+    "sample-data-v2\\pdf-edition\\previews\\d20-page-01.png",
+    "sample-data-v2\\pdf-edition\\previews\\d25-page-01.png",
+    "sample-data-v2\\pdf-edition\\previews\\d25-page-02.png",
+    "sample-data-v2\\pdf-edition\\previews\\d27-page-01.png",
+    "sample-data-v2\\pdf-edition\\previews\\d28-page-01.png",
+    "sample-data-v2\\pdf-edition\\previews\\d29-page-01.png",
+    "sample-data-v2\\pdf-edition\\previews\\folio-page-01.png",
+    "sample-data-v2\\pdf-edition\\previews\\folio-page-02.png",
+    "sample-data-v2\\pdf-edition\\README.md",
+    "sample-data-v2\\pdf-edition\\requirements.txt",
+    "sample-data-v2\\pdf-edition\\tests\\test_pdfs.py",
+    "sample-data-v2\\pdf-edition\\verify_pdfs.py",
+    "sample-data-v2\\preview.html",
+    "sample-data-v2\\README.md",
+    "sample-data-v2\\seed.py",
+    "sample-data-v2\\single-sample\\build_sample.py",
+    "sample-data-v2\\single-sample\\extracted-text.txt",
+    "sample-data-v2\\single-sample\\preview-page-02.png",
+    "sample-data-v2\\single-sample\\preview.png",
+    "sample-data-v2\\single-sample\\production-closeout.md",
+    "sample-data-v2\\single-sample\\README.md",
+    "sample-data-v2\\single-sample\\research.json",
+    "sample-data-v2\\single-sample\\verification.json",
+    "sample-data-v2\\tests\\test_integrity.py",
+    "sample-data-v2\\validate.py",
+    "sample-data-v2\\variety-samples\\build.py",
+    "sample-data-v2\\variety-samples\\extracted-text\\collection-notebook.txt",
+    "sample-data-v2\\variety-samples\\extracted-text\\integration-brief.txt",
+    "sample-data-v2\\variety-samples\\extracted-text\\receipt-case.txt",
+    "sample-data-v2\\variety-samples\\extracted-text\\sharing-decision.txt",
+    "sample-data-v2\\variety-samples\\extracted-text\\wip-handoff.txt",
+    "sample-data-v2\\variety-samples\\manifest.json",
+    "sample-data-v2\\variety-samples\\previews\\collection-notebook-page-01.png",
+    "sample-data-v2\\variety-samples\\previews\\collection-notebook-page-02.png",
+    "sample-data-v2\\variety-samples\\previews\\collection-notebook-page-03.png",
+    "sample-data-v2\\variety-samples\\previews\\integration-brief-page-01.png",
+    "sample-data-v2\\variety-samples\\previews\\integration-brief-page-02.png",
+    "sample-data-v2\\variety-samples\\previews\\integration-brief-page-03.png",
+    "sample-data-v2\\variety-samples\\previews\\layout-overview.png",
+    "sample-data-v2\\variety-samples\\previews\\receipt-case-page-01.png",
+    "sample-data-v2\\variety-samples\\previews\\receipt-case-page-02.png",
+    "sample-data-v2\\variety-samples\\previews\\receipt-case-page-03.png",
+    "sample-data-v2\\variety-samples\\previews\\sharing-decision-page-01.png",
+    "sample-data-v2\\variety-samples\\previews\\sharing-decision-page-02.png",
+    "sample-data-v2\\variety-samples\\previews\\sharing-decision-page-03.png",
+    "sample-data-v2\\variety-samples\\previews\\wip-handoff-page-01.png",
+    "sample-data-v2\\variety-samples\\previews\\wip-handoff-page-02.png",
+    "sample-data-v2\\variety-samples\\previews\\wip-handoff-page-03.png",
+    "sample-data-v2\\variety-samples\\provenance.json",
+    "sample-data-v2\\variety-samples\\README.md",
+    "sample-data-v2\\variety-samples\\sources\\collection-notebook.md",
+    "sample-data-v2\\variety-samples\\sources\\integration-brief.md",
+    "sample-data-v2\\variety-samples\\sources\\receipt-case.md",
+    "sample-data-v2\\variety-samples\\sources\\sharing-decision.md",
+    "sample-data-v2\\variety-samples\\sources\\wip-handoff.md",
+    "sample-data-v2\\variety-samples\\tests\\test_variety.py",
+    "sample-data-v2\\verify_delivery.py"
+  ],
+  "pdf_rendering": {
+    "dependencies": {
+      "Pillow": "12.3.0",
+      "PyMuPDF": "1.26.5",
+      "fonttools": "4.59.2",
+      "reportlab": "4.4.3"
+    },
+    "fonts": {
+      "Code": {
+        "embedding_fs_type": 8,
+        "filename": "consola.ttf",
+        "sha256": "cf00b507b3286870cc5064ebd0633c303f70b491a4af25eec2d32df413db0179"
+      },
+      "Editorial": {
+        "embedding_fs_type": 8,
+        "filename": "georgia.ttf",
+        "sha256": "38dffcaf1fac89492f7c56c600a14daf36ae42f7c21985cd4134ae113124a58f"
+      },
+      "Editorial-Bold": {
+        "embedding_fs_type": 8,
+        "filename": "georgiab.ttf",
+        "sha256": "72a6cd94fab6c179392075d3fb361e269cdddfad41bb7ab385fa22a37e49a900"
+      },
+      "Editorial-Italic": {
+        "embedding_fs_type": 8,
+        "filename": "georgiai.ttf",
+        "sha256": "d3e4bad27651d120ac8f2cea42cf4b4f077264fb243f66b3caffcfd35465f49b"
+      },
+      "Interface": {
+        "embedding_fs_type": 8,
+        "filename": "segoeui.ttf",
+        "sha256": "8134dbcd09e7b123c9a7f229d49cffbcb01352cc72ea5e1076b65d0dca9f73cd"
+      },
+      "Interface-Bold": {
+        "embedding_fs_type": 8,
+        "filename": "segoeuib.ttf",
+        "sha256": "aeb9e4a6ec5cc59f4d72df8189032d7dbb28f45161cf1552174818b5465dac4e"
+      }
+    },
+    "closeout_fonts": {
+      "Code": {
+        "embedding_fs_type": 8,
+        "filename": "consola.ttf",
+        "sha256": "cf00b507b3286870cc5064ebd0633c303f70b491a4af25eec2d32df413db0179"
+      },
+      "Editorial": {
+        "embedding_fs_type": 8,
+        "filename": "georgia.ttf",
+        "sha256": "38dffcaf1fac89492f7c56c600a14daf36ae42f7c21985cd4134ae113124a58f"
+      },
+      "Editorial-Bold": {
+        "embedding_fs_type": 8,
+        "filename": "georgiab.ttf",
+        "sha256": "72a6cd94fab6c179392075d3fb361e269cdddfad41bb7ab385fa22a37e49a900"
+      },
+      "Editorial-Italic": {
+        "embedding_fs_type": 8,
+        "filename": "georgiai.ttf",
+        "sha256": "d3e4bad27651d120ac8f2cea42cf4b4f077264fb243f66b3caffcfd35465f49b"
+      },
+      "Interface": {
+        "embedding_fs_type": 8,
+        "filename": "segoeui.ttf",
+        "sha256": "8134dbcd09e7b123c9a7f229d49cffbcb01352cc72ea5e1076b65d0dca9f73cd"
+      },
+      "Interface-Bold": {
+        "embedding_fs_type": 8,
+        "filename": "segoeuib.ttf",
+        "sha256": "aeb9e4a6ec5cc59f4d72df8189032d7dbb28f45161cf1552174818b5465dac4e"
+      }
+    },
+    "source_verification": {
+      "standard_pdf_count": 34,
+      "standard_pdf_pages": 46,
+      "prose_pdf_count": 5,
+      "prose_pdf_pages": 15,
+      "closeout_pdf_pages": 2,
+      "original_fidelity_checks": "Full source-text, fact, hyperlink, font, geometry and exact-byte replay checks passed on isolated lab copies before excluding editable sources."
+    }
+  },
+  "licensing_status": "No standalone LICENSE found in the local source repository. Local transfer is authorized by this task; publication/relicensing approval is not inferred. Public-source text, images and bulk datasets were not imported; sample-sources.json retains derivation/reuse limits. Only recorded embedded PDF font subsets are retained, not font files.",
+  "derived_assets": [
+    {
+      "path": "scripts\\validate-cocoarynth-data.py",
+      "source_path": "sample-data-v2\\validate.py",
+      "source_sha256": "e82ab1bb7b6bf0c8e0fa80ce1526b321d66dee78a7db5f066471b224fd7394f9",
+      "adaptations": "Retained domain validation; removed document authoring/generator dependencies; added finished-PDF/manifest and isolated real lab-loader checks."
+    }
+  ],
+  "validation": {
+    "original_offline_domain_tests": 44,
+    "original_pdf_tests": 11,
+    "original_prose_pdf_tests": 18,
+    "pdf_byte_replay": "All 40 selected PDFs replayed byte-identically on isolated copies before authoring sources were excluded.",
+    "finished_pdf_parsing": "40 PDFs, 63 pages; canonical bindings, page sizes, font embedding and hyperlink targets checked locally.",
+    "credential_contact_resource_scan": "No findings in selected PDF text or unchanged JSON inputs.",
+    "source_preservation": "All 488 non-environment/cache/Git source files unchanged; only .gitignore and data/README.md changed among existing lab files.",
+    "remaining_limits": "No remote URL availability, PDF/UA certification, human licensing approval, Azure ingestion rehearsal or publication is claimed.",
+    "finished_data_regression_tests": 24
+  },
+  "canonical_text_hashes": {
+    "data\\caldova\\corpora.json": "8231b03844dc5fd66dbeaf4a982f2b01fb959cd1a5d15836851974267dc91a63",
+    "data\\caldova\\provenance.json": "beb365fa848360b397f3dd0282cf6aa1d6f869966c601927305821f279c7fa5b",
+    "data\\cocoarynth\\corpora.json": "cd6228ce165550277a6d7078085b56ea2bbb15bddebad507b302d22e2b9c2be9",
+    "data\\cocoarynth\\documents\\engineering-practices\\source\\cocoarynth-api-design-export-contracts-guide.html": "c27f4225d35c35b6f2b9940f27d4b222c7d87a8e6e9b93b93acbd55afe9eba86",
+    "data\\cocoarynth\\documents\\engineering-practices\\source\\cocoarynth-engineering-culture-presentation.html": "eafb7873e517db2d0c16fe91a66221602c364a3d1ead692ab90d4f636d139213",
+    "data\\cocoarynth\\documents\\engineering-practices\\source\\cocoarynth-product-ui-accessibility-guide.html": "33c801eb2a67745f1c56cb777a535bdabc29eb924adb80a4c7f5aa167f007065",
+    "data\\cocoarynth\\documents\\engineering-practices\\source\\cocoarynth-react-typescript-engineering-guide.html": "fe6979bbc3a93df9c4b093098adc5b2afc5cfc66ccb6caee82707809a689bc77",
+    "data\\cocoarynth\\documents\\source\\adr-immutable-origin-passport-snapshots.html": "5ce4ce53e4ded47b13b448ac9b05c740666bfd4f8ee8a3e41b2cc1cdbc540c2b",
+    "data\\cocoarynth\\documents\\source\\mapayca-markets-traceability-pilot-requirements.html": "1639eb45caa2303fdc3e08d4cbbb0b46920cf444def1981b97952d7c5b4efd2f",
+    "data\\cocoarynth\\documents\\source\\origin-passport-support-runbook.html": "55fbf1fa259049a791320f3d09f34f6f863ed21397da8d7caaa68f5b43874c0f",
+    "data\\cocoarynth\\documents\\source\\wholesale-traceability-data-sharing-policy.html": "0ac5a654140a61ea3859d7a10fcd962f0f1252479f2ef589474383077979aac3",
+    "data\\cocoarynth\\provenance.json": "6c1a5bb9cc298b6b028f910db99b0f78656ef0a5931b60b2136050d1cfae5c78",
+    "data\\index-data\\cocoarynth-documents-index-exported.jsonl": "6d68acbd3ed3208c844f4960c33bb3c3f06ab72e1f1d02604855a8c399fd7be8",
+    "data\\index-data\\cocoarynth-documents-index-index.json": "d3df4f9557bd54d48be790203b83afe0ec83619aa19640b78a209ec64fe77c7a",
+    "data\\index-data\\cocoarynth-engineering-practices-index-exported.jsonl": "45f6f86470ae625cae5e31d71e88f7e07f7e5dc814501eda49ec0cefd4b66b0f",
+    "data\\index-data\\cocoarynth-engineering-practices-index-index.json": "d3d143f2b9943a2064a87420df5e309a022ac786cd7910e2f6d665767eb2bbb5",
+    "data\\index-data\\sourcing-documents-exported.jsonl": "f2ce421a65a648ce0d96d59b3f4be458f45f5c9f77e7da9f3724702dfe8db3c1",
+    "data\\index-data\\sourcing-documents-index.json": "cb9b8bcde50963670047b20d40cafe47b7fce96e24a6050108d6e6cda4c09849",
+    "data\\index-data\\supplier-evidence-exported.jsonl": "0cb5960c176acea14bf114a0433a21a8b65ac3002218193628465b68ccba353f",
+    "data\\index-data\\supplier-evidence-index.json": "a14312dc00fd39724864b30082b54ed9ed963bc3b67f4d5f0feb9708e4b2d309",
+    "infra\\create-index-snapshots.py": "c25f51111ebe6cc8784eabdb081e2d304f74687093de0cc8ee329f30f89f8825",
+    "infra\\create-knowledge.py": "7c3d052ab442c0b84f2f156d480a55598f040f551612a5a93df16ab9ee987b1a",
+    "infra\\main.parameters.json": "ce67763ccd5013de2250999c4a81820dde98a18328e227024ef3e71552759885",
+    "infra\\README.md": "b4a3f3daae35f8f2d6cedc5283daad9b82c114b975ac73130523c79b99dbea34",
+    "infra\\setup-content-understanding.py": "ed7a67d8b3a7f347e814141ffe9dba376e7b4b43ae3974a8b649a238929f5515",
+    "infra\\setup-env.py": "c4501a03de111ffdc52b305b1dfbc724017503cedfc42b81c47c581bed11c1b5",
+    "scripts\\export-search-index.py": "031f165293ed5b3c64ef6d4d18d6dabc7275af297fa6d04453bab3fc51d8dadf",
+    "scripts\\sync-caldova-data.py": "7c1117293bdc147873a88450ae5323138854faf15be0cba02369fcb5dcd28691",
+    "scripts\\validate-index-snapshots.py": "bf599ab4565b5b6f997e9813e11e53e0be10d15412f5d5663d202988dae50870",
+    "src\\notebooks\\part1-standard-foundry-iq-kb.ipynb": "59e0071b1c6ebed3ca364a2beb426d1ed90f5fcd2aeea89e687edb854b7f3586",
+    "src\\README.md": "a4aa206b27d3f48418a770c0a001e2ad1833c4c0864d1b18a243389b443c46bc"
+  }
+}

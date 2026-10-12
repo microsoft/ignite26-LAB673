@@ -1,0 +1,143 @@
+{
+  "access_date": "2026-10-09",
+  "derivation_policy": "Facts are summarized in original prose. No source text, images, bulk datasets, real personal records, logos or certification seals are redistributed. All scenario quantities, weather, policies, approvals and businesses are fictional. Public availability is not an open licence.",
+  "sources": [
+    {
+      "id": "PUB-ICCO-HARVEST",
+      "title": "ICCO: Harvesting and post-harvest",
+      "url": "https://www.icco.org/harvesting-post-harvest-new/",
+      "publisher": "International Cocoa Organization",
+      "status": "read",
+      "licence": "No explicit open licence established; copyright presumed. Factual inspiration and link only.",
+      "adopted_facts": ["Pods are harvested and opened to recover wet beans.", "Fermentation and drying precede bagging."],
+      "not_derived": ["Fictional farm locations, areas, harvest dates, wet weights, staff observations and process schedules."]
+    },
+    {
+      "id": "PUB-ICCO-PROCESS",
+      "title": "ICCO: Processing cocoa",
+      "url": "https://www.icco.org/processing-cocoa/",
+      "publisher": "International Cocoa Organization",
+      "status": "read",
+      "licence": "No explicit open licence established; copyright presumed. Original factual paraphrase only.",
+      "adopted_facts": ["Fermentation and roasting both contribute to flavour.", "Drying reduces bean moisture; the page discusses 7.5 percent for storage.", "Shell and nib separation is a distinct step.", "Roast targets vary with intended flavour."],
+      "not_derived": ["The v2 7.5 percent receiving limit is a chosen synthetic specification, not a universal legal limit.", "80 percent liquor yield, roast/shell/process loss fractions and recipes are fictional accounting assumptions.", "This page's brief fermentation timing is not a universal full fermentation duration; v2 five/six-day schedules are invented."]
+    },
+    {
+      "id": "PUB-ICCO-FLAVOUR",
+      "title": "ICCO: Fine or flavour cocoa",
+      "url": "https://www.icco.org/fine-or-flavor-cocoa/",
+      "publisher": "International Cocoa Organization",
+      "status": "read",
+      "licence": "No explicit open licence established; link and original factual paraphrase only.",
+      "adopted_facts": ["Variety labels alone do not determine fine-flavour status.", "Ecuador Nacional is a noted exception to broad variety generalizations.", "Sensory quality depends on genetics, growing conditions and post-harvest handling."],
+      "not_derived": ["Cultivar identity is not genetically verified.", "No official fine-flavour country percentages, protected designation or certification are claimed."]
+    },
+    {
+      "id": "PUB-FAO-COCOA",
+      "title": "FAO: Growing cocoa, introductory chapter (historical training manual)",
+      "url": "https://www.fao.org/4/ad220e/AD220E01.htm",
+      "publisher": "Food and Agriculture Organization of the United Nations",
+      "status": "read",
+      "licence": "No document-specific open licence established. FAO web-content terms permit attributed private study/research/teaching and non-commercial use, with commercial/adaptation rights subject to permission. No source text reproduced.",
+      "terms_url": "https://www.fao.org/contact-us/terms/en/",
+      "adopted_facts": ["Growing-site selection and continuous plantation care matter.", "Harvesting, fermentation and drying affect marketing quality.", "Ghana is discussed as a cocoa-producing country."],
+      "not_derived": ["Historical economic claims and prescriptive nursery details are not adopted.", "Farm areas, shade descriptions and drainage observations are fictional, not agronomic recommendations."]
+    },
+    {
+      "id": "PUB-RA-MASS",
+      "title": "Rainforest Alliance: Mass Balance Sourcing: What is It?",
+      "url": "https://www.rainforest-alliance.org/business/certification/what-is-mass-balance-sourcing/",
+      "publisher": "Rainforest Alliance",
+      "status": "read",
+      "licence": "No explicit open licence established; copyright presumed. Concepts paraphrased, no seal, diagrams or standard text reproduced.",
+      "adopted_facts": ["Mass-balance sourcing can mix certified and non-certified physical material.", "Certified purchasing volumes and physical identity preservation are different concepts.", "Segregation does not always mean a single farm identity."],
+      "not_derived": ["The v2 ledger is physical mass accounting, not a Rainforest Alliance certification credit ledger.", "No Rainforest Alliance certification, compliance, conversion factor or seal eligibility is claimed.", "The mixed-origin run is physically traceable to two lots; it is not proof of certified mass-balance sourcing."]
+    },
+    {
+      "id": "PUB-USDA-ORGANIC",
+      "title": "USDA AMS: How to Become Certified Organic",
+      "url": "https://www.ams.usda.gov/services/organic-certification/becoming-certified",
+      "publisher": "United States Department of Agriculture, Agricultural Marketing Service",
+      "status": "read",
+      "licence": "US federal agency factual guidance; no page-specific licence asserted and no logos or third-party material reproduced.",
+      "adopted_facts": ["Certification involves application, review, inspection and a certifier decision.", "Maintaining certification involves annual review and inspection."],
+      "not_derived": ["Annual review is NOT an automatic certificate expiry rule.", "Demo finite evidence periods and review gates are invented policies.", "No real USDA-certified operator, certificate or organic finished-product label appears."]
+    },
+    {
+      "id": "PUB-FDA-TRACE",
+      "title": "FDA: FSMA Final Rule on Requirements for Additional Traceability Records for Certain Foods",
+      "url": "https://www.fda.gov/food/food-safety-modernization-act-fsma/fsma-final-rule-requirements-additional-traceability-records-certain-foods",
+      "publisher": "United States Food and Drug Administration",
+      "status": "read",
+      "licence": "US federal agency factual guidance; no page-specific licence asserted and no third-party material reproduced.",
+      "adopted_facts": ["Shipping, receiving and transformation are distinguishable record events.", "Event data should remain linked to the applicable lot code."],
+      "not_derived": ["This is record-design inspiration, not an assertion that cacao/chocolate falls on the Food Traceability List.", "No compliance determination, legal retention schedule or deadline is modeled."]
+    },
+    {
+      "id": "PUBLIC-DATA-CANDIDATE",
+      "title": "FAOSTAT crops and livestock products; dataset terms checked but rows not imported",
+      "url": "https://www.fao.org/faostat/en/#data/QCL",
+      "publisher": "Food and Agriculture Organization of the United Nations",
+      "status": "consulted_not_used",
+      "licence": "FAO statistical database terms state CC BY 4.0 unless metadata says otherwise, with additional terms and third-party exceptions.",
+      "terms_url": "https://www.fao.org/contact-us/terms/db-terms-of-use/en/",
+      "adopted_facts": [],
+      "not_derived": ["No statistical rows downloaded; dynamic page did not expose country rows in this inspection.", "V2 does not claim to be sampled from official production distributions."]
+    }
+  ],
+  "methodology": [
+    {
+      "id": "METHOD-SOP",
+      "repository": "docs",
+      "inspected_revision": "963f40df018ce7d3b121cff50ed1bb95d7b66757",
+      "path": "evidence\\synthetic-corpora\\airline-sop\\raw\\airline-sop-1.html",
+      "read_scope": "summary.md; raw metadata, purpose/scope, related documents and specifications",
+      "adopted_technique": "Operational specificity: stable document identities, effective dates, constrained applicability and tables that serve decisions; v2 QC and rework reports use these methods.",
+      "content_reuse": "Method only; no aircraft facts, procedure wording or internal/customer content imported."
+    },
+    {
+      "id": "METHOD-FROZEN",
+      "repository": "docs",
+      "inspected_revision": "963f40df018ce7d3b121cff50ed1bb95d7b66757",
+      "path": "topics\\cocoarynth-developer-kb\\tools\\prepare_corpus.py",
+      "read_scope": "README.md and generator lines 1-160",
+      "adopted_technique": "Separate pinned input identity from derived output; hash frozen records and document bytes; verify complete binding coverage; offline replay without inference.",
+      "content_reuse": "Method only; no vectors, source extracts, credentials or live workflow copied."
+    },
+    {
+      "id": "METHOD-TRUTH",
+      "repository": "docs",
+      "inspected_revision": "963f40df018ce7d3b121cff50ed1bb95d7b66757",
+      "path": "AGENTS-writing-guidance.md",
+      "read_scope": "universal contract, grounding discipline and artifact-fit guidance",
+      "adopted_technique": "Choose genre for the reader's decision; distinguish public fact, synthetic scenario, source implementation and requirement; qualify uncertain evidence instead of smoothing it away.",
+      "content_reuse": "Method only; original prose authored for this fictional corpus."
+    }
+  ],
+  "capability_sources": [
+    {
+      "id": "APP-PIN",
+      "title": "Pinned Cocoarynth Trace passport service, route and fixtures",
+      "repository": "cocoarynth-trace",
+      "revision": "a0b02a0579a8667c3d1bac7d1f5001ab0a0b0f77",
+      "url": "https://github.com/pamelas-organization/cocoarynth-trace/tree/a0b02a0579a8667c3d1bac7d1f5001ab0a0b0f77",
+      "inspected": ["server\\services\\originPassport.ts", "server\\routes\\passports.ts", "server\\data\\batches.ts"],
+      "boundary": "JSON allowlist and on-demand construction are implemented; immutable issuance storage, replacement lineage and Mapayca CSV are not implemented here."
+    },
+    {
+      "id": "WORKSHOP-PIN",
+      "title": "Pinned Cocoarynth workshop: immutable issuance, sharing policy and Mapayca pilot",
+      "repository": "developer-kb-for-github-copilot",
+      "revision": "1cdf35934462a46752da542f0c856ac82b475075",
+      "url": "https://github.com/pamelas-organization/developer-kb-for-github-copilot/tree/1cdf35934462a46752da542f0c856ac82b475075",
+      "inspected": ["documents\\source\\adr-immutable-origin-passport-snapshots.html", "documents\\source\\wholesale-traceability-data-sharing-policy.html", "Mapayca pilot contract via preserved baseline reference"],
+      "boundary": "Requirements inform fictional scenarios, not claims of implementation or actual disclosure. Mapayca has no allocation/shipment; completion is distinct from manufacturing start."
+    }
+  ],
+  "discovery_limits": [
+    "docs\\examples\\README.md is a skeleton, not a worked generator.",
+    "The airline summary's promoted Markdown companion was absent; the bounded raw HTML example was read instead.",
+    "Several guessed certification/GS1 URLs failed; only successfully read source pages above ground content.",
+    "No internal source content was sent to web search; public queries concerned cacao facts only."
+  ]
+}
