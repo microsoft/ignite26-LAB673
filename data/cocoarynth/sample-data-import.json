@@ -357,9 +357,8 @@
     "Finished PDFs placed directly alongside canonical product documents; no supplemental folder or added ingestion selection.",
     "records.json and sample-sources.json copied unchanged.",
     "document-manifest.json maps 40 finished PDFs to records; original authoring-source paths/hashes are provenance only, with included=false.",
-    "Read-only domain validator ported without generator or authored document dependencies.",
     "One shared source manifest replaces duplicate provenance copies.",
-    "Pin exact imported JSON bytes with narrow .gitattributes rules; canonical text checks tolerate only CRLF/LF checkout normalization."
+    "Pin exact imported JSON bytes with narrow .gitattributes rules."
   ],
   "finished_document_count": 40,
   "excluded_categories": [
@@ -604,22 +603,14 @@
     }
   },
   "licensing_status": "No standalone LICENSE found in the local source repository. Local transfer is authorized by this task; publication/relicensing approval is not inferred. Public-source text, images and bulk datasets were not imported; sample-sources.json retains derivation/reuse limits. Only recorded embedded PDF font subsets are retained, not font files.",
-  "derived_assets": [
-    {
-      "path": "scripts\\validate-cocoarynth-data.py",
-      "source_path": "sample-data-v2\\validate.py",
-      "source_sha256": "e82ab1bb7b6bf0c8e0fa80ce1526b321d66dee78a7db5f066471b224fd7394f9",
-      "adaptations": "Retained domain validation; removed document authoring/generator dependencies; added finished-PDF/manifest and isolated real lab-loader checks."
-    }
-  ],
-  "validation": {
+  "pre_import_validation": {
     "original_offline_domain_tests": 44,
     "original_pdf_tests": 11,
     "original_prose_pdf_tests": 18,
     "pdf_byte_replay": "All 40 selected PDFs replayed byte-identically on isolated copies before authoring sources were excluded.",
     "finished_pdf_parsing": "40 PDFs, 63 pages; canonical bindings, page sizes, font embedding and hyperlink targets checked locally.",
     "credential_contact_resource_scan": "No findings in selected PDF text or unchanged JSON inputs.",
-    "source_preservation": "All 488 non-environment/cache/Git source files unchanged; only .gitignore and data/README.md changed among existing lab files.",
+    "source_preservation": "All 488 non-environment/cache/Git source files unchanged; original lab data, documentation and loader files preserved.",
     "remaining_limits": "No remote URL availability, PDF/UA certification, human licensing approval, Azure ingestion rehearsal or publication is claimed.",
     "finished_data_regression_tests": 24
   },
