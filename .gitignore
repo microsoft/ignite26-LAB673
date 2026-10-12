@@ -354,12 +354,6 @@ paket-files/
 **/__pycache__/
 *.pyc
 
-# Keep new sample document authoring files outside the delivery repository.
-data/cocoarynth/documents/source/
-data/cocoarynth/documents/*.md
-data/cocoarynth/documents/*.html
-data/cocoarynth/documents/*.htm
-
 # Cake - Uncomment if you are using it
 #tools/**
 #!tools/packages.config
