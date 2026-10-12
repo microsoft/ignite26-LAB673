@@ -1,3 +1,0 @@
-# Preserve the imported JSON byte identities independently of core.autocrlf.
-data/cocoarynth/records.json -text
-data/cocoarynth/sample-sources.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
