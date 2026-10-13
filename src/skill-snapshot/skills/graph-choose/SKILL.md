@@ -12,6 +12,9 @@ metadata:
 
 Ask only what is missing, decide once, then route. Load one reference at a time.
 
+This graph-only snapshot does not bundle `foundry-iq-skills` or
+`azure-kusto-graph-skills`; references to them describe external routes.
+
 | Need | Load |
 |---|---|
 | Route table, ontology choice, and the planned entity stage | [Route table](references/route-table.md) |
