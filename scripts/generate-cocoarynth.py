@@ -301,9 +301,7 @@ def render(document: dict, evidence: dict, path: Path) -> None:
                 ("LINEBELOW", (0, 1), (-1, -1), 0.25, colors.HexColor("#D5D2CB"))]))
             flow += [t, Spacer(1, 8)]
         elif kind == "refs":
-            label = "Registros relacionados" if document["language"] == "es" else "Companion records"
-            flow.append(Paragraph("<b>" + label + "</b><br/>" +
-                                  "; ".join(escape(name) for name in b[1]), small))
+            continue
         elif kind == "link":
             flow.append(Paragraph(f'<b>{escape(b[1])}</b><br/><link href="{escape(b[2], quote=True)}">{escape(b[2])}</link>', small))
 
@@ -347,10 +345,10 @@ def validate_pdf(document: dict, evidence: dict, path: Path) -> int:
                 expected.append(block[1])
             elif block[0] == "table":
                 expected.extend(str(x) for row in [block[1]] + block[2] for x in row)
-            elif block[0] == "refs":
-                expected.extend(block[1])
             elif block[0] == "link":
                 expected.extend(block[1:])
+        if "Companion records" in text or "Registros relacionados" in text:
+            raise ValueError(f"Authoring companion list exposed in {path.name}")
         for value in expected:
             if normalized(value) not in normalized(text):
                 raise ValueError(f"PDF text missing in {path.name}: {value}")

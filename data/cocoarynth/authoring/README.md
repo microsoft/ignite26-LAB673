@@ -20,7 +20,7 @@ Identical source, Python and pinned dependency versions produce byte-identical P
 
 ## Files and schema
 
-`documents.json` defines titles, departments, dates, identities, language, genre and ordered content blocks. Blocks are `h`, `p`, `note`, `table`, `page`, `refs`, `link`, `evidence` and `science_sources`. An `evidence` block selects rows by exact fields and renders specified columns directly from `evidence.json`; do not copy those readings into prose tables. Column widths are positive fractions totaling one. `refs` resolve against generated or original companion PDFs.
+`documents.json` defines titles, departments, dates, identities, language, genre and ordered content blocks. Blocks are `h`, `p`, `note`, `table`, `page`, `refs`, `link`, `evidence` and `science_sources`. An `evidence` block selects rows by exact fields and renders specified columns directly from `evidence.json`; do not copy those readings into prose tables. Column widths are positive fractions totaling one. `refs` resolve against generated or original companion PDFs for authoring validation only; they are not rendered in participant PDFs. Participants must discover connections through the records themselves.
 
 `evidence.json` is the common chartable factual source. Collections contain natural `id` values and actual companion `document` filenames. Shipments join to batches and pallet groups; movements join pallets to staging positions and timestamps; readings join sensor and position to the relevant dwell window. Observations join sample cohorts to batches and, for retail stock, shipments. Packaging and ingredient issues join by batch and material-lot IDs. These are authoring inputs, not application fixtures or new app capabilities.
 
