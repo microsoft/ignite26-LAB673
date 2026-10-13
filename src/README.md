@@ -1,5 +1,10 @@
 # Source
 
+The [temporary skill distribution snapshot](skill-snapshot/README.md) contains
+the pinned Foundry IQ, graph-routing, EKG, grounding, GRZ and ontology skills and
+production runtimes for testing. See its inventory and runtime prerequisites
+before using it; it is not a published release.
+
 [Part 1: Build knowledge bases with agentic retrieval](notebooks/part1-standard-foundry-iq-kb.ipynb) adapts the ILL344 teaching flow to Cocoarynth, the chocolate retailer from [the developer KB lab](https://github.com/pamelas-organization/developer-kb-for-github-copilot).
 
 It creates a standalone file knowledge source and KB for the wholesale traceability data-sharing policy. It then connects `cocoarynth-documents-index` and `cocoarynth-engineering-practices-index` to the two-source `cocoarynth-kb-all`. Retrieval questions combine partner CSV requirements, data-sharing rules, and engineering guidance. Fabric and Work IQ are not required.

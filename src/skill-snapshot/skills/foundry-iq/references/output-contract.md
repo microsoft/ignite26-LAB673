@@ -1,0 +1,3 @@
+# Normalized output contract
+
+Return route/operation IDs, plane, resolved API version and selection source, compatibility evidence and preview warnings, subscription/resource group, redacted endpoint and resource IDs, discovered versus supplied inputs, approval decision, status/request IDs/ETags, changed resources, deterministic validation evidence, elapsed stages, warnings, ongoing cost drivers, rollback/cleanup, and remaining customer-owned actions. Distinguish documentation-based compatibility checks from live validation; do not claim an override was tested merely because a version parameter was substituted.

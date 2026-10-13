@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "grounding-skills-local"
+version = "0.1.0"
+description = "Agent skills to create, load and verify an Azure AI Search grounding index (edgeList graph profile)"
+license = {text = "MIT"}
+requires-python = ">=3.10"
+authors = [{name = "Microsoft"}]
+dependencies = ["azure-identity>=1.16", "httpx>=0.27"]
+
+[project.urls]
+Repository = "https://github.com/microsoft/GitHub-Copilot-for-Azure"
+Issues = "https://github.com/microsoft/GitHub-Copilot-for-Azure/issues"
+
+[project.optional-dependencies]
+parquet = ["pyarrow>=14"]
+
+[project.scripts]
+grounding-provision = "grounding.cli_provision:main"
+grounding-build = "grounding.cli_build:main"
+grounding-consume = "grounding.cli_consume:main"
+grounding-mcp = "grounding.mcp_server:main"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["grounding*"]
+namespaces = false

@@ -1,0 +1,27 @@
+{
+  "name": "foundry-iq-skills",
+  "description": "Temporary testing-only snapshot of 14 Foundry IQ, graph-routing, EKG, grounding, GRZ and ontology skills.",
+  "version": "1.0.0-snapshot.0e44f94",
+  "author": {
+    "name": "Microsoft",
+    "url": "https://www.microsoft.com"
+  },
+  "homepage": "https://github.com/microsoft/github-copilot-for-azure",
+  "repository": "https://github.com/microsoft/ignite26-LAB673",
+  "license": "MIT",
+  "keywords": [
+    "azure",
+    "azure-ai-search",
+    "foundry-iq",
+    "search",
+    "retrieval",
+    "rag",
+    "knowledge-graph",
+    "ekg",
+    "grounding",
+    "grz",
+    "ontology"
+  ],
+  "skills": "./skills/",
+  "mcpServers": "./.mcp.json"
+}

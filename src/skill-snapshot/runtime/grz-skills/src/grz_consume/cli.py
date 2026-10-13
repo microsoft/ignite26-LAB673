@@ -1,0 +1,144 @@
+"""Read-only CLI for the candidate sidecar."""
+
+from __future__ import annotations
+
+import argparse
+import json
+from typing import Any
+
+from grz_core.cli_output import add_json_option, add_version_option, emit, emit_error
+from grz_core.doctor import emit_doctor
+from grz_core.contracts import ContractError
+
+from .config import add_connection_options, build_service, resolve_config
+from .question import embed_question
+from .service import ConsumeService
+
+
+def add_source_options(parser: argparse.ArgumentParser) -> None:
+    add_connection_options(parser)
+    parser.add_argument("--query-key", help="Azure Search query key; prefer GRZ_SEARCH_QUERY_KEY")
+
+
+def make_service(args: argparse.Namespace) -> ConsumeService:
+    return build_service(resolve_config(args))
+
+
+def parser() -> argparse.ArgumentParser:
+    result = argparse.ArgumentParser(prog="grz-consume", description="Preview read-only candidate sidecar browser")
+    add_source_options(result)
+    add_json_option(result)
+    add_version_option(result)
+    commands = result.add_subparsers(dest="command", required=True)
+    commands.add_parser("doctor", help="Read only: check this machine, sign-in, descriptor and sidecar access")
+    commands.add_parser("status")
+    listing = commands.add_parser("list-communities")
+    listing.add_argument("--level", type=int, help="Defaults to the level with about 10-30 communities; 0 is finest")
+    listing.add_argument("--page-size", type=int, default=100)
+    listing.add_argument("--cursor")
+    community = commands.add_parser("get-community")
+    community.add_argument("community_id")
+    members = commands.add_parser("list-members")
+    members.add_argument("community_id")
+    members.add_argument("--page-size", type=int)
+    members.add_argument("--cursor")
+    members.add_argument("--question", help="Rank this community's articles for the question")
+    members.add_argument("--question-vector", help="JSON array of finite query vector values")
+    members.add_argument("--top-k", type=int, default=10)
+    chunk = commands.add_parser("get-chunk")
+    chunk.add_argument("chunk_id")
+    for sub in commands.choices.values():
+        add_json_option(sub, subcommand=True)
+    return result
+
+
+
+def _name(row: dict[str, Any]) -> str:
+    return row.get("label") or "(unnamed)"
+
+
+def _more(result: dict[str, Any], command: str) -> str:
+    return f"\nMore: run the same {command} with --cursor {result['next_cursor']}" if result.get("next_cursor") else ""
+
+
+CHECKS = {
+    "build_attested_manifest_and_live_counts": "the live document counts match what the build verified",
+}
+
+
+def summarize_status(result: dict[str, Any]) -> str:
+    counts = result.get("communities_per_level") or {}
+    levels = ", ".join(f"level {level}: {counts[level]}" for level in sorted(counts, key=int, reverse=True))
+    check = CHECKS.get(result["verification_scope"], result["verification_scope"])
+    return (f"Ready: {check}.\n"
+            f"Communities per level (0 is finest): {levels}.\n"
+            f"Browsing starts at level {result['browse_level']}. Next: list-communities")
+
+
+def summarize_communities(result: dict[str, Any]) -> str:
+    rows = result["items"]
+    lines = [f"{len(rows)} communities" + (f" at level {result['level']}" if "level" in result else "") + ":"]
+    for row in sorted(rows, key=lambda r: -r["member_count"]):
+        lines.append(f"  {_name(row)} - {row['member_count']} chunks  [{row['community_id']}]")
+    lines.append("Next: get-community <id> or list-members <id>")
+    return "\n".join(lines) + _more(result, "list-communities")
+
+
+def summarize_community(result: dict[str, Any]) -> str:
+    children = result.get("children") or []
+    return (f"{_name(result)}: {result['member_count']} chunks at level {result['level']}, "
+            f"{len(children)} finer communities.\nNext: list-members {result['community_id']}")
+
+
+def summarize_members(result: dict[str, Any]) -> str:
+    if result.get("ranked_by") == "question":
+        lines = [f"Top {len(result['items'])} articles for the question in {result['community_id']}:"]
+        lines += [f"  {r['score']:.3f}  {r['source_id']}  [{r['chunk_id']}]" for r in result["items"]]
+        return "\n".join(lines + ["Next: get-chunk <chunk id>"])
+    lines = [f"{len(result['items'])} members:"] + [f"  {r['source_id']}  [{r['chunk_id']}]" for r in result["items"]]
+    return "\n".join(lines + ["Next: get-chunk <chunk id>"]) + _more(result, "list-members")
+
+
+def summarize_chunk(result: dict[str, Any]) -> str:
+    text = " ".join(str(result.get("text", "")).split())
+    return f"{result.get('source_id')}\n{text[:600]}" + ("..." if len(text) > 600 else "")
+
+
+def main(argv: list[str] | None = None) -> int:
+    args = parser().parse_args(argv)
+    try:
+        if args.command == "doctor":
+            from .doctor import run_doctor
+
+            return emit_doctor(run_doctor(resolve_config(args)), args.json, "grz-consume")
+        service = make_service(args)
+        if args.command == "status":
+            result, summary = service.status(), summarize_status
+        elif args.command == "list-communities":
+            level = args.level if args.level is not None else service.browse_level()
+            result = {**service.list_communities(level, args.page_size, args.cursor), "level": level}
+            summary = summarize_communities
+        elif args.command == "get-community":
+            result, summary = service.get_community(args.community_id), summarize_community
+        elif args.command == "list-members":
+            if args.question and args.question_vector:
+                raise ContractError("QUERY_INVALID", "Use --question or --question-vector, not both")
+            if args.question or args.question_vector:
+                if args.cursor is not None or args.page_size is not None:
+                    raise ContractError("QUERY_INVALID", "--page-size/--cursor are not valid with a question")
+                vector = (json.loads(args.question_vector) if args.question_vector else
+                          embed_question(args.question, service.descriptor.embedding_model_id, service.descriptor.dimension))
+                result = service.rank_members(args.community_id, vector, args.top_k)
+            else:
+                result = service.list_members(args.community_id, args.page_size or 100, args.cursor)
+            summary = summarize_members
+        else:
+            result, summary = service.get_chunk(args.chunk_id), summarize_chunk
+        emit(result, args.json, summary, compact=False)
+        return 0
+    except (ContractError, ValueError, OSError, TypeError, ImportError) as exc:
+        return emit_error(exc, args.json, "QUERY_INVALID")
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

@@ -1,0 +1,1 @@
+{"version":"grz-build-v1","strategy":"exact","k":2,"candidate_probes":3,"similarity_cutoff":0.0,"cluster_size_limit":1000,"memory_budget_bytes":512000000,"seed":42}

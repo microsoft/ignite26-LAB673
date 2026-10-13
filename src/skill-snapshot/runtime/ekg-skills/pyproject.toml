@@ -1,0 +1,34 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ekg-skills-local"
+version = "0.1.0"
+description = "Enterprise Knowledge Graph skills for Azure AI Search: entity and relationship graphs with multi-hop questions, complementing Foundry IQ"
+license = {text = "MIT"}
+requires-python = ">=3.10"
+authors = [{name = "Microsoft"}]
+
+[project.urls]
+Repository = "https://github.com/microsoft/GitHub-Copilot-for-Azure"
+Issues = "https://github.com/microsoft/GitHub-Copilot-for-Azure/issues"
+
+[project.optional-dependencies]
+provision = ["azure-identity>=1.16", "azure-mgmt-resource>=23.0"]
+build = ["azure-identity>=1.16", "httpx>=0.27", "rdflib>=7.0"]
+consume = ["azure-identity>=1.16", "httpx>=0.27"]
+
+[project.scripts]
+ekg-provision = "ekg_provision.cli:main"
+ekg-build = "ekg_build.cli:main"
+ekg-consume = "ekg_consume.cli:main"
+ekg-mcp = "adapters.mcp.stdio:main"
+
+[tool.setuptools]
+package-dir = {"" = "src", adapters = "adapters"}
+
+[tool.setuptools.packages.find]
+where = ["src", "."]
+include = ["ekg_*", "adapters*"]
+namespaces = false

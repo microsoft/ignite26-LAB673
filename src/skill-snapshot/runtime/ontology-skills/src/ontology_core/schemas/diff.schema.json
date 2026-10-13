@@ -1,0 +1,148 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "versions/v<N>/diff.v<N>.json",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "from_version": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "minimum": 0
+    },
+    "to_version": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "added": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "classes": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Za-z][A-Za-z0-9_]*$"
+          }
+        },
+        "properties": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Za-z][A-Za-z0-9_]*$"
+          }
+        }
+      },
+      "required": [
+        "classes",
+        "properties"
+      ]
+    },
+    "removed": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "classes": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Za-z][A-Za-z0-9_]*$"
+          }
+        },
+        "properties": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Za-z][A-Za-z0-9_]*$"
+          }
+        }
+      },
+      "required": [
+        "classes",
+        "properties"
+      ]
+    },
+    "changed": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "kind": {
+            "enum": [
+              "class",
+              "property"
+            ]
+          },
+          "name": {
+            "type": "string",
+            "pattern": "^[A-Za-z][A-Za-z0-9_]*$"
+          },
+          "field": {
+            "enum": [
+              "description",
+              "domain",
+              "range",
+              "kind",
+              "parent"
+            ]
+          },
+          "before": {},
+          "after": {}
+        },
+        "required": [
+          "after",
+          "before",
+          "field",
+          "kind",
+          "name"
+        ]
+      }
+    },
+    "coverage_regressions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string",
+            "pattern": "^[A-Za-z][A-Za-z0-9_]*$"
+          },
+          "kind": {
+            "enum": [
+              "class",
+              "property"
+            ]
+          },
+          "had_evidence": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        "required": [
+          "had_evidence",
+          "kind",
+          "name"
+        ]
+      }
+    },
+    "seed_violations": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[A-Za-z][A-Za-z0-9_]*$"
+      }
+    }
+  },
+  "required": [
+    "added",
+    "changed",
+    "coverage_regressions",
+    "from_version",
+    "removed",
+    "seed_violations",
+    "to_version"
+  ]
+}

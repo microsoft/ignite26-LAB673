@@ -1,0 +1,118 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "runs/<plan_id>/sample.json",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "plan_id": {
+      "type": "string",
+      "pattern": "^oplan-[0-9a-f]{16}$"
+    },
+    "level": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "excerpt_chars": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "shard_chars": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "passages": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "evidence_id": {
+            "type": "string",
+            "pattern": "^E[0-9a-f]{10,12}$"
+          },
+          "chunk_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "community_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "level": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "source_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "excerpt": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "chunk_id",
+          "community_id",
+          "evidence_id",
+          "excerpt",
+          "level",
+          "source_id"
+        ]
+      }
+    },
+    "shards": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "index": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "community_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "minItems": 1
+          },
+          "evidence_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^E[0-9a-f]{10,12}$"
+            },
+            "minItems": 1
+          }
+        },
+        "required": [
+          "community_ids",
+          "evidence_ids",
+          "index"
+        ]
+      }
+    },
+    "warnings": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": [
+    "excerpt_chars",
+    "level",
+    "passages",
+    "plan_id",
+    "shard_chars",
+    "shards",
+    "warnings"
+  ]
+}

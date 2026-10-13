@@ -1,0 +1,74 @@
+{
+  "mcpServers": {
+    "azure": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@azure/mcp@latest",
+        "server",
+        "start"
+      ],
+      "env": {
+        "NPM_CONFIG_REGISTRY": "https://packagefeedproxy.microsoft.io/npm/"
+      }
+    },
+    "ekg-skills": {
+      "command": "uv",
+      "args": [
+        "tool",
+        "run",
+        "--isolated",
+        "--from",
+        "${CLAUDE_PLUGIN_ROOT}/runtime/ekg-skills[build,consume,provision]",
+        "ekg-mcp"
+      ],
+      "env": {
+        "UV_INDEX_URL": "https://packagefeedproxy.microsoft.io/pypi/simple/"
+      }
+    },
+    "grounding-skills": {
+      "command": "uv",
+      "args": [
+        "tool",
+        "run",
+        "--isolated",
+        "--from",
+        "${CLAUDE_PLUGIN_ROOT}/runtime/grounding-skills[parquet]",
+        "grounding-mcp"
+      ],
+      "env": {
+        "UV_INDEX_URL": "https://packagefeedproxy.microsoft.io/pypi/simple/"
+      }
+    },
+    "grz-skills": {
+      "command": "uv",
+      "args": [
+        "tool",
+        "run",
+        "--isolated",
+        "--python",
+        "3.12",
+        "--from",
+        "${CLAUDE_PLUGIN_ROOT}/runtime/grz-skills[azure,embed]",
+        "grz-mcp"
+      ],
+      "env": {
+        "UV_INDEX_URL": "https://packagefeedproxy.microsoft.io/pypi/simple/"
+      }
+    },
+    "ontology-skills": {
+      "command": "uv",
+      "args": [
+        "tool",
+        "run",
+        "--isolated",
+        "--from",
+        "${CLAUDE_PLUGIN_ROOT}/runtime/ontology-skills",
+        "ontology-mcp"
+      ],
+      "env": {
+        "UV_INDEX_URL": "https://packagefeedproxy.microsoft.io/pypi/simple/"
+      }
+    }
+  }
+}
