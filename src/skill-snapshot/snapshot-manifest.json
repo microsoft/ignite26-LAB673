@@ -146,24 +146,10 @@
   ],
   "manifest_path": "snapshot-manifest.json",
   "manifest_self_hash": "excluded-to-avoid-self-reference",
-  "payload_file_count": 288,
+  "payload_file_count": 286,
   "payload_digest_algorithm": "SHA256(sorted UTF8(path + NUL + file_sha256 + LF))",
-  "payload_sha256": "a518e95d320531646be8d3be6648d851281d13155d6449b3129128c1c1112fec",
+  "payload_sha256": "e07f2387690042ef4398c50f36e2da83fa1a49972617785c57a18f2dd46d24de",
   "files": [
-    {
-      "path": ".claude-plugin/plugin.json",
-      "sha256": "86dfc6432e215c26f517747c3f859444e1657c22ea81d3ba2660684c70a127fe",
-      "size_bytes": 661,
-      "origin": "generated-from-pinned-release-config",
-      "adaptation": "Temporary snapshot metadata, provisional version and approved feeds"
-    },
-    {
-      "path": ".cursor-plugin/plugin.json",
-      "sha256": "86dfc6432e215c26f517747c3f859444e1657c22ea81d3ba2660684c70a127fe",
-      "size_bytes": 661,
-      "origin": "generated-from-pinned-release-config",
-      "adaptation": "Temporary snapshot metadata, provisional version and approved feeds"
-    },
     {
       "path": ".gitattributes",
       "sha256": "308a40fa1d89ae5ea4390b4c9b46a0108b09f171f07898f25d451fa0c69c4e9f",
