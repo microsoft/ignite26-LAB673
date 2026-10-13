@@ -83,7 +83,7 @@
   "manifest_self_hash": "excluded-to-avoid-self-reference",
   "payload_file_count": 406,
   "payload_digest_algorithm": "SHA256(sorted UTF8(path + NUL + file_sha256 + LF))",
-  "payload_sha256": "082c9034af955602c46fb33bd6aafea0a09b640ed86cd04e68bb0d610ca5d10c",
+  "payload_sha256": "d3f7a8a4705bbcf9f56f575ded68f95178a24ec0607c7870c80c1e5dba1e0f1f",
   "files": [
     {
       "path": ".claude-plugin/plugin.json",
@@ -1775,13 +1775,13 @@
     },
     {
       "path": "runtime/ontology-skills/src/ontology_build/export.py",
-      "sha256": "f9290f32079ba469035ac9651f14a1d464250068932ee581a27887edc5ab6e7c",
-      "size_bytes": 9182,
+      "sha256": "e2f7f5e5d11ef8e946e55d03ab4901c1d2ab9846bc5cddd98309f66295fa4925",
+      "size_bytes": 9181,
       "origin": "pinned-source",
       "source_path": "runtime/ontology-skills/src/ontology_build/export.py",
       "source_sha256": "f57a80940f9bf54414dab5cbdc222408a6ba70b6d5bc5a890676dabe3aad852b",
       "normalized_source_sha256": "f9290f32079ba469035ac9651f14a1d464250068932ee581a27887edc5ab6e7c",
-      "modified": false
+      "modified": true
     },
     {
       "path": "runtime/ontology-skills/src/ontology_build/grz_reader.py",

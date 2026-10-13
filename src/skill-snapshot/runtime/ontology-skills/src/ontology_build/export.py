@@ -181,4 +181,3 @@ def _as_seed(ontology: Ontology) -> Ontology:
         classes=[dataclasses.replace(c, seed=True) for c in ontology.classes],
         properties=[dataclasses.replace(p, seed=True) for p in ontology.properties],
     )
-
