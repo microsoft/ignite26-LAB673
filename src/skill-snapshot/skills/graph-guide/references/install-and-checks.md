@@ -1,6 +1,6 @@
 # Install and checks
 
-This testing-only snapshot bundles Foundry IQ, EKG, grounding, GRZ and ontology
+This testing-only snapshot bundles graph routing, EKG, grounding, GRZ and ontology
 in one local plugin. Use the [snapshot runtime instructions](../../../README.md#install-the-local-runtimes),
 not marketplace installation, to keep the pinned source revision.
 
@@ -10,7 +10,8 @@ Run only the checks required by the route: `ekg-provision --version`,
 [native prerequisite](../../../README.md#grz-native-runtime-prerequisite).
 Version checks alone do not prove service readiness.
 
-Kusto graph analysis is external to this snapshot. `entity-skills` is planned
+Foundry IQ document retrieval, KB binding and Kusto graph analysis are external
+to this snapshot. `entity-skills` is planned
 and cannot be run. If a required runtime or native asset is missing, report
 the prerequisite; do not substitute a fixture, simulator or another revision.
 

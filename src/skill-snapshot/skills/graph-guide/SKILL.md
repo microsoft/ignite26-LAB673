@@ -13,6 +13,9 @@ metadata:
 Explain only. Ask about data shape and answer shape before routing. Load one
 reference at a time.
 
+This graph-only snapshot does not bundle `foundry-iq-skills` or
+`azure-kusto-graph-skills`; references to them describe external routes.
+
 | Need | Load |
 |---|---|
 | Plain-language choice between retrieval, knowledge graph, and Kusto graph | [Decision guide](references/decision-guide.md) |

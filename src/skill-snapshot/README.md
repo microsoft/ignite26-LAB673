@@ -1,4 +1,4 @@
-# Temporary skill distribution snapshot
+# Temporary graph skill distribution snapshot
 
 This is a **testing-only snapshot**, not a published or assured release. It
 packages the production skill and runtime files from
@@ -7,22 +7,28 @@ at commit `0e44f9464deb180b13aea0fb4875d2cb2755e3aa`. Do not replace it with
 the moving feature branch or a marketplace package when reproducing a run.
 
 The pinned source defines one unified `foundry-iq-skills` plugin. This snapshot
-ships all 14 skills, four Python runtimes and five MCP server registrations.
+ships only its 13 graph-related skills as `graph-skills-snapshot`, with four
+Python runtimes and five MCP server registrations. The general Foundry IQ skill
+and its operations library are not included.
 Source guidance sometimes calls runtime families companion plugins; here they
 are bundled in this one plugin.
+
+Skill guidance remains under `skills\<skill-name>` and production Python
+packages remain under `runtime\<family>`. The four runtime packages and all
+five native binaries retain their existing paths and bytes.
 
 ## Skills and entry points
 
 | Family | Skills | Runtime commands |
 |---|---|---|
-| Foundry IQ and Search | [foundry-iq](skills/foundry-iq/SKILL.md) | Exact REST operation guidance; Azure MCP is an external dependency |
 | Graph routing | [graph-choose](skills/graph-choose/SKILL.md), [graph-demo](skills/graph-demo/SKILL.md), [graph-guide](skills/graph-guide/SKILL.md) | Routing only |
 | Enterprise knowledge graph | [ekg-provision](skills/ekg-provision/SKILL.md), [ekg-build](skills/ekg-build/SKILL.md), [ekg-consume](skills/ekg-consume/SKILL.md) | `ekg-provision`, `ekg-build`, `ekg-consume`, `ekg-mcp` |
 | Grounding | [grounding-provision](skills/grounding-provision/SKILL.md), [grounding-build](skills/grounding-build/SKILL.md), [grounding-consume](skills/grounding-consume/SKILL.md) | `grounding-provision`, `grounding-build`, `grounding-consume`, `grounding-mcp` |
 | Topic communities | [grz-build](skills/grz-build/SKILL.md), [grz-consume](skills/grz-consume/SKILL.md) | `grz-build`, `grz-consume`, `grz-mcp` |
 | Ontology | [ontology-build](skills/ontology-build/SKILL.md), [ontology-consume](skills/ontology-consume/SKILL.md) | `ontology-build`, `ontology-consume`, `ontology-mcp` |
 
-The Kusto graph route is external and is not included. Automated entity linking
+Foundry IQ document retrieval and KB binding are external routes, not included
+skills. The Kusto graph route is also external and is not included. Automated entity linking
 and extraction through `entity-skills` is not implemented in this snapshot.
 Native EKG graph extraction is a separate supported preview route.
 
@@ -135,27 +141,22 @@ boundaries. These installation instructions do not authorize resource creation,
 permission changes, ingestion or model calls. Run Azure CLI and its child
 processes with task-isolated auth/config state, not a shared default profile.
 
-1. For document retrieval or KB binding, start with
-   [Foundry IQ](skills/foundry-iq/SKILL.md). Exact leaves include
-   [knowledge source creation](skills/foundry-iq/operations/data-plane/knowledge-sources/create-or-update.md),
-   [knowledge base binding](skills/foundry-iq/operations/data-plane/knowledge-bases/create-or-update.md)
-   and [retrieval](skills/foundry-iq/operations/data-plane/knowledge-retrieval/retrieve.md).
-   Resolve and reuse the appropriate API versions and verify service responses.
-2. For an EKG, run `ekg-provision` readiness checks, inspect the exact source,
+1. For an EKG, run `ekg-provision` readiness checks, inspect the exact source,
    and plan with `ekg-build`. Apply only the approved plan, verify the managed
    generation, publish the descriptor, then use `ekg-consume query --graph`.
    The preview graph path uses Search `2026-08-01-preview` and Azure Blob
    knowledge sources. SharePoint graph builds and EKG-to-KB handoff are
-   explicitly unsupported; use the Foundry IQ KB leaves instead.
-3. For topic communities, use `grz-build --backend azure` with a source index
+   explicitly unsupported. General document retrieval and KB binding require
+   tooling outside this graph-only snapshot.
+2. For topic communities, use `grz-build --backend azure` with a source index
    containing retrievable chunk vectors and the required source attestations.
    Plan, apply, verify and publish are distinct stages. A native executable
    is required for apply. Browse the published descriptor with `grz-consume`.
-4. For an ontology, use `ontology-build` on an existing published GRZ generation,
+3. For an ontology, use `ontology-build` on an existing published GRZ generation,
    follow its proposal/review/export sequence, and pass the exported OWL file
    to EKG. Ontology can consume an existing GRZ generation even when this
    machine cannot perform a new native GRZ build.
-5. Grounding is optional: `grounding-build` loads an edgeList grounding index
+4. Grounding is optional: `grounding-build` loads an edgeList grounding index
    from CSV, JSONL or Wikidata; use `grounding-consume` to inspect readiness.
 
 Typical read-only local checks after installation are `ekg-build --version`,
@@ -170,8 +171,8 @@ original source path and SHA-256. The manifest names its own path separately
 to avoid a self-referential hash. Its payload digest covers the sorted file
 paths and hashes. Preserve the [MIT license](LICENSE).
 
-Snapshot-only adaptations remove Foundry IQ evaluation scripts, associated
-guides and routing; GRZ's offline fixture backend, fixture artifact generator,
+Snapshot-only adaptations exclude the general Foundry IQ skill and its
+operations library; GRZ's offline fixture backend, fixture artifact generator,
 full-generation test reader and developer simulator; runtime development
 dependencies and test configuration; and EKG sample fixture data.
 Production GRZ Azure reads/writes and the native adapter remain. The CLI's

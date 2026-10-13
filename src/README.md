@@ -1,7 +1,7 @@
 # Source
 
-The [temporary skill distribution snapshot](skill-snapshot/README.md) contains
-the pinned Foundry IQ, graph-routing, EKG, grounding, GRZ and ontology skills and
+The [temporary graph skill distribution snapshot](skill-snapshot/README.md) contains
+the pinned graph-routing, EKG, grounding, GRZ and ontology skills and
 production runtimes for testing. See its inventory and runtime prerequisites
 before using it; it is not a published release.
 
