@@ -1,0 +1,116 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ontology.v<N>.json",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "version": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "classes": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/class"
+      }
+    },
+    "properties": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/property"
+      }
+    }
+  },
+  "required": [
+    "classes",
+    "properties",
+    "version"
+  ],
+  "$defs": {
+    "evidence": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^E[0-9a-f]{10,12}$"
+      },
+      "uniqueItems": true
+    },
+    "class": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "pattern": "^[A-Za-z][A-Za-z0-9_]*$"
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1
+        },
+        "evidence": {
+          "$ref": "#/$defs/evidence"
+        },
+        "parent": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^[A-Za-z][A-Za-z0-9_]*$"
+        },
+        "seed": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "description",
+        "evidence",
+        "name",
+        "parent",
+        "seed"
+      ]
+    },
+    "property": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "pattern": "^[A-Za-z][A-Za-z0-9_]*$"
+        },
+        "kind": {
+          "enum": [
+            "object",
+            "datatype"
+          ]
+        },
+        "domain": {
+          "type": "string",
+          "pattern": "^[A-Za-z][A-Za-z0-9_]*$"
+        },
+        "range": {
+          "type": "string",
+          "pattern": "^[A-Za-z][A-Za-z0-9_]*$"
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1
+        },
+        "evidence": {
+          "$ref": "#/$defs/evidence"
+        },
+        "seed": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "description",
+        "domain",
+        "evidence",
+        "kind",
+        "name",
+        "range",
+        "seed"
+      ]
+    }
+  }
+}

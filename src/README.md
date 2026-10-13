@@ -1,5 +1,10 @@
 # Source
 
+The [temporary skill distribution snapshot](skill-snapshot/README.md) contains
+the pinned Foundry IQ, graph-routing, EKG, grounding, GRZ and ontology skills and
+production runtimes for testing. See its inventory and runtime prerequisites
+before using it; it is not a published release.
+
 [Part 1: Build knowledge bases with agentic retrieval](notebooks/part1-standard-foundry-iq-kb.ipynb) adapts the ILL344 teaching flow to Cocoarynth Chocolate Works, a fictional bean-to-bar chocolate maker.
 
 It creates a standalone file knowledge source and KB for the label and marketing claims policy. It then connects `cocoarynth-origins`, `cocoarynth-quality`, `cocoarynth-logistics-retail`, and `cocoarynth-policies` to the four-source `cocoarynth-kb-all`, and uses it to solve mysteries whose evidence is spread across farm, factory, shipping, retail, and policy records. The answers and evidence are in [the mysteries file](../data/cocoarynth/questions.yaml). Fabric and Work IQ are not required.

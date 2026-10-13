@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools>=75,<81", "wheel>=0.45,<1"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ontology-skills"
+version = "0.1.0"
+description = "Propose, review and export an OWL ontology from a published GRZ community generation in Azure AI Search"
+license = {text = "MIT"}
+requires-python = ">=3.12"
+authors = [{name = "Microsoft"}]
+dependencies = [
+  "azure-identity==1.23.0",
+  "azure-search-documents==12.0.0",
+  "requests>=2.32,<3",
+  "rdflib>=7.1,<8",
+]
+
+[project.urls]
+Repository = "https://github.com/microsoft/GitHub-Copilot-for-Azure"
+Issues = "https://github.com/microsoft/GitHub-Copilot-for-Azure/issues"
+
+[project.scripts]
+ontology-build = "ontology_build.cli:main"
+ontology-consume = "ontology_consume.cli:main"
+ontology-mcp = "ontology_mcp.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+ontology_core = ["schemas/*.json"]

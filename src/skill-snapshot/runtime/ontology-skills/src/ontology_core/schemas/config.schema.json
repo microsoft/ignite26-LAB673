@@ -1,0 +1,128 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "config.json",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "tool_version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "tenant_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "tenant_name": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "created_at": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?Z$"
+    },
+    "grz": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "descriptor_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "search_endpoint": {
+          "type": "string",
+          "pattern": "^https://"
+        },
+        "physical_index": {
+          "type": "string",
+          "minLength": 1
+        },
+        "generation_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source_index": {
+          "type": "string",
+          "minLength": 1
+        },
+        "embedding_model_id": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "descriptor_sha256",
+        "embedding_model_id",
+        "generation_id",
+        "physical_index",
+        "search_endpoint",
+        "source_index"
+      ]
+    },
+    "model": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "endpoint": {
+          "type": "string",
+          "pattern": "^https://"
+        },
+        "deployment": {
+          "type": "string",
+          "minLength": 1
+        },
+        "input_price_per_1m": {
+          "type": "number",
+          "minimum": 0
+        },
+        "output_price_per_1m": {
+          "type": "number",
+          "minimum": 0
+        },
+        "subscription_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "resource_group": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "model_name": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "model_version": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "deployment",
+        "endpoint",
+        "input_price_per_1m",
+        "model_name",
+        "model_version",
+        "output_price_per_1m",
+        "resource_group",
+        "subscription_id"
+      ]
+    }
+  },
+  "required": [
+    "created_at",
+    "grz",
+    "model",
+    "tenant_id",
+    "tenant_name",
+    "tool_version"
+  ]
+}

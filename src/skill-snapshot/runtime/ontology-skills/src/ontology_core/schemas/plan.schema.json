@@ -1,0 +1,354 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "plans/<plan_id>.json",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "tool_version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "plan_id": {
+      "type": "string",
+      "pattern": "^oplan-[0-9a-f]{16}$"
+    },
+    "created_at": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?Z$"
+    },
+    "tenant_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "grz": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "search_endpoint": {
+          "type": "string",
+          "pattern": "^https://"
+        },
+        "physical_index": {
+          "type": "string",
+          "minLength": 1
+        },
+        "generation_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "manifest_digest": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      },
+      "required": [
+        "generation_id",
+        "manifest_digest",
+        "physical_index",
+        "search_endpoint"
+      ]
+    },
+    "seed": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "format": {
+          "enum": [
+            "owl",
+            "rdf",
+            "xml",
+            "ttl",
+            "nt",
+            "json"
+          ]
+        }
+      },
+      "required": [
+        "format",
+        "path",
+        "sha256"
+      ]
+    },
+    "sampling": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "level": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "communities_at_level": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "passages": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "excerpt_chars": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "shard_chars": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "shards": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "audit_mode": {
+          "enum": [
+            "full",
+            "cited"
+          ]
+        }
+      },
+      "required": [
+        "audit_mode",
+        "communities_at_level",
+        "excerpt_chars",
+        "level",
+        "passages",
+        "shard_chars",
+        "shards"
+      ]
+    },
+    "model": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "endpoint": {
+          "type": "string",
+          "pattern": "^https://"
+        },
+        "deployment": {
+          "type": "string",
+          "minLength": 1
+        },
+        "model_name": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "model_version": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "reasoning_effort": {
+          "enum": [
+            "minimal",
+            "low",
+            "medium",
+            "high"
+          ]
+        },
+        "proposal_max_output_tokens": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "audit_max_output_tokens": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "input_price_per_1m": {
+          "type": "number",
+          "minimum": 0
+        },
+        "output_price_per_1m": {
+          "type": "number",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "audit_max_output_tokens",
+        "deployment",
+        "endpoint",
+        "input_price_per_1m",
+        "model_name",
+        "model_version",
+        "output_price_per_1m",
+        "proposal_max_output_tokens",
+        "reasoning_effort"
+      ]
+    },
+    "prompt_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "estimate": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "calls": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "input_tokens": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "output_tokens": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "usd": {
+          "type": "number",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "calls",
+        "input_tokens",
+        "output_tokens",
+        "usd"
+      ]
+    },
+    "caps": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "max_spend_usd": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "max_tokens": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1
+        }
+      },
+      "required": [
+        "max_spend_usd",
+        "max_tokens"
+      ]
+    },
+    "critique": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "enum": [
+            "critique",
+            "refine"
+          ]
+        },
+        "base_version": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "base_schema_id": {
+          "type": "string",
+          "pattern": "^sha256:[0-9a-f]{64}$"
+        },
+        "max_rounds": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 5
+        },
+        "max_output_tokens": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "queries": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "path": {
+              "type": "string",
+              "minLength": 1
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "count": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          "required": [
+            "count",
+            "path",
+            "sha256"
+          ]
+        },
+        "judge_samples": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 5
+        },
+        "noise_margin": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10
+        },
+        "judge_deployment": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        },
+        "judge_reasoning_effort": {
+          "enum": [
+            "minimal",
+            "low",
+            "medium",
+            "high",
+            null
+          ]
+        }
+      },
+      "required": [
+        "base_schema_id",
+        "base_version",
+        "kind",
+        "max_output_tokens",
+        "max_rounds",
+        "queries"
+      ]
+    }
+  },
+  "required": [
+    "caps",
+    "created_at",
+    "estimate",
+    "grz",
+    "model",
+    "plan_id",
+    "prompt_sha256",
+    "sampling",
+    "seed",
+    "tenant_id",
+    "tool_version"
+  ]
+}

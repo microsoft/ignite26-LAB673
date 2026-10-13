@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "one line of versions/v<N>/evidence.v<N>.jsonl",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "evidence_id": {
+      "type": "string",
+      "pattern": "^E[0-9a-f]{10,12}$"
+    },
+    "chunk_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "source_id": {
+      "type": "string"
+    },
+    "community_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "level": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "excerpt": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "chunk_id",
+    "community_id",
+    "evidence_id",
+    "excerpt",
+    "level",
+    "source_id"
+  ]
+}
