@@ -231,7 +231,8 @@ class BuildService:
         config = build_native_config(
             endpoint=getattr(self.store, "endpoint", f"https://{source.service}.search.windows.net"),
             source_index=source.index,
-            vector_field=planned.get("source", {}).get("vector_field") or "vector",
+            vector_field=(planned.get("source_binding") or {}).get("vector_field")
+            or planned.get("source", {}).get("vector_field") or "vector",
             output_directory=native_out,
             auth_mode=planned.get("auth_mode", "defaultAzureCredential"),
             tenant_id=getattr(self.store, "tenant_id", None),

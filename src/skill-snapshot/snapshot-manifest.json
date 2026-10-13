@@ -44,6 +44,7 @@
   },
   "scope_notes": [
     "Snapshot Git attributes disable text conversion to preserve inventory hashes on every platform.",
+    "Snapshot ignore rules expose only the six explicitly allowed native bin assets.",
     "All 14 source skills and all four production Python runtimes are included.",
     "Evaluation routes, scripts and supporting guides are omitted.",
     "GRZ fixture backend, native fixture generator, full-generation test reader and developer simulator are omitted.",
@@ -53,26 +54,36 @@
     "Runtime production smoke and MCP protocol self-check functions are retained.",
     "Skill/plugin versions are provisional snapshots, not assured or published releases.",
     "Python dependency manifests retain source runtime constraints; no transitive lockfile or wheelhouse is shipped.",
-    "Azure MCP @latest remains an external, unpinned dependency."
+    "Azure MCP @latest remains an external, unpinned dependency.",
+    "Windows x64 native binary and original runtime references come from the user-supplied archive, not the pinned Python source.",
+    "All native archive checksums and the pinned executable checksum are verified; Authenticode status is NotSigned.",
+    "The user-supplied archive includes no third-party notice or standalone license file; this is not a signed customer release.",
+    "Native community labeling configuration requires AOAI URI/key-environment fields not supplied by the Python build adapter.",
+    "Native clustering reads the vector field from the approved source binding instead of assuming vector."
   ],
   "native_assets": [
     {
       "name": "GRZBuildPoc",
-      "included": false,
-      "status": "not-found-in-authorized-locations",
+      "included": true,
+      "status": "verified-user-supplied-windows-x64",
+      "source_archive": "GRZBuildPoc-0.1.4-local-win-x64.zip",
+      "source_archive_sha256": "24019d4f150a11a49d6fc7d59c100de8516fcddfb5013884ec014eaf8873fdc4",
+      "authenticode_status": "NotSigned",
       "expected_bin_directory": "runtime/grz-skills/bin",
       "trusted_sha256_by_platform": {
         "win-x64": "6AA6AC85ED84436CE9676178C252EEDE85891B9D1717ACA66CAE095830354579",
         "linux-x64": "7095407BC5B3499056E2F94401D6EED22B103F2DB947AAE114E96B17FCAAB66A"
       },
-      "shipped_platforms": []
+      "shipped_platforms": [
+        "win-x64"
+      ]
     }
   ],
   "manifest_path": "snapshot-manifest.json",
   "manifest_self_hash": "excluded-to-avoid-self-reference",
-  "payload_file_count": 399,
+  "payload_file_count": 406,
   "payload_digest_algorithm": "SHA256(sorted UTF8(path + NUL + file_sha256 + LF))",
-  "payload_sha256": "5e0dd25ea0090c5fcb22b6f011868ce18614215cf20993376f4a3ff551097ff6",
+  "payload_sha256": "082c9034af955602c46fb33bd6aafea0a09b640ed86cd04e68bb0d610ca5d10c",
   "files": [
     {
       "path": ".claude-plugin/plugin.json",
@@ -90,10 +101,17 @@
     },
     {
       "path": ".gitattributes",
-      "sha256": "705fd4d6451a31d36b3df7de96f83f30ac976c9b4a6d1e51671d8e2f33e2d0da",
-      "size_bytes": 8,
-      "origin": "generated-from-pinned-release-config",
+      "sha256": "308a40fa1d89ae5ea4390b4c9b46a0108b09f171f07898f25d451fa0c69c4e9f",
+      "size_bytes": 72,
+      "origin": "snapshot-packaging-metadata",
       "adaptation": "Preserve exact snapshot bytes across Git checkouts"
+    },
+    {
+      "path": ".gitignore",
+      "sha256": "c691c9789ce5a43690f86a31d926038d5907ebb4df265fe24a40f2819984f531",
+      "size_bytes": 302,
+      "origin": "snapshot-packaging-metadata",
+      "adaptation": "Allowlist native package assets despite the repository bin-directory ignore rule"
     },
     {
       "path": ".mcp.json",
@@ -118,8 +136,8 @@
     },
     {
       "path": "README.md",
-      "sha256": "34a0d5b8770ff951d3f559eb56dcca5200b3141be656a6771645ddd5b2c6d8e7",
-      "size_bytes": 8906,
+      "sha256": "c6e12018944ddd0b109d8c2e93077d0d6997c7c4b0020613fdba35ec71ba7e1a",
+      "size_bytes": 10489,
       "origin": "generated-from-pinned-release-config",
       "adaptation": "Temporary snapshot metadata, provisional version and approved feeds"
     },
@@ -1064,9 +1082,71 @@
       "modified": false
     },
     {
+      "path": "runtime/grz-skills/bin/checksums.sha256",
+      "sha256": "32b88cc3ff77c93d9d4d84e4acee46360ed40f37cc805084ea2fcf01b31b5be7",
+      "size_bytes": 339,
+      "origin": "user-supplied-native-archive",
+      "source_archive": "GRZBuildPoc-0.1.4-local-win-x64.zip",
+      "source_archive_sha256": "24019d4f150a11a49d6fc7d59c100de8516fcddfb5013884ec014eaf8873fdc4",
+      "archive_entry": "checksums.sha256",
+      "source_sha256": "32b88cc3ff77c93d9d4d84e4acee46360ed40f37cc805084ea2fcf01b31b5be7",
+      "modified": false
+    },
+    {
+      "path": "runtime/grz-skills/bin/config.example.json",
+      "sha256": "e88d51fe3d1e0b5032a9e1643090649c46ec5a559cf49a3a08fff933dce95f6e",
+      "size_bytes": 1330,
+      "origin": "user-supplied-native-archive",
+      "source_archive": "GRZBuildPoc-0.1.4-local-win-x64.zip",
+      "source_archive_sha256": "24019d4f150a11a49d6fc7d59c100de8516fcddfb5013884ec014eaf8873fdc4",
+      "archive_entry": "config.example.json",
+      "source_sha256": "e88d51fe3d1e0b5032a9e1643090649c46ec5a559cf49a3a08fff933dce95f6e",
+      "modified": false
+    },
+    {
+      "path": "runtime/grz-skills/bin/config.json",
+      "sha256": "a208767bccf434d9207ccbcdc65023d80c7f787c0a692540c427142bf9038474",
+      "size_bytes": 1412,
+      "origin": "task-specific-credential-free-native-configuration",
+      "adaptation": "Authorized task Search/model settings; no credential values"
+    },
+    {
+      "path": "runtime/grz-skills/bin/GRZBuildPoc.exe",
+      "sha256": "6aa6ac85ed84436ce9676178c252eede85891b9d1717aca66cae095830354579",
+      "size_bytes": 76907282,
+      "origin": "user-supplied-native-archive",
+      "source_archive": "GRZBuildPoc-0.1.4-local-win-x64.zip",
+      "source_archive_sha256": "24019d4f150a11a49d6fc7d59c100de8516fcddfb5013884ec014eaf8873fdc4",
+      "archive_entry": "GRZBuildPoc.exe",
+      "source_sha256": "6aa6ac85ed84436ce9676178c252eede85891b9d1717aca66cae095830354579",
+      "modified": false
+    },
+    {
+      "path": "runtime/grz-skills/bin/PACKAGING-AND-SIGNING.md",
+      "sha256": "4f0990448a9e40624bd0155c6c59a4341a260d6b6f54a98e03aa52cccda31299",
+      "size_bytes": 23753,
+      "origin": "user-supplied-native-archive",
+      "source_archive": "GRZBuildPoc-0.1.4-local-win-x64.zip",
+      "source_archive_sha256": "24019d4f150a11a49d6fc7d59c100de8516fcddfb5013884ec014eaf8873fdc4",
+      "archive_entry": "PACKAGING-AND-SIGNING.md",
+      "source_sha256": "4f0990448a9e40624bd0155c6c59a4341a260d6b6f54a98e03aa52cccda31299",
+      "modified": false
+    },
+    {
+      "path": "runtime/grz-skills/bin/README.md",
+      "sha256": "f4796a6a4299ed754923367a1e05665cabe285d35eaa2d2e99eb36a397defee0",
+      "size_bytes": 9855,
+      "origin": "user-supplied-native-archive",
+      "source_archive": "GRZBuildPoc-0.1.4-local-win-x64.zip",
+      "source_archive_sha256": "24019d4f150a11a49d6fc7d59c100de8516fcddfb5013884ec014eaf8873fdc4",
+      "archive_entry": "README.md",
+      "source_sha256": "f4796a6a4299ed754923367a1e05665cabe285d35eaa2d2e99eb36a397defee0",
+      "modified": false
+    },
+    {
       "path": "runtime/grz-skills/pyproject.toml",
-      "sha256": "1242a41aa1f49895b9e4816a95dc389b6848bafbcab824b95e0498ddba201206",
-      "size_bytes": 930,
+      "sha256": "c0de1c8b8a825dd91e3f68ff5e8d86497b495de3b698afec1d3e086813ac0e2e",
+      "size_bytes": 1133,
       "origin": "pinned-source",
       "source_path": "runtime/grz-skills/pyproject.toml",
       "source_sha256": "6a21924e3a69ae0af3139f0567d497f24ecc22fd97db0d4d564c1bb1ce40d3ff",
@@ -1225,8 +1305,8 @@
     },
     {
       "path": "runtime/grz-skills/src/grz_build/execution.py",
-      "sha256": "718f192c66f5cf68420b30dc78182c7fd53e6d3335e2a4516ebe52e09d688950",
-      "size_bytes": 29274,
+      "sha256": "1a8c42c39ebf4318cc4855070c43112d1f96b5e6677e6a7ee1c0f54f87c65e56",
+      "size_bytes": 29347,
       "origin": "pinned-source",
       "source_path": "runtime/grz-skills/src/grz_build/execution.py",
       "source_sha256": "105464802f00e0e4b9dec091e878208fcbe98126cb663999f3d366c5a92a2eb2",
