@@ -39,3 +39,7 @@ grz_build = ["profiles/*.json"]
   "bin/README.md",
   "bin/PACKAGING-AND-SIGNING.md",
 ]
+"share/foundry-iq-skills/grz/bin/linux-x64" = ["bin/linux-x64/GRZBuildPoc", "bin/linux-x64/checksums.sha256"]
+"share/foundry-iq-skills/grz/bin/linux-arm64" = ["bin/linux-arm64/GRZBuildPoc", "bin/linux-arm64/checksums.sha256"]
+"share/foundry-iq-skills/grz/bin/osx-x64" = ["bin/osx-x64/GRZBuildPoc", "bin/osx-x64/checksums.sha256"]
+"share/foundry-iq-skills/grz/bin/osx-arm64" = ["bin/osx-arm64/GRZBuildPoc", "bin/osx-arm64/checksums.sha256"]

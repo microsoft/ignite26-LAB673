@@ -61,10 +61,15 @@ No dependencies or MCP server packages were installed to create this snapshot.
 ## GRZ native runtime prerequisite
 
 The pinned Python source does not contain `GRZBuildPoc` binaries. This snapshot
-now includes the user-supplied Windows x64 archive's executable at
-`runtime\grz-skills\bin\GRZBuildPoc.exe`, alongside its original runtime
-references and checksum file. Its executable SHA-256 matches the pinned
-Python resolver. There is no fixture fallback.
+includes five user-supplied `0.1.4-local` builds. Windows x64 remains at
+`runtime\grz-skills\bin\GRZBuildPoc.exe`; Linux and macOS executables are at
+`runtime\grz-skills\bin\<RID>\GRZBuildPoc`, each with its archive's
+`checksums.sha256`. The byte-identical vendor README, example configuration
+and packaging guidance are shared at the bin root. There is no fixture fallback.
+Each original checksum file describes the vendor's flat archive layout; its
+shared-document entries refer to the bin-root copies, not duplicate documents
+inside each RID directory. Use the snapshot manifest for the shipped layout's
+complete file verification.
 
 Archive: `GRZBuildPoc-0.1.4-local-win-x64.zip`; SHA-256:
 `24019d4f150a11a49d6fc7d59c100de8516fcddfb5013884ec014eaf8873fdc4`.
@@ -76,22 +81,39 @@ testing-only snapshot, not a customer or production release. The vendor's
 [packaging and signing guidance](runtime/grz-skills/bin/PACKAGING-AND-SIGNING.md)
 records the additional release, legal/IP and OSS requirements.
 
-The source pins these executable SHA-256 values:
+The pinned source supplies the Windows x64 and Linux x64 executable hashes.
+The other three trusted hashes come from the verified user-supplied archives.
+All archive origins and per-file hashes are recorded in
+[snapshot-manifest.json](snapshot-manifest.json).
 
-| Platform | Executable | SHA-256 | Included |
+| Platform (RID) | Executable relative to `bin` | SHA-256 | Verification |
 |---|---|---|---|
-| Windows x64 | `GRZBuildPoc.exe` | `6AA6AC85ED84436CE9676178C252EEDE85891B9D1717ACA66CAE095830354579` | Yes |
-| Linux x64 | `GRZBuildPoc` | `7095407BC5B3499056E2F94401D6EED22B103F2DB947AAE114E96B17FCAAB66A` | No |
+| Windows x64 (`win-x64`) | `GRZBuildPoc.exe` | `6AA6AC85ED84436CE9676178C252EEDE85891B9D1717ACA66CAE095830354579` | Checksum, PE64 header and live workflow |
+| Linux x64 (`linux-x64`) | `linux-x64/GRZBuildPoc` | `7095407BC5B3499056E2F94401D6EED22B103F2DB947AAE114E96B17FCAAB66A` | Checksum and ELF64 CPU header only |
+| Linux ARM64 (`linux-arm64`) | `linux-arm64/GRZBuildPoc` | `53B3282DAA20590CEBFC035843E8B675083F15E8924EA99C0C1B78890886C253` | Checksum and ELF64 CPU header only |
+| macOS x64 (`osx-x64`) | `osx-x64/GRZBuildPoc` | `151C7FF70F0F43ECE1E20B789C229B9492E5442E11EB61FB837AC468D4D7C348` | Checksum and Mach-O64 CPU header only |
+| macOS ARM64 (`osx-arm64`) | `osx-arm64/GRZBuildPoc` | `772FC9B3E3460EA5F12473BCD87E205B2BB33F48B66105273DA2F8EF6764DCBE` | Checksum and Mach-O64 CPU header only |
+
+All five builds are included. Linux and macOS builds have **not been executed**
+on this Windows host; checksum/header checks and simulated platform resolution
+are not Linux/macOS end-to-end validation. No macOS signing/notarization or
+production-release approval is established.
 
 The resolver checks an explicit `--native-binary`, `GRZ_BUILD_BINARY` or
-`GRZ_NATIVE_BINARY` first, then `runtime\grz-skills\bin`, installed wheel data,
-the known Downloads locations, and PATH. It verifies the executable checksum.
-Windows ARM64 is rejected. Linux ARM64 and macOS have no default trusted
-checksum; this snapshot does not claim executable support for them.
+`GRZ_NATIVE_BINARY` first, then the host RID's snapshot path, installed wheel
+data, the known Downloads locations, and PATH. It verifies the executable
+checksum and rejects OS/CPU header mismatches, including for an explicit binary
+with a custom trusted hash. Windows ARM64 and unsupported platforms are rejected.
 
-The GRZ wheel retains the five native package files under
-`share\foundry-iq-skills\grz\bin` in its isolated environment. No Linux binary or
-download source is inferred. See the vendor's
+The GRZ wheel retains the five original Windows package files at
+`share\foundry-iq-skills\grz\bin` and the other four executable/checksum pairs
+in RID subdirectories. The task-specific `config.json` is not wheel data.
+On Unix, preserve executable bits when checking out the repository. If a wheel
+installer does not preserve them, grant execute permission to the matching
+installed executable with `chmod +x <environment>/share/foundry-iq-skills/grz/bin/<RID>/GRZBuildPoc`
+(or the matching snapshot path). The runner verifies its trusted checksum
+before checking execute permission and never silently changes permissions.
+See the vendor's
 [native runtime contract](runtime/grz-skills/bin/README.md) for authentication,
 configuration and invocation. Keep API keys outside JSON and source control.
 
