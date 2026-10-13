@@ -1,6 +1,6 @@
 """Native binary runner for GRZBuildPoc CLI.
 
-Orchestrates the single-file, self-contained .NET 8 CLI binary for the host RID,
+Orchestrates the single-file, self-contained CLI binary for the host RID,
 verifying its SHA-256 checksum, validating configuration, invoking commands
 via subprocess (without shell), parsing the `grz-cli-v1` JSON stdout envelope,
 capturing stderr, and extracting operation support logs and receipt paths.
@@ -26,6 +26,9 @@ from grz_core.contracts import ContractError
 NATIVE_BINARY_SHA256_BY_RID = {
     "win-x64": "6AA6AC85ED84436CE9676178C252EEDE85891B9D1717ACA66CAE095830354579",
     "linux-x64": "7095407BC5B3499056E2F94401D6EED22B103F2DB947AAE114E96B17FCAAB66A",
+    "linux-arm64": "53B3282DAA20590CEBFC035843E8B675083F15E8924EA99C0C1B78890886C253",
+    "osx-x64": "151C7FF70F0F43ECE1E20B789C229B9492E5442E11EB61FB837AC468D4D7C348",
+    "osx-arm64": "772FC9B3E3460EA5F12473BCD87E205B2BB33F48B66105273DA2F8EF6764DCBE",
 }
 CLI_SCHEMA_VERSION = "grz-cli-v1"
 SUPPORT_LOG_PATTERN = re.compile(r"Customer support log:\s*(.+)")
@@ -117,9 +120,10 @@ def resolve_binary_path(path: Path | str | None = None) -> Path:
         if env_path:
             candidates.append(Path(env_path))
 
+    relative_binary = Path(binary_name) if rid == "win-x64" else Path(rid) / binary_name
     candidates.extend([
-        Path(__file__).resolve().parents[2] / "bin" / binary_name,
-        Path(sys.prefix) / "share" / "foundry-iq-skills" / "grz" / "bin" / binary_name,
+        Path(__file__).resolve().parents[2] / "bin" / relative_binary,
+        Path(sys.prefix) / "share" / "foundry-iq-skills" / "grz" / "bin" / relative_binary,
     ])
 
     downloads = Path.home() / "Downloads"
@@ -148,6 +152,38 @@ def resolve_binary_path(path: Path | str | None = None) -> Path:
     )
 
 
+def verify_binary_platform(path: Path) -> None:
+    """Reject native headers that do not match the supported host OS and CPU."""
+    rid = get_host_rid()
+    detected_rid = None
+    with path.open("rb") as stream:
+        header = stream.read(64)
+        if header.startswith(b"MZ") and len(header) == 64:
+            stream.seek(int.from_bytes(header[60:64], "little"))
+            pe_header = stream.read(6)
+            if pe_header[:4] == b"PE\0\0":
+                detected_rid = {0x8664: "win-x64", 0xAA64: "win-arm64"}.get(
+                    int.from_bytes(pe_header[4:6], "little")
+                )
+        elif header.startswith(b"\x7fELF") and len(header) >= 20 and header[4] == 2:
+            byteorder = {1: "little", 2: "big"}.get(header[5])
+            if byteorder:
+                detected_rid = {62: "linux-x64", 183: "linux-arm64"}.get(
+                    int.from_bytes(header[18:20], byteorder)
+                )
+        elif header[:4] in (b"\xcf\xfa\xed\xfe", b"\xfe\xed\xfa\xcf"):
+            byteorder = "little" if header[:4] == b"\xcf\xfa\xed\xfe" else "big"
+            detected_rid = {0x01000007: "osx-x64", 0x0100000C: "osx-arm64"}.get(
+                int.from_bytes(header[4:8], byteorder)
+            )
+    if detected_rid != rid:
+        raise ContractError(
+            "NATIVE_BINARY_PLATFORM_MISMATCH",
+            f"Native binary header identifies {detected_rid or 'an unsupported format'}, "
+            f"but this host requires {rid}: {path}",
+        )
+
+
 def verify_binary(path: Path, expected_sha256: str | None = None) -> str:
     """Verify an explicit SHA-256, or the pinned checksum for the host RID."""
     if not path.is_file():
@@ -174,6 +210,7 @@ def verify_binary(path: Path, expected_sha256: str | None = None) -> str:
             "BINARY_HASH_MISMATCH",
             f"Native binary SHA-256 mismatch. Expected {expected_sha256}, got {actual_hash}",
         )
+    verify_binary_platform(path)
     return actual_hash
 
 
@@ -295,6 +332,8 @@ class NativeRunner:
             verify_binary(path)
         elif self._expected_sha256 is not None:
             verify_binary(path, self._expected_sha256)
+        else:
+            verify_binary_platform(path)
         if sys.platform != "win32" and not os.access(path, os.X_OK):
             raise ContractError(
                 "NATIVE_BINARY_NOT_EXECUTABLE",
