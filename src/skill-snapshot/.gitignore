@@ -1,0 +1,8 @@
+!runtime/grz-skills/bin/
+runtime/grz-skills/bin/*
+!runtime/grz-skills/bin/GRZBuildPoc.exe
+!runtime/grz-skills/bin/checksums.sha256
+!runtime/grz-skills/bin/config.example.json
+!runtime/grz-skills/bin/config.json
+!runtime/grz-skills/bin/README.md
+!runtime/grz-skills/bin/PACKAGING-AND-SIGNING.md

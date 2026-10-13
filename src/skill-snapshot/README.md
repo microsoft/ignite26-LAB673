@@ -60,16 +60,27 @@ No dependencies or MCP server packages were installed to create this snapshot.
 
 ## GRZ native runtime prerequisite
 
-The pinned source does not contain `GRZBuildPoc` binaries. **No native binary is
-included in this snapshot:** none was found in the authorized prior-session
-artifact tree or the known standard resolver locations. Real GRZ clustering
-cannot run until a trusted executable is supplied; there is no fixture fallback.
+The pinned Python source does not contain `GRZBuildPoc` binaries. This snapshot
+now includes the user-supplied Windows x64 archive's executable at
+`runtime\grz-skills\bin\GRZBuildPoc.exe`, alongside its original runtime
+references and checksum file. Its executable SHA-256 matches the pinned
+Python resolver. There is no fixture fallback.
+
+Archive: `GRZBuildPoc-0.1.4-local-win-x64.zip`; SHA-256:
+`24019d4f150a11a49d6fc7d59c100de8516fcddfb5013884ec014eaf8873fdc4`.
+The executable is 76,907,282 bytes and is self-contained; no separate .NET
+installation is required. It is **not Authenticode-signed**. Hash verification
+establishes content identity, not signed-release approval. The archive has no
+third-party notice or standalone license file. This remains an internal,
+testing-only snapshot, not a customer or production release. The vendor's
+[packaging and signing guidance](runtime/grz-skills/bin/PACKAGING-AND-SIGNING.md)
+records the additional release, legal/IP and OSS requirements.
 
 The source pins these executable SHA-256 values:
 
 | Platform | Executable | SHA-256 | Included |
 |---|---|---|---|
-| Windows x64 | `GRZBuildPoc.exe` | `6AA6AC85ED84436CE9676178C252EEDE85891B9D1717ACA66CAE095830354579` | No |
+| Windows x64 | `GRZBuildPoc.exe` | `6AA6AC85ED84436CE9676178C252EEDE85891B9D1717ACA66CAE095830354579` | Yes |
 | Linux x64 | `GRZBuildPoc` | `7095407BC5B3499056E2F94401D6EED22B103F2DB947AAE114E96B17FCAAB66A` | No |
 
 The resolver checks an explicit `--native-binary`, `GRZ_BUILD_BINARY` or
@@ -78,10 +89,21 @@ the known Downloads locations, and PATH. It verifies the executable checksum.
 Windows ARM64 is rejected. Linux ARM64 and macOS have no default trusted
 checksum; this snapshot does not claim executable support for them.
 
-If an authorized Windows executable is later added, verify its pinned checksum
-before copying it to `runtime\grz-skills\bin\GRZBuildPoc.exe`, update the file
-inventory and package-data mapping, and revalidate. No Linux binary or download
-source is inferred.
+The GRZ wheel retains the five native package files under
+`share\foundry-iq-skills\grz\bin` in its isolated environment. No Linux binary or
+download source is inferred. See the vendor's
+[native runtime contract](runtime/grz-skills/bin/README.md) for authentication,
+configuration and invocation. Keep API keys outside JSON and source control.
+
+Native community labeling requires the documented `azureOpenAI.llmResourceUri`
+chat-completions URL and an environment-variable reference for its Azure OpenAI
+key. The Python build adapter's generated configuration does not supply those
+labeling fields automatically. Read-only clustering does not establish that
+model-backed labeling works; verify the selected execution mode separately.
+Use the task's native configuration for direct CLI execution.
+Do not enable insecure HTTP or invalid-certificate acceptance for this Azure
+Search service. Task-specific configuration and run results are separate from
+the immutable native package; `config.example.json` is the vendor template.
 
 ## Run against Azure AI Search
 
@@ -132,6 +154,8 @@ full-generation test reader and developer simulator; runtime development
 dependencies and test configuration; and EKG sample fixture data.
 Production GRZ Azure reads/writes and the native adapter remain. The CLI's
 explicit native-binary argument is connected to the actual build runner.
+Native clustering uses the approved source binding's vector field instead of
+assuming the field is named `vector`.
 
 No eval suites, test code, fixture backend, private evidence, session auth state,
 source governance tooling or development environment is included. Provisional

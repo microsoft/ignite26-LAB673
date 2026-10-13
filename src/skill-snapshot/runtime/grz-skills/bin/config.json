@@ -1,0 +1,44 @@
+{
+  "search": {
+    "endpoint": "https://magottei-s1m-os.search.windows.net",
+    "apiVersion": "2025-09-01",
+    "allowInsecureHttp": false,
+    "allowInvalidCertificate": false,
+    "serviceName": "magottei-s1m-os",
+    "sourceIndex": "lab673-snapshot-20261013-source",
+    "vectorField": "embedding"
+  },
+  "authentication": {
+    "mode": "azureCli",
+    "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+    "managedIdentityClientId": "",
+    "managedIdentityObjectId": "",
+    "managedIdentityResourceId": "",
+    "allowInteractiveBrowser": false
+  },
+  "azureOpenAI": {
+    "llmResourceUri": "https://magottei-swedencentral-foundry.openai.azure.com/openai/deployments/gpt-6-luna/chat/completions?api-version=2024-10-21"
+  },
+  "credentials": {
+    "searchApiKeyEnvironmentVariable": "AZURE_SEARCH_API_KEY",
+    "azureOpenAIApiKeyEnvironmentVariable": "AZURE_OPENAI_API_KEY"
+  },
+  "execution": {
+    "samplePercent": 5,
+    "probeSeed": 1234,
+    "threshold": 0,
+    "maxLeafSize": 100,
+    "concurrency": 1,
+    "requestsPerSecond": 1,
+    "readOnly": true,
+    "stopAfterGraph": false,
+    "enableVectorRetrieval": false,
+    "benchmarkProbes": false,
+    "benchmarkConcurrencies": [
+      1
+    ],
+    "benchmarkSeconds": 1
+  },
+  "outputDirectory": ".\\results\\lab673-snapshot-20261013",
+  "outputIndex": "grz-lab673-snapshot-20261013-native-candidate"
+}

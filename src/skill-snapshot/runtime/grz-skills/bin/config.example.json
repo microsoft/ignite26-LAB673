@@ -1,0 +1,47 @@
+{
+  "search": {
+    "endpoint": "https://service.search.windows.net",
+    "apiVersion": "2025-09-01",
+    "allowInsecureHttp": false,
+    "allowInvalidCertificate": false,
+    "serviceName": "",
+    "sourceIndex": "aranka-vec-clustered-200k",
+    "vectorField": "title_body_text_3_large"
+  },
+  "authentication": {
+    "mode": "defaultAzureCredential",
+    "tenantId": "<customer-tenant-id>",
+    "managedIdentityClientId": "",
+    "managedIdentityObjectId": "",
+    "managedIdentityResourceId": "",
+    "allowInteractiveBrowser": false
+  },
+  "azureOpenAI": {
+    "llmResourceUri": "https://example.openai.azure.com/openai/deployments/example/chat/completions?api-version=2024-10-21"
+  },
+  "credentials": {
+    "searchApiKeyEnvironmentVariable": "AZURE_SEARCH_API_KEY",
+    "azureOpenAIApiKeyEnvironmentVariable": "AZURE_OPENAI_API_KEY"
+  },
+  "execution": {
+    "samplePercent": 5,
+    "probeSeed": 1234,
+    "threshold": 0,
+    "maxLeafSize": 100,
+    "concurrency": 8,
+    "requestsPerSecond": 25,
+    "readOnly": true,
+    "stopAfterGraph": false,
+    "enableVectorRetrieval": false,
+    "benchmarkProbes": false,
+    "benchmarkConcurrencies": [
+      1,
+      4,
+      8,
+      16
+    ],
+    "benchmarkSeconds": 60
+  },
+  "outputDirectory": "./results",
+  "outputIndex": ""
+}

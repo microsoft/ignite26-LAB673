@@ -30,3 +30,12 @@ where = ["src"]
 [tool.setuptools.package-data]
 grz_adapters = ["sidecar-index.schema.json"]
 grz_build = ["profiles/*.json"]
+
+[tool.setuptools.data-files]
+"share/foundry-iq-skills/grz/bin" = [
+  "bin/GRZBuildPoc.exe",
+  "bin/checksums.sha256",
+  "bin/config.example.json",
+  "bin/README.md",
+  "bin/PACKAGING-AND-SIGNING.md",
+]
