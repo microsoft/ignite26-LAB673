@@ -43,19 +43,18 @@ Add your session description here. Keep it concise — 2-3 sentences about what 
 
 If you're following along during a live session:
 
-1. Step 1
-2. Step 2
-3. Open [`instructions/`](instructions/README.md) when this session includes
-   attendee step-by-step guidance
+1. Sign in to the lab environment provided for the session
+2. Follow the lab instructions in the Skillable sidebar
 
 #### On your own
 
 If you're learning at your own pace:
 
 1. Clone this repository
-2. Set up your environment
-3. Follow the session guidance in [`instructions/`](instructions/README.md), or
-   use the linked docs-site entry point when this repository uses that pattern
+2. Deploy the Azure resources to your own subscription by following
+   [Deploy to your own Azure subscription](deploy_yourself.md)
+3. Run the notebook
+   [`src/notebooks/part1-standard-foundry-iq-kb.ipynb`](src/notebooks/part1-standard-foundry-iq-kb.ipynb)
 
 ### 🎯 Learning outcomes
 
