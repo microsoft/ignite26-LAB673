@@ -110,10 +110,9 @@ uv pip install --python .venv-cocoarynth -r scripts/cocoarynth/requirements.txt
 .venv-cocoarynth/bin/python scripts/cocoarynth/charts.py
 .venv-cocoarynth/bin/python scripts/cocoarynth/images.py derived
 .venv-cocoarynth/bin/python scripts/cocoarynth/render.py
-.venv-cocoarynth/bin/python scripts/cocoarynth/check.py
 ```
 
-`validate.py` checks that the facts are consistent, that each mystery's answer follows from them, and that every cited document exists. `check.py` confirms that every PDF is fresh and that `corpora.json` matches the briefs (run it with `--write-corpora` after adding or moving a document). New photos need MAI image credentials in `.env` and `images.py photos`.
+`validate.py` checks that the facts are consistent, that each mystery's answer follows from them, that every cited document exists, and that `corpora.json` lists every document. `render.py` builds the PDFs and rewrites `corpora.json`. New photos need MAI image credentials in `.env` and `images.py photos`.
 
 To measure retrieval quality against a provisioned environment, run `.venv/bin/python scripts/cocoarynth/ask_mysteries.py` from the lab's `.venv`. It builds the notebook's knowledge base, asks each mystery, and reports evidence recall: how many of the mystery's facts have at least one valid document among the answer's references.
 

@@ -324,7 +324,24 @@ def check_briefs(world: dict, mysteries: list[dict], authors: set[str]) -> None:
                 check(document.endswith(".pdf") and document.removesuffix(".pdf") in seen, f"evidence {label}: unknown document {document}")
             if item.get("part_a_file"):
                 check(len(documents) == 1, f"evidence {label}: the Part A file source must be a single document")
+    corpora_path = DATA / "corpora.json"
+    check(json.loads(corpora_path.read_text(encoding="utf-8")) == expected_corpora(), "corpora.json doesn't match the briefs; rerun render.py")
     print(f"  briefs: {sum(counts.values())} total, " + ", ".join(f"{k} {v}" for k, v in counts.items()))
+
+
+def expected_corpora() -> dict[str, list[str]]:
+    """corpora.json drives lab ingestion: each index's PDFs, plus the Part A file source."""
+    corpora: dict[str, list[str]] = defaultdict(list)
+    index_of: dict[str, str] = {}
+    for path in sorted((DATA / "briefs").glob("cocoarynth-*.yaml")):
+        doc = yaml.safe_load(path.read_text(encoding="utf-8"))
+        for brief in doc["briefs"]:
+            index_of[brief["id"]] = doc["index"]
+            corpora[doc["index"]].append(f"documents/{doc['index']}/{brief['id']}.pdf")
+    mysteries = yaml.safe_load((DATA / "questions.yaml").read_text(encoding="utf-8"))["mysteries"]
+    part_a = {name.removesuffix(".pdf") for m in mysteries for e in m["evidence"] if e.get("part_a_file") for name in e["documents"]}
+    file_source = sorted(f"documents/{index_of[bid]}/{bid}.pdf" for bid in part_a if bid in index_of)
+    return {index: sorted(paths) for index, paths in sorted(corpora.items())} | {"file-source": file_source}
 
 
 def mystery_facts(retail, loggers, lots, batches, products, origins, commercial, sensory) -> list[str]:

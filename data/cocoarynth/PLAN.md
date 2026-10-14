@@ -118,9 +118,8 @@ scripts/cocoarynth/
   validate.py       ID references, mass balance, date order, units
   charts.py         charts drawn from world data
   images.py         MAI generation, Wikimedia download, text overlays, scanned-paper effect
-  render.py         Markdown + Jinja → HTML with per-organization house styles → PDF (Playwright Chromium)
+  render.py         Markdown + Jinja → HTML with per-organization house styles → PDF (Playwright Chromium); writes corpora.json
   handwriting.py    handwriting and scanned-paper effects for scanned forms
-  check.py          every brief has a fresh PDF, and corpora.json matches the briefs
   ask_mysteries.py  asks the mysteries against a live knowledge base and scores evidence recall
 ```
 
@@ -157,9 +156,9 @@ Use these for the kinds of records, fields and practices to include. Don't copy 
 1. **Spike.** *Rendering done* (the throwaway spike script has since been removed). Use JPEG, not PNG, for embedded photos to keep PDFs small. *Content Understanding check deferred* until a lab environment exists; until then every clue also appears in text, and phase 5 decides which clues become image-only.
 2. **World and mysteries.** *Done:* `world/` (company, origins, beans, production, retail, sensory, commercial), `questions.yaml` with each mystery's answer and evidence chain, and `scripts/cocoarynth/validate.py`, which checks references, cut-test totals, date order, mass balance, bar counts, shipments against sell-in, organic claims and the facts behind every mystery answer.
 3. **Briefs.** *Done:* 55 briefs (origins 16, quality 15, logistics-retail 16, policies 8). `validate.py` checks that every brief's entities, authors and assets resolve, and that every evidence item in `questions.yaml` cites existing documents.
-4. **Assets, templates and rendering.** *Done:* 16 MAI photos, 13 charts and diagrams (`charts.py`), wrapper labels and 5 scanned forms (`images.py derived`), 55 drafts in `drafts/`, rendered by `render.py` into `documents/<index>/` (55 PDFs, 91 pages, about 11 MB). `check.py` confirms every brief has a fresh PDF using its visuals, and `corpora.json` matches the briefs. To rebuild: `charts.py`, `images.py derived`, `render.py`, `check.py` (and `images.py photos` only for new photos).
+4. **Assets, templates and rendering.** *Done:* 16 MAI photos, 13 charts and diagrams (`charts.py`), wrapper labels and 5 scanned forms (`images.py derived`), 55 drafts in `drafts/`, rendered by `render.py` into `documents/<index>/` (55 PDFs, 91 pages, about 11 MB). To rebuild: `validate.py`, `charts.py`, `images.py derived`, `render.py` (and `images.py photos` only for new photos).
 5. **Testing.** *Done (13 October 2026):* ingested into a live environment, ran notebook 1 end to end, and scored the mysteries with `ask_mysteries.py`. With auto reasoning effort, M1, M3, M4, M6 and M7 cite all their evidence; M2 and M5 need a second round of searches (lot code first, then the origin record) and sometimes stop after one round. Medium effort finds everything. Snapshots exported to `data/index-data/` and restore verified.
-6. **Lab integration.** *Done:* `corpora.json` generated from the briefs (`check.py --write-corpora`); ingestion, restore, export and snapshot-validation scripts use the four indexes and the label-claims policy as the file source; the notebook tells the Cocoarynth story and asks the mysteries; READMEs and `deploy_yourself.md` updated.
+6. **Lab integration.** *Done:* `corpora.json` generated from the briefs by `render.py` and checked by `validate.py`; ingestion, restore, export and snapshot-validation scripts use the four indexes and the label-claims policy as the file source; the notebook tells the Cocoarynth story and asks the mysteries; READMEs and `deploy_yourself.md` updated.
 7. **Removal.** *Done:* engineering-practices corpus, the original Cocoarynth documents, the 40 old PDFs, `authoring/`, the old generator, Caldova data and script, all old index snapshots, and the spike. The copyrighted Dandelion report was moved out of the repository.
 
 ## Open items

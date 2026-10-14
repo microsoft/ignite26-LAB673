@@ -8,7 +8,6 @@
     "scripts/cocoarynth/validate.py",
     "scripts/cocoarynth/charts.py",
     "scripts/cocoarynth/images.py derived",
-    "scripts/cocoarynth/render.py",
-    "scripts/cocoarynth/check.py"
+    "scripts/cocoarynth/render.py"
   ]
 }

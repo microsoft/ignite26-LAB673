@@ -8,6 +8,7 @@ Available in drafts:
   {{ W }} world data by file and id, e.g. W.beans.lots["MG26-L02"].received_kg
 
 Usage: .venv-cocoarynth/bin/python scripts/cocoarynth/render.py [brief-id ...]
+Also rewrites data/cocoarynth/corpora.json, the list of PDFs the lab ingests.
 """
 
 import base64
@@ -23,6 +24,8 @@ import markdown
 import yaml
 from PIL import Image
 from playwright.sync_api import sync_playwright
+
+from validate import expected_corpora
 
 DATA = Path(__file__).resolve().parents[2] / "data" / "cocoarynth"
 OUTPUT = DATA / "documents"
@@ -555,6 +558,9 @@ def main(selected: list[str]) -> None:
             out = render_brief(page, brief, index)
             print(f"{index}/{out.name} ({out.stat().st_size // 1024} KB)")
         browser.close()
+    corpora = DATA / "corpora.json"
+    corpora.write_text(json.dumps(expected_corpora(), indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    print(f"Wrote {corpora.relative_to(DATA.parents[1])}")
     if missing:
         print(f"\nNo draft yet for {len(missing)} brief(s): {', '.join(missing)}")
 
