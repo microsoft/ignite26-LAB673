@@ -12,7 +12,7 @@ The lab corpus is Cocoarynth Chocolate Works, a fictional bean-to-bar chocolate 
 - [Provenance](cocoarynth/provenance.json): how the corpus was generated, and the image, font, and logo sources.
 - `index-data/`: the destination for portable index definitions and document/vector snapshots after the maintainer capture step.
 
-Snapshots of the four indexes, captured from a live ingestion run, are in `index-data/`. Provisioning restores them by default, without running Content Understanding. After changing the documents, follow [index preparation](../deploy_yourself.md#prepare-the-cocoarynth-indexes) to rebuild and re-export them.
+Snapshots of the four indexes, captured from a live ingestion run, are in `index-data/`. Provisioning restores them by default, without running Content Understanding. After changing the documents, [rebuild the snapshots](../infra/README.md#rebuild-the-index-snapshots).
 
 ## What's in each index
 
@@ -116,4 +116,73 @@ uv pip install --python .venv-cocoarynth -r scripts/cocoarynth/requirements.txt
 
 To measure retrieval quality against a provisioned environment, run `.venv/bin/python scripts/cocoarynth/ask_mysteries.py` from the lab's `.venv`. It builds the notebook's knowledge base, asks each mystery, and reports evidence recall: how many of the mystery's facts have at least one valid document among the answer's references.
 
-Documents use the house style of the organization that issued them, so Cocoarynth's own documents look different from those of farms, labs, carriers, and retailers. Rendering uses fonts installed on macOS.
+### Authoring conventions
+
+- `world/` is the single source of truth. Charts and tables are generated from it, so they never disagree. Prose in `drafts/` is ordinary Markdown, free to vary in tone, layout, and length.
+- Every mystery answer must come only from the corpus and cite at least one document that participants can open.
+- Records from Ecuador, Peru, and the Dominican Republic farms are in Spanish; Madagascar and Ghana records are in English.
+- Avoid heavy metals and other toxic contaminants, and mock recalls.
+- Lot codes and label text are drawn onto images in code, because generated images garble text.
+- Scanned forms: printed parts come from HTML. Handwriting is drawn per character by `scripts/cocoarynth/handwriting.py` with SIL OFL fonts in `assets/fonts/` (one hand per writer, random angle, baseline, size, and ink, slight warping), then composited onto paper with folds, stains, uneven light, perspective, and JPEG noise. Codes and weights use a print-style hand so they stay legible.
+- House styles: the issuing organization sets the look (`HOUSE` in `render.py`). Cocoarynth documents use the brand from the `cocoarynth-trace` app: logo in `assets/brand/`, a cocoa band with a yellow rule, Georgia headings, Inter body text (static weights in `assets/fonts/Inter-*.ttf`), and the app palette. Cooperatives use a centered Times letterhead, the estate Palatino, the certifier Verdana, the lab Helvetica Neue, the freight forwarder boxed Arial Narrow forms, the carrier a Rockwell letterhead, and each retailer's email its own sender style. Rendering uses fonts installed on macOS.
+- Embed photos as JPEG, not PNG, to keep PDFs small.
+- MAI images: `MAI_IMAGE_ENDPOINT` holds only the resource name; the URL is `https://${MAI_IMAGE_ENDPOINT}.services.ai.azure.com/mai/v1/images/generations`, with `MAI_IMAGE_KEY` as the `api-key` header. Never print or commit the key. The model accepts at most 1,056,768 pixels: use 1248×832 for landscape photos and 1024×1024 for square ones. Prompts should ask for no people, text, or logos unless needed.
+
+Use these for the kinds of records, fields, and practices to include. Don't copy their text, data, or layouts.
+
+- [Rainforest Alliance farm-requirement checklists](https://knowledge.rainforest-alliance.org/docs/checklist-for-sustainable-agriculture-standard-farm-requirements) and [Management Annex v1.2](https://knowledge.rainforest-alliance.org/docs/management-annex-v12): internal farm inspections, findings, and follow-up.
+- [CAOBISCO/ECA cocoa bean quality requirements](https://qm.cocoaquality.eu/) and [inspection, sampling and traceability](https://pm.cocoaquality.eu/good-warehouse-practices/inspection-sampling-documentation-and-traceability): cut-test categories, moisture around 7.5–8%, off-flavors.
+- [Cacao of Excellence sensory evaluation form](https://www.cacaoofexcellence.org/resources/resource/sensory-evaluation-form-for-cacao-and-chocolate) and [assessment guide](https://www.cacaoofexcellence.org/resources/resource/guide-for-the-assessment-of-cacao-quality-and-flavour): sensory attributes and scoring.
+- [Cargo Handbook: cocoa beans](https://cargohandbook.com/Cocoa_Beans) and [ICCO trading and shipping](https://www.icco.org/trading-shipping/): container preparation, condensation, custody handoffs.
+- [Dandelion Chocolate origins page](https://www.dandelionchocolate.com/pages/origins) and sourcing reports: structure of a public origin report only. Their sourcing reports are copyrighted and must not be committed, ingested, or quoted.
+
+## Open items
+
+- With auto reasoning effort, M2 and M5 are sometimes only partly answered: each needs a second round of searches (lot code first, then the origin record). Medium effort finds everything. Revisit with newer knowledge base features.
+- Optional: make some clues image-only, since Content Understanding reads the handwritten scans well.
+
+## Future questions for new retrieval strategies
+
+Not in the lab yet. These questions would demonstrate two new indexing and retrieval strategies. Phrase every question as a real employee would: who is asking, why, and what they type. When adding them, put the expected answers and citations in `questions.yaml`, and test each one against standard retrieval too, to confirm that the intended strategy is what makes it succeed. Names below (such as Harbor Foods or Loma Clara) are placeholders until the world data has them.
+
+### Entity knowledge graph
+
+These questions only succeed when facts from separate reports are connected through shared entities: farms, bean lots, batches, pallets, storage bays, trucks, carriers, inspectors, retailers.
+
+| Who's asking | Question | Connection required | Answer |
+| --- | --- | --- | --- |
+| Quality lead handling a complaint | Harbor Foods says the Ghana bars they got last week look chalky. Has this happened with anything else that went through the same warehouse? | Complaint → shipment → storage bay → other incidents there | Yes; another pallet waited in the same unrefrigerated overflow bay in July and bloomed the same way. |
+| Sourcing manager before a supplier call | I'm calling Loma Clara about the smoky beans. What did we ask them to fix last time, and did they do it? | Rejection → farm (named differently) → earlier inspection → follow-up | Move the drying racks away from the dryer chimney; the follow-up visit found it hadn't happened yet. |
+| Customer service agent | A customer emailed a photo of their wrapper and wants to know which farm grew the beans. Can we tell them? | Lot code in image → batch → bean lot → farms | Two Esmeraldas farms, Las Brisas and El Cedro. |
+| Account manager | Northstar is asking whether this month's bars use the same beans as the batch that went white in July. Do they? | Two batches → their bean lots → compare | No; different bean lots, harvested a month apart. |
+| Quality lead | Our tasters loved the raspberry-like Madagascar lot. Were there any problems with it on arrival? | Tasting report → bean lot → arrival hold | Yes; it arrived too wet and was re-dried, which is also why the launch slipped. |
+| Auditor preparing a visit | We're auditing the Peru cooperative next week. Which farms have open findings, and have any of their beans already gone into bars we sold? | Farms with open findings ∩ farms supplying shipped batches | La Quebrada; its beans went into the August batch sold to two retailers. |
+| Logistics manager | Are the truck breakdown, the late Madagascar delivery, and the gap in QA's temperature logs all the same problem? | Three separate reports → one consignment | Yes; all from the same June consignment. |
+| Logistics manager choosing a carrier | We're thinking of dropping our cold-chain carrier. Which retailers have had damaged deliveries while their goods were with that carrier? | Carrier → shipments → incidents → retailers | Northstar and the café group. |
+| Marketing writer | What's different about this year's Ecuador bar compared with last year's? I'm updating the label story. | 2025 vs 2026 batches → contributing farms → difference | A second farm, El Cedro, joined in 2026. |
+
+### Global, corpus-wide summaries
+
+These questions need themes that recur across many documents in different words. No single document may summarize them.
+
+| Who's asking | Question | Kind of answer |
+| --- | --- | --- |
+| Operations director preparing a quarterly review | What went wrong most often this year, from farm to shelf? | Heat in storage and transit, wet beans on arrival, drying problems; with examples. |
+| Quality lead | What are the most common causes of quality problems across our origins? | Heat during transit and storage, wet beans on arrival, drying practices such as smoke exposure. |
+| New customer-service hire | What do retailers usually complain about, and how have we handled it? Does it change by season? | Summer bloom and softness, broken bars from packaging, late holiday deliveries; usual fixes. |
+| New sourcing associate | How do our origins differ in how they ferment and dry beans? | Short comparison by country. |
+| Head of sourcing planning next year | What should we worry about for next harvest season? What are the biggest risks to next year's supply? | Rainy-season drying, dependence on one supplier, a pending organic renewal, summer warehouse space. |
+| Marketing | What do our tasters keep saying about each origin? I need one line for each bar. | One flavor line per origin. |
+| CEO | Are our farm inspections actually leading to improvements? Which findings come up most? | Most findings concern drying or record-keeping; most are fixed with cheap physical changes; one remains outstanding. |
+| Sourcing director | How did our relationship with each origin change from 2025 to 2026? | Volumes, prices, new farms, a rejection, a renewal. |
+| New employee | What does a typical bar's journey from farm to shelf look like, and where does it usually go wrong? | Summarized journey with common failure points. |
+
+### What the world needs for these questions
+
+- **Graph design in `world/`.**
+  - Entity types: Farm, Supplier, BeanLot, Batch, Product, Consignment, Pallet, Truck, Port, StorageBay, Logger, Inspector, Inspection, Finding, Retailer, Complaint, Person.
+  - Relationship types: SUPPLIED, CONTRIBUTED_TO, MADE_FROM, SHIPPED_ON, STORED_AT, INSPECTED, FOUND, RESOLVED_BY, COMPLAINED_ABOUT, RECEIVED.
+- **Aliases.** Each entity has several names (ID, nickname, translation, description such as "the second pallet off the truck"). Briefs pick different names in different documents.
+- **Lookalikes.** For example, two farms named La Esperanza in different countries, and two inspectors who share a surname, so the graph must tell entities apart.
+- **Theme table.** Each corpus-wide theme lists the documents that carry it and the varied wording each uses.
+- **More documents.** Expect about 70 rather than 55, because themes need repetition and entity questions need extra reports and lookalikes.

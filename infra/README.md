@@ -31,7 +31,7 @@ Use the existing Windows lab image with Azure CLI and Python available. The opti
 
 The background script reuses the foreground Azure CLI login, retrieves Search and Foundry API keys directly with `az rest` and `az cognitiveservices account keys list`, and passes the keys to [setup-knowledge.ps1](setup-knowledge.ps1). That script writes `.env` from the keys and inherited Bicep outputs using PowerShell, prepares the local virtual environment, configures Content Understanding, and restores the four Cocoarynth indexes (`cocoarynth-origins`, `cocoarynth-quality`, `cocoarynth-logistics-retail`, and `cocoarynth-policies`) by default. Skillable setup does not use Python's `AzureCliCredential`; self-paced deployment retains its `azd` credential flow. Knowledge sources and knowledge bases are left for [the first notebook](../src/notebooks/part1-standard-foundry-iq-kb.ipynb).
 
-Snapshots for the four Cocoarynth indexes are in `data/index-data/`. After changing the documents, repeat [the ingestion and export](../deploy_yourself.md#prepare-the-cocoarynth-indexes) and commit the new snapshot files before releasing a Skillable environment. Missing snapshots stop setup before restoration writes.
+Snapshots for the four Cocoarynth indexes are in `data/index-data/`. After changing the documents, [rebuild the snapshots](#rebuild-the-index-snapshots) and commit them before releasing a Skillable environment. Missing snapshots stop setup before restoration writes.
 
 Set `$env:RESTORE_INDEX_SNAPSHOTS = "false"` in the lifecycle action before launching the background script only for rebuilding snapshots or a deliberate live-ingestion exercise. Re-running restoration replaces records in the four Cocoarynth indexes with the captured snapshots. Disabling restoration does not delete existing indexes.
 
@@ -41,30 +41,35 @@ Follow [the self-deployment guide](../deploy_yourself.md). [main.parameters.json
 
 Both deployment paths install [notebook requirements](../src/notebooks/requirements.txt), which include [infrastructure requirements](requirements.txt) and `ipykernel` for the notebook kernel. The full upstream requirements, agent-framework, Fabric, and OneLake packages are not needed.
 
-## Optional data tools
+## Rebuild the index snapshots
 
-Snapshot restoration runs during provisioning by default. The other data tools are included for maintainers and are not automatically run:
+Provisioning restores the four Cocoarynth indexes from the snapshots in `data/index-data/`, without uploading PDFs or running Content Understanding. Rebuild the snapshots only after changing the documents in `data/cocoarynth/`. These tools are for maintainers and are not run automatically:
 
 | Tool | Purpose |
 | --- | --- |
-| [create-knowledge.py](create-knowledge.py) | Restore the four Cocoarynth index snapshots, bypassing Blob ingestion and Content Understanding |
 | [create-index-snapshots.py](create-index-snapshots.py) | Upload the 55 Cocoarynth PDFs and build Blob data sources, Content Understanding skillsets, embedding skills, indexes, and indexers |
 | [export-search-index.py](../scripts/export-search-index.py) | Export portable index definitions and document/vector snapshots |
 | [validate-index-snapshots.py](../scripts/validate-index-snapshots.py) | Validate committed snapshots without Azure access |
+| [create-knowledge.py](create-knowledge.py) | Restore the four index snapshots (what provisioning runs) |
 
-After provisioning, use the virtual environment created by setup. On macOS/Linux, these commands run from the repository root:
+1. Provision an environment with restoration turned off (`azd env set RESTORE_INDEX_SNAPSHOTS false`, then `azd provision`), or reuse an existing one.
+2. Sign in as the attendee identity that has Blob Data Contributor access; the upload tool uses `DefaultAzureCredential` rather than a service principal's management-plane access. From the repository root, run:
 
-```sh
-.venv/bin/python infra/create-index-snapshots.py
-.venv/bin/python scripts/export-search-index.py
-.venv/bin/python scripts/validate-index-snapshots.py
-```
+   ```sh
+   .venv/bin/python infra/create-index-snapshots.py
+   .venv/bin/python scripts/export-search-index.py
+   .venv/bin/python scripts/validate-index-snapshots.py
+   ```
 
-On the Windows lab VM, use `.venv\Scripts\python.exe` instead. The upload tool authenticates to Blob Storage with `DefaultAzureCredential`; sign in as the attendee who received Blob Data Contributor, rather than relying on a different service principal's management-plane access.
+   On Windows, use `.venv\Scripts\python.exe`. The live-indexing tool requires Python 3.11 or newer.
+3. Commit the eight files in `data/index-data/`. Chunk counts come from ingestion; don't edit them by hand.
+4. To check restoration, run `.venv/bin/python infra/create-knowledge.py`, or `azd env set RESTORE_INDEX_SNAPSHOTS true` and `azd provision`.
 
-The live-indexing tool clears only the selected Cocoarynth corpus prefixes and their index records before rebuilding them. Run it only against disposable lab resources. It ran successfully against serverless Search and Content Understanding on 13 October 2026; Content Understanding can return transient errors, which a rerun of the affected indexer resolves. Snapshot restoration is a separate alternative, not proof that live ingestion works.
+Ingestion uploads the PDFs listed in [the corpus manifest](../data/cocoarynth/corpora.json) under one prefix per index in the `knowledge` container, creates `cocoarynth-origins`, `cocoarynth-quality`, `cocoarynth-logistics-retail`, and `cocoarynth-policies`, and runs Content Understanding with 700-token semantic chunking and 3072-dimensional embeddings. It clears and replaces only those four corpora's blobs and index records, and incurs model charges, so run it only against disposable lab resources. The current snapshots were captured on 13 October 2026. Content Understanding can return transient errors; rerunning the affected indexer resolves them.
 
-The current PDF manifest and how the documents are generated are in [Cocoarynth data guidance](../data/README.md).
+Restoration replaces records in the four indexes with the snapshot text and vectors. Setting `RESTORE_INDEX_SNAPSHOTS=false` skips restoration and does not clear existing indexes.
+
+How the documents themselves are generated is in [Cocoarynth data guidance](../data/README.md).
 
 ## Cleanup
 
