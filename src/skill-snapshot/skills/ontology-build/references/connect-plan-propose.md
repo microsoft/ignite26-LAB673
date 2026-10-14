@@ -12,7 +12,7 @@ Use this path to bind a state directory to one GRZ generation and one model depl
 
 ## Setup
 
-1. Run `ontology-build --version`. If missing, read the [local runtime installation instructions](../../../README.md#install-the-local-runtimes) first. Install or run the shipped `runtime/ontology-skills` package through the Microsoft CFS feed.
+1. Run `ontology-build --version`. If missing, read the [local runtime installation instructions](../../../README.md#install-the-local-runtimes) first. Install or run the shipped `runtime/ontology-skills` package with dependencies from public PyPI.
 2. Run `ontology-skills-ontology_doctor` or `ontology-build doctor --json` first, and again after any blocked result. It only reads, always exits 0, and ends with one `next_step`. Before connecting, pass the same `--tenant-id`, `--grz-descriptor`, `--model-endpoint`, and `--model-deployment` you will pass to `connect`. A `warn` check names the missing flag.
 3. Name the tenant before sign-in, then the user runs `az login --tenant <id>`.
 

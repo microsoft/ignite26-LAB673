@@ -14,7 +14,7 @@ Use this path when browsing is blocked, the environment is unknown, or the user 
 
 1. Run `grz-skills-grz_doctor` first, and again after any blocked result. It only reads: versions, `uv`, the Azure sign-in tenant, the descriptor, sidecar health, and reader access. Doctor never signs in.
 2. If `ready` is false, fix the first `fail` check using the top-level `next_step`; `warn` does not block.
-3. When the MCP tools are unavailable, use `grz-consume doctor --json`. If `grz-consume` is missing, read the [local runtime installation instructions](../../../README.md#install-the-local-runtimes) first. Install or run the shipped `runtime/grz-skills[azure,embed]` package through the Microsoft CFS feed, then rerun doctor.
+3. When the MCP tools are unavailable, use `grz-consume doctor --json`. If `grz-consume` is missing, read the [local runtime installation instructions](../../../README.md#install-the-local-runtimes) first. Install or run the shipped `runtime/grz-skills[azure,embed]` package with dependencies from public PyPI, then rerun doctor.
 
 ## Choosing the build
 

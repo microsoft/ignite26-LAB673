@@ -36,7 +36,7 @@ If `ekg_build_plan` returns a plan without blockers and the user wants the chang
    - `ekg-build publish` after verification succeeds.
 4. If publish is requested, confirm the build is verified first. Publish updates the current descriptor unless the operator explicitly keeps the previous current pointer.
 
-If `ekg-build` is missing on PATH, read the [local runtime installation instructions](../../../README.md#install-the-local-runtimes) first. Install or run the shipped `runtime/ekg-skills[build,consume,provision]` package through the Microsoft CFS feed, then check `ekg-build --version`.
+If `ekg-build` is missing on PATH, read the [local runtime installation instructions](../../../README.md#install-the-local-runtimes) first. Install or run the shipped `runtime/ekg-skills[build,consume,provision]` package with dependencies from public PyPI, then check `ekg-build --version`.
 
 ## Return
 

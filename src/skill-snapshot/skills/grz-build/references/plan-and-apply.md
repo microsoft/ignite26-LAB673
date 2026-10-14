@@ -12,7 +12,7 @@ Use this path to go from a Search source index with stored chunk vectors to a ve
 
 ## Preflight
 
-1. Run `grz-build --version`. If missing, read the [local runtime installation instructions](../../../README.md#install-the-local-runtimes) first. Install or run the shipped `runtime/grz-skills[azure,embed]` package through the Microsoft CFS feed. Check the [native prerequisite](../../../README.md#grz-native-runtime-prerequisite) before apply; this snapshot has no fixture fallback.
+1. Run `grz-build --version`. If missing, read the [local runtime installation instructions](../../../README.md#install-the-local-runtimes) first. Install or run the shipped `runtime/grz-skills[azure,embed]` package with dependencies from public PyPI. Check the [native prerequisite](../../../README.md#grz-native-runtime-prerequisite) before apply; this snapshot has no fixture fallback.
 2. Run `grz-build doctor --json` (or `grz-skills-grz_doctor`) with the same `--tenant-id`, `--state-dir`, and Search flags you will use. Doctor only reads. Fix the first `fail` check using the top-level `next_step`; `warn` does not block.
 3. For community naming, add `--naming-endpoint`, `--naming-deployment`, and `--naming-resource-group` to doctor. It lists models and does a read-only deployment GET, with no completion and no spend.
 

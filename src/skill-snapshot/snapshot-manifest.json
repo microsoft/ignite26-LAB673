@@ -41,8 +41,8 @@
     "ontology-skills"
   ],
   "package_feeds": {
-    "pypi": "https://packagefeedproxy.microsoft.io/pypi/simple/",
-    "npm": "https://packagefeedproxy.microsoft.io/npm/"
+    "pypi": "https://pypi.org/simple/",
+    "npm": "https://registry.npmjs.org/"
   },
   "scope_notes": [
     "Snapshot Git attributes disable text conversion to preserve inventory hashes on every platform.",
@@ -148,7 +148,7 @@
   "manifest_self_hash": "excluded-to-avoid-self-reference",
   "payload_file_count": 286,
   "payload_digest_algorithm": "SHA256(sorted UTF8(path + NUL + file_sha256 + LF))",
-  "payload_sha256": "e07f2387690042ef4398c50f36e2da83fa1a49972617785c57a18f2dd46d24de",
+  "payload_sha256": "a7290b006eb6f7fde5932c569be162a111f0855c7905cd0a8bb03c299ba2441d",
   "files": [
     {
       "path": ".gitattributes",
@@ -166,17 +166,17 @@
     },
     {
       "path": ".mcp.json",
-      "sha256": "583faf4663cd3bfdbbd44bb4edd391bad4a643c8fc1601e40e4b261eb7a3efc9",
-      "size_bytes": 1652,
+      "sha256": "0ead87a7ca585fd740feffda3c2db8501f80ca3eb6888c0d9dbff906279f376d",
+      "size_bytes": 1533,
       "origin": "generated-from-pinned-release-config",
-      "adaptation": "Temporary snapshot metadata, provisional version and approved feeds"
+      "adaptation": "Temporary snapshot metadata, provisional version and public package registries"
     },
     {
       "path": ".plugin/plugin.json",
       "sha256": "86dfc6432e215c26f517747c3f859444e1657c22ea81d3ba2660684c70a127fe",
       "size_bytes": 661,
       "origin": "generated-from-pinned-release-config",
-      "adaptation": "Temporary snapshot metadata, provisional version and approved feeds"
+      "adaptation": "Temporary snapshot metadata, provisional version and public package registries"
     },
     {
       "path": "LICENSE",
@@ -187,10 +187,10 @@
     },
     {
       "path": "README.md",
-      "sha256": "965f0b3790a5cba678cd91a811947d0980fded624001791a3ac3a9e94b49ea56",
-      "size_bytes": 12310,
+      "sha256": "9af5e183c41a04ef19e8b8c764bdc25b757c1e5685007a7e017e6498ac7192ba",
+      "size_bytes": 12225,
       "origin": "generated-from-pinned-release-config",
-      "adaptation": "Temporary snapshot metadata, provisional version and approved feeds"
+      "adaptation": "Temporary snapshot metadata, provisional version and public package registries"
     },
     {
       "path": "runtime/ekg-skills/adapters/__init__.py",
@@ -2392,8 +2392,8 @@
     },
     {
       "path": "skills/ekg-build/references/plan-and-publish.md",
-      "sha256": "0f1a93e3e22169f4dd5b32d928b4ec7ab054cbc5da6ad9bd1cb9a88d4a664b14",
-      "size_bytes": 2557,
+      "sha256": "518cd057c6dc637dd69f131644d8d236d5234910afa86a08999c8f6dc80a85b8",
+      "size_bytes": 2561,
       "origin": "pinned-source",
       "source_path": "skills/ekg-build/references/plan-and-publish.md",
       "source_sha256": "1ecaaf184d8b7b85f379e717a0460076a5dc413ec909d27ff7ca6ff9d479250e",
@@ -2462,8 +2462,8 @@
     },
     {
       "path": "skills/ekg-consume/references/health-and-capabilities.md",
-      "sha256": "56ea492034dbf998eb985155f31f9db0b39c5dbb28f3282861ee4c02cd0c82f0",
-      "size_bytes": 1489,
+      "sha256": "09ff553ebf0a4daaab69edf400e9678575f6a13f7c93429996bec3bf6452de08",
+      "size_bytes": 1493,
       "origin": "pinned-source",
       "source_path": "skills/ekg-consume/references/health-and-capabilities.md",
       "source_sha256": "c715eaf0fc66ffc42217d1772a7bcf3fbb5da61f9bdfa1fba66b5ddcecb0e661",
@@ -2512,8 +2512,8 @@
     },
     {
       "path": "skills/ekg-provision/references/new-public-test-setup.md",
-      "sha256": "9cecd2cb76371bc5d6e6fb08b30e219ec3cdbd730078434c1db95937342973cf",
-      "size_bytes": 1407,
+      "sha256": "ecc8b5a0247fa82f085a5ad5feb749cb7b0966499db456bf1093533ec30aefb2",
+      "size_bytes": 1411,
       "origin": "pinned-source",
       "source_path": "skills/ekg-provision/references/new-public-test-setup.md",
       "source_sha256": "8591655cc1f16a36abd2c27c7e629dcb946be57b69e0516ceba3e6ec7ec1d4ed",
@@ -2802,8 +2802,8 @@
     },
     {
       "path": "skills/grz-build/references/plan-and-apply.md",
-      "sha256": "86037767523721fb0c074f2fa56035c83ad9f6562a0b10cfcbd3b2b09a1076eb",
-      "size_bytes": 2919,
+      "sha256": "0e16707d5e6a84917fed927d216c3454ff1d3ba38e5af0f53022834cba8f9d6e",
+      "size_bytes": 2923,
       "origin": "pinned-source",
       "source_path": "skills/grz-build/references/plan-and-apply.md",
       "source_sha256": "055c08b8a0d348531062d20f9af1aa078728d6efb989daaa999fd7227942687c",
@@ -2862,8 +2862,8 @@
     },
     {
       "path": "skills/grz-consume/references/health-and-access.md",
-      "sha256": "9642efb50bcdae6e6d6b3b3f7ee0c9b6c0a67ec3b0fa169105d41fa53c37c09c",
-      "size_bytes": 1969,
+      "sha256": "a63f88ea8a477bab5f8f9e1ff0f073d8e1e1b4a3f686668f33873cb98ea66c0e",
+      "size_bytes": 1973,
       "origin": "pinned-source",
       "source_path": "skills/grz-consume/references/health-and-access.md",
       "source_sha256": "8b6a43a54dfadac441e4a913cb2ec3f08060d043a1d8db09d6d281305dd85897",
@@ -2902,8 +2902,8 @@
     },
     {
       "path": "skills/ontology-build/references/connect-plan-propose.md",
-      "sha256": "5ff329198f04e684dd77444773069b0a76c045604c0417bb8cf8122b0d625f67",
-      "size_bytes": 2421,
+      "sha256": "7e88cb295c96f68ec809d85ea4d4fdbcb90a8dafd822fe999ee50197df2b7f9d",
+      "size_bytes": 2425,
       "origin": "pinned-source",
       "source_path": "skills/ontology-build/references/connect-plan-propose.md",
       "source_sha256": "caa9f9b25a79ea9d8b821928739747672d5bbd85121ac17e5c92df80190b65ca",
@@ -3005,7 +3005,7 @@
       "sha256": "57a2a7a90c000d564c267b5fc62d37f3a497a761effb6ead545010f48233ade5",
       "size_bytes": 187,
       "origin": "generated-from-pinned-release-config",
-      "adaptation": "Temporary snapshot metadata, provisional version and approved feeds"
+      "adaptation": "Temporary snapshot metadata, provisional version and public package registries"
     }
   ]
 }
