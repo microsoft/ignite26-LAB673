@@ -7,6 +7,6 @@
     "embeddingModelCapacity": { "value": "${EMBEDDING_MODEL_CAPACITY=30}" },
     "llmModelName": { "value": "${LLM_MODEL_NAME=gpt-5.4}" },
     "llmModelVersion": { "value": "${LLM_MODEL_VERSION=2026-03-05}" },
-    "llmModelCapacity": { "value": "${LLM_MODEL_CAPACITY=50}" }
+    "llmModelCapacity": { "value": "${LLM_MODEL_CAPACITY=200}" }
   }
 }

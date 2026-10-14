@@ -1,0 +1,288 @@
+index: cocoarynth-origins
+description: Origin and farm records - supplier profiles, collection tickets, fermentation and drying logs, inspections, certificates and sourcing prices.
+
+# Brief fields
+#   type: template family (report, field_log, scanned_form, inspection_report, letter, memo, trip_report, public_report)
+#   entities: world references the document draws facts from
+#   content: what the prose must cover; facts come from `entities`
+#   avoid: facts or conclusions this document must not state, so mysteries need several sources
+
+briefs:
+  - id: origin-profile-ecuador
+    title: "Origin profile: Río Claro, Esmeraldas, Ecuador"
+    type: report
+    language: en
+    date: 2026-04-01
+    author: ana-ortega
+    audience: Cocoarynth staff and retail partners
+    pages: 2
+    purpose: Introduce the Río Claro cooperative and its member farms.
+    entities: [origins.origins.ecuador, origins.suppliers.rio-claro, origins.farms.las-brisas, origins.farms.el-cedro, origins.farms.la-ceiba, commercial.purchases_kg.ecuador]
+    content:
+      - Cooperative history, 86 members, collection center run by Marisol Vega.
+      - The three farms Cocoarynth buys from, with planted hectares and shade.
+      - Box fermentation and raised-bed drying; flavor notes.
+      - Explain that a single origin can mean several farms, and that lots may combine farms.
+      - Volumes bought 2024–2026.
+    visuals: [{kind: photo, asset: cacao-pods-ecuador}, {kind: photo, asset: fermentation-boxes}]
+    avoid: [Lot codes for specific batches]
+
+  - id: origin-profile-ghana
+    title: "Origin profile: Akwapim Ridge, Ghana"
+    type: report
+    language: en
+    date: 2026-04-01
+    author: ana-ortega
+    audience: Cocoarynth staff and retail partners
+    pages: 2
+    purpose: Introduce the Akwapim Ridge association and its on-farm heap fermentation.
+    entities: [origins.origins.ghana, origins.suppliers.akwapim-ridge, origins.farms.nyamebekyere, origins.farms.adom, origins.farms.asaase, commercial.purchases_kg.ghana]
+    content:
+      - Association of 140 farmers; secretary Kwabena Asare.
+      - Heap fermentation under banana leaves and bamboo-mat drying.
+      - Community premium for raised drying frames.
+      - Flavor notes and the GH68 bar.
+    visuals: [{kind: photo, asset: heap-fermentation-ghana}]
+    avoid: []
+
+  - id: origin-profile-peru
+    title: "Origin profile: Nuevo Horizonte, Bagua, Peru"
+    type: report
+    language: en
+    date: 2026-04-01
+    author: ana-ortega
+    audience: Cocoarynth staff and retail partners
+    pages: 2
+    purpose: Introduce the Nuevo Horizonte cooperative, its centralized fermentary and its organic program.
+    entities: [origins.origins.peru, origins.suppliers.nuevo-horizonte, origins.farms.san-isidro, origins.farms.los-laureles, origins.certifications.cert-nh-organic]
+    content:
+      - 212-member cooperative; quality officer Lucía Huamán.
+      - Centralized cascading-box fermentary and solar dryers.
+      - Organic certificate CA-ORG-2025-0381 valid until 31 May 2026; renewal inspection planned for April (written before the inspection).
+      - Note that Los Laureles borders a neighbor's rice paddy.
+    visuals: [{kind: photo, asset: solar-dryer-peru}]
+    avoid: [Inspection findings or renewal outcome (profile predates them)]
+
+  - id: origin-profile-madagascar
+    title: "Origin profile: Tsaravola Estate, Sambirano Valley, Madagascar"
+    type: report
+    language: en
+    date: 2026-04-01
+    author: ana-ortega
+    audience: Cocoarynth staff and retail partners
+    pages: 2
+    purpose: Introduce the single estate behind Cocoarynth's most expensive bar.
+    entities: [origins.origins.madagascar, origins.suppliers.tsaravola, origins.farms.tsaravola-river, origins.farms.tsaravola-hillside, commercial.contracts]
+    content:
+      - Estate managed by Hery Rakotomalala; two parcels.
+      - Four-tier box fermentation; greenhouse plus open-bed drying.
+      - Two shipments a year from Antsiranana.
+      - Red berry and citrus flavor; why Cocoarynth pays an estate price.
+      - States plainly that the estate is not certified organic.
+    visuals: [{kind: photo, asset: greenhouse-drying-rain}]
+    avoid: [2026 harvest problems]
+
+  - id: origin-profile-dominican-republic
+    title: "New origin trial: Loma Verde, Hato Mayor, Dominican Republic"
+    type: report
+    language: en
+    date: 2026-03-12
+    author: ana-ortega
+    audience: Cocoarynth staff
+    pages: 1
+    purpose: Explain why Cocoarynth is trialing a fifth origin.
+    entities: [origins.origins.dominican-republic, origins.suppliers.loma-verde, origins.farms.loma-verde-farm, origins.farms.el-guayabo, beans.lots.DR26-T01, commercial.contracts]
+    content:
+      - Producer association of 38 farmers; field technician Yanelis Peña.
+      - Sample DR26-T01 approved on 10 March; molasses and raisin notes.
+      - Plan for a 360 kg trial lot from Finca El Guayabo with a sample-match clause.
+    visuals: []
+    avoid: [Smoky problems that happen later]
+
+  - id: boletas-acopio-rio-claro-2026
+    title: "Boletas de acopio, Cooperativa Río Claro (mayo–junio 2026)"
+    type: scanned_form
+    language: es
+    date: 2026-06-04
+    author: marisol-vega
+    audience: Cooperative records
+    pages: 3
+    purpose: Handwritten collection tickets that identify which farm delivered beans to which lot.
+    entities: [beans.collection_tickets, beans.lots.EC26-L05, beans.lots.EC26-L07]
+    content:
+      - One page per ticket - T-0402 (La Ceiba, lot EC26-L05), T-0417 (Las Brisas, lot EC26-L07), T-0418 (El Cedro, lot EC26-L07).
+      - Fields - ticket number, date, farmer, farm, wet kg, lot code, notes, signatures.
+      - T-0418 has a note that the original got wet in the rain and a legible copy is attached.
+      - Short typed cover note in Spanish listing the tickets (text fallback for the scans).
+    visuals: [{kind: scan, asset: ticket-scans}]
+    avoid: [Batch or wrapper codes]
+
+  - id: registro-fermentacion-ec26-l07
+    title: "Registro de fermentación y secado, lote EC26-L07"
+    type: field_log
+    language: es
+    date: 2026-06-19
+    author: marisol-vega
+    audience: Cooperative and Cocoarynth sourcing
+    pages: 2
+    purpose: Day-by-day fermentation and drying log for the lot behind the Ecuador wrapper mystery.
+    entities: [beans.lots.EC26-L07, origins.farms.las-brisas, origins.farms.el-cedro]
+    content:
+      - Lot made of 770 kg wet beans from Las Brisas (420) and El Cedro (350).
+      - Fermentation 4–10 June with turns every 48 hours and box temperatures (author plausible values, peak about 47 °C).
+      - Drying 10–19 June on raised beds; 300 kg dried in 5 bags; dispatched 22 June.
+    visuals: []
+    avoid: [Batch codes]
+
+  - id: inspeccion-interna-rio-claro-2026-03
+    title: "Inspección interna de fincas, Cooperativa Río Claro (marzo 2026)"
+    type: inspection_report
+    language: es
+    date: 2026-03-17
+    author: marisol-vega
+    audience: Cooperative members
+    pages: 2
+    purpose: Routine internal inspection; realistic background with minor findings.
+    entities: [origins.inspections.insp-rc-2026-03]
+    content: [Findings table with status, corrective actions and dates.]
+    visuals: []
+    avoid: []
+
+  - id: akwapim-internal-inspection-2026-02
+    title: "Akwapim Ridge internal inspection, February 2026"
+    type: inspection_report
+    language: en
+    date: 2026-02-24
+    author: kwabena-asare
+    audience: Association members
+    pages: 1
+    purpose: Background inspection showing the association's drying-mat improvements.
+    entities: [origins.inspections.insp-ar-2026-02]
+    content: [Finding on mats on bare ground and its closure.]
+    visuals: []
+    avoid: []
+
+  - id: informe-inspeccion-organica-nuevo-horizonte-2026
+    title: "Informe de inspección orgánica anual, Cooperativa Agraria Nuevo Horizonte"
+    type: inspection_report
+    language: es
+    date: 2026-04-22
+    author: rafael-soto
+    audience: Cooperative and certification committee
+    pages: 3
+    purpose: The certifier's inspection report with the buffer-zone finding that stalls the organic renewal.
+    entities: [origins.inspections.insp-nh-2026-04, origins.certifications.cert-nh-organic, origins.farms.los-laureles, origins.farms.san-isidro]
+    content:
+      - Scope, farms visited, documents reviewed.
+      - Major finding f-nh-01 - 3 m buffer with no hedge beside a neighbor's sprayed rice paddy; 8 m with barrier required.
+      - Minor finding f-nh-02 on the input register.
+      - Required corrective actions and deadline 31 August; renewal decision withheld until the major finding is verified.
+    visuals: [{kind: photo, asset: buffer-strip-rice-paddy}]
+    avoid: [Any statement that the bars may or may not carry a seal]
+
+  - id: organic-status-update-nuevo-horizonte
+    title: "Organic certificate status: Nuevo Horizonte (September 2026)"
+    type: memo
+    language: en
+    date: 2026-09-01
+    author: ana-ortega
+    audience: Quality, Production and Sales
+    pages: 1
+    purpose: Sourcing update on where the Peru organic renewal stands.
+    entities: [origins.certifications.cert-nh-organic, origins.inspections.insp-nh-2026-04]
+    content:
+      - Certificate CA-ORG-2025-0381 expired on 31 May 2026; renewal pending.
+      - Cooperative submitted hedge-planting evidence on 28 August; certifier follow-up visit on 20 October.
+      - Organic premium in the contract is suspended while the certificate is not valid.
+      - Asks Production to follow the label-claims policy for new Peru batches.
+    visuals: [{kind: photo, asset: inga-hedge-planting}]
+    avoid: [Restating the policy rule itself - point to the label-claims policy instead]
+
+  - id: tsaravola-buyer-visit-2026-05
+    title: "Trip report: Tsaravola Estate, May 2026"
+    type: trip_report
+    language: en
+    date: 2026-05-15
+    author: ana-ortega
+    audience: Sourcing and Quality
+    pages: 2
+    purpose: Buyer visit that notes the estate's limited covered drying space.
+    entities: [origins.inspections.insp-ts-2026-05, origins.suppliers.tsaravola]
+    content:
+      - Tour of both parcels, fermentary and dryers.
+      - Observation - the greenhouse dryer holds about half a peak-week harvest; open beds must be covered in rain.
+      - Agreement to add a second greenhouse before 2027.
+    visuals: [{kind: photo, asset: greenhouse-drying-rain}]
+    avoid: []
+
+  - id: tsaravola-harvest-report-2026-06
+    title: "Tsaravola Estate harvest and drying report, June 2026"
+    type: report
+    language: en
+    date: 2026-06-23
+    author: hery-rakotomalala
+    audience: Cocoarynth sourcing
+    pages: 2
+    purpose: The estate's own report on the June lot, including the rain that cut drying short.
+    entities: [beans.lots.MG26-L02, beans.consignments.CN-MG-2606]
+    content:
+      - Harvest from both parcels; fermentation 6–12 June.
+      - Drying 12–21 June interrupted by four days of rain; beans bagged a day early to meet the vessel.
+      - Estate moisture-meter reading at bagging (author a value near 7.6%) with a caution that open-bed beans may be wetter.
+      - 420 kg in 7 bags dispatched 22 June for vessel departing 26 June.
+    visuals: [{kind: photo, asset: greenhouse-drying-rain}]
+    avoid: [Factory arrival results]
+
+  - id: informe-visita-campo-loma-verde-2026-05
+    title: "Informe de visita de campo, Asociación Loma Verde (20 de mayo de 2026)"
+    type: field_log
+    language: es
+    date: 2026-05-20
+    author: yanelis-pena
+    audience: Association board
+    pages: 2
+    purpose: Field technician's notes that record the wood-fired dryer beside the drying racks at El Guayabo.
+    entities: [origins.inspections.insp-lv-2026-05, origins.farms.el-guayabo, origins.farms.loma-verde-farm]
+    content:
+      - Handwritten-style notebook page (scan) plus typed transcription.
+      - El Guayabo installed a wood-fired dryer after two weeks of rain; chimney about 4 m from the racks; smoke drifts over beans in the afternoon.
+      - Recommendation to move racks 30 m upwind and raise the chimney.
+      - Loma Verde farm visit with no issues.
+    visuals: [{kind: scan, asset: field-notes-scan}, {kind: photo, asset: dryer-chimney-racks}]
+    avoid: [Mention of Cocoarynth's tasting results (they come later)]
+
+  - id: sourcing-price-review-2026
+    title: "Sourcing price review 2026"
+    type: report
+    language: en
+    date: 2026-09-30
+    author: ana-ortega
+    audience: Leadership team
+    pages: 3
+    purpose: Annual comparison of what Cocoarynth pays each origin against the world reference.
+    entities: [commercial.prices_landed_usd_kg, commercial.market_reference, commercial.purchases_kg, commercial.contracts]
+    content:
+      - Landed price per origin 2024–2026 versus world reference; Madagascar highest at USD 13.80.
+      - Contract terms - quality bonus, community premium, organic premium suspension, sample-match credit for the rejected Dominican lot.
+      - Volumes by origin.
+      - Open question for leadership on whether the Madagascar premium is justified (do not answer it).
+    visuals: [{kind: chart, asset: landed-price-by-origin}, {kind: chart, asset: purchases-by-origin}]
+    avoid: [Sales or tasting results]
+
+  - id: origin-transparency-report-2026
+    title: "Cocoarynth Origin Report 2026"
+    type: public_report
+    language: en
+    date: 2026-10-01
+    author: ana-ortega
+    audience: Public
+    pages: 6
+    purpose: Public transparency report about where Cocoarynth's cacao comes from.
+    entities: [origins.origins, origins.suppliers, origins.farms, commercial.purchases_kg, commercial.prices_landed_usd_kg, commercial.market_reference]
+    content:
+      - Sourcing philosophy; one profile page per active origin with farm names (no farmer contact details).
+      - Average landed price versus world reference (aggregate, not per shipment).
+      - New-origin trial in the Dominican Republic described as ongoing.
+      - Glossary box.
+    visuals: [{kind: map, asset: origins-world-map}, {kind: chart, asset: landed-price-by-origin}, {kind: photo, asset: cacao-pods-ecuador}, {kind: photo, asset: heap-fermentation-ghana}]
+    avoid: [Batch-level problems, complaints or rejections]

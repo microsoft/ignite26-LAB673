@@ -1,15 +1,14 @@
 {
-  "repository": "https://github.com/pamelas-organization/developer-kb-for-github-copilot",
-  "revision": "1cdf35934462a46752da542f0c856ac82b475075",
-  "paths": ["documents"],
-  "ingestion_reference": "scripts/preingest.py",
-  "knowledge_base_reference": "app/backend/foundry_iq.py",
-  "adaptations": [
-    "Retained all four product/traceability PDFs and all four engineering-practice PDFs.",
-    "Reused the data-sharing policy PDF for the standalone file-source exercise.",
-    "Used the existing knowledge container with a separate prefix for each index.",
-    "Matched the source's 700-token semantic chunking and 3072-dimension embeddings.",
-    "Retained the lab's portable citation schema without image extraction or image projections.",
-    "Kept answer synthesis for the notebook instead of the source app's extractive output."
+  "generator": "scripts/cocoarynth",
+  "description": "Fictional corpus generated for LAB673. Facts come from data/cocoarynth/world/*.json, documents are planned in briefs/ and written in drafts/, and render.py produces the PDFs.",
+  "images": "Photos generated with MAI-Image-2.5; charts, maps, scans and labels drawn in code.",
+  "fonts": "SIL Open Font License fonts in assets/fonts/, with license files.",
+  "brand": "Cocoarynth logos from the cocoarynth-trace repository (assets/brand/).",
+  "rebuild": [
+    "scripts/cocoarynth/validate.py",
+    "scripts/cocoarynth/charts.py",
+    "scripts/cocoarynth/images.py derived",
+    "scripts/cocoarynth/render.py",
+    "scripts/cocoarynth/check.py"
   ]
 }

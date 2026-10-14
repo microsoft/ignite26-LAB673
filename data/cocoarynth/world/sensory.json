@@ -1,0 +1,26 @@
+{
+  "attributes": ["cocoa", "fruit", "floral", "nutty", "sweetness", "bitterness", "acidity", "off_flavor"],
+  "scale": "0 (absent) to 10 (very strong); overall quality 0 to 10",
+  "panels": [
+    {
+      "id": "PANEL-2026-09", "date": "2026-09-22", "coordinator": "devi-narayan", "panelists": 9, "method": "Blind, randomized three-digit codes, 70 g bar samples at 20 °C",
+      "samples": [
+        {"code": "418", "product": "MG70", "batch": "MG26-0910", "overall": 8.4,
+         "scores": {"cocoa": 6.0, "fruit": 8.5, "floral": 5.0, "nutty": 2.0, "sweetness": 5.5, "bitterness": 3.0, "acidity": 6.5, "off_flavor": 0.0},
+         "notes": "Red berry and raspberry, citrus zest, bright but balanced acidity, low bitterness. Seven of nine panelists ranked it first."},
+        {"code": "731", "product": "EC72", "batch": "EC26-0811", "overall": 7.9,
+         "scores": {"cocoa": 6.5, "fruit": 5.0, "floral": 7.5, "nutty": 3.5, "sweetness": 4.5, "bitterness": 4.0, "acidity": 4.0, "off_flavor": 0.0},
+         "notes": "Jasmine and orange blossom, dried fig, long finish."},
+        {"code": "265", "product": "PE70", "batch": "PE26-0902", "overall": 7.6,
+         "scores": {"cocoa": 6.0, "fruit": 6.5, "floral": 4.0, "nutty": 3.0, "sweetness": 6.0, "bitterness": 3.5, "acidity": 5.0, "off_flavor": 0.0},
+         "notes": "Honey, citrus, yellow plum."},
+        {"code": "582", "product": "GH68", "batch": "GH26-0901", "overall": 7.2,
+         "scores": {"cocoa": 8.0, "fruit": 3.0, "floral": 2.0, "nutty": 6.0, "sweetness": 5.0, "bitterness": 5.0, "acidity": 3.0, "off_flavor": 0.0},
+         "notes": "Classic chocolate, roasted peanut, brown bread. Most 'chocolatey' of the set."},
+        {"code": "907", "product": "DR70", "batch": "DR26-T03 bench batch", "overall": 7.0,
+         "scores": {"cocoa": 6.5, "fruit": 4.5, "floral": 2.0, "nutty": 4.0, "sweetness": 5.0, "bitterness": 4.5, "acidity": 3.5, "off_flavor": 0.0},
+         "notes": "Molasses and raisin; no smoke. Promising for a 2027 launch."}
+      ]
+    }
+  ]
+}

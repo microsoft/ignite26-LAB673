@@ -1,0 +1,152 @@
+{
+  "receiving_limits": {
+    "moisture_max_pct": 7.5,
+    "cut_test_beans": 300,
+    "mouldy_max_pct": 3.0,
+    "slaty_max_pct": 5.0,
+    "insect_damaged_max_pct": 3.0,
+    "off_flavor": "Any smoky, hammy or musty off-flavor confirmed by at least three tasters rejects the lot."
+  },
+  "collection_tickets": [
+    {"id": "T-0402", "supplier": "rio-claro", "date": "2026-05-12", "farm": "la-ceiba", "wet_kg": 640, "lot": "EC26-L05", "received_by": "marisol-vega", "notes": "Mazorcas maduras."},
+    {"id": "T-0417", "supplier": "rio-claro", "date": "2026-06-03", "farm": "las-brisas", "wet_kg": 420, "lot": "EC26-L07", "received_by": "marisol-vega", "notes": "Mazorcas maduras, sin monilia."},
+    {"id": "T-0418", "supplier": "rio-claro", "date": "2026-06-04", "farm": "el-cedro", "wet_kg": 350, "lot": "EC26-L07", "received_by": "marisol-vega", "notes": "Boleta original mojada por lluvia; copia legible adjunta."},
+    {"id": "NH-1107", "supplier": "nuevo-horizonte", "date": "2025-11-05", "farm": "san-isidro", "wet_kg": 520, "lot": "PE25-L11", "received_by": "lucia-huaman", "notes": "Cacao en baba, lote orgánico."},
+    {"id": "NH-1108", "supplier": "nuevo-horizonte", "date": "2025-11-06", "farm": "los-laureles", "wet_kg": 480, "lot": "PE25-L11", "received_by": "lucia-huaman", "notes": "Cacao en baba, lote orgánico."}
+  ],
+  "consignments": [
+    {"id": "CN-EC-2605", "lots": ["EC26-L05"], "port_of_loading": "Guayaquil, Ecuador", "port_of_discharge": "Oakland, USA", "mode": "Sea, less-than-container load", "forwarder": "bluefin", "importer": "tidewater", "bill_of_lading": "BFF-GYE-26-1094", "departed": "2026-05-30", "arrived": "2026-06-22", "factory_receipt": "2026-06-26"},
+    {"id": "CN-EC-2606", "lots": ["EC26-L07"], "port_of_loading": "Guayaquil, Ecuador", "port_of_discharge": "Oakland, USA", "mode": "Sea, less-than-container load", "forwarder": "bluefin", "importer": "tidewater", "bill_of_lading": "BFF-GYE-26-1182", "departed": "2026-06-28", "arrived": "2026-07-20", "factory_receipt": "2026-07-27"},
+    {"id": "CN-GH-2606", "lots": ["GH26-L03"], "port_of_loading": "Tema, Ghana", "port_of_discharge": "Oakland, USA", "mode": "Sea, less-than-container load", "forwarder": "bluefin", "importer": "tidewater", "bill_of_lading": "BFF-TEM-26-0457", "departed": "2026-06-03", "arrived": "2026-06-29", "factory_receipt": "2026-07-02"},
+    {"id": "CN-PE-2512", "lots": ["PE25-L11"], "port_of_loading": "Paita, Peru", "port_of_discharge": "Oakland, USA", "mode": "Sea, less-than-container load", "forwarder": "bluefin", "importer": "tidewater", "bill_of_lading": "BFF-PAI-25-2210", "departed": "2025-12-12", "arrived": "2026-01-09", "factory_receipt": "2026-01-15"},
+    {"id": "CN-MG-2511", "lots": ["MG25-L09"], "port_of_loading": "Antsiranana, Madagascar", "port_of_discharge": "Oakland, USA", "mode": "Sea, less-than-container load, transshipped at Port Louis", "forwarder": "bluefin", "importer": "tidewater", "bill_of_lading": "BFF-DIE-25-0318", "departed": "2025-12-05", "arrived": "2026-01-14", "factory_receipt": "2026-01-20"},
+    {"id": "CN-MG-2606", "lots": ["MG26-L02"], "port_of_loading": "Antsiranana, Madagascar", "port_of_discharge": "Oakland, USA", "mode": "Sea, less-than-container load, transshipped at Port Louis", "forwarder": "bluefin", "importer": "tidewater", "bill_of_lading": "BFF-DIE-26-0207", "departed": "2026-06-26", "arrived": "2026-07-24", "factory_receipt": "2026-07-28", "notes": "Bags loaded during heavy rain at Antsiranana; outer jute damp on arrival."},
+    {"id": "CN-DR-2606", "lots": ["DR26-T02"], "port_of_loading": "Río Haina, Dominican Republic", "port_of_discharge": "Oakland, USA", "mode": "Sea, less-than-container load", "forwarder": "bluefin", "importer": "tidewater", "bill_of_lading": "BFF-HAI-26-0133", "departed": "2026-06-05", "arrived": "2026-07-02", "factory_receipt": "2026-07-08"}
+  ],
+  "lots": [
+    {
+      "id": "EC26-L05", "origin": "ecuador", "harvest_year": 2026, "kind": "production",
+      "contributions": [{"farm": "la-ceiba", "wet_kg": 640}],
+      "fermentation": {"start": "2026-05-12", "end": "2026-05-18"},
+      "drying": {"start": "2026-05-18", "end": "2026-05-27"},
+      "dried_kg": 250, "bags": 5, "dispatched": "2026-05-28", "consignment": "CN-EC-2605",
+      "received_kg": 249.0,
+      "tests": [
+        {"date": "2026-06-26", "type": "moisture", "value_pct": 6.8, "result": "pass"},
+        {"date": "2026-06-26", "type": "cut_test", "beans": 300, "well_fermented": 251, "partly_fermented": 30, "slaty": 7, "purple": 8, "mouldy": 1, "insect_damaged": 1, "germinated": 0, "flat": 2, "result": "pass"},
+        {"date": "2026-06-27", "type": "sensory_check", "result": "pass", "notes": "Clean, floral, mild cocoa."}
+      ],
+      "sample_kg": 1.0, "status": "released", "released": "2026-06-27"
+    },
+    {
+      "id": "EC26-L07", "origin": "ecuador", "harvest_year": 2026, "kind": "production",
+      "contributions": [{"farm": "las-brisas", "wet_kg": 420}, {"farm": "el-cedro", "wet_kg": 350}],
+      "fermentation": {"start": "2026-06-04", "end": "2026-06-10"},
+      "drying": {"start": "2026-06-10", "end": "2026-06-19"},
+      "dried_kg": 300, "bags": 5, "dispatched": "2026-06-22", "consignment": "CN-EC-2606",
+      "received_kg": 299.4,
+      "tests": [
+        {"date": "2026-07-27", "type": "moisture", "value_pct": 7.0, "result": "pass"},
+        {"date": "2026-07-27", "type": "cut_test", "beans": 300, "well_fermented": 252, "partly_fermented": 27, "slaty": 6, "purple": 12, "mouldy": 1, "insect_damaged": 1, "germinated": 0, "flat": 1, "result": "pass"},
+        {"date": "2026-07-28", "type": "sensory_check", "result": "pass", "notes": "Floral, jasmine, dried fig."}
+      ],
+      "sample_kg": 1.0, "status": "released", "released": "2026-07-29"
+    },
+    {
+      "id": "GH26-L03", "origin": "ghana", "harvest_year": 2026, "kind": "production",
+      "contributions": [{"farm": "nyamebekyere", "dried_kg": 260}, {"farm": "adom", "dried_kg": 220}],
+      "fermentation": {"start": "2026-05-12", "end": "2026-05-18"},
+      "drying": {"start": "2026-05-18", "end": "2026-05-27"},
+      "dried_kg": 480, "bags": 8, "dispatched": "2026-06-01", "consignment": "CN-GH-2606",
+      "received_kg": 478.5,
+      "tests": [
+        {"date": "2026-07-02", "type": "moisture", "value_pct": 6.8, "result": "pass"},
+        {"date": "2026-07-02", "type": "cut_test", "beans": 300, "well_fermented": 246, "partly_fermented": 33, "slaty": 9, "purple": 7, "mouldy": 2, "insect_damaged": 2, "germinated": 1, "flat": 0, "result": "pass"},
+        {"date": "2026-07-03", "type": "sensory_check", "result": "pass", "notes": "Classic cocoa, roasted nut."}
+      ],
+      "sample_kg": 1.0, "status": "released", "released": "2026-07-03"
+    },
+    {
+      "id": "PE25-L11", "origin": "peru", "harvest_year": 2025, "kind": "production",
+      "contributions": [{"farm": "san-isidro", "wet_kg": 520}, {"farm": "los-laureles", "wet_kg": 480}],
+      "fermentation": {"start": "2025-11-07", "end": "2025-11-14"},
+      "drying": {"start": "2025-11-14", "end": "2025-11-24"},
+      "dried_kg": 400, "bags": 7, "dispatched": "2025-12-01", "consignment": "CN-PE-2512",
+      "received_kg": 398.5, "organic_transaction_certificate": "TC-CA-2025-1147",
+      "tests": [
+        {"date": "2026-01-15", "type": "moisture", "value_pct": 6.6, "result": "pass"},
+        {"date": "2026-01-15", "type": "cut_test", "beans": 300, "well_fermented": 255, "partly_fermented": 28, "slaty": 5, "purple": 9, "mouldy": 1, "insect_damaged": 1, "germinated": 0, "flat": 1, "result": "pass"},
+        {"date": "2026-01-16", "type": "sensory_check", "result": "pass", "notes": "Citrus, honey."}
+      ],
+      "sample_kg": 1.0, "status": "released", "released": "2026-01-16"
+    },
+    {
+      "id": "MG25-L09", "origin": "madagascar", "harvest_year": 2025, "kind": "production",
+      "contributions": [{"farm": "tsaravola-river", "dried_kg": 300}, {"farm": "tsaravola-hillside", "dried_kg": 200}],
+      "fermentation": {"start": "2025-11-03", "end": "2025-11-09"},
+      "drying": {"start": "2025-11-09", "end": "2025-11-18"},
+      "dried_kg": 500, "bags": 9, "dispatched": "2025-11-26", "consignment": "CN-MG-2511",
+      "received_kg": 498.0,
+      "tests": [
+        {"date": "2026-01-20", "type": "moisture", "value_pct": 6.9, "result": "pass"},
+        {"date": "2026-01-20", "type": "cut_test", "beans": 300, "well_fermented": 258, "partly_fermented": 24, "slaty": 4, "purple": 11, "mouldy": 1, "insect_damaged": 1, "germinated": 1, "flat": 0, "result": "pass"},
+        {"date": "2026-01-21", "type": "sensory_check", "result": "pass", "notes": "Red berry, citrus zest."}
+      ],
+      "sample_kg": 1.0, "status": "released", "released": "2026-01-21"
+    },
+    {
+      "id": "MG26-L02", "origin": "madagascar", "harvest_year": 2026, "kind": "production",
+      "contributions": [{"farm": "tsaravola-river", "dried_kg": 260}, {"farm": "tsaravola-hillside", "dried_kg": 160}],
+      "fermentation": {"start": "2026-06-06", "end": "2026-06-12"},
+      "drying": {"start": "2026-06-12", "end": "2026-06-21", "note": "Open-bed drying interrupted by four days of rain; beans bagged a day early to meet the vessel."},
+      "dried_kg": 420, "bags": 7, "dispatched": "2026-06-22", "consignment": "CN-MG-2606",
+      "received_kg": 420.0,
+      "tests": [
+        {"date": "2026-07-28", "type": "moisture", "value_pct": 8.6, "result": "fail"},
+        {"date": "2026-07-28", "type": "cut_test", "beans": 300, "well_fermented": 249, "partly_fermented": 29, "slaty": 6, "purple": 10, "mouldy": 5, "insect_damaged": 1, "germinated": 0, "flat": 0, "result": "pass", "notes": "Mouldy 1.7%, under the 3% limit but higher than usual."},
+        {"date": "2026-08-19", "type": "moisture", "value_pct": 7.1, "result": "pass", "notes": "After re-drying."},
+        {"date": "2026-08-19", "type": "sensory_check", "result": "pass", "notes": "Red berry; no musty notes."}
+      ],
+      "hold": {"opened": "2026-07-28", "reason": "Moisture 8.6% above the 7.5% limit", "action": "Re-dried in the bean conditioning room, 2026-08-03 to 2026-08-14", "closed": "2026-08-20"},
+      "redry_checks": [["2026-08-03", 8.6], ["2026-08-04", 8.4], ["2026-08-05", 8.3], ["2026-08-06", 8.1], ["2026-08-07", 8.0], ["2026-08-10", 7.7], ["2026-08-11", 7.6], ["2026-08-12", 7.4], ["2026-08-13", 7.3], ["2026-08-14", 7.2], ["2026-08-19", 7.1]],
+      "mass_after_redry_kg": 413.2,
+      "sample_kg": 1.0, "status": "released", "released": "2026-08-20"
+    },
+    {
+      "id": "DR26-T01", "origin": "dominican-republic", "harvest_year": 2026, "kind": "sample",
+      "contributions": [{"farm": "loma-verde-farm", "dried_kg": 2}],
+      "dried_kg": 2, "bags": 0, "dispatched": "2026-02-24", "consignment": null, "received_kg": 2.0, "received": "2026-03-04",
+      "tests": [
+        {"date": "2026-03-04", "type": "moisture", "value_pct": 6.9, "result": "pass"},
+        {"date": "2026-03-10", "type": "sensory_check", "result": "pass", "notes": "Molasses, raisin; clean."}
+      ],
+      "sample_kg": 2.0, "status": "sample_approved", "released": "2026-03-10"
+    },
+    {
+      "id": "DR26-T02", "origin": "dominican-republic", "harvest_year": 2026, "kind": "trial",
+      "contributions": [{"farm": "el-guayabo", "dried_kg": 360}],
+      "fermentation": {"start": "2026-04-30", "end": "2026-05-06"},
+      "drying": {"start": "2026-05-06", "end": "2026-05-14", "note": "Dried on racks next to the farm's new wood-fired dryer during a rainy spell."},
+      "dried_kg": 360, "bags": 6, "dispatched": "2026-05-28", "consignment": "CN-DR-2606",
+      "received_kg": 359.0,
+      "tests": [
+        {"date": "2026-07-08", "type": "moisture", "value_pct": 6.9, "result": "pass"},
+        {"date": "2026-07-08", "type": "cut_test", "beans": 300, "well_fermented": 240, "partly_fermented": 38, "slaty": 10, "purple": 9, "mouldy": 1, "insect_damaged": 1, "germinated": 1, "flat": 0, "result": "pass"},
+        {"date": "2026-07-13", "type": "sensory_check", "result": "fail", "tasters": 5, "tasters_detecting_off_flavor": 4, "notes": "Smoky, hammy off-flavor; campfire and smoked-ham notes on the finish."}
+      ],
+      "sample_kg": 1.0, "status": "rejected", "rejected": "2026-07-15",
+      "disposition": "Supplier credited the lot under the sample-match clause; beans composted on 2026-07-22."
+    },
+    {
+      "id": "DR26-T03", "origin": "dominican-republic", "harvest_year": 2026, "kind": "sample",
+      "contributions": [{"farm": "el-guayabo", "dried_kg": 2}],
+      "drying": {"start": "2026-08-20", "end": "2026-08-27", "note": "Dried on relocated racks after the corrective action."},
+      "dried_kg": 2, "bags": 0, "dispatched": "2026-09-02", "consignment": null, "received_kg": 2.0, "received": "2026-09-15",
+      "tests": [
+        {"date": "2026-09-15", "type": "moisture", "value_pct": 7.0, "result": "pass"},
+        {"date": "2026-09-16", "type": "sensory_check", "result": "pass", "notes": "Molasses, raisin; no smoke detected by any taster."}
+      ],
+      "sample_kg": 2.0, "status": "sample_approved", "released": "2026-09-16"
+    }
+  ]
+}

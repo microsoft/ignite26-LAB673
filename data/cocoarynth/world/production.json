@@ -1,0 +1,30 @@
+{
+  "process": {
+    "nib_yield": 0.80,
+    "packing_loss": 0.02,
+    "retention_bars_per_batch": 10,
+    "recipe": "Two ingredients: cocoa beans and organic cane sugar. Cocoa percentage is the share of cocoa mass in the bar."
+  },
+  "products": [
+    {"id": "EC72", "name": "Ecuador Río Claro 72%", "origin": "ecuador", "cocoa_pct": 72, "wholesale_usd": 4.90, "retail_usd": 9.50, "launched": "2019-03-01", "status": "active"},
+    {"id": "EC85", "name": "Ecuador Río Claro 85%", "origin": "ecuador", "cocoa_pct": 85, "wholesale_usd": 5.10, "retail_usd": 9.95, "launched": "2022-10-01", "status": "active"},
+    {"id": "GH68", "name": "Ghana Akwapim Ridge 68%", "origin": "ghana", "cocoa_pct": 68, "wholesale_usd": 4.60, "retail_usd": 8.50, "launched": "2020-02-01", "status": "active"},
+    {"id": "PE70", "name": "Peru Bagua 70%", "origin": "peru", "cocoa_pct": 70, "wholesale_usd": 4.90, "retail_usd": 9.50, "launched": "2021-04-01", "status": "active"},
+    {"id": "MG70", "name": "Madagascar Tsaravola 70%", "origin": "madagascar", "cocoa_pct": 70, "wholesale_usd": 5.60, "retail_usd": 11.00, "launched": "2022-05-01", "status": "active"},
+    {"id": "MGNB", "name": "Madagascar Tsaravola 70% with Cacao Nibs (limited edition)", "origin": "madagascar", "cocoa_pct": 70, "wholesale_usd": 5.90, "retail_usd": 11.50, "planned_launch": "2026-09-01", "launched": "2026-10-01", "status": "active", "launch_delay_reason": "lot-hold:MG26-L02"},
+    {"id": "DR70", "name": "Dominican Loma Verde 70% (trial)", "origin": "dominican-republic", "cocoa_pct": 70, "wholesale_usd": null, "retail_usd": null, "launched": null, "status": "development"}
+  ],
+  "batches": [
+    {"id": "EC26-0702", "product": "EC72", "inputs": [{"lot": "EC26-L05", "kg": 200}], "production_date": "2026-07-02", "packed": "2026-07-03", "bars": 3101, "retained_bars": 10, "organic_claim": false},
+    {"id": "EC26-0811", "product": "EC72", "inputs": [{"lot": "EC26-L07", "kg": 250}], "production_date": "2026-08-11", "packed": "2026-08-12", "bars": 3878, "retained_bars": 10, "organic_claim": false},
+    {"id": "EC26-0815", "product": "EC85", "inputs": [{"lot": "EC26-L07", "kg": 45}], "production_date": "2026-08-15", "packed": "2026-08-15", "bars": 582, "retained_bars": 10, "organic_claim": false},
+    {"id": "GH26-0706", "product": "GH68", "inputs": [{"lot": "GH26-L03", "kg": 230}], "production_date": "2026-07-06", "packed": "2026-07-07", "bars": 3778, "retained_bars": 10, "organic_claim": false},
+    {"id": "GH26-0901", "product": "GH68", "inputs": [{"lot": "GH26-L03", "kg": 240}], "production_date": "2026-09-01", "packed": "2026-09-02", "bars": 3942, "retained_bars": 10, "organic_claim": false},
+    {"id": "PE26-0303", "product": "PE70", "inputs": [{"lot": "PE25-L11", "kg": 190}], "production_date": "2026-03-03", "packed": "2026-03-05", "bars": 3030, "retained_bars": 10, "organic_claim": true, "organic_basis": "Certificate CA-ORG-2025-0381 valid on the packing date; transaction certificate TC-CA-2025-1147 on file."},
+    {"id": "PE26-0902", "product": "PE70", "inputs": [{"lot": "PE25-L11", "kg": 200}], "production_date": "2026-09-02", "packed": "2026-09-04", "bars": 3189, "retained_bars": 10, "organic_claim": false, "organic_basis": "Supplier certificate expired 2026-05-31; renewal pending. Wrappers printed without the organic seal."},
+    {"id": "MG26-0210", "product": "MG70", "inputs": [{"lot": "MG25-L09", "kg": 240}], "production_date": "2026-02-10", "packed": "2026-02-11", "bars": 3830, "retained_bars": 10, "organic_claim": false},
+    {"id": "MG26-0610", "product": "MG70", "inputs": [{"lot": "MG25-L09", "kg": 250}], "production_date": "2026-06-10", "packed": "2026-06-11", "bars": 3989, "retained_bars": 10, "organic_claim": false},
+    {"id": "MG26-0826", "product": "MGNB", "inputs": [{"lot": "MG26-L02", "kg": 220}], "production_date": "2026-08-26", "packed": "2026-08-28", "bars": 3509, "retained_bars": 10, "organic_claim": false, "planned_production_date": "2026-07-30"},
+    {"id": "MG26-0910", "product": "MG70", "inputs": [{"lot": "MG26-L02", "kg": 180}], "production_date": "2026-09-10", "packed": "2026-09-11", "bars": 2869, "retained_bars": 10, "organic_claim": false}
+  ]
+}
