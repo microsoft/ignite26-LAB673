@@ -40,7 +40,7 @@ try {
         if ($LASTEXITCODE -ne 0) { throw "Could not create the virtual environment." }
     }
     $venvPython = Join-Path $repoRoot ".venv\Scripts\python.exe"
-    & $venvPython -m pip install -r (Join-Path $repoRoot "src\notebooks\requirements.txt")
+    & $venvPython -m pip install --disable-pip-version-check -r (Join-Path $repoRoot "src\notebooks\requirements.txt")
     if ($LASTEXITCODE -ne 0) { throw "Dependency installation failed." }
     & $venvPython (Join-Path $PSScriptRoot "setup-content-understanding.py")
     if ($LASTEXITCODE -ne 0) { throw "Content Understanding setup failed." }
