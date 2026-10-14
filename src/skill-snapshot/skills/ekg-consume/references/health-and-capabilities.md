@@ -15,7 +15,7 @@ Use this path when the operator needs to confirm descriptor validity, default de
 - If no descriptor path is supplied, the runtime uses the current published descriptor. Say that choice out loud when it matters.
 - If the descriptor is invalid, stop and correct it; do not guess missing fields.
 - If a capability is absent, return that it is not enabled. Do not route around it silently.
-- If the CLI fallback is needed, check `ekg-consume --version`. If missing, read the [local runtime installation instructions](../../../README.md#install-the-local-runtimes) first. Install or run the shipped `runtime/ekg-skills[consume]` package through the Microsoft CFS feed.
+- If the CLI fallback is needed, check `ekg-consume --version`. If missing, read the [local runtime installation instructions](../../../README.md#install-the-local-runtimes) first. Install or run the shipped `runtime/ekg-skills[consume]` package with dependencies from public PyPI.
 
 ## Return
 

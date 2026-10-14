@@ -16,7 +16,7 @@ Use this path when the operator wants EKG infrastructure created in a new isolat
 - Default and private-network apply stay disabled.
 - Never infer `entra_only` from missing IP data or silently switch modes.
 - The approval card must cover every resource, deployment, and role assignment that will be created.
-- If the CLI is missing, read the [local runtime installation instructions](../../../README.md#install-the-local-runtimes) first. Install or run the shipped `runtime/ekg-skills[build,consume,provision]` package through the Microsoft CFS feed, then rerun `ekg-provision --version` and `ekg-provision doctor`.
+- If the CLI is missing, read the [local runtime installation instructions](../../../README.md#install-the-local-runtimes) first. Install or run the shipped `runtime/ekg-skills[build,consume,provision]` package with dependencies from public PyPI, then rerun `ekg-provision --version` and `ekg-provision doctor`.
 
 ## Return
 

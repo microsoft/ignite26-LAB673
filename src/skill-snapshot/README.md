@@ -38,8 +38,8 @@ Use an existing Python 3.12 installation and `uv`. From the repository root:
 
 ```powershell
 $snapshot = (Resolve-Path 'src\skill-snapshot').Path
-$env:UV_INDEX_URL = 'https://packagefeedproxy.microsoft.io/pypi/simple/'
-$env:NPM_CONFIG_REGISTRY = 'https://packagefeedproxy.microsoft.io/npm/'
+$env:UV_INDEX_URL = 'https://pypi.org/simple/'
+$env:NPM_CONFIG_REGISTRY = 'https://registry.npmjs.org/'
 
 uv tool install --python 3.12 --index-url $env:UV_INDEX_URL "$snapshot\runtime\ekg-skills[build,consume,provision]"
 uv tool install --python 3.12 --index-url $env:UV_INDEX_URL "$snapshot\runtime\grounding-skills[parquet]"
@@ -51,16 +51,16 @@ Keep runtimes in separate environments: GRZ pins `azure-search-documents==11.6.0
 while ontology pins `azure-search-documents==12.0.0`. The Python manifests define
 the direct production dependencies; there is no locked transitive dependency
 set or offline wheelhouse in this snapshot. Installation resolves dependencies
-through the Microsoft CFS feed and requires network access.
+through public PyPI and requires network access.
 
 For one-off commands, use `uv tool run --isolated --python 3.12 --index-url
-https://packagefeedproxy.microsoft.io/pypi/simple/ --from
+https://pypi.org/simple/ --from
 "<absolute-snapshot-root>\runtime\<runtime>[<extras>]" <command> ...`.
 
 Load this directory as a local plugin only through a host that supports the
 included plugin manifests. `.mcp.json` uses `${CLAUDE_PLUGIN_ROOT}` for local
 runtime paths; verify that your host expands it. Each subprocess is configured
-with its approved CFS registry. Azure MCP uses the source's
+with public PyPI or npm. Azure MCP uses the source's
 `@azure/mcp@latest` registration and is therefore not pinned by this snapshot.
 No dependencies or MCP server packages were installed to create this snapshot.
 

@@ -9,7 +9,7 @@
         "start"
       ],
       "env": {
-        "NPM_CONFIG_REGISTRY": "https://packagefeedproxy.microsoft.io/npm/"
+        "NPM_CONFIG_REGISTRY": "https://registry.npmjs.org/"
       }
     },
     "ekg-skills": {
@@ -23,7 +23,7 @@
         "ekg-mcp"
       ],
       "env": {
-        "UV_INDEX_URL": "https://packagefeedproxy.microsoft.io/pypi/simple/"
+        "UV_INDEX_URL": "https://pypi.org/simple/"
       }
     },
     "grounding-skills": {
@@ -37,7 +37,7 @@
         "grounding-mcp"
       ],
       "env": {
-        "UV_INDEX_URL": "https://packagefeedproxy.microsoft.io/pypi/simple/"
+        "UV_INDEX_URL": "https://pypi.org/simple/"
       }
     },
     "grz-skills": {
@@ -53,7 +53,7 @@
         "grz-mcp"
       ],
       "env": {
-        "UV_INDEX_URL": "https://packagefeedproxy.microsoft.io/pypi/simple/"
+        "UV_INDEX_URL": "https://pypi.org/simple/"
       }
     },
     "ontology-skills": {
@@ -67,7 +67,7 @@
         "ontology-mcp"
       ],
       "env": {
-        "UV_INDEX_URL": "https://packagefeedproxy.microsoft.io/pypi/simple/"
+        "UV_INDEX_URL": "https://pypi.org/simple/"
       }
     }
   }
