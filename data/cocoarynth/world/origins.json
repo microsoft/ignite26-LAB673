@@ -1,0 +1,126 @@
+{
+  "suppliers": [
+    {"id": "rio-claro", "name": "Cooperativa Agroartesanal Río Claro", "type": "cooperative", "members": 86, "contact": "marisol-vega", "language": "es"},
+    {"id": "akwapim-ridge", "name": "Akwapim Ridge Cocoa Farmers Association", "type": "producer_association", "members": 140, "contact": "kwabena-asare", "language": "en"},
+    {"id": "nuevo-horizonte", "name": "Cooperativa Agraria Nuevo Horizonte", "type": "cooperative", "members": 212, "contact": "lucia-huaman", "language": "es"},
+    {"id": "tsaravola", "name": "Tsaravola Estate", "type": "single_estate", "members": 1, "contact": "hery-rakotomalala", "language": "en"},
+    {"id": "loma-verde", "name": "Asociación de Productores de Cacao Loma Verde", "type": "producer_association", "members": 38, "contact": "yanelis-pena", "language": "es"}
+  ],
+  "origins": [
+    {
+      "id": "ecuador", "country": "Ecuador", "region": "Esmeraldas", "supplier": "rio-claro", "status": "active", "buying_since": 2018,
+      "variety_trade_name": "Nacional (trade description)", "elevation_m": "50–300",
+      "fermentation": "Three-tier wooden boxes, 6 days, turned every 48 hours",
+      "drying": "Raised wooden beds under a retractable roof, 8–10 days",
+      "flavor_notes": ["floral", "jasmine", "dried fig", "mild cocoa"]
+    },
+    {
+      "id": "ghana", "country": "Ghana", "region": "Akwapim Ridge, Eastern Region", "supplier": "akwapim-ridge", "status": "active", "buying_since": 2019,
+      "variety_trade_name": "Amelonado and Amazon hybrids (trade description)", "elevation_m": "300–450",
+      "fermentation": "On-farm heap fermentation under banana leaves, 6 days, turned twice",
+      "drying": "Raised bamboo mats in full sun, 7–9 days",
+      "flavor_notes": ["classic cocoa", "roasted nut", "brown bread"]
+    },
+    {
+      "id": "peru", "country": "Peru", "region": "Bagua, Amazonas", "supplier": "nuevo-horizonte", "status": "active", "buying_since": 2020,
+      "variety_trade_name": "Native Amazonian cacao (trade description)", "elevation_m": "450–700",
+      "fermentation": "Centralized fermentary, cascading boxes, 6–7 days",
+      "drying": "Solar dryer with raised mesh beds, 9–11 days",
+      "flavor_notes": ["citrus", "honey", "yellow fruit"]
+    },
+    {
+      "id": "madagascar", "country": "Madagascar", "region": "Sambirano Valley", "supplier": "tsaravola", "status": "active", "buying_since": 2021,
+      "variety_trade_name": "Trinitario (trade description)", "elevation_m": "20–150",
+      "fermentation": "Four-tier boxes, 6 days, turned daily after day 2",
+      "drying": "Raised beds with greenhouse cover in the rainy season, 7–12 days",
+      "flavor_notes": ["red berry", "citrus zest", "bright acidity"]
+    },
+    {
+      "id": "dominican-republic", "country": "Dominican Republic", "region": "Hato Mayor", "supplier": "loma-verde", "status": "trial", "buying_since": 2026,
+      "variety_trade_name": "Hispaniola Trinitario (trade description)", "elevation_m": "100–350",
+      "fermentation": "Wooden boxes at each farm, 5–6 days",
+      "drying": "Wooden racks and patios at each farm, 6–8 days",
+      "flavor_notes": ["molasses", "raisin", "earthy"]
+    }
+  ],
+  "farms": [
+    {"id": "las-brisas", "name": "Finca Las Brisas", "origin": "ecuador", "farmer": "jacinto-quinonez", "planted_ha": 4.2, "shade": "Mixed shade: guaba, banana and laurel"},
+    {"id": "el-cedro", "name": "Finca El Cedro", "origin": "ecuador", "farmer": "rosa-cortez", "planted_ha": 3.6, "shade": "Young cedar and banana shade"},
+    {"id": "la-ceiba", "name": "Finca La Ceiba", "origin": "ecuador", "farmer": "wilmer-angulo", "planted_ha": 5.1, "shade": "Remnant forest canopy"},
+    {"id": "nyamebekyere", "name": "Nyamebekyere Farm", "origin": "ghana", "farmer": "ama-owusu", "planted_ha": 2.8, "shade": "Plantain and timber trees"},
+    {"id": "adom", "name": "Adom Farm", "origin": "ghana", "farmer": "kofi-boateng", "planted_ha": 3.3, "shade": "Plantain, avocado and timber trees"},
+    {"id": "asaase", "name": "Asaase Farm", "origin": "ghana", "farmer": "akosua-mensah", "planted_ha": 2.1, "shade": "Light timber shade"},
+    {"id": "san-isidro", "name": "Chacra San Isidro", "origin": "peru", "farmer": "teodoro-ramos", "planted_ha": 3.0, "shade": "Inga and banana"},
+    {"id": "los-laureles", "name": "Chacra Los Laureles", "origin": "peru", "farmer": "elvira-chuquimango", "planted_ha": 2.4, "shade": "Inga; borders a neighbor's rice paddy on the east side"},
+    {"id": "tsaravola-river", "name": "Tsaravola River Parcel", "origin": "madagascar", "farmer": "hery-rakotomalala", "planted_ha": 18.0, "shade": "Albizia and jackfruit"},
+    {"id": "tsaravola-hillside", "name": "Tsaravola Hillside Parcel", "origin": "madagascar", "farmer": "hery-rakotomalala", "planted_ha": 11.5, "shade": "Albizia and mango"},
+    {"id": "loma-verde-farm", "name": "Finca Loma Verde", "origin": "dominican-republic", "farmer": "ramon-castillo", "planted_ha": 6.0, "shade": "Coconut and Gliricidia"},
+    {"id": "el-guayabo", "name": "Finca El Guayabo", "origin": "dominican-republic", "farmer": "miguel-reyes", "planted_ha": 4.5, "shade": "Guava, banana and Gliricidia"}
+  ],
+  "certifications": [
+    {
+      "id": "cert-nh-organic", "supplier": "nuevo-horizonte", "scheme": "Organic (USDA NOP and EU)", "certifier": "certiorganica",
+      "certificate_no": "CA-ORG-2025-0381", "valid_from": "2025-06-01", "valid_until": "2026-05-31",
+      "status": "expired_renewal_pending", "renewal_inspection": "insp-nh-2026-04",
+      "note": "Renewal decision waits for the certifier's follow-up visit on the buffer-zone finding."
+    },
+    {
+      "id": "cert-tsaravola-organic", "supplier": "tsaravola", "scheme": "Organic (EU)", "certifier": null,
+      "certificate_no": null, "valid_from": null, "valid_until": null, "status": "none",
+      "note": "Tsaravola is not certified organic. Cocoarynth's label policy forbids implying it."
+    }
+  ],
+  "inspections": [
+    {
+      "id": "insp-nh-2026-04", "type": "certifier_annual", "supplier": "nuevo-horizonte", "farms": ["san-isidro", "los-laureles"],
+      "date": "2026-04-22", "inspector": "rafael-soto", "language": "es",
+      "findings": [
+        {
+          "id": "f-nh-01", "farm": "los-laureles", "severity": "major",
+          "text": "Buffer strip between the cacao and the neighbor's rice paddy is only 3 m wide with no barrier hedge; the neighbor sprays herbicide by backpack sprayer. Required minimum is 8 m with a barrier.",
+          "corrective_action": "Plant a 10 m buffer with a living Inga hedge along the east boundary and record neighbor spraying dates.",
+          "due": "2026-08-31", "status": "evidence_submitted", "evidence_submitted": "2026-08-28", "follow_up_visit": "2026-10-20"
+        },
+        {
+          "id": "f-nh-02", "farm": "san-isidro", "severity": "minor",
+          "text": "Input register missing the compost delivery of 2026-02-14.",
+          "corrective_action": "Update the input register.", "due": "2026-05-31", "status": "closed", "closed": "2026-05-12"
+        }
+      ]
+    },
+    {
+      "id": "insp-rc-2026-03", "type": "internal", "supplier": "rio-claro", "farms": ["las-brisas", "el-cedro", "la-ceiba"],
+      "date": "2026-03-17", "inspector": "marisol-vega", "language": "es",
+      "findings": [
+        {"id": "f-rc-01", "farm": "el-cedro", "severity": "minor", "text": "Drainage channel beside the pod-breaking area blocked with husks.", "corrective_action": "Clear channel and move husk pile.", "due": "2026-04-15", "status": "closed", "closed": "2026-04-02"},
+        {"id": "f-rc-02", "farm": "la-ceiba", "severity": "observation", "text": "Black pod disease on roughly 5% of pods in the lower block.", "corrective_action": "Remove infected pods weekly.", "due": null, "status": "open"}
+      ]
+    },
+    {
+      "id": "insp-ar-2026-02", "type": "internal", "supplier": "akwapim-ridge", "farms": ["nyamebekyere", "adom", "asaase"],
+      "date": "2026-02-24", "inspector": "kwabena-asare", "language": "en",
+      "findings": [
+        {"id": "f-ar-01", "farm": "asaase", "severity": "minor", "text": "Drying mats placed directly on bare ground at one site.", "corrective_action": "Raise mats on bamboo frames at least 60 cm high.", "due": "2026-04-30", "status": "closed", "closed": "2026-04-10"}
+      ]
+    },
+    {
+      "id": "insp-ts-2026-05", "type": "buyer_visit", "supplier": "tsaravola", "farms": ["tsaravola-river", "tsaravola-hillside"],
+      "date": "2026-05-12", "inspector": "ana-ortega", "language": "en",
+      "findings": [
+        {"id": "f-ts-01", "farm": "tsaravola-river", "severity": "observation", "text": "Greenhouse dryer holds about half of a peak-week harvest; the rest dries on open beds that must be covered during rain.", "corrective_action": "Estate to add a second greenhouse dryer before the 2027 main crop.", "due": "2027-04-30", "status": "open"}
+      ]
+    },
+    {
+      "id": "insp-lv-2026-05", "type": "internal", "supplier": "loma-verde", "farms": ["el-guayabo", "loma-verde-farm"],
+      "date": "2026-05-20", "inspector": "yanelis-pena", "language": "es",
+      "findings": [
+        {
+          "id": "f-lv-01", "farm": "el-guayabo", "severity": "major",
+          "text": "After two weeks of rain the farm installed a wood-fired dryer. Its chimney stands about 4 m from the drying racks and smoke drifts over the beans in the afternoon.",
+          "corrective_action": "Move the drying racks at least 30 m upwind of the dryer and extend the chimney above the roofline.",
+          "due": "2026-08-15", "status": "closed", "closed": "2026-08-12"
+        }
+      ]
+    }
+  ]
+}

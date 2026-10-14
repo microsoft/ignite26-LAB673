@@ -1,0 +1,73 @@
+{
+  "company": {
+    "id": "cocoarynth",
+    "name": "Cocoarynth Chocolate Works",
+    "short_name": "Cocoarynth",
+    "founded": 2016,
+    "headquarters": "Portland, Oregon, USA",
+    "description": "Small bean-to-bar maker of single-origin chocolate. Buys fermented, dried cocoa beans from cooperatives, an estate and producer groups in five countries, makes two-ingredient bars in its Portland factory, and sells through grocers, specialty shops, cafés, an online marketplace and an overseas distributor.",
+    "employees": 24,
+    "flagship_shop": "Cocoarynth Tasting Room, Portland",
+    "bar_weight_g": 70
+  },
+  "departments": [
+    {"id": "sourcing", "name": "Sourcing"},
+    {"id": "quality", "name": "Quality"},
+    {"id": "production", "name": "Production"},
+    {"id": "sales", "name": "Sales and Partnerships"},
+    {"id": "logistics", "name": "Logistics"},
+    {"id": "data", "name": "Data and Insights"}
+  ],
+  "people": [
+    {"id": "ana-ortega", "name": "Ana Ortega", "org": "cocoarynth", "department": "sourcing", "role": "Head of Sourcing"},
+    {"id": "marcus-bell", "name": "Marcus Bell", "org": "cocoarynth", "department": "quality", "role": "Quality Manager"},
+    {"id": "devi-narayan", "name": "Devi Narayan", "org": "cocoarynth", "department": "quality", "role": "Sensory Panel Coordinator"},
+    {"id": "lin-zhou", "name": "Lin Zhou", "org": "cocoarynth", "department": "production", "role": "Production Manager"},
+    {"id": "talia-brooks", "name": "Talia Brooks", "org": "cocoarynth", "department": "sales", "role": "Sales and Partnerships Lead"},
+    {"id": "sam-okafor", "name": "Sam Okafor", "org": "cocoarynth", "department": "logistics", "role": "Logistics Coordinator"},
+    {"id": "jo-park", "name": "Jo Park", "org": "cocoarynth", "department": "data", "role": "Data Lead"},
+
+    {"id": "marisol-vega", "name": "Marisol Vega", "org": "rio-claro", "role": "Collection center manager"},
+    {"id": "jacinto-quinonez", "name": "Jacinto Quiñónez", "org": "rio-claro", "role": "Farmer, Finca Las Brisas"},
+    {"id": "rosa-cortez", "name": "Rosa Cortez", "org": "rio-claro", "role": "Farmer, Finca El Cedro"},
+    {"id": "wilmer-angulo", "name": "Wilmer Angulo", "org": "rio-claro", "role": "Farmer, Finca La Ceiba"},
+
+    {"id": "kwabena-asare", "name": "Kwabena Asare", "org": "akwapim-ridge", "role": "Association secretary"},
+    {"id": "ama-owusu", "name": "Ama Owusu", "org": "akwapim-ridge", "role": "Farmer, Nyamebekyere Farm"},
+    {"id": "kofi-boateng", "name": "Kofi Boateng", "org": "akwapim-ridge", "role": "Farmer, Adom Farm"},
+    {"id": "akosua-mensah", "name": "Akosua Mensah", "org": "akwapim-ridge", "role": "Farmer, Asaase Farm"},
+
+    {"id": "lucia-huaman", "name": "Lucía Huamán", "org": "nuevo-horizonte", "role": "Cooperative quality officer"},
+    {"id": "teodoro-ramos", "name": "Teodoro Ramos", "org": "nuevo-horizonte", "role": "Farmer, Chacra San Isidro"},
+    {"id": "elvira-chuquimango", "name": "Elvira Chuquimango", "org": "nuevo-horizonte", "role": "Farmer, Chacra Los Laureles"},
+
+    {"id": "hery-rakotomalala", "name": "Hery Rakotomalala", "org": "tsaravola", "role": "Estate manager"},
+
+    {"id": "yanelis-pena", "name": "Yanelis Peña", "org": "loma-verde", "role": "Association field technician"},
+    {"id": "ramon-castillo", "name": "Ramón Castillo", "org": "loma-verde", "role": "Farmer, Finca Loma Verde"},
+    {"id": "miguel-reyes", "name": "Miguel Reyes", "org": "loma-verde", "role": "Farmer, Finca El Guayabo"},
+
+    {"id": "priya-raman", "name": "Priya Raman", "org": "larkspur-market", "role": "Store manager, Hillcrest"},
+    {"id": "owen-gallagher", "name": "Owen Gallagher", "org": "steeple-saucer", "role": "Purchasing manager"},
+    {"id": "mei-lindqvist", "name": "Mei Lindqvist", "org": "cacao-cabinet", "role": "Owner"},
+    {"id": "aiko-tanabe", "name": "Aiko Tanabe", "org": "hoshizora-foods", "role": "Import manager"},
+    {"id": "rafael-soto", "name": "Rafael Soto", "org": "certiorganica", "role": "Organic inspector"},
+    {"id": "dana-whitfield", "name": "Dana Whitfield", "org": "northwind", "role": "Depot supervisor, Riverbend"}
+  ],
+  "partners": [
+    {"id": "tidewater", "name": "Tidewater Bean Importers", "kind": "importer", "location": "Oakland, California, USA"},
+    {"id": "bluefin", "name": "Bluefin Forwarding", "kind": "freight_forwarder", "location": "Oakland, California, USA"},
+    {"id": "northwind", "name": "Northwind Cold Freight", "kind": "carrier", "location": "Portland, Oregon, USA"},
+    {"id": "cascadia-labs", "name": "Cascadia Food Labs", "kind": "laboratory", "location": "Seattle, Washington, USA"},
+    {"id": "certiorganica", "name": "CertiOrgánica Andina", "kind": "certification_body", "location": "Lima, Peru"},
+    {"id": "fernleaf", "name": "Fernleaf Packaging", "kind": "packaging_supplier", "location": "Eugene, Oregon, USA"}
+  ],
+  "sites": [
+    {"id": "factory", "org": "cocoarynth", "name": "Cocoarynth factory", "location": "Portland, Oregon, USA", "timezone": "America/Los_Angeles"},
+    {"id": "conditioning-room", "org": "cocoarynth", "parent": "factory", "name": "Bean conditioning room", "location": "Portland, Oregon, USA", "timezone": "America/Los_Angeles"},
+    {"id": "retention-room", "org": "cocoarynth", "parent": "factory", "name": "Retention sample room", "location": "Portland, Oregon, USA", "timezone": "America/Los_Angeles"},
+    {"id": "riverbend-depot", "org": "northwind", "name": "Riverbend transfer depot", "location": "Pasco, Washington, USA", "timezone": "America/Los_Angeles"},
+    {"id": "riverbend-cold-room", "org": "northwind", "parent": "riverbend-depot", "name": "Cold Room 2 (16 °C)", "location": "Pasco, Washington, USA", "timezone": "America/Los_Angeles"},
+    {"id": "riverbend-bay-4", "org": "northwind", "parent": "riverbend-depot", "name": "Overflow Bay 4 (not temperature controlled)", "location": "Pasco, Washington, USA", "timezone": "America/Los_Angeles"}
+  ]
+}

@@ -1,0 +1,248 @@
+index: cocoarynth-logistics-retail
+description: Inbound bean shipping, outbound deliveries, carrier records, retailer correspondence, agreements, launch plans and sales.
+
+briefs:
+  - id: bill-of-lading-cn-mg-2606
+    title: "Bill of lading BFF-DIE-26-0207 (Antsiranana to Oakland)"
+    type: shipping_form
+    language: en
+    date: 2026-06-26
+    author: bluefin
+    audience: Importer and consignee
+    pages: 1
+    purpose: Shipping document for the Madagascar lot.
+    entities: [beans.consignments.CN-MG-2606, beans.lots.MG26-L02]
+    content: [Shipper Tsaravola Estate, consignee Tidewater for Cocoarynth, 7 jute bags 420 kg net, transshipment Port Louis, clause noting cargo loaded in rain.]
+    visuals: []
+    avoid: []
+
+  - id: receiving-note-cn-mg-2606
+    title: "Warehouse receiving note: consignment CN-MG-2606"
+    type: form
+    language: en
+    date: 2026-07-28
+    author: sam-okafor
+    audience: Quality, Logistics
+    pages: 1
+    purpose: Factory dock receipt noting damp bags.
+    entities: [beans.consignments.CN-MG-2606, beans.lots.MG26-L02]
+    content: [Arrived 28 July, 7 bags, 420.0 kg, outer jute damp in patches, sent to Quality for moisture check.]
+    visuals: [{kind: photo, asset: damp-jute-sacks}]
+    avoid: [Moisture value]
+
+  - id: bill-of-lading-cn-ec-2606
+    title: "Bill of lading BFF-GYE-26-1182 (Guayaquil to Oakland)"
+    type: shipping_form
+    language: en
+    date: 2026-06-28
+    author: bluefin
+    audience: Importer and consignee
+    pages: 1
+    purpose: Shipping document for the Ecuador lot EC26-L07.
+    entities: [beans.consignments.CN-EC-2606, beans.lots.EC26-L07]
+    content: [Shipper Cooperativa Agroartesanal Río Claro, 5 bags 300 kg, marks "EC26-L07".]
+    visuals: []
+    avoid: []
+
+  - id: dispatch-note-shp-2607-031
+    title: "Dispatch note SHP-2607-031: Larkspur Market"
+    type: shipping_form
+    language: en
+    date: 2026-07-13
+    author: sam-okafor
+    audience: Northwind Cold Freight, Larkspur Market
+    pages: 1
+    purpose: Outbound delivery of Ghana bars to Larkspur.
+    entities: [retail.shipments.SHP-2607-031, production.batches.GH26-0706]
+    content:
+      - Pallet LM-P02, 480 bars GH26-0706, route via Riverbend depot.
+      - Handling instructions - keep at 15–20 °C, do not stage in unrefrigerated areas.
+    visuals: []
+    avoid: []
+
+  - id: riverbend-depot-handling-log-2026-07-14
+    title: "Northwind Riverbend depot handling log, 14 July 2026"
+    type: scanned_form
+    language: en
+    date: 2026-07-14
+    author: dana-whitfield
+    audience: Northwind operations
+    pages: 2
+    purpose: Depot clipboard log showing where pallet LM-P02 waited.
+    entities: [retail.shipments.SHP-2607-031, company.sites.riverbend-bay-4, company.sites.riverbend-cold-room]
+    content:
+      - Several pallets logged that day; LM-P02 arrived 07:30, Cold Room 2 full with produce, placed in Overflow Bay 4 at 08:00, loaded onward 20:10.
+      - Heat advisory noted at the top of the sheet.
+      - Typed transcription page (text fallback for the scan).
+    visuals: [{kind: scan, asset: depot-log-scan}, {kind: photo, asset: overflow-bay}]
+    avoid: [Temperature readings]
+
+  - id: logger-report-logger-04
+    title: "Temperature logger report: LOGGER-04, Overflow Bay 4"
+    type: report
+    language: en
+    date: 2026-07-16
+    author: sam-okafor
+    audience: Quality, Logistics
+    pages: 2
+    purpose: Download of the logger that sat beside pallet LM-P02.
+    entities: [retail.loggers.LOGGER-04, retail.storage_guidance]
+    content:
+      - Chart of half-hourly readings 06:00–20:00 on 14 July.
+      - Summary - minimum, maximum 34.1 °C at 14:30, time above 25 °C 11:30–17:30.
+      - Reading table in an appendix.
+      - Note that the logger measures air, not the inside of the bars.
+    visuals: [{kind: chart, asset: logger-04}]
+    avoid: [Conclusions about bloom]
+
+  - id: email-larkspur-complaint-2026-07-18
+    title: "Email: White streaks on the Ghana bars – photos attached"
+    type: email
+    language: en
+    date: 2026-07-18
+    author: priya-raman
+    audience: Cocoarynth Quality
+    pages: 1
+    purpose: Retailer complaint that starts mystery 1.
+    entities: [retail.cases.CASE-2607-18, production.batches.GH26-0706]
+    content:
+      - Bars look dusty and grey; customers say they taste fine but look old.
+      - Asks whether they are safe to sell and whether to pull the case.
+      - Mentions the wrapper code GH26-0706 in the text as well as the photo.
+    visuals: [{kind: photo, asset: bloomed-bar}, {kind: photo, asset: wrapper-back-gh26-0706}]
+    avoid: []
+
+  - id: email-steeple-saucer-reorder-2026-07
+    title: "Email thread: Steeple & Saucer July reorder"
+    type: email
+    language: en
+    date: 2026-07-24
+    author: owen-gallagher
+    audience: Cocoarynth Sales
+    pages: 1
+    purpose: Another retailer happy with the same Ghana batch.
+    entities: [retail.shipments.SHP-2607-022, production.batches.GH26-0706]
+    content: [Ghana bars from the 10 July delivery are selling well and look great in the cafés; reorder request for August.]
+    visuals: []
+    avoid: []
+
+  - id: northwind-incident-letter-2026-07-24
+    title: "Northwind Cold Freight incident response: pallet LM-P02"
+    type: letter
+    language: en
+    date: 2026-07-24
+    author: northwind
+    audience: Cocoarynth Logistics
+    pages: 1
+    purpose: Carrier acknowledges where the pallet was staged and commits to a fix.
+    entities: [retail.shipments.SHP-2607-031, retail.cases.CASE-2607-18]
+    content:
+      - Pallet LM-P02 was staged in Overflow Bay 4 for about 12 hours during the heat advisory because Cold Room 2 was full.
+      - Corrective action - never stage Cocoarynth pallets in overflow bays; call ahead when the cold room is full.
+    visuals: []
+    avoid: [Temperatures and the word "bloom"]
+
+  - id: credit-memo-larkspur-2026-07
+    title: "Credit memo CM-2607-09: Larkspur Market"
+    type: form
+    language: en
+    date: 2026-07-22
+    author: talia-brooks
+    audience: Larkspur Market accounts payable
+    pages: 1
+    purpose: Credit for the affected bars and the replacement shipment.
+    entities: [retail.cases.CASE-2607-18, retail.shipments.SHP-2607-044, production.products.GH68]
+    content: [480 bars at USD 4.60 = USD 2,208.00 credited; replacement SHP-2607-044 sent direct on 22 July.]
+    visuals: []
+    avoid: [Cause]
+
+  - id: email-customer-inquiry-pantry-lane-2026-09-14
+    title: "Email: Which farms grew my chocolate?"
+    type: email
+    language: en
+    date: 2026-09-14
+    author: pantry-lane
+    audience: Cocoarynth support
+    pages: 1
+    purpose: Customer question forwarded from Pantry Lane that starts mystery 2.
+    entities: [retail.cases.CASE-2609-14, production.batches.EC26-0811]
+    content:
+      - Customer loved the Ecuador bar and wants to know which farms grew it; attaches a wrapper photo.
+      - The lot code EC26-0811 appears in the photo and is typed in the forwarding note.
+      - Support assigns the question to the Data team.
+    visuals: [{kind: photo, asset: wrapper-back-ec26-0811}]
+    avoid: [Any farm names]
+
+  - id: retailer-agreement-larkspur-market
+    title: "Supply agreement: Larkspur Market"
+    type: contract
+    language: en
+    date: 2025-12-01
+    author: talia-brooks
+    audience: Larkspur Market and Cocoarynth
+    pages: 3
+    purpose: Commercial terms and storage requirements for a grocer.
+    entities: [retail.retailers.larkspur-market, retail.storage_guidance]
+    content: [Pricing, delivery, storage at 15–20 °C in transit and in store, credit policy for damaged goods, traceability details for shelf labels (farm names yes, farmer names no).]
+    visuals: []
+    avoid: []
+
+  - id: retailer-agreement-cacao-cabinet
+    title: "Supply agreement: The Cacao Cabinet"
+    type: contract
+    language: en
+    date: 2025-11-15
+    author: talia-brooks
+    audience: The Cacao Cabinet and Cocoarynth
+    pages: 3
+    purpose: Specialty-shop agreement with first allocation of limited editions and shelf cards.
+    entities: [retail.retailers.cacao-cabinet]
+    content: [Pricing, limited editions first, shelf cards with farm names but no farmer contact details.]
+    visuals: []
+    avoid: []
+
+  - id: launch-plan-madagascar-nibs
+    title: "Launch plan update: Madagascar Tsaravola 70% with Cacao Nibs"
+    type: memo
+    language: en
+    date: 2026-08-05
+    author: talia-brooks
+    audience: Sales, retailers' buyers
+    pages: 1
+    purpose: Moves the limited-edition launch by a month.
+    entities: [production.products.MGNB, beans.lots.MG26-L02]
+    content:
+      - Original plan - production 30 July, launch 1 September.
+      - New plan - launch 1 October because the beans for the run are on a quality hold.
+      - Retailer communication timeline.
+    visuals: []
+    avoid: [Moisture values]
+
+  - id: wholesale-price-list-2026
+    title: "Cocoarynth wholesale price list 2026"
+    type: price_list
+    language: en
+    date: 2026-01-02
+    author: talia-brooks
+    audience: Retail partners
+    pages: 1
+    purpose: Prices per bar for every product.
+    entities: [production.products]
+    content: [Wholesale and suggested retail prices; limited edition listed as coming soon.]
+    visuals: []
+    avoid: []
+
+  - id: sales-review-q3-2026
+    title: "Sales review Q3 2026"
+    type: slide_deck
+    language: en
+    date: 2026-10-05
+    author: talia-brooks
+    audience: Leadership team
+    pages: 8
+    purpose: Quarterly sell-in by product and retailer.
+    entities: [commercial.sell_in_units_2026, production.products, retail.retailers]
+    content:
+      - Slides - headline numbers, units by product, MG70 by retailer, margin per bar after bean cost, retailer notes (Larkspur credit, Hoshizora quarterly orders), Q4 priorities.
+    visuals: [{kind: chart, asset: sellin-by-product-2026}, {kind: chart, asset: sellin-mg70-by-retailer}, {kind: chart, asset: margin-per-bar}]
+    avoid: []

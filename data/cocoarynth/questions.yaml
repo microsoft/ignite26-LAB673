@@ -1,0 +1,100 @@
+# Lab mysteries with ground truth for measuring retrieval quality.
+# `answer` is the expected answer. Each `evidence` item is one fact the answer needs, and `documents`
+# lists the PDFs (in data/cocoarynth/documents/<index>/) that are valid citations for it.
+# Citing any one of an item's documents counts as finding that fact.
+# `part_a_file` marks the policy uploaded as the notebook's file knowledge source.
+
+mysteries:
+  - id: M1
+    title: The grey Ghana bars
+    question: Why did the Ghana bars sold at Larkspur Market turn grey and dusty-looking in July 2026, and was the batch itself bad?
+    answer: >-
+      No, the batch was fine. The pallet waited 12 hours in Northwind's unrefrigerated Overflow Bay 4 at the
+      Riverbend depot during a heat wave on 14 July; the air stayed above 25 °C for six hours and peaked at 34.1 °C,
+      which caused heat (fat) bloom. Retained bars and the same batch sent to other retailers by direct routes had no bloom.
+    world: [retail.cases.CASE-2607-18, retail.shipments.SHP-2607-031, retail.loggers.LOGGER-04, production.batches.GH26-0706]
+    evidence:
+      - {fact: "Larkspur complaint with photos of grey bars, batch GH26-0706", documents: [email-larkspur-complaint-2026-07-18.pdf]}
+      - {fact: "Pallet LM-P02 placed in Overflow Bay 4 08:00–20:10 on 14 July; cold room full", documents: [riverbend-depot-handling-log-2026-07-14.pdf, northwind-incident-letter-2026-07-24.pdf]}
+      - {fact: "LOGGER-04 air temperature above 25 °C 11:30–17:30, peak 34.1 °C at 14:30", documents: [logger-report-logger-04.pdf]}
+      - {fact: "Retained bars from GH26-0706 show no bloom; other direct-route customers had no complaints", documents: [retention-check-gh26-0706.pdf]}
+      - {fact: "Bloom risk above 25 °C; recommended storage 15–20 °C", documents: [storage-handling-guide.pdf]}
+
+  - id: M2
+    title: Whose farm is in my bar?
+    question: A Pantry Lane customer sent a photo of an Ecuador bar wrapper and asked which farms grew the cacao. What can we tell them?
+    answer: >-
+      The wrapper lot code EC26-0811 is a batch made from bean lot EC26-L07, which combined beans from two farms in
+      Esmeraldas, Ecuador: Finca Las Brisas and Finca El Cedro (Cooperativa Agroartesanal Río Claro). Farm names can be
+      shared, but not the farmers' names or contact details.
+    world: [retail.cases.CASE-2609-14, production.batches.EC26-0811, beans.lots.EC26-L07, beans.collection_tickets]
+    evidence:
+      - {fact: "Customer inquiry with wrapper photo showing lot EC26-0811", documents: [email-customer-inquiry-pantry-lane-2026-09-14.pdf]}
+      - {fact: "Batch EC26-0811 used 250 kg of bean lot EC26-L07", documents: [batch-record-ec26-0811.pdf]}
+      - {fact: "Collection tickets T-0417 (Las Brisas, 420 kg) and T-0418 (El Cedro, 350 kg) for lot EC26-L07", documents: [boletas-acopio-rio-claro-2026.pdf, registro-fermentacion-ec26-l07.pdf]}
+      - {fact: "Policy allows farm names, not farmer personal details", documents: [data-sharing-policy.pdf]}
+
+  - id: M3
+    title: The smoky Dominican beans
+    question: Why did the trial beans from the Dominican Republic taste smoky, and what happened next?
+    answer: >-
+      Lot DR26-T02 from Finca El Guayabo was dried on racks about 4 m from a new wood-fired dryer whose chimney smoke
+      drifted over the beans. Four of five tasters found a smoky, hammy off-flavor, so the lot was rejected and credited.
+      The farm moved its racks 30 m upwind and raised the chimney; a later sample (DR26-T03) tasted clean.
+    world: [beans.lots.DR26-T02, origins.inspections.insp-lv-2026-05, retail.cases.NCR-2607-03, beans.lots.DR26-T03]
+    evidence:
+      - {fact: "Sensory rejection: 4 of 5 tasters detected smoky, hammy off-flavor", documents: [sensory-rejection-dr26-t02.pdf, ncr-2607-03-loma-verde.pdf]}
+      - {fact: "Field inspection notes: wood-fired dryer chimney 4 m from drying racks", documents: [informe-visita-campo-loma-verde-2026-05.pdf]}
+      - {fact: "Corrective action completed 2026-08-12; follow-up sample passed 2026-09-16", documents: [ncr-2607-03-loma-verde.pdf, sample-approval-dr26-t03.pdf]}
+
+  - id: M4
+    title: The organic seal
+    question: Can Cocoarynth print the organic seal on the Peru Bagua 70% bars packed in September 2026?
+    answer: >-
+      No. The cooperative's organic certificate expired on 31 May 2026 and the renewal is still pending because the
+      certifier found a buffer strip only 3 m wide next to a neighbor's sprayed rice paddy at Chacra Los Laureles. Label
+      policy requires a valid certificate on the packing date. (The March batch could carry the seal; the September batch cannot.)
+    world: [origins.certifications.cert-nh-organic, origins.inspections.insp-nh-2026-04, production.batches.PE26-0902, production.batches.PE26-0303]
+    evidence:
+      - {fact: "Label-claims policy: organic seal only if supplier certificate valid on packing date and transaction certificate on file", documents: [label-claims-policy.pdf], part_a_file: true}
+      - {fact: "Certificate CA-ORG-2025-0381 valid until 2026-05-31; renewal pending", documents: [organic-status-update-nuevo-horizonte.pdf]}
+      - {fact: "Inspection finding f-nh-01: 3 m buffer, required 8 m; follow-up visit 2026-10-20", documents: [informe-inspeccion-organica-nuevo-horizonte-2026.pdf]}
+      - {fact: "PE26-0902 packed 2026-09-04 without seal", documents: [batch-record-pe26-0902.pdf]}
+
+  - id: M5
+    title: The late limited edition
+    question: Why did the Madagascar limited-edition bar with cacao nibs launch on 1 October instead of 1 September, and what happened at the estate to start the delay?
+    answer: >-
+      Its beans (lot MG26-L02) arrived on 28 July at 8.6% moisture, above the 7.5% limit, after rain cut drying short at
+      the estate. The lot was held and re-dried until it tested 7.1% on 19 August, so production moved from late July to
+      26 August and the launch slipped a month.
+    world: [beans.lots.MG26-L02, production.products.MGNB, production.batches.MG26-0826]
+    evidence:
+      - {fact: "Estate drying interrupted by four days of rain; beans bagged early", documents: [tsaravola-harvest-report-2026-06.pdf]}
+      - {fact: "Receiving test 8.6% moisture, hold opened 28 July", documents: [hold-notice-mg26-l02.pdf, cut-test-register-2026.pdf, release-record-mg26-l02.pdf]}
+      - {fact: "Re-dried 3–14 August; retest 7.1% on 19 August; released 20 August", documents: [redry-log-mg26-l02.pdf, lab-certificate-mg26-l02.pdf, release-record-mg26-l02.pdf]}
+      - {fact: "Launch moved from 1 September to 1 October", documents: [launch-plan-madagascar-nibs.pdf, sales-review-q3-2026.pdf]}
+
+  - id: M6
+    title: The tasting panel winner
+    question: Which origin won Cocoarynth's September 2026 tasting panel, and what did the tasters notice about it?
+    answer: >-
+      Madagascar (Tsaravola 70%) won with an overall score of 8.4 out of 10. Tasters noted red berry and raspberry,
+      citrus zest, bright but balanced acidity and low bitterness; seven of nine ranked it first.
+    world: [sensory.panels.PANEL-2026-09]
+    evidence:
+      - {fact: "Overall scores by origin (Madagascar 8.4, Ecuador 7.9, Peru 7.6, Ghana 7.2, Dominican trial 7.0) and Madagascar's tasting notes", documents: [sensory-panel-report-2026-09.pdf]}
+
+  - id: M7
+    title: Capstone — was it worth it?
+    question: Which origin's beans cost Cocoarynth the most in 2026, and was it worth paying for them, judging by taste and sales?
+    answer: >-
+      Madagascar's Tsaravola beans, at USD 13.80 per kg landed (versus 9.40–11.20 for the others and a 5.20 world
+      reference). Yes: the bar won the tasting panel, sells at the highest wholesale price (USD 5.60), keeps the best
+      margin per bar after bean cost, and its sales grew every month at The Cacao Cabinet and through Hoshizora Foods.
+    world: [commercial.prices_landed_usd_kg, commercial.contracts, production.products, sensory.panels.PANEL-2026-09, commercial.sell_in_units_2026]
+    evidence:
+      - {fact: "2026 landed prices by origin and world reference", documents: [sourcing-price-review-2026.pdf, origin-transparency-report-2026.pdf]}
+      - {fact: "Wholesale price per bar by product", documents: [wholesale-price-list-2026.pdf, sales-review-q3-2026.pdf]}
+      - {fact: "Monthly sell-in by product and retailer", documents: [sales-review-q3-2026.pdf]}
+      - {fact: "Tasting panel ranking", documents: [sensory-panel-report-2026-09.pdf]}

@@ -31,9 +31,12 @@ VECTOR_PROFILE_NAME = "vector-search-profile"
 INDEXER_POLL_SECONDS = 10
 INDEXER_TIMEOUT_SECONDS = 30 * 60
 CORPUS_COUNTS = {
-    "cocoarynth-documents-index": 4,
-    "cocoarynth-engineering-practices-index": 4,
+    "cocoarynth-logistics-retail": 16,
+    "cocoarynth-origins": 16,
+    "cocoarynth-policies": 8,
+    "cocoarynth-quality": 15,
 }
+FILE_SOURCE_PDF = "documents/cocoarynth-policies/label-claims-policy.pdf"
 
 
 def load_corpora() -> dict[str, list[Path]]:
@@ -71,8 +74,8 @@ def load_corpora() -> dict[str, list[Path]]:
         indexed_paths.update(relative_paths)
 
     file_sources = manifest.get("file-source")
-    if file_sources != ["documents/wholesale-traceability-data-sharing-policy.pdf"]:
-        raise RuntimeError("The file-source exercise must use the data-sharing policy PDF.")
+    if file_sources != [FILE_SOURCE_PDF]:
+        raise RuntimeError("The file-source exercise must use the label-claims policy PDF.")
     if not (DATA_ROOT / file_sources[0]).is_file():
         raise RuntimeError("The file-source policy PDF is missing.")
     return selected

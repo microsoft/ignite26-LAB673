@@ -20,7 +20,7 @@ credential = AzureKeyCredential(admin_key)
 azure_openai_endpoint = os.environ["AZURE_OPENAI_ENDPOINT"]
 
 LOG_FILE = str(Path(__file__).parent / "index-creation.log")
-INDEX_NAMES = ("cocoarynth-documents-index", "cocoarynth-engineering-practices-index")
+INDEX_NAMES = ("cocoarynth-logistics-retail", "cocoarynth-origins", "cocoarynth-policies", "cocoarynth-quality")
 
 def log_message(message, log_file=LOG_FILE):
     """Write message to log file with timestamp"""

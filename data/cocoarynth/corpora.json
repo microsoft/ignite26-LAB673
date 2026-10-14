@@ -1,17 +1,68 @@
 {
-  "cocoarynth-documents-index": [
-    "documents/adr-immutable-origin-passport-snapshots.pdf",
-    "documents/mapayca-markets-traceability-pilot-requirements.pdf",
-    "documents/origin-passport-support-runbook.pdf",
-    "documents/wholesale-traceability-data-sharing-policy.pdf"
+  "cocoarynth-logistics-retail": [
+    "documents/cocoarynth-logistics-retail/bill-of-lading-cn-ec-2606.pdf",
+    "documents/cocoarynth-logistics-retail/bill-of-lading-cn-mg-2606.pdf",
+    "documents/cocoarynth-logistics-retail/credit-memo-larkspur-2026-07.pdf",
+    "documents/cocoarynth-logistics-retail/dispatch-note-shp-2607-031.pdf",
+    "documents/cocoarynth-logistics-retail/email-customer-inquiry-pantry-lane-2026-09-14.pdf",
+    "documents/cocoarynth-logistics-retail/email-larkspur-complaint-2026-07-18.pdf",
+    "documents/cocoarynth-logistics-retail/email-steeple-saucer-reorder-2026-07.pdf",
+    "documents/cocoarynth-logistics-retail/launch-plan-madagascar-nibs.pdf",
+    "documents/cocoarynth-logistics-retail/logger-report-logger-04.pdf",
+    "documents/cocoarynth-logistics-retail/northwind-incident-letter-2026-07-24.pdf",
+    "documents/cocoarynth-logistics-retail/receiving-note-cn-mg-2606.pdf",
+    "documents/cocoarynth-logistics-retail/retailer-agreement-cacao-cabinet.pdf",
+    "documents/cocoarynth-logistics-retail/retailer-agreement-larkspur-market.pdf",
+    "documents/cocoarynth-logistics-retail/riverbend-depot-handling-log-2026-07-14.pdf",
+    "documents/cocoarynth-logistics-retail/sales-review-q3-2026.pdf",
+    "documents/cocoarynth-logistics-retail/wholesale-price-list-2026.pdf"
   ],
-  "cocoarynth-engineering-practices-index": [
-    "documents/engineering-practices/cocoarynth-api-design-export-contracts-guide.pdf",
-    "documents/engineering-practices/cocoarynth-engineering-culture-presentation.pdf",
-    "documents/engineering-practices/cocoarynth-product-ui-accessibility-guide.pdf",
-    "documents/engineering-practices/cocoarynth-react-typescript-engineering-guide.pdf"
+  "cocoarynth-origins": [
+    "documents/cocoarynth-origins/akwapim-internal-inspection-2026-02.pdf",
+    "documents/cocoarynth-origins/boletas-acopio-rio-claro-2026.pdf",
+    "documents/cocoarynth-origins/informe-inspeccion-organica-nuevo-horizonte-2026.pdf",
+    "documents/cocoarynth-origins/informe-visita-campo-loma-verde-2026-05.pdf",
+    "documents/cocoarynth-origins/inspeccion-interna-rio-claro-2026-03.pdf",
+    "documents/cocoarynth-origins/organic-status-update-nuevo-horizonte.pdf",
+    "documents/cocoarynth-origins/origin-profile-dominican-republic.pdf",
+    "documents/cocoarynth-origins/origin-profile-ecuador.pdf",
+    "documents/cocoarynth-origins/origin-profile-ghana.pdf",
+    "documents/cocoarynth-origins/origin-profile-madagascar.pdf",
+    "documents/cocoarynth-origins/origin-profile-peru.pdf",
+    "documents/cocoarynth-origins/origin-transparency-report-2026.pdf",
+    "documents/cocoarynth-origins/registro-fermentacion-ec26-l07.pdf",
+    "documents/cocoarynth-origins/sourcing-price-review-2026.pdf",
+    "documents/cocoarynth-origins/tsaravola-buyer-visit-2026-05.pdf",
+    "documents/cocoarynth-origins/tsaravola-harvest-report-2026-06.pdf"
+  ],
+  "cocoarynth-policies": [
+    "documents/cocoarynth-policies/bean-quality-specification.pdf",
+    "documents/cocoarynth-policies/data-sharing-policy.pdf",
+    "documents/cocoarynth-policies/glossary.pdf",
+    "documents/cocoarynth-policies/label-claims-policy.pdf",
+    "documents/cocoarynth-policies/org-chart.pdf",
+    "documents/cocoarynth-policies/product-launch-process.pdf",
+    "documents/cocoarynth-policies/sourcing-principles.pdf",
+    "documents/cocoarynth-policies/storage-handling-guide.pdf"
+  ],
+  "cocoarynth-quality": [
+    "documents/cocoarynth-quality/batch-record-ec26-0811.pdf",
+    "documents/cocoarynth-quality/batch-record-gh26-0706.pdf",
+    "documents/cocoarynth-quality/batch-record-mg26-0826.pdf",
+    "documents/cocoarynth-quality/batch-record-pe26-0902.pdf",
+    "documents/cocoarynth-quality/bean-receiving-procedure.pdf",
+    "documents/cocoarynth-quality/cut-test-register-2026.pdf",
+    "documents/cocoarynth-quality/hold-notice-mg26-l02.pdf",
+    "documents/cocoarynth-quality/lab-certificate-mg26-l02.pdf",
+    "documents/cocoarynth-quality/ncr-2607-03-loma-verde.pdf",
+    "documents/cocoarynth-quality/redry-log-mg26-l02.pdf",
+    "documents/cocoarynth-quality/release-record-mg26-l02.pdf",
+    "documents/cocoarynth-quality/retention-check-gh26-0706.pdf",
+    "documents/cocoarynth-quality/sample-approval-dr26-t03.pdf",
+    "documents/cocoarynth-quality/sensory-panel-report-2026-09.pdf",
+    "documents/cocoarynth-quality/sensory-rejection-dr26-t02.pdf"
   ],
   "file-source": [
-    "documents/wholesale-traceability-data-sharing-policy.pdf"
+    "documents/cocoarynth-policies/label-claims-policy.pdf"
   ]
 }

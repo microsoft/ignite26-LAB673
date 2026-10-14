@@ -26,7 +26,7 @@ param llmModelVersion string = '2026-03-05'
 @description('Chat/reasoning deployment capacity')
 @minValue(1)
 @maxValue(200)
-param llmModelCapacity int = 50
+param llmModelCapacity int = 200
 
 var uniqueSuffix = uniqueString(resourceGroup().id)
 var foundrySuffix = empty(foundryDeploymentSuffix) ? uniqueSuffix : '${uniqueSuffix}-${foundryDeploymentSuffix}'

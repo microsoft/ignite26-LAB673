@@ -1,0 +1,243 @@
+index: cocoarynth-quality
+description: Factory quality and production records - receiving procedure, bean tests, holds, lab certificates, sensory reports, batch records and nonconformances.
+
+briefs:
+  - id: bean-receiving-procedure
+    title: "QP-04 Bean receiving and release procedure"
+    type: procedure
+    language: en
+    date: 2026-01-05
+    author: marcus-bell
+    audience: Quality and warehouse staff
+    pages: 3
+    purpose: The rules every incoming bean lot must pass before it can be used.
+    entities: [beans.receiving_limits]
+    content:
+      - Steps - weigh, inspect bags, sample, moisture, 300-bean cut test, sensory check, release or hold.
+      - Limits - moisture 7.5% max; mouldy 3%, slaty 5%, insect-damaged 3% max; off-flavor rule (3 tasters).
+      - Holds - lots over the moisture limit are re-dried in the conditioning room and retested; lots with off-flavors are rejected.
+      - Release record and who signs it.
+    visuals: []
+    avoid: []
+
+  - id: cut-test-register-2026
+    title: "Bean receiving register 2026 (January–September)"
+    type: register
+    language: en
+    date: 2026-09-30
+    author: marcus-bell
+    audience: Quality
+    pages: 2
+    purpose: One row per bean lot received in 2026 with moisture, cut-test counts and disposition.
+    entities: [beans.lots]
+    content:
+      - Table of all lots - origin, received date, kg, moisture, cut-test counts, sensory, status, release/reject date.
+      - Footnotes for MG26-L02 (hold and re-dry) and DR26-T02 (rejected on sensory).
+    visuals: [{kind: chart, asset: cut-test-summary-2026}]
+    avoid: [Causes of the hold or rejection]
+
+  - id: hold-notice-mg26-l02
+    title: "Hold notice H-2607-02: bean lot MG26-L02"
+    type: form
+    language: en
+    date: 2026-07-28
+    author: marcus-bell
+    audience: Quality, Production, Sourcing
+    pages: 1
+    purpose: Formal hold placed on the Madagascar lot on arrival.
+    entities: [beans.lots.MG26-L02, beans.consignments.CN-MG-2606]
+    content:
+      - Lot, 7 bags, 420 kg received 28 July; outer jute damp.
+      - Moisture 8.6% against the 7.5% limit; cut test passed with mouldy 1.7% (higher than usual).
+      - Disposition - hold; re-dry in the conditioning room; do not issue to production.
+      - Production impact - limited-edition run planned for 30 July cannot start.
+    visuals: [{kind: photo, asset: damp-jute-sacks}]
+    avoid: []
+
+  - id: redry-log-mg26-l02
+    title: "Conditioning room log: re-drying MG26-L02"
+    type: log
+    language: en
+    date: 2026-08-19
+    author: lin-zhou
+    audience: Quality
+    pages: 2
+    purpose: Daily moisture checks while the Madagascar lot was re-dried.
+    entities: [beans.lots.MG26-L02, company.sites.conditioning-room]
+    content:
+      - Re-drying 3–14 August in shallow trays with dehumidification; daily moisture checks.
+      - Retest on 19 August - 7.1%; mass after re-dry 413.2 kg.
+    visuals: [{kind: chart, asset: redry-moisture-mg26-l02}, {kind: photo, asset: conditioning-room-trays}]
+    avoid: []
+
+  - id: lab-certificate-mg26-l02
+    title: "Cascadia Food Labs certificate of analysis CFL-26-08-4471"
+    type: lab_certificate
+    language: en
+    date: 2026-08-19
+    author: cascadia-labs
+    audience: Cocoarynth Quality
+    pages: 1
+    purpose: Independent moisture and microbiology results after re-drying.
+    entities: [beans.lots.MG26-L02]
+    content:
+      - Sample received 19 August; moisture 7.1%.
+      - Microbiology - total yeast and mould, Salmonella absent in 25 g, E. coli below detection (author realistic values within limits).
+      - Conclusion - meets Cocoarynth specification.
+    visuals: []
+    avoid: []
+
+  - id: release-record-mg26-l02
+    title: "Lot release record: MG26-L02"
+    type: form
+    language: en
+    date: 2026-08-20
+    author: marcus-bell
+    audience: Production
+    pages: 1
+    purpose: Closes the hold and releases the Madagascar lot.
+    entities: [beans.lots.MG26-L02]
+    content: [Hold opened 28 July and closed 20 August; released 412.2 kg after sample; sensory check clean.]
+    visuals: []
+    avoid: []
+
+  - id: sensory-rejection-dr26-t02
+    title: "Sensory evaluation: trial lot DR26-T02"
+    type: report
+    language: en
+    date: 2026-07-13
+    author: devi-narayan
+    audience: Quality and Sourcing
+    pages: 1
+    purpose: Tasting result that rejects the Dominican trial lot.
+    entities: [beans.lots.DR26-T02, beans.lots.DR26-T01]
+    content:
+      - Bench roast and liquor tasting by 5 tasters.
+      - 4 of 5 detected smoky, hammy notes (campfire, smoked ham on the finish); approved sample DR26-T01 did not have them.
+      - Recommendation - reject under the sample-match clause.
+    visuals: []
+    avoid: [Cause on the farm]
+
+  - id: ncr-2607-03-loma-verde
+    title: "Nonconformance report NCR-2607-03"
+    type: form
+    language: en
+    date: 2026-07-15
+    author: marcus-bell
+    audience: Quality and Sourcing
+    pages: 2
+    purpose: Nonconformance raised for the rejected trial lot, with the supplier response and closure added later.
+    entities: [retail.cases.NCR-2607-03, beans.lots.DR26-T02, beans.lots.DR26-T03]
+    content:
+      - Section 1 (15 July) - rejection, disposition, supplier credited; supplier asked for root cause.
+      - Section 2 (12 August) - supplier reports racks moved 30 m upwind and chimney raised (refers to the association's field visit without detail).
+      - Section 3 (18 September) - follow-up sample DR26-T03 clean; NCR closed.
+    visuals: [{kind: photo, asset: relocated-racks}]
+    avoid: [Quoting the 4 m chimney distance (that is in the field notes)]
+
+  - id: sample-approval-dr26-t03
+    title: "Sample approval: DR26-T03"
+    type: form
+    language: en
+    date: 2026-09-16
+    author: devi-narayan
+    audience: Sourcing
+    pages: 1
+    purpose: Confirms the post-fix sample tastes clean.
+    entities: [beans.lots.DR26-T03]
+    content: [Moisture 7.0%, molasses and raisin, no smoke detected by any taster; dried on relocated racks.]
+    visuals: []
+    avoid: []
+
+  - id: sensory-panel-report-2026-09
+    title: "Sensory panel report: 2026 single-origin bars"
+    type: report
+    language: en
+    date: 2026-09-24
+    author: devi-narayan
+    audience: Company-wide
+    pages: 3
+    purpose: Annual blind tasting of all origins.
+    entities: [sensory.panels.PANEL-2026-09]
+    content:
+      - Method - 9 panelists, blind three-digit codes.
+      - Results table with overall scores and the notes for each sample.
+      - Discussion of the winner and the Dominican trial's improvement.
+    visuals: [{kind: chart, asset: panel-overall}, {kind: chart, asset: panel-radar-all}, {kind: photo, asset: tasting-booths}]
+    avoid: [Prices]
+
+  - id: batch-record-gh26-0706
+    title: "Batch record GH26-0706: Ghana Akwapim Ridge 68%"
+    type: batch_record
+    language: en
+    date: 2026-07-07
+    author: lin-zhou
+    audience: Production and Quality
+    pages: 2
+    purpose: Normal batch record; shows the batch passed release.
+    entities: [production.batches.GH26-0706, beans.lots.GH26-L03]
+    content: [Inputs, roast/grind/conche/temper stages with times, temper check passed, 3778 bars packed, 10 retained.]
+    visuals: []
+    avoid: []
+
+  - id: retention-check-gh26-0706
+    title: "Retention sample check: GH26-0706"
+    type: form
+    language: en
+    date: 2026-07-20
+    author: marcus-bell
+    audience: Quality, Sales
+    pages: 1
+    purpose: Quality checks the factory's retained bars after the Larkspur complaint.
+    entities: [production.batches.GH26-0706, retail.cases.CASE-2607-18]
+    content:
+      - All 10 retained bars glossy, even snap, no bloom.
+      - Note that Steeple & Saucer and Pantry Lane received the same batch on direct routes and reported no issues.
+      - Conclusion - the batch left the factory in good condition; look at what happened in transit.
+    visuals: [{kind: photo, asset: glossy-bar}]
+    avoid: [Depot or temperature details]
+
+  - id: batch-record-ec26-0811
+    title: "Batch record EC26-0811: Ecuador Río Claro 72%"
+    type: batch_record
+    language: en
+    date: 2026-08-12
+    author: lin-zhou
+    audience: Production and Quality
+    pages: 2
+    purpose: Links the wrapper lot code to the bean lot.
+    entities: [production.batches.EC26-0811, beans.lots.EC26-L07]
+    content: [Input 250 kg of bean lot EC26-L07, stages, 3878 bars, wrapper lot code EC26-0811 best by 08/2027.]
+    visuals: []
+    avoid: [Farm names (they are in the origin records)]
+
+  - id: batch-record-pe26-0902
+    title: "Batch record PE26-0902: Peru Bagua 70%"
+    type: batch_record
+    language: en
+    date: 2026-09-04
+    author: lin-zhou
+    audience: Production and Quality
+    pages: 2
+    purpose: Peru batch packed without the organic seal.
+    entities: [production.batches.PE26-0902, production.batches.PE26-0303, beans.lots.PE25-L11]
+    content:
+      - Input 200 kg of PE25-L11; 3189 bars.
+      - Label check - wrappers printed without organic seal; reason recorded as "supplier certificate not valid on packing date".
+      - Reference to the March batch PE26-0303, which carried the seal.
+    visuals: []
+    avoid: [Inspection findings]
+
+  - id: batch-record-mg26-0826
+    title: "Batch record MG26-0826: Madagascar Tsaravola 70% with Cacao Nibs"
+    type: batch_record
+    language: en
+    date: 2026-08-28
+    author: lin-zhou
+    audience: Production and Quality
+    pages: 2
+    purpose: The limited-edition run that started almost a month late.
+    entities: [production.batches.MG26-0826, beans.lots.MG26-L02, production.products.MGNB]
+    content: [Planned start 30 July; actual 26 August after lot release on 20 August; 220 kg input; 3509 bars.]
+    visuals: []
+    avoid: []

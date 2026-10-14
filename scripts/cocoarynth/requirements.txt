@@ -1,0 +1,9 @@
+Jinja2
+Markdown
+matplotlib
+Pillow
+playwright
+PyMuPDF
+python-dotenv
+PyYAML
+requests
