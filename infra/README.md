@@ -7,6 +7,7 @@ This folder provisions the Foundry IQ portion of LAB673 for Skillable and self-p
 | Resource | Configuration |
 | --- | --- |
 | Foundry IQ (Azure AI Search) | Serverless in **West Central US**, using `2026-09-01-preview` |
+| Search graph identity | User-assigned identity attached to Search for managed knowledge graph builds, with Storage Blob Data Reader and Cognitive Services OpenAI User |
 | Blob Storage | Standard LRS account with a private `knowledge` container |
 | Foundry | An `AIServices` account and project with managed identities |
 | Chat/reasoning | `gpt-5.4`, version `2026-03-05`, Global Standard, capacity 200 |
