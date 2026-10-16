@@ -1,0 +1,35 @@
+{
+  "sourceCommit": "b7fa50616f52e3355f609e78ca0fc91a5bebedc2",
+  "sourceDirty": false,
+  "nodeVersion": "v22.19.0",
+  "platform": "win32",
+  "architecture": "x64",
+  "lockfileSha256": "fa214927c06137bd218220f427f52717b5dbe35ef3bf858b5a4aae7f6fdac05c",
+  "buildCommand": "npm ci; npx vite build --mode <entry>; node scripts/check-bundles.mjs",
+  "product": "ekg",
+  "resources": {
+    "graph": {
+      "rawHtmlBytes": 1895246,
+      "gzipHtmlBytes": 543455,
+      "gzipJsCssBytes": 543284,
+      "budgetBytes": 1048576,
+      "sha256": "9c5d6cb701d55848fbf60aef7822b38faa02b6514012e7282baceec2d1aadc3e",
+      "graphDependencies": 498
+    },
+    "evidence": {
+      "rawHtmlBytes": 478745,
+      "gzipHtmlBytes": 137563,
+      "gzipJsCssBytes": 137358,
+      "budgetBytes": 204800,
+      "sha256": "bab64bcc50593b376a7594b062b0e0c126a86e00c3fd6a0ff6761063388203ae",
+      "graphDependencies": 0
+    }
+  },
+  "notices": {
+    "graph.THIRD_PARTY_NOTICES.txt": "30e4be45fc7341c0bf6fdfba5007de8914f4da96cc40fb0a11b81c93ec7f8484",
+    "evidence.THIRD_PARTY_NOTICES.txt": "dcb4e6a0c780816ba22b63de05822779d09d943b4b245a2fc2aa8c18016b2fa1"
+  },
+  "domainIsolation": {
+    "result": "passed"
+  }
+}

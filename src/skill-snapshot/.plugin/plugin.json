@@ -1,7 +1,7 @@
 {
   "name": "graph-skills-snapshot",
   "description": "Temporary testing-only snapshot of 13 graph-routing, EKG, grounding, GRZ and ontology skills.",
-  "version": "1.0.0-snapshot.0e44f94",
+  "version": "1.0.0-snapshot.e92776c",
   "author": {
     "name": "Microsoft",
     "url": "https://www.microsoft.com"

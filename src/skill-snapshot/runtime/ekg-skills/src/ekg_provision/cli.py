@@ -9,7 +9,7 @@ from ekg_core.cli import Blocked, add_command, new_parser, parse, report, say
 from ekg_core.execution import ApprovalRequired, serialize_events
 from ekg_core.models import (
     MODEL_DEPLOYMENT_SKUS, BuildAccessSpec, ModelDeploymentSpec, NetworkSpec, ProvisioningSpec, PublicTestSpec,
-    Target,
+    PublicDataSpec, Target,
 )
 from .backends import AzureSdkBackend, ProvisioningError
 from .capacity import CapacityError, capacity_plan, capacity_update, quota_check
@@ -71,6 +71,11 @@ def _resources() -> argparse.ArgumentParser:
     parser.add_argument("--public-test-egress-ip", action="append")
     parser.add_argument("--public-test-expires-at")
     parser.add_argument("--synthetic-data-only", action="store_true")
+    parser.add_argument("--public-data-entra", action="store_true",
+                        help="bounded public-corpus-only Entra setup; not synthetic public-test")
+    parser.add_argument("--public-data-only", action="store_true",
+                        help="acknowledge genuinely public corpus only, no non-public data")
+    parser.add_argument("--public-data-expires-at", help="UTC expiry in the next 72 hours")
     parser.add_argument("--search-identity-name",
                         help="managed identity to create and attach to Search (build access)")
     parser.add_argument("--storage-container", help="private Blob container to create "
@@ -165,7 +170,7 @@ def _build_parser():
             "--output", help="folder for Bicep parameters and Portal guidance")
     add_command(commands, "inspect", "Inspect the live resources (read-only).", [resources])
     add_command(commands, "verify", "Verify the provisioned resources (read-only).", [resources])
-    _gate(add_command(commands, "apply", "Apply the approved public-test plan.", [resources]),
+    _gate(add_command(commands, "apply", "Apply the approved bounded public plan.", [resources]),
           "provisioning")
     _run_id(add_command(commands, "plan-resume", "Review resuming an interrupted run.",
                         [resources]), "the run to resume")
@@ -242,6 +247,18 @@ def _validate_command_args(args) -> tuple[tuple[str | None, ...], list[ModelDepl
         raise _usage("network configuration requires --network-vnet-name, "
                      "--network-subnet-name, --network-vnet-cidr and --network-subnet-cidr "
                      "together")
+    if args.public_data_entra:
+        if (args.public_test or args.public_test_mode or args.public_test_tenant_id
+                or args.public_test_egress_ip or args.public_test_expires_at
+                or args.synthetic_data_only):
+            raise _usage("--public-data-entra rejects all public-test/synthetic settings")
+        if not (args.tenant_id and args.public_data_only and args.public_data_expires_at):
+            raise _usage("--public-data-entra requires --tenant-id, --public-data-only and "
+                         "--public-data-expires-at")
+        if any(value is not None for value in network_args):
+            raise _usage("--public-data-entra cannot use private networking")
+    elif args.public_data_only or args.public_data_expires_at:
+        raise _usage("public-data settings require --public-data-entra")
     if args.public_test:
         if not (args.public_test_mode and args.public_test_tenant_id
                 and args.public_test_expires_at and args.synthetic_data_only):
@@ -294,8 +311,8 @@ def _validate_command_args(args) -> tuple[tuple[str | None, ...], list[ModelDepl
         if not all(access_args):
             raise _usage("build access needs --search-identity-name, --storage-container and "
                          "--operator-object-id together")
-        if not args.public_test:
-            raise _usage("build access requires --public-test")
+        if not (args.public_test or args.public_data_entra):
+            raise _usage("build access requires --public-test or --public-data-entra")
         if {deployment.role for deployment in deployments} != {"embedding", "chat"}:
             raise _usage("build access needs --embedding-deployment and --chat-deployment, "
                          "so one plan finishes setup")
@@ -325,6 +342,10 @@ def _spec(args, network_args, deployments) -> ProvisioningSpec:
             synthetic_data_only=args.synthetic_data_only,
             mode=args.public_test_mode,
         ) if args.public_test else None),
+        public_data=(PublicDataSpec(
+            tenant_id=args.tenant_id, expires_at=args.public_data_expires_at,
+            public_data_only=args.public_data_only,
+        ) if args.public_data_entra else None),
         model_deployments=tuple(deployments),
         build_access=(BuildAccessSpec(
             search_identity_name=args.search_identity_name,
@@ -352,6 +373,8 @@ def _run(args) -> dict:
     if args.command == "cleanup-approve":
         return _journal(args).approve_cleanup(args.run_id, args.plan_id)
     spec = _spec(args, *_validate_command_args(args))
+    if spec.public_data is not None:
+        plan(spec, require_active=args.command not in ("inspect", "verify"))
     if args.command in _LIVE and not args.subscription_id:
         raise _usage("--subscription-id is required for live Azure commands")
     tenant = args.tenant_id or args.public_test_tenant_id
@@ -435,7 +458,7 @@ def _simple_card(spec: ProvisioningSpec, tenant: str | None, what: str, plan_id:
 def _provision_card(spec: ProvisioningSpec, plan_id: str, writes: list[str]) -> str:
     from ekg_core import approval
     from ekg_core.pricing import search_usd_per_day
-    tenant = spec.public_test.tenant_id if spec.public_test else None
+    tenant = spec.public_endpoint.tenant_id if spec.public_endpoint else None
     names = approval.azure_context(tenant, spec.target.subscription_id)
     # The recorded one-plan setup took about 12 minutes; Search creation dominates.
     return approval.card(
@@ -444,7 +467,12 @@ def _provision_card(spec: ProvisioningSpec, plan_id: str, writes: list[str]) -> 
         cost=approval.cost_text(0.0, search_usd_per_day(spec.search_sku)),
         tenant_id=tenant, tenant_name=names.get("tenant_name"),
         subscription=names.get("subscription") or spec.target.subscription_id,
-        resource_group=spec.target.resource_group, new_group=spec.create_resource_group)
+        resource_group=spec.target.resource_group, new_group=spec.create_resource_group,
+        notes=((f"PUBLIC DATA ONLY: no non-public data. Entra-only public endpoints, "
+                f"all public IPs; no trusted-service bypass. Expiry: "
+                f"{spec.public_data.expires_at} (manual cleanup, not automatic shutdown). "
+                "Upload, Build and publish each require separate approval.",)
+               if spec.public_data else ()))
 
 
 def _cmd_plan(args, spec: ProvisioningSpec) -> dict:
@@ -453,10 +481,13 @@ def _cmd_plan(args, spec: ProvisioningSpec) -> dict:
     payload = reviewed.to_dict()
     writes = plain_writes(spec, reviewed.operations)
     payload["writes"] = writes
+    if spec.public_data is not None:
+        from .journal import journal_spec
+        payload["spec"] = journal_spec(spec)
     if args.command == "plan":
         payload["summary"] = (
-            (f"Here's what I'll create in tenant {spec.public_test.tenant_id}, subscription "
-             f"{spec.target.subscription_id}" if spec.public_test else
+            (f"Here's what I'll create in tenant {spec.public_endpoint.tenant_id}, subscription "
+             f"{spec.target.subscription_id}" if spec.public_endpoint else
              f"Planned resources in subscription {spec.target.subscription_id}")
             + f" ({len(writes)} changes):\n" + "\n".join(f"- {line}" for line in writes[:3])
             + (f"\n- ...and {len(writes) - 3} more (--json lists every change)"
@@ -464,9 +495,9 @@ def _cmd_plan(args, spec: ProvisioningSpec) -> dict:
         payload["next_step"] = (
             "Show every change to the user; on approval run `ekg-provision apply` with the "
             f"same flags plus --plan-id {reviewed.plan_id} --confirm-writes."
-            if spec.public_test else
+            if spec.public_endpoint else
             "Deploy with the rendered Bicep (`ekg-provision render`) or use --public-test.")
-        if spec.public_test and not reviewed.blocked_by:
+        if spec.public_endpoint and not reviewed.blocked_by:
             payload["approval_card"] = _provision_card(spec, reviewed.plan_id, writes)
     if args.output:
         parameters, portal = write_artifacts(spec, args.output)
@@ -487,13 +518,15 @@ def _cmd_backend(args, spec: ProvisioningSpec) -> dict:
                                    confirmed_public_test=args.confirm_writes)
               if args.command == "resume-apply" else
               backend.apply(spec, approved_plan_id=args.plan_id,
-                            confirmed_public_test=args.confirm_writes))
+                            confirmed_public_test=args.confirm_writes if spec.public_test else False,
+                            confirmed_public_data=args.confirm_writes if spec.public_data else False))
     payload = {"plan_id": args.plan_id, "completed": result.completed,
                "events": serialize_events(result.events), "run_id": backend.last_run_id,
                "journal_path": (str(backend.journal.path(backend.last_run_id))
                                 if backend.last_run_id else None)}
     if not result.completed:
-        raise Blocked("PROVISION_INCOMPLETE", "provisioning did not complete", result=payload)
+        raise Blocked("PUBLIC_DATA_STOPPED" if spec.public_data else "PROVISION_INCOMPLETE",
+                      "provisioning did not complete", result=payload)
     return payload
 
 
@@ -521,6 +554,13 @@ def _connect_summary(payload: dict) -> dict:
         if payload.get("approval_card"):
             return {"summary": "\n".join(lines), "next_step": step,
                     "approval_card": payload["approval_card"]}
+    elif payload["status"] == "unverified" and any(
+        row.get("permission_coverage") is not None and row["status"] != "assigned"
+        for row in payload.get("roles", [])
+    ):
+        step = ("Ask the account owner to verify OpenAI access for you and the Search identity "
+                "(role-definition permissions, groups, active PIM, conditions and denies), "
+                "then run `ekg-provision connect` again. No missing role or grant is inferred.")
     else:
         step = "Supply the missing inputs, then run `ekg-provision connect` again."
     return {"summary": "\n".join(lines), "next_step": step}
@@ -618,6 +658,8 @@ def main(argv: list[str] | None = None) -> None:
     except Blocked as blocked:
         report(blocked, prog=PROG, command=args.command)
     except (RuntimeError, ValueError, OSError, KeyError) as error:
+        if getattr(args, "public_data_entra", False) and isinstance(error, ProvisioningError):
+            report(Blocked("PUBLIC_DATA_STOPPED", str(error)), prog=PROG, command=args.command)
         report(_classify(error, args.command), prog=PROG, command=args.command)
     if not args.json:
         from ekg_core.telemetry import summary_text

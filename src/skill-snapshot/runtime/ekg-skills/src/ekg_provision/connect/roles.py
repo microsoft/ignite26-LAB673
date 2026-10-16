@@ -2,10 +2,15 @@ from typing import Any, Callable
 from ekg_core.models import stable_id
 from ekg_core.az_identity import IdentityError, az_json
 from .spec import ACCEPTED_ROLES, UNVERIFIED_ROLE, ConnectSpec
+from .openai_roles import OpenAICoverage
 def _principal_roles(
     spec: ConnectSpec, principal: str, principal_type: str, scope: str, roles: tuple[str, ...],
     who: str, runner: Callable[..., Any],
+    *, openai_coverage: OpenAICoverage | None = None,
 ) -> list[dict[str, Any]]:
+    if roles == ("Cognitive Services OpenAI User",):
+        coverage = openai_coverage or OpenAICoverage(spec, runner)
+        return [coverage.check(principal, principal_type, scope, who)]
     try:
         assignments = az_json([
             "role", "assignment", "list", "--scope", scope, "--assignee-object-id", principal,
@@ -44,22 +49,25 @@ def _rbac(spec: ConnectSpec, operator: dict[str, str], ids: dict[str, str],
           uai: dict[str, Any] | None, runner: Callable[..., Any]) -> list[dict[str, Any]]:
     container = (f"{ids['storage']}/blobServices/default/containers/{spec.storage_container}")
     oid, kind = operator["principal_object_id"], operator["principal_type"]
+    coverage = OpenAICoverage(spec, runner)
     rows = _principal_roles(spec, oid, kind, ids["search"],
                             ("Search Service Contributor", "Search Index Data Contributor"),
                             "operator", runner)
     rows += _principal_roles(spec, oid, kind, container, ("Storage Blob Data Contributor",),
                              "operator", runner)
     rows += _principal_roles(spec, oid, kind, ids["openai"], ("Cognitive Services OpenAI User",),
-                             "operator", runner)
+                             "operator", runner, openai_coverage=coverage)
     if uai and uai.get("principal_id"):
         pid = uai["principal_id"]
         rows += _principal_roles(spec, pid, "ServicePrincipal", container,
                                  ("Storage Blob Data Reader",), "search_identity", runner)
         rows += _principal_roles(spec, pid, "ServicePrincipal", ids["openai"],
-                                 ("Cognitive Services OpenAI User",), "search_identity", runner)
+                                 ("Cognitive Services OpenAI User",), "search_identity", runner,
+                                 openai_coverage=coverage)
     return rows
 def _role_plan(spec: ConnectSpec, rows: list[dict[str, Any]]) -> dict[str, Any] | None:
-    proposed = [row for row in rows if row["status"] != "assigned"]
+    proposed = [row for row in rows if row["status"] != "assigned"
+                and row.get("grant_recommended", True)]
     if not proposed:
         return None
     operations = [{

@@ -7,13 +7,13 @@ from pathlib import Path
 from typing import Any, Literal
 
 from ontology_core import diff as diff_mod
-from ontology_core import hygiene, owl_read, owl_write, profile, state
+from ontology_core import hygiene, jsonld_profile, jsonld_write, owl_read, owl_write, profile, state
 from ontology_core.errors import Blocked
 from ontology_core.journal import Journal, StateLock
-from ontology_core.model import ExportGrz, ExportManifest, Ontology, Version
+from ontology_core.model import ExportGrz, ExportManifest, JsonLdExportManifest, Ontology, Version
 from ontology_core.state import StatePaths
 
-ExportFormat = Literal["owl", "ttl"]
+ExportFormat = Literal["owl", "ttl", "jsonld"]
 FALLBACK_SOURCE = "ontology"
 
 
@@ -65,20 +65,22 @@ _OTHER_RDF_SUFFIXES = frozenset({".ttl", ".nt", ".n3", ".nq", ".trig", ".jsonld"
 
 def export(paths: StatePaths, *, output: Path, version: int | None = None, fmt: ExportFormat = "owl",
            base_iri: str | None = None, force: bool = False) -> dict[str, Any]:
-    """Write the approved version as flat-owl RDF/XML plus
-    `exports/export-manifest.<hash12>.json`; journal `artifact_written` and `export_written`.
+    """Write the approved version in the requested format with a format-specific manifest.
     `version=None` means latest approved. The profile is validated before writing.
 
-    Returns `{status:"ok", version, schema_id, format, output, owl_sha256, manifest, next_step}`.
+    Returns an OWL or JSON-LD format-specific digest and manifest. JSON-LD is a separate artifact and does not
+    replace the approved OWL `current` pointer.
 
     Raises: EXPORT_FORMAT_UNSUPPORTED, VERSION_NOT_FOUND, NOT_APPROVED, SCHEMA_ID_MISMATCH, OUTPUT_EXISTS,
-        BASE_IRI_INVALID, PROFILE_VIOLATION, STATE_LOCKED.
+        BASE_IRI_INVALID, PROFILE_VIOLATION, JSONLD_EXPORT_UNSUPPORTED, JSONLD_PROFILE_VIOLATION, STATE_LOCKED.
     """
+    if fmt == "jsonld":
+        return _export_jsonld(paths, output=output, version=version, base_iri=base_iri, force=force)
     if fmt != "owl":
-        raise Blocked("EXPORT_FORMAT_UNSUPPORTED", f"`--format {fmt}` is not available; export writes RDF/XML")
+        raise Blocked("EXPORT_FORMAT_UNSUPPORTED", f"`--format {fmt}` is not available")
     if Path(output).suffix.lower() in _OTHER_RDF_SUFFIXES:
         raise Blocked("EXPORT_FORMAT_UNSUPPORTED",
-                      f"{Path(output).name} names another RDF syntax, but export writes RDF/XML")
+                      f"{Path(output).name} names another syntax, but `--format owl` writes RDF/XML")
     n = _export_version(paths, version)
     meta, ontology = state.load_version(paths, n)
     approval = state.load_approval(paths, n)
@@ -121,6 +123,53 @@ def export(paths: StatePaths, *, output: Path, version: int | None = None, fmt: 
         "current": pointer["path"],
         "manifest": str(manifest_path),
         "next_step": f"ontology-consume check {target}",
+    }
+
+
+def _export_jsonld(paths: StatePaths, *, output: Path, version: int | None, base_iri: str | None,
+                   force: bool) -> dict[str, Any]:
+    if Path(output).suffix.lower() != ".jsonld":
+        raise Blocked("EXPORT_FORMAT_UNSUPPORTED", "JSON-LD export requires a .jsonld output path")
+    n = _export_version(paths, version)
+    meta, ontology = state.load_version(paths, n)
+    approval = state.load_approval(paths, n)
+    if approval is None or approval.schema_id != meta.schema_id:
+        raise Blocked("NOT_APPROVED", f"the approval for v{n} is for a different schema ID", n=n, id=meta.schema_id)
+    target = Path(output).expanduser().resolve()
+    if target.exists() and not force:
+        raise Blocked("OUTPUT_EXISTS", f"{target} already exists")
+    iri = _base_iri(paths, base_iri)
+    data = jsonld_write.write(ontology, base_iri=iri, version_info=owl_write.version_info(n, meta.schema_id))
+    jsonld_profile.require_valid(data, file=str(target))
+    with StateLock(paths, "export"):
+        jsonld_sha = _write_output(target, data)
+        grz = None
+        if meta.origin == "propose" and paths.config.is_file():
+            binding = state.load_config(paths).grz
+            grz = ExportGrz(search_endpoint=binding.search_endpoint, physical_index=binding.physical_index,
+                            generation_id=meta.grz_generation_id or binding.generation_id,
+                            source_index=binding.source_index)
+        manifest = JsonLdExportManifest(
+            schema_id=meta.schema_id, version=n, format="jsonld", jsonld_sha256=jsonld_sha,
+            output=str(target), base_iri=iri, tool_version=state.tool_version(),
+            created_at=state.utc_now(), plan_id=meta.plan_id, prompt_sha256=meta.prompt_sha256,
+            model=meta.model, grz=grz)
+        manifest_path = paths.jsonld_export_manifest(meta.schema_id)
+        journal = Journal(paths)
+        sha = state.write_record(manifest_path, manifest)
+        journal.append("artifact_written", path=paths.relative(manifest_path), sha256=sha)
+        journal.append("export_written", version=n, schema_id=meta.schema_id, format="jsonld", output=str(target),
+                       sha256=jsonld_sha)
+    return {
+        "status": "ok",
+        "version": n,
+        "schema_id": meta.schema_id,
+        "format": "jsonld",
+        "output": str(target),
+        "jsonld_sha256": jsonld_sha,
+        "base_iri": iri,
+        "manifest": str(manifest_path),
+        "next_step": f"provide {target} contents as ontology.inlineJsonLd with graphName to compatible graph extraction",
     }
 
 

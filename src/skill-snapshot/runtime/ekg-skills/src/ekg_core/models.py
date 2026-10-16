@@ -14,6 +14,7 @@ class OntologyMode(str, Enum):
     NONE = "none"
     SCHEMA_ORG = "schema_org"
     OWL_FILE = "owl_file"
+    INLINE_JSONLD = "inline_jsonld"
 
 
 class Capability(str, Enum):
@@ -187,13 +188,14 @@ class Target:
 @dataclass(frozen=True)
 class Ontology:
     schema_id: str
-    source_kind: Literal["schema_org", "owl_file"]
+    source_kind: Literal["schema_org", "owl_file", "inline_jsonld"]
     source_reference: str
     node_types: tuple[str, ...] = ()
     edge_types: tuple[tuple[str, str, str], ...] = ()
     properties: tuple["OntologyProperty", ...] = ()
     # (name, "NodeType" | "EdgeType", text) rows sent to extraction as rdfs:comment.
     descriptions: tuple[tuple[str, str, str], ...] = ()
+    inline_jsonld: str | None = None
 
 
 @dataclass(frozen=True)
@@ -220,6 +222,15 @@ class PublicTestSpec:
     expires_at: str
     synthetic_data_only: bool = False
     mode: Literal["ip_allowlist", "entra_only"] = "ip_allowlist"
+
+
+@dataclass(frozen=True)
+class PublicDataSpec:
+    tenant_id: str
+    expires_at: str
+    public_data_only: bool = False
+    mode: Literal["entra_only"] = "entra_only"
+    egress_ips: tuple[str, ...] = ()
 
 
 # Token-based deployment SKUs, where capacity is thousands of tokens per minute. Provisioned
@@ -290,8 +301,15 @@ class ProvisioningSpec:
     public_test: PublicTestSpec | None = None
     model_deployments: tuple[ModelDeploymentSpec, ...] = ()
     build_access: BuildAccessSpec | None = None
+    public_data: PublicDataSpec | None = None
+
+    @property
+    def public_endpoint(self) -> PublicTestSpec | PublicDataSpec | None:
+        return self.public_test if self.public_test is not None else self.public_data
 
     def __post_init__(self) -> None:
+        if self.public_test is not None and self.public_data is not None:
+            raise ValueError("public-test and public-data modes are mutually exclusive")
         roles = [item.role for item in self.model_deployments]
         names = [item.name.lower() for item in self.model_deployments]
         if len(set(roles)) != len(roles) or len(set(names)) != len(names):

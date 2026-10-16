@@ -1,4 +1,4 @@
-"""The per-user `current` pointer to the approved ontology.
+"""The per-user `current` pointer to the approved ontology (docs/contract.md).
 
 `approve` and `export` write `<home>/current.json` and copy the flat-owl bytes to
 `<home>/ontologies/<schema_id>.owl`, so a consumer can say "use the current approved ontology"

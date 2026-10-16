@@ -1,0 +1,23 @@
+{
+  "resources": {
+    "graph": {
+      "rawHtmlBytes": 1895246,
+      "gzipHtmlBytes": 543455,
+      "gzipJsCssBytes": 543284,
+      "budgetBytes": 1048576,
+      "sha256": "9c5d6cb701d55848fbf60aef7822b38faa02b6514012e7282baceec2d1aadc3e",
+      "graphDependencies": 498
+    },
+    "evidence": {
+      "rawHtmlBytes": 478745,
+      "gzipHtmlBytes": 137563,
+      "gzipJsCssBytes": 137358,
+      "budgetBytes": 204800,
+      "sha256": "bab64bcc50593b376a7594b062b0e0c126a86e00c3fd6a0ff6761063388203ae",
+      "graphDependencies": 0
+    }
+  },
+  "domainIsolation": {
+    "result": "passed"
+  }
+}

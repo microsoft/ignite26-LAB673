@@ -2,7 +2,8 @@ from typing import Any, Callable
 from ekg_core.models import MODEL_DEPLOYMENT_SKUS, BuildSpec, ModelDeploymentSpec, ProvisioningSpec, Target
 from ..capacity import API_VERSION as OPENAI_API_VERSION, quota_preflight, read_regional_quota
 from ekg_core.az_identity import IdentityError, az_json
-from .spec import ARM, OPENAI_DATA_API_VERSION, SEARCH_DATA_API_VERSION, ConnectSpec, _TYPES, _canonical, _check, _get, _network, _parts, _props, _region, _show
+from ekg_core.resource_endpoints import cognitive_account_endpoint
+from .spec import ARM, SEARCH_DATA_API_VERSION, ConnectSpec, _TYPES, _canonical, _check, _get, _network, _parts, _props, _region, _show
 def _search_state_checks(checks: list, props: dict[str, Any], sku: str) -> None:
     state_ok = (str(props.get("provisioningState", "")).lower() == "succeeded"
                 and str(props.get("status", "running")).lower() == "running")
@@ -148,17 +149,22 @@ def _openai_account_checks(checks: list, observed: dict[str, Any],
            "API keys are disabled; Entra only." if props.get("disableLocalAuth") is True
            else "API keys are enabled; EKG uses Entra only.")
     _network(checks, "openai", props, "The Search service (as caller) and the Build host")
-    endpoints = props.get("endpoints") or {}
-    return str(endpoints.get("OpenAI Language Model Instance API")
-               or (f"https://{subdomain}.openai.azure.com/" if subdomain else
-                   props.get("endpoint") or "")).rstrip("/")
+    try:
+        endpoint = cognitive_account_endpoint(props)
+    except ValueError as error:
+        _check(checks, "openai.endpoint", "fail", str(error))
+        return ""
+    origin = ("properties.endpoint" if props.get("endpoint") is not None else
+              "properties.endpoints advertised OpenAI API (account endpoint absent)")
+    _check(checks, "openai.endpoint", "ok", f"Using ARM {origin}: {endpoint}.")
+    return endpoint
 def _probe_openai_data_plane(endpoint: str, checks: list, runner: Callable[..., Any]) -> None:
     if not endpoint:
         return
     try:
-        _get(f"{endpoint}/openai/models?api-version={OPENAI_DATA_API_VERSION}", runner,
-             "https://cognitiveservices.azure.com")
-        _check(checks, "openai.data_plane", "ok", "Listed models with Entra ID from this host.")
+        _get(f"{endpoint}/openai/v1/models", runner, "https://ai.azure.com")
+        _check(checks, "openai.data_plane", "ok", "Listed models with Entra ID from this host; "
+               "this does not verify inference operations or the Search identity's access.")
     except IdentityError:
         _check(checks, "openai.data_plane", "fail",
                "Could not list models from this host: network, role or auth mode.")

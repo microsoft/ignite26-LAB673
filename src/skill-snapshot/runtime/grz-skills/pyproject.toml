@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=75,<81", "wheel>=0.45,<1"]
+requires = ["setuptools==84.0.0", "wheel==0.48.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -9,15 +9,12 @@ description = "Agent skills that build and browse GRZ community sidecars in Azur
 requires-python = ">=3.12"
 license = {text = "MIT"}
 authors = [{name = "Microsoft"}]
-dependencies = ["numpy==2.2.6"]
-
-[project.urls]
-Repository = "https://github.com/microsoft/GitHub-Copilot-for-Azure"
-Issues = "https://github.com/microsoft/GitHub-Copilot-for-Azure/issues"
+dependencies = ["numpy==2.5.3"]
 
 [project.optional-dependencies]
-azure = ["azure-search-documents==11.6.0", "azure-identity==1.23.0"]
-embed = ["fastembed==0.7.3"]
+azure = ["azure-search-documents==12.0.0", "azure-identity==1.26.0"]
+embed = ["fastembed==0.9.0"]
+apps = ["mcp==2.3.0"]
 
 [project.scripts]
 grz-build = "grz_build.cli:main"
@@ -30,6 +27,7 @@ where = ["src"]
 [tool.setuptools.package-data]
 grz_adapters = ["sidecar-index.schema.json"]
 grz_build = ["profiles/*.json"]
+grz_mcp = ["assets/*.html", "assets/*.txt", "assets/*.json"]
 
 [tool.setuptools.data-files]
 "share/foundry-iq-skills/grz/bin" = [

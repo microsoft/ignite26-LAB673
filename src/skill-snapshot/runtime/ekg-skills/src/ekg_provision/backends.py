@@ -90,10 +90,11 @@ def _validate(spec: ProvisioningSpec, *, require_active: bool = True) -> None:
 
 
 def _public_tags(spec: ProvisioningSpec) -> dict[str, str]:
-    assert spec.public_test is not None
+    assert spec.public_endpoint is not None
     return {
         "ekg-plan-id": plan(spec, require_active=False).plan_id,
-        "ekg-public-test-expires-at": spec.public_test.expires_at,
+        ("ekg-public-data-expires-at" if spec.public_data
+         else "ekg-public-test-expires-at"): spec.public_endpoint.expires_at,
     }
 
 
@@ -129,7 +130,7 @@ def _desired(spec: ProvisioningSpec, operation: Operation, *,
             spec, operation,
             principal_id=(access.principal_for(spec, operation.id, identity_principal)
                           if resource == "role_assignment" else None),
-            tags=_public_tags(spec) if spec.public_test else None,
+            tags=_public_tags(spec) if spec.public_endpoint else None,
         )
     if resource == "model_deployment":
         deployment = _deployment(spec, operation)
@@ -142,9 +143,9 @@ def _desired(spec: ProvisioningSpec, operation: Operation, *,
             },
         }
     payload: dict[str, Any] = {"location": spec.target.location}
-    if spec.public_test:
+    if spec.public_endpoint:
         payload["tags"] = _public_tags(spec)
-    entra_only = spec.public_test is not None and spec.public_test.mode == "entra_only"
+    entra_only = spec.public_endpoint is not None and spec.public_endpoint.mode == "entra_only"
     if resource == "search_service":
         payload.update(
             sku={"name": spec.search_sku},
@@ -156,12 +157,12 @@ def _desired(spec: ProvisioningSpec, operation: Operation, *,
                 "publicNetworkAccess": "Disabled",
             },
         )
-        if spec.public_test:
+        if spec.public_endpoint:
             payload["properties"].update(
                 publicNetworkAccess="Enabled", disableLocalAuth=True,
                 networkRuleSet={
                     "bypass": "None",
-                    "ipRules": [{"value": ip} for ip in spec.public_test.egress_ips],
+                    "ipRules": [{"value": ip} for ip in spec.public_endpoint.egress_ips],
                 },
             )
     elif resource == "storage_account":
@@ -174,7 +175,7 @@ def _desired(spec: ProvisioningSpec, operation: Operation, *,
                 "publicNetworkAccess": "Disabled",
             },
         )
-        if spec.public_test:
+        if spec.public_endpoint:
             payload["properties"].update(
                 publicNetworkAccess="Enabled", allowSharedKeyAccess=False,
                 defaultToOAuthAuthentication=True, isLocalUserEnabled=False,
@@ -182,7 +183,7 @@ def _desired(spec: ProvisioningSpec, operation: Operation, *,
                 networkAcls={
                     "defaultAction": "Allow" if entra_only else "Deny", "bypass": "None",
                     "ipRules": [
-                        {"value": ip, "action": "Allow"} for ip in spec.public_test.egress_ips
+                        {"value": ip, "action": "Allow"} for ip in spec.public_endpoint.egress_ips
                     ],
                     "virtualNetworkRules": [], "resourceAccessRules": [],
                 },
@@ -196,12 +197,12 @@ def _desired(spec: ProvisioningSpec, operation: Operation, *,
                 "publicNetworkAccess": "Disabled",
             },
         )
-        if spec.public_test:
+        if spec.public_endpoint:
             payload["properties"].update(
                 publicNetworkAccess="Enabled", disableLocalAuth=True,
                 networkAcls={
                     "defaultAction": "Allow" if entra_only else "Deny", "bypass": "None",
-                    "ipRules": [{"value": ip} for ip in spec.public_test.egress_ips],
+                    "ipRules": [{"value": ip} for ip in spec.public_endpoint.egress_ips],
                     "virtualNetworkRules": [],
                 },
             )
@@ -304,10 +305,10 @@ def _evidence(spec: ProvisioningSpec, operation: Operation, observed: Any, *,
     if not _same_location(location, spec.target.location):
         raise ProvisioningError(f"{operation.id}: location differs from requested location")
     evidence = {"resource_id": actual_id, "location": location}
-    if spec.public_test:
+    if spec.public_endpoint:
         tags = _field(observed, "tags", {})
         if any(_field(tags, key) != value for key, value in _public_tags(spec).items()):
-            raise ProvisioningError(f"{operation.id}: public test plan/expiry tags differ")
+            raise ProvisioningError(f"{operation.id}: public endpoint plan/expiry tags differ")
     if resource == "resource_group":
         return evidence
     desired = _desired(spec, operation)
@@ -357,8 +358,10 @@ def _evidence(spec: ProvisioningSpec, operation: Operation, observed: Any, *,
     )
     if resource == "search_service":
         evidence["sku"] = actual_sku
-    if spec.public_test:
-        evidence["auth_posture"] = spec.public_test.mode
+    if spec.public_endpoint:
+        evidence["auth_posture"] = spec.public_endpoint.mode
+        if spec.public_data:
+            evidence["data_policy"] = "public_data_only"
     return evidence
 
 
@@ -406,6 +409,7 @@ class AzureSdkBackend:
         self.permission_reader = permission_reader or read_subscription_permissions
         self._sleep = sleep
         self._principal_object_id: str | None = None
+        self._principal_type: str | None = None
         self._quota: dict[str, Any] = {}
         self.expected_tenant_id = expected_tenant_id
         self._injected_client = client
@@ -413,6 +417,7 @@ class AzureSdkBackend:
         self._sdk_credential: Any = None
         self._client_subscription: str | None = None
         self._client_tenant: str | None = None
+        self._client_public_data: bool | None = None
         self.journal = ProvisioningJournal(
             journal_root if journal_root is not None else Path.cwd() / ".ekg" / "provision-runs"
         )
@@ -421,10 +426,12 @@ class AzureSdkBackend:
     def _client(self, spec: ProvisioningSpec) -> Any:
         if self._injected_client is not None:
             return self._injected_client
-        tenant = spec.public_test.tenant_id if spec.public_test else self.expected_tenant_id
+        tenant = spec.public_endpoint.tenant_id if spec.public_endpoint else self.expected_tenant_id
         if not tenant or (self.expected_tenant_id and self.expected_tenant_id != tenant):
             raise ProvisioningError("an explicit matching tenant ID is required for live Azure access")
-        if self._client_subscription != spec.target.subscription_id or self._client_tenant != tenant:
+        public_data = spec.public_data is not None
+        if (self._client_subscription != spec.target.subscription_id
+                or self._client_tenant != tenant or self._client_public_data != public_data):
             try:
                 from azure.identity import AzureCliCredential
                 try:
@@ -437,6 +444,7 @@ class AzureSdkBackend:
                 ) from error
             identity = active_az_identity(tenant, spec.target.subscription_id)
             self._principal_object_id = identity["principal_object_id"]
+            self._principal_type = identity["principal_type"]
             credential = self.credential if self.credential is not None else AzureCliCredential(
                 tenant_id=tenant
             )
@@ -446,10 +454,12 @@ class AzureSdkBackend:
             credential.get_token("https://management.azure.com/.default")
             self._sdk_credential = credential
             self._sdk_client = ResourceManagementClient(
-                credential, spec.target.subscription_id
+                credential, spec.target.subscription_id,
+                **({"retry_total": 0} if spec.public_data else {}),
             )
             self._client_subscription = spec.target.subscription_id
             self._client_tenant = tenant
+            self._client_public_data = public_data
         return self._sdk_client
 
     def _get(self, client: Any, spec: ProvisioningSpec, operation: Operation) -> Any | None:
@@ -496,7 +506,7 @@ class AzureSdkBackend:
             )
         result = {"plan_id": plan(spec, require_active=False).plan_id, "resources": resources}
         tenant = self._client_tenant or (
-            spec.public_test.tenant_id if spec.public_test else self.expected_tenant_id
+            spec.public_endpoint.tenant_id if spec.public_endpoint else self.expected_tenant_id
         )
         if tenant:
             result["tenant_id"] = tenant
@@ -510,13 +520,13 @@ class AzureSdkBackend:
         return {"status": "verified", **result}
 
     def apply(self, spec: ProvisioningSpec, *, approved_plan_id: str,
-              confirmed_public_test: bool = False) -> ApplyResult:
-        if spec.public_test is None:
+              confirmed_public_test: bool = False, confirmed_public_data: bool = False) -> ApplyResult:
+        if spec.public_endpoint is None:
             raise ProvisioningError(
                 "live provisioning apply is disabled pending a separately approved deployment decision"
             )
-        if not confirmed_public_test:
-            raise ApprovalRequired("public test requires explicit billable deployment confirmation")
+        if not (confirmed_public_data if spec.public_data else confirmed_public_test):
+            raise ApprovalRequired("public provisioning requires explicit billable deployment confirmation")
         _validate(spec)
         desired_plan = plan(spec)
         if not approved_plan_id or approved_plan_id != desired_plan.plan_id:
@@ -525,6 +535,11 @@ class AzureSdkBackend:
             self._client(spec)
             self._sdk_credential.get_token("https://management.azure.com/.default")
             access_spec = spec.build_access
+            if spec.public_data and access_spec and (
+                (self._principal_object_id or "").lower() != access_spec.operator_object_id.lower()
+                or self._principal_type != access_spec.operator_principal_type
+            ):
+                raise ProvisioningError("public-data operator must match the active Azure CLI principal and type")
             if (access_spec and access_spec.operator_principal_type == "User"
                     and (self._principal_object_id or "").lower()
                     != access_spec.operator_object_id.lower()):
@@ -714,7 +729,9 @@ class AzureSdkBackend:
             observed = self._get(client, spec, operation)
             if require_missing and observed is not None:
                 raise ProvisioningError(
-                    f"{operation.id}: resource appeared after resume preflight; no update permitted"
+                    f"{operation.id}: resource appeared after "
+                    + ("preflight" if spec.public_data else "resume preflight")
+                    + "; no update permitted"
                 )
             created = observed is None
             if created and operation.resource == "model_deployment":
@@ -726,7 +743,7 @@ class AzureSdkBackend:
                 attempted = True
                 if operation.resource == "resource_group":
                     payload = {"location": spec.target.location}
-                    if spec.public_test:
+                    if spec.public_endpoint:
                         payload["tags"] = _public_tags(spec)
                     if spec.network:
                         payload["tags"] = {"ekg-run-id": run_id, "ekg-plan-id": plan_id}
@@ -845,8 +862,8 @@ class AzureSdkBackend:
 
     def _apply_approved(self, spec: ProvisioningSpec, *, approved_plan_id: str,
                         allow_live: bool = False) -> ApplyResult:
-        """Guarded execution path; only public-test apply may use live clients."""
-        if self._injected_client is None and not (allow_live and spec.public_test):
+        """Guarded execution path; only bounded public modes may use live clients."""
+        if self._injected_client is None and not (allow_live and spec.public_endpoint):
             raise ProvisioningError("the internal execution path requires an injected test client")
         _validate(spec)
         desired_plan = plan(spec)
@@ -855,8 +872,8 @@ class AzureSdkBackend:
                 f"explicit approval of plan {desired_plan.plan_id} is required"
             )
         inspection = self.inspect(spec)
-        if spec.public_test and inspection["resources"]["create-resource-group"]["status"] != "missing":
-            raise ProvisioningError("public test requires an absent isolated resource group")
+        if spec.public_endpoint and inspection["resources"]["create-resource-group"]["status"] != "missing":
+            raise ProvisioningError("public test/public-data requires an absent isolated resource group")
         if inspection["resources"]["create-resource-group"]["status"] == "missing" and not spec.create_resource_group:
             raise ProvisioningError("resource group is missing; approve a plan with create_resource_group")
         missing_deployments = tuple(
@@ -873,7 +890,10 @@ class AzureSdkBackend:
         self.last_run_id = run_id
 
         def execute(operation: Operation) -> dict:
-            return self._execute_operation(spec, operation, run_id, desired_plan.plan_id)
+            return self._execute_operation(
+                spec, operation, run_id, desired_plan.plan_id,
+                require_missing=spec.public_data is not None,
+            )
 
         result = apply_plan(desired_plan, approved=True, executor=execute)
         self.journal.finish(run_id, result.completed)

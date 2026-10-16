@@ -31,7 +31,7 @@ COMMUNITY_HEADER_CHARS = 160
 
 @dataclass(frozen=True)
 class PlanRequest:
-    """`ontology-build plan` flags (and the `ontology_plan_estimate` MCP input)."""
+    """`ontology-build plan` flags."""
 
     max_spend_usd: float
     seed: Path | None = None

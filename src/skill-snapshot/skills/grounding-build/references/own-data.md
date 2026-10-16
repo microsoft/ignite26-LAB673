@@ -8,10 +8,11 @@
 
 ## Steps
 
-1. Get the target graph name from the graph-extraction build's plan.
-2. Plan: `grounding-build plan --file <edges> --graph-name <graph name> [--index grounding-<name>] [--license "<text>"]`, or call `grounding-skills-grounding_build_plan`. Nothing is written.
+1. Get the target graph name and Search endpoint from the consuming graph-extraction plan,
+   including its chosen grounding-index input. Never copy a name from an ungrounded plan.
+2. Preview (read-only Azure index and headroom checks, nothing saved): `grounding-build preview --file <edges> --graph-name <graph name>`. Then plan: `grounding-build plan --file <edges> --graph-name <graph name> [--index grounding-<name>] [--license "<text>"]`. The plan saves the approval snapshot and writes nothing to Azure.
 3. Show the plan card (counts, dropped rows, capacity, plan ID). Wait for approval.
-4. Apply: `grounding-build apply --plan-id <id>`. Then run `grounding-consume ready --index <name> --graph-name <graph name>` and follow its `next_step` on FAIL.
+4. Apply: `grounding-build apply --plan-id <id>`. Then run `grounding-consume ready --index <name> --graph-name <graph name>` and follow its `next_step` on FAIL. Return endpoint, index and exact graph name to the consumer; it must re-plan before approving its own writes.
 
 ## Formats
 

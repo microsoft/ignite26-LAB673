@@ -13,7 +13,7 @@ Use this path when a Search service already exists, or when you need to know why
 ## Steps
 
 1. Confirm the tenant and subscription the CLI prints to stderr. Pass `--tenant <id>` to abort on mismatch and `--subscription <id>` to override the default.
-2. Run `grounding-skills-grounding_provision_doctor` (MCP) or `grounding-provision doctor [--endpoint <url>]`. It reports Entra auth, role gaps, and `2026-08-01-preview` availability.
+2. Run `grounding-provision doctor [--endpoint <url>]`. It reports Entra auth, role gaps, and `2026-08-01-preview` availability.
 3. List services with `grounding-provision connect`. Add `--service <name>` to select and save one, or `--no-save` to only inspect. `--endpoint <url>` targets a known service.
 4. Re-run `doctor` against the saved endpoint.
 

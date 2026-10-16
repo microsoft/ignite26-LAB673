@@ -8,7 +8,7 @@
 
 ## Use this path
 
-Use this path to review a version, pin it by its schema ID, write the flat-owl `.owl` file, import an existing ontology, or hand the approved ontology to a consumer.
+Use this path to review a version, pin it by its schema ID, write the flat-owl `.owl` file or opt-in JSON-LD, import an existing ontology, or hand the approved ontology to a consumer.
 
 ## Review and approve
 
@@ -18,8 +18,9 @@ Use this path to review a version, pin it by its schema ID, write the flat-owl `
 
 ## Export and hand off
 
-- `ontology-build export --output <path>.owl` writes RDF/XML only, refuses any unapproved version, and never overwrites a file unless the user asked for `--force`. It also updates the current pointer.
-- `ontology-skills-ontology_current` or `ontology-build current --json` returns the current approved ontology's path, SHA-256, IRI, counts, source generation, and approval time. Blocks with `NO_CURRENT` until a version is approved and `CURRENT_INVALID` when the file changed.
+- `ontology-build export --output <path>.owl` writes flat-owl RDF/XML, refuses any unapproved version, and never overwrites a file unless the user asked for `--force`. It also updates the current pointer.
+- `ontology-build export --format jsonld --output <path>.jsonld` is an explicit, separate inline-compatible artifact. It never changes `current`; offer it only for a compatible inline JSON-LD graph-extraction input.
+- `ontology-build current --json` (or `ontology-consume current --json`) returns the current approved ontology's path, SHA-256, IRI, counts, source generation, and approval time. Blocks with `NO_CURRENT` until a version is approved and `CURRENT_INVALID` when the file changed.
 - Offer `ontology-consume check <path>.owl` to validate the exported file against the flat-owl profile.
 
 ## Import

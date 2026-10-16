@@ -8,7 +8,6 @@ Preserves partial coverage facts (assigned vs unassigned counts, node coverage).
 
 from __future__ import annotations
 
-import base64
 from typing import Any, Callable
 
 import numpy as np
@@ -23,20 +22,29 @@ from grz_build.centroids import Centroid
 from grz_core.contracts import ContractError, Descriptor
 
 from .checks import community_summary
+from .paging import check_page_size, decode_cursor, encode_cursor
 
 MAX_PAGE_SIZE = 1000
 
 
-def _encode_cursor(offset: int) -> str:
-    return base64.urlsafe_b64encode(str(offset).encode("utf-8")).decode("ascii")
+def _cursor_context(descriptor: Descriptor, operation: str, scope: Any) -> list[Any]:
+    return [descriptor.physical_index, descriptor.generation_id, operation, scope]
 
 
-def _decode_cursor(cursor: str | None) -> int:
-    if not cursor:
+def _encode_cursor(offset: int, context: list[Any]) -> str:
+    return encode_cursor(str(offset), context)
+
+
+def _decode_cursor(cursor: str | None, context: list[Any]) -> int:
+    last = decode_cursor(cursor, context)
+    if last is None:
         return 0
     try:
-        return int(base64.urlsafe_b64decode(cursor.encode("ascii")).decode("utf-8"))
-    except Exception as exc:
+        offset = int(last)
+        if offset < 0 or str(offset) != last:
+            raise ValueError("invalid offset")
+        return offset
+    except ValueError as exc:
         raise ContractError("CURSOR_INVALID", "Invalid pagination cursor") from exc
 
 
@@ -131,8 +139,11 @@ class NativeConsumeReader:
         self, level: int | None = None, page_size: int = 100, cursor: str | None = None
     ) -> dict[str, Any]:
         """List communities, optionally filtered by level."""
-        page_size = min(max(1, page_size), MAX_PAGE_SIZE)
-        offset = _decode_cursor(cursor)
+        page_size = check_page_size(page_size)
+        if level is not None and (type(level) is not int or level < 0):
+            raise ContractError("LEVEL_INVALID", "level must be a nonnegative integer")
+        context = _cursor_context(self.descriptor, "communities", level)
+        offset = _decode_cursor(cursor, context)
 
         all_items = []
         target_levels = [level] if level is not None else list(range(len(self.hierarchy)))
@@ -150,7 +161,7 @@ class NativeConsumeReader:
 
         page = all_items[offset : offset + page_size]
         next_offset = offset + len(page)
-        next_cursor = _encode_cursor(next_offset) if next_offset < len(all_items) else None
+        next_cursor = _encode_cursor(next_offset, context) if next_offset < len(all_items) else None
         return {"items": page, "next_cursor": next_cursor}
 
     def get_community(
@@ -163,12 +174,14 @@ class NativeConsumeReader:
         if community_id not in self._by_id:
             raise ContractError("COMMUNITY_NOT_FOUND", f"Community {community_id} not found")
 
+        children_page_size = check_page_size(children_page_size)
+        context = _cursor_context(self.descriptor, "children", community_id)
         level, c = self._by_id[community_id]
         children = sorted(self._children_by_parent.get(community_id, []))
-        ch_offset = _decode_cursor(children_cursor)
+        ch_offset = _decode_cursor(children_cursor, context)
         ch_page = children[ch_offset : ch_offset + children_page_size]
         next_ch_offset = ch_offset + len(ch_page)
-        next_ch_cursor = _encode_cursor(next_ch_offset) if next_ch_offset < len(children) else None
+        next_ch_cursor = _encode_cursor(next_ch_offset, context) if next_ch_offset < len(children) else None
 
         row = {
             "community_id": community_id,
@@ -191,9 +204,10 @@ class NativeConsumeReader:
         if community_id not in self._by_id:
             raise ContractError("COMMUNITY_NOT_FOUND", f"Community {community_id} not found")
 
+        page_size = check_page_size(page_size)
+        context = _cursor_context(self.descriptor, "members", community_id)
         _, c = self._by_id[community_id]
-        page_size = min(max(1, page_size), MAX_PAGE_SIZE)
-        offset = _decode_cursor(cursor)
+        offset = _decode_cursor(cursor, context)
 
         members = sorted(c.members)
         chunk_ids = members[offset : offset + page_size]
@@ -211,7 +225,7 @@ class NativeConsumeReader:
             items.append(item)
 
         next_offset = offset + len(chunk_ids)
-        next_cursor = _encode_cursor(next_offset) if next_offset < len(members) else None
+        next_cursor = _encode_cursor(next_offset, context) if next_offset < len(members) else None
         return {"items": items, "next_cursor": next_cursor}
 
     def get_chunk(self, chunk_id: str) -> dict[str, Any]:

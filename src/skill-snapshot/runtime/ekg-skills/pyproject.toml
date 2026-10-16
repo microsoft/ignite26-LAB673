@@ -1,11 +1,11 @@
 [build-system]
-requires = ["setuptools>=68"]
+requires = ["setuptools==84.0.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "ekg-skills-local"
 version = "0.1.0"
-description = "Enterprise Knowledge Graph skills for Azure AI Search: entity and relationship graphs with multi-hop questions, complementing Foundry IQ"
+description = "Self-contained agent skills for Azure EKG provisioning, build, and consumption"
 license = {text = "MIT"}
 requires-python = ">=3.10"
 authors = [{name = "Microsoft"}]
@@ -15,15 +15,17 @@ Repository = "https://github.com/microsoft/GitHub-Copilot-for-Azure"
 Issues = "https://github.com/microsoft/GitHub-Copilot-for-Azure/issues"
 
 [project.optional-dependencies]
-provision = ["azure-identity>=1.16", "azure-mgmt-resource>=23.0"]
-build = ["azure-identity>=1.16", "httpx>=0.27", "rdflib>=7.0"]
-consume = ["azure-identity>=1.16", "httpx>=0.27"]
+provision = ["azure-identity==1.26.0", "azure-mgmt-resource==26.0.0"]
+build = ["azure-identity==1.26.0", "httpx==0.28.1", "openai==3.26.1", "rdflib==7.6.0"]
+consume = ["azure-identity==1.26.0", "azure-search-documents==12.0.0",
+           "httpx==0.28.1", "openai==3.26.1"]
+apps = ["mcp==2.3.0"]
 
 [project.scripts]
 ekg-provision = "ekg_provision.cli:main"
 ekg-build = "ekg_build.cli:main"
 ekg-consume = "ekg_consume.cli:main"
-ekg-mcp = "adapters.mcp.stdio:main"
+ekg-apps = "adapters.mcp.apps_sdk:main"
 
 [tool.setuptools]
 package-dir = {"" = "src", adapters = "adapters"}
@@ -32,3 +34,6 @@ package-dir = {"" = "src", adapters = "adapters"}
 where = ["src", "."]
 include = ["ekg_*", "adapters*"]
 namespaces = false
+
+[tool.setuptools.package-data]
+"adapters.mcp" = ["ui/*.html", "ui/*.txt", "ui/*.json"]

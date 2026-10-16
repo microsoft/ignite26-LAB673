@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import hashlib
 import json
 import re
 import time
@@ -13,6 +14,8 @@ from .runtime import require_capability
 
 _PARALLEL_READS = 8
 GRAPH_ROUND_TRIP_LIMIT = 128
+SEARCH_API_VERSION = "2026-08-01-preview"
+INLINE_JSONLD_API_VERSION = "2026-11-01-preview"
 
 
 class GraphBudgetExceeded(RuntimeError):
@@ -36,6 +39,12 @@ def _request_telemetry(client: Any, before: dict[str, int] | None) -> dict[str, 
     return result
 
 
+def _validate_query(query: str) -> None:
+    if (not isinstance(query, str) or not query.strip() or len(query) > 2048
+            or any(ord(char) < 32 for char in query)):
+        raise ValueError("query must be nonempty text of at most 2048 characters")
+
+
 def _adapter(descriptor: dict[str, Any], injected: QueryAdapter | None) -> QueryAdapter:
     if injected is not None:
         return injected
@@ -48,6 +57,22 @@ def _adapter(descriptor: dict[str, Any], injected: QueryAdapter | None) -> Query
         embedding_deployment=endpoints.get("embedding_deployment"),
         search_api_version=endpoints.get("search_api_version", "2024-07-01"),
     )
+
+
+def _managed_search_api_version(descriptor: dict[str, Any]) -> str | None:
+    endpoints = descriptor.get("endpoints") or {}
+    version = endpoints.get("search_api_version")
+    ontology = descriptor.get("ontology") or {}
+    mode = ontology.get("mode")
+    if mode == "inline_jsonld":
+        expected = INLINE_JSONLD_API_VERSION
+    elif mode in {"owl_file", "schema_org"}:
+        expected = SEARCH_API_VERSION
+    else:
+        return version if version == SEARCH_API_VERSION else None
+    if version != expected:
+        raise ValueError(f"{mode} ontology requires Search {expected}")
+    return version
 
 
 def _index(descriptor: dict[str, Any], kind: str) -> str:
@@ -101,8 +126,9 @@ def retrieve(descriptor: dict[str, Any], query: str, method: str = "document_ret
     require_capability(descriptor, method)
     if method != "document_retrieval":
         raise ValueError("agentic retrieval is not implemented")
-    if not query.strip() or not 1 <= top <= 100:
-        raise ValueError("query must be nonempty and top must be 1..100")
+    _validate_query(query)
+    if type(top) is not int or not 1 <= top <= 100:
+        raise ValueError("top must be an integer in 1..100")
     if ("source_provenance" in descriptor or
             (descriptor.get("endpoints") or {}).get("source_manifest_digest")) and (
             validate_deployment_descriptor(descriptor)):
@@ -110,7 +136,7 @@ def retrieve(descriptor: dict[str, Any], query: str, method: str = "document_ret
     started = time.perf_counter()
     client = _adapter(descriptor, adapter)
     before = _stats(client)
-    managed = (descriptor.get("endpoints") or {}).get("search_api_version") == "2026-08-01-preview"
+    managed = _managed_search_api_version(descriptor) is not None
     embedding_ms = 0.0
     embedding = None
     if vector:
@@ -122,6 +148,7 @@ def retrieve(descriptor: dict[str, Any], query: str, method: str = "document_ret
                          vector_field="snippet_vector" if managed else "embedding")
     search_ms = round((time.perf_counter() - search_started) * 1000, 3)
     return {
+        "result_schema_version": 1,
         "query": query, "answer": None,
         "provenance": [_source(hit, descriptor) for hit in hits],
         "telemetry": {
@@ -174,10 +201,13 @@ def graph_query(descriptor: dict[str, Any], query: str, *,
                 adapter: QueryAdapter | None = None, depth: int = 2,
                 top: int = 5, fanout: int = 20) -> dict[str, Any]:
     require_capability(descriptor, "graph_retrieval")
-    if not query.strip() or not 1 <= depth <= 3 or not 1 <= top <= 10 or not 1 <= fanout <= 50:
-        raise ValueError("query, depth (1..3), top (1..10), and fanout (1..50) are required")
-    if (descriptor.get("endpoints") or {}).get("search_api_version") != "2026-08-01-preview":
-        raise ValueError("native graph query requires Search 2026-08-01-preview")
+    _validate_query(query)
+    if (type(depth) is not int or not 1 <= depth <= 3
+            or type(top) is not int or not 1 <= top <= 10
+            or type(fanout) is not int or not 1 <= fanout <= 50):
+        raise ValueError("depth must be 1..3, top 1..10, and fanout 1..50")
+    if _managed_search_api_version(descriptor) is None:
+        raise ValueError("native graph query requires a managed ontology and supported Search API version")
     if ("source_provenance" in descriptor or
             (descriptor.get("endpoints") or {}).get("source_manifest_digest")) and (
             validate_deployment_descriptor(descriptor)):
@@ -384,6 +414,7 @@ def graph_query(descriptor: dict[str, Any], query: str, *,
     hydrate_ms = round((time.perf_counter() - hydrate_started) * 1000, 3)
     elapsed = round((time.perf_counter() - started) * 1000, 3)
     return {
+        "result_schema_version": 1,
         "query": query, "answer": None, "nodes": list(nodes.values()),
         "edges": list(edges.values()), "paths": paths,
         "provenance": list(provenance.values()),
@@ -400,3 +431,32 @@ def graph_query(descriptor: dict[str, Any], query: str, *,
         "capabilities_used": ["graph_retrieval"],
         **({"warnings": warnings} if warnings else {}),
     }
+
+
+def compact_graph_result(result: dict[str, Any]) -> dict[str, Any]:
+    """Keep distinct evidence once, with document and evidence links on each edge."""
+    evidence: dict[str, dict[str, Any]] = {}
+
+    def keep(item: Any) -> tuple[str, str] | None:
+        if not isinstance(item, dict):
+            return None
+        source_id = str(item.get("source_id") or item.get("citation_uri") or item.get("source") or "")
+        if not source_id:
+            return None
+        identity = json.dumps(item, sort_keys=True, separators=(",", ":"), ensure_ascii=False)
+        evidence_id = "evidence-" + hashlib.sha256(identity.encode("utf-8")).hexdigest()
+        evidence.setdefault(evidence_id, {**item, "evidence_id": evidence_id})
+        return source_id, evidence_id
+
+    edges = []
+    for edge in result.get("edges") or []:
+        if not isinstance(edge, dict):
+            continue
+        links = [link for item in edge.get("provenance") or [] if (link := keep(item))]
+        compact = {key: value for key, value in edge.items() if key != "provenance"}
+        compact["source_ids"] = sorted({source_id for source_id, _ in links})
+        compact["evidence_ids"] = sorted({evidence_id for _, evidence_id in links})
+        edges.append(compact)
+    for item in result.get("provenance") or []:
+        keep(item)
+    return {**result, "edges": edges, "provenance": list(evidence.values()), "detail": "compact"}

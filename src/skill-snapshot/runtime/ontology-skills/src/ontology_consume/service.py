@@ -1,4 +1,4 @@
-"""Read-only services shared by `ontology-consume` and the MCP tools.
+"""Read-only services shared by `ontology-consume` and the optional Apps adapter.
 
 Every function returns the `--json` result dict (status "ok") or raises `Blocked`. None take the lock or
 write anything; none reach Azure.

@@ -194,7 +194,7 @@ def _prepare_smoke_run(
              "search.post.search?api-version=2024-07-01")
     scope_storage = "https://storage.azure.com/.default"
     scope_search = "https://search.azure.com/.default"
-    scope_openai = "https://cognitiveservices.azure.com/.default"
+    scope_openai = "https://ai.azure.com/.default"
     storage_headers = {"x-ms-version": "2023-11-03",
                        "x-ms-date": datetime.now(timezone.utc).strftime(
                            "%a, %d %b %Y %H:%M:%S GMT"
@@ -213,10 +213,10 @@ def _prepare_smoke_run(
     content = f"Synthetic EKG proof marker {smoke.smoke_id}. No customer data."
     embedding = None
     if smoke.embedding_deployment:
-        url = (f"https://{spec.openai_name}.openai.azure.com/openai/deployments/"
-               f"{smoke.embedding_deployment}/embeddings?api-version=2024-10-21")
+        url = f"https://{spec.openai_name}.openai.azure.com/openai/v1/embeddings"
         response = _require(transport.request(
-            "POST", url, scope_openai, body=_json({"input": content}),
+            "POST", url, scope_openai,
+            body=_json({"model": smoke.embedding_deployment, "input": content}),
         ), (200,), "OpenAI embedding data plane")
         items = response.json().get("data")
         if not isinstance(items, list) or len(items) != 1 or not isinstance(

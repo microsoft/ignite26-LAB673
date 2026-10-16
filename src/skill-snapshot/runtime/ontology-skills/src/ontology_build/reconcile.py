@@ -12,7 +12,7 @@ from ontology_build import budget
 from ontology_core import hashing, journal as journal_mod, state
 from ontology_core.errors import Blocked
 from ontology_core.journal import Journal
-from ontology_core.model import Approval, ExportManifest, Plan, Version
+from ontology_core.model import Approval, ExportManifest, JsonLdExportManifest, Plan, Version
 from ontology_core.state import StatePaths
 
 
@@ -113,14 +113,19 @@ def _export_drift(paths: StatePaths) -> list[str]:
     drift = []
     if not paths.exports_dir.is_dir():
         return drift
-    for manifest_path in sorted(paths.exports_dir.glob("export-manifest.*.json")):
+    manifests = [*paths.exports_dir.glob("export-manifest.*.json"),
+                 *paths.exports_dir.glob("jsonld-export-manifest.*.json")]
+    for manifest_path in sorted(manifests):
+        is_jsonld = manifest_path.name.startswith("jsonld-export-manifest.")
+        manifest_type = JsonLdExportManifest if is_jsonld else ExportManifest
         try:
-            manifest = state.read_record(manifest_path, ExportManifest)
+            manifest = state.read_record(manifest_path, manifest_type)
         except (Blocked, ValueError, KeyError, TypeError):
             drift.append(paths.relative(manifest_path))
             continue
         output = Path(manifest.output)
-        if output.is_file() and hashing.sha256_file(output) != manifest.owl_sha256:
+        expected_sha = manifest.jsonld_sha256 if is_jsonld else manifest.owl_sha256
+        if output.is_file() and hashing.sha256_file(output) != expected_sha:
             drift.append(output.as_posix())
     return drift
 

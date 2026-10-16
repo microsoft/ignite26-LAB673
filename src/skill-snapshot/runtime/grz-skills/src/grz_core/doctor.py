@@ -21,7 +21,7 @@ from grz_core.contracts import ContractError
 OK, FAIL, SKIP = "ok", "FAIL", "skip"
 MIN_PYTHON = (3, 12)
 PACKAGE = "grz-skills"
-SEARCH_API_VERSION = "2024-07-01"
+SEARCH_API_VERSION = "2026-04-01"
 OPENAI_METADATA_API_VERSION = "2024-10-21"
 COGNITIVE_ARM_API_VERSION = "2024-10-01"
 COGNITIVE_SCOPE = "https://cognitiveservices.azure.com/.default"
@@ -503,17 +503,3 @@ def check_naming_model_lifecycle(endpoint: str | None, deployment: str | None, s
         wanted = " ".join(filter(None, model)) or label
         return skip(name, f"{wanted} isn't in {account}'s model list")
     return classify_model(entry, now=now)
-
-
-# ---- MCP server -------------------------------------------------------------------------------
-
-def check_mcp_self_test(run: Runner = _run) -> Check:
-    result = run([sys.executable, "-m", "grz_mcp", "--self-test"])
-    if result.returncode != 0:
-        detail = (result.stderr or result.stdout or "").strip().splitlines()
-        return fail("mcp_self_test", "MCP_SELF_TEST_FAILED", detail[-1] if detail else f"exit {result.returncode}")
-    try:
-        report = json.loads(result.stdout)
-    except ValueError:
-        return fail("mcp_self_test", "MCP_SELF_TEST_FAILED", "self-test printed no JSON")
-    return ok("mcp_self_test", f"{report.get('server')} started, {len(report.get('tools', []))} tools listed")

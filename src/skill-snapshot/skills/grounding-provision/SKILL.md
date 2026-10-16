@@ -2,10 +2,10 @@
 name: grounding-provision
 description: 'Connect to or create the Azure AI Search service that hosts a grounding index. WHEN: choosing a Search service, checking its roles or preview API readiness, or creating one for grounding. DO NOT USE FOR: loading edges, checking an index, or deleting resources.'
 license: MIT
-compatibility: Azure sign-in (Entra), Copilot CLI, grounding-skills MCP, and the grounding-provision CLI for approved writes.
+compatibility: Azure sign-in (Entra), Copilot CLI, and the grounding-provision CLI for approved writes.
 metadata:
   author: Microsoft
-  version: "0.1.0-snapshot.0e44f94"
+  version: "0.0.0-snapshot"
 ---
 
 # Grounding provision
@@ -19,6 +19,6 @@ Load one path only.
 
 ## Shared rules
 
-Use read-only `grounding-skills-grounding_provision_doctor` first. State the tenant and subscription before any Azure call; the CLI prints both to stderr, and `--tenant` aborts on mismatch. Entra auth only: never request, pass, or store keys.
+Run read-only `grounding-provision doctor` first. State the tenant and subscription before any Azure call; the CLI prints both to stderr, and `--tenant` aborts on mismatch. Entra auth only: never request, pass, or store keys.
 
 Writes stay on the CLI. `grounding-provision create` is a dry run until the user replies `approved <plan_id>`; only then re-run it with `--plan-id`. Never delete anything. Report role gaps and who must grant them; do not work around them. When the service is ready, hand off to `grounding-build` with the saved endpoint.

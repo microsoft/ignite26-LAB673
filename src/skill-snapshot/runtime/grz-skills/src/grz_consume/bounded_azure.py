@@ -41,6 +41,7 @@ class BoundedAzureReader:
             fail("Published manifest changed during browsing")
         payload = check_manifest_identity(row.get("payload"), desc)
         check_build_health(payload)
+        self.store.bind_schema(desc.physical_index, desc.generation_id, desc.schema_version)
         if not isinstance(payload.get("documents_digest"), str) or not re.fullmatch(
             r"[0-9a-f]{64}", payload["documents_digest"]
         ):

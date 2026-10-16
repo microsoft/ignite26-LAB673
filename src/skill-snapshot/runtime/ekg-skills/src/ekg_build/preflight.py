@@ -10,8 +10,9 @@ from ekg_core.models import (
     RequestedOutcome, RouteDecision, SourceKind, stable_id,
 )
 
-from .managed_pipeline import SEARCH_API_VERSION
-from .preview import PREVIEW_ENTITLEMENT_UNVERIFIABLE, probe_error, search_resource_id
+from .managed_pipeline import search_api_version
+from .target_validation import graph_input_error, search_resource_id
+from .target_reader import canonical_resource_endpoint
 
 
 class ResourceReader(Protocol):
@@ -60,20 +61,17 @@ def route(spec: BuildSpec) -> RouteDecision:
     if spec.source is not None and spec.source_manifest is None:
         return RouteDecision(
             outcome, kind, "contract_only",
-            evidence=(f"Search {SEARCH_API_VERSION} Azure Blob graphExtraction verified on one service only",),
-            uncertainty=(PREVIEW_ENTITLEMENT_UNVERIFIABLE,),
+            evidence=(f"Search {search_api_version(spec)} Azure Blob graphExtraction contract",),
             blocked_by=("SOURCE_ROUTE_NOT_INTEGRATED: explicit source manifests are not consumed by Build yet",),
         )
     if spec.source is not None:
         return RouteDecision(
             outcome, kind, "verified_path",
-            evidence=(f"Search {SEARCH_API_VERSION} Azure Blob graphExtraction via approved staging",),
-            uncertainty=(PREVIEW_ENTITLEMENT_UNVERIFIABLE,),
+            evidence=(f"Search {search_api_version(spec)} Azure Blob graphExtraction via approved staging",),
         )
     return RouteDecision(
         outcome, kind, "verified_path",
-        evidence=(f"legacy local corpus to managed Azure Blob KS uses Search {SEARCH_API_VERSION}",),
-        uncertainty=(PREVIEW_ENTITLEMENT_UNVERIFIABLE,),
+        evidence=(f"legacy local corpus to managed Azure Blob KS uses Search {search_api_version(spec)}",),
     )
 
 
@@ -166,7 +164,7 @@ def preflight(spec: BuildSpec, reader: ResourceReader | None = None) -> Prefligh
     }
     uncertainties = list(decision.uncertainty) if decision else []
     can_inspect = (
-        reader is not None and not probe_error(spec) and not target_blockers(spec)
+        reader is not None and not graph_input_error(spec) and not target_blockers(spec)
         and not unsupported
     )
     if can_inspect:
@@ -210,7 +208,9 @@ def preflight(spec: BuildSpec, reader: ResourceReader | None = None) -> Prefligh
             observed = reader.inspect_resource(resource_id, spec.tenant_id)
             if (not isinstance(observed, dict)
                     or str(observed.get("id", "")).casefold() != resource_id.casefold()
-                    or observed.get("endpoint") != endpoint):
+                    or not isinstance(observed.get("endpoint"), str)
+                    or canonical_resource_endpoint(observed["endpoint"]) !=
+                    canonical_resource_endpoint(endpoint)):
                 blockers.append(f"TARGET_ID_MISMATCH: observed {label} ARM identity or endpoint differs")
             elif (observed.get("tenant_id") and
                   str(observed["tenant_id"]).casefold() != spec.tenant_id.casefold()
@@ -240,7 +240,7 @@ def preflight(spec: BuildSpec, reader: ResourceReader | None = None) -> Prefligh
     if priority is None and blockers:
         priority = blockers[0]
     code = priority.split(":", 1)[0] if priority else (
-        "DOCUMENT_INDEX_UNVERIFIED" if legacy_documents else "PREVIEW_ENTITLEMENT_UNVERIFIABLE"
+        "DOCUMENT_INDEX_UNVERIFIED" if legacy_documents else "BUILD_PLAN_REQUIRES_APPROVAL"
     )
     next_action = (
         "Inventory the source with its read-only adapter, attach its manifest, then request "
@@ -255,7 +255,7 @@ def preflight(spec: BuildSpec, reader: ResourceReader | None = None) -> Prefligh
         "Inspect the legacy document-index plan and request separate approval for its writes; "
         "this path creates no Knowledge Base or graph."
         if legacy_documents else
-        "Review the exact plan and unknown preview/permissions; request separate approval for one guarded attempt."
+        "Review the exact plan and remaining target/permission evidence; request separate approval before writes."
     )
     event = Event("preflight", "blocked" if blockers else "planned", code, {
         "plan_id": desired.plan_id, "blockers": blockers,

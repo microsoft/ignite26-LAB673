@@ -1,0 +1,18 @@
+{
+  "evidence": {
+    "rawHtmlBytes": 475395,
+    "gzipHtmlBytes": 136837,
+    "gzipJsCssBytes": 136644,
+    "budgetBytes": 204800,
+    "sha256": "d4d8604dd13204fe42705f328fda526f3a95f78146f131065a95e990d0902d26",
+    "graphDependencies": 0
+  },
+  "ontology": {
+    "rawHtmlBytes": 1894693,
+    "gzipHtmlBytes": 543534,
+    "gzipJsCssBytes": 543360,
+    "budgetBytes": 1048576,
+    "sha256": "ff637d544359badb6a4f9bf4da7e6450ad665b53aaa4dcfad9036f1d1fce14fb",
+    "graphDependencies": 162
+  }
+}

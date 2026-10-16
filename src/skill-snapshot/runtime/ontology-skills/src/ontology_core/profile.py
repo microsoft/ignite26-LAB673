@@ -1,4 +1,4 @@
-"""flat-owl profile validator.
+"""flat-owl profile validator. Public contract: docs/flat-owl-profile.md.
 
 This is an independent re-implementation of the rules a simple ElementTree consumer relies on. It reads the
 XML directly and only uses `owl_read`/`owl_write` for the final determinism check.

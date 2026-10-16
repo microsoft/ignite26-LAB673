@@ -1,11 +1,12 @@
 from ekg_core.models import BuildSpec, OntologyMode
 from ekg_core.telemetry import TelemetryRecorder, adapter_http_stats
 
-from .managed_pipeline import SEARCH_API_VERSION
-from .preview import search_resource_id
+from .managed_pipeline import search_api_version
+from .target_validation import search_resource_id
 from .executor import (
-    BuildError, _advance_source_journal, _complete_journal, _merge_telemetry, _read_attempt_journal,
-    _require_managed_entitlement, _source_record, _synchronization_event, generation, index_names, plan,
+    BuildError, _advance_source_journal, _complete_journal, _managed_attempt_identity,
+    _merge_telemetry, _read_attempt_journal,
+    _verify_managed_target, _source_record, _synchronization_event, generation, index_names, plan,
 )
 
 def reconcile(executor, spec: BuildSpec) -> dict:
@@ -19,7 +20,7 @@ def reconcile(executor, spec: BuildSpec) -> dict:
             expected = _source_record(spec, "attempt_requested")
             same_run = all(record.get(key) == expected[key] for key in (
                 "version", "run_id", "plan_id", "scope", "generation",
-                "knowledge_source", "preview_entitlement", "create_request_hash",
+                "knowledge_source", "create_request_hash",
             ))
             if same_run and record.get("state") == "verified":
                 verified = executor.verify(spec)
@@ -32,8 +33,8 @@ def reconcile(executor, spec: BuildSpec) -> dict:
             recorder = TelemetryRecorder("build", adapter_http_stats(executor.adapter))
             with recorder.span("reconcile_targets"):
                 executor._source_targets(spec)
-            if getattr(executor.adapter, "search_api_version", SEARCH_API_VERSION) != SEARCH_API_VERSION:
-                raise BuildError("managed graph requires exact preview API version")
+            if getattr(executor.adapter, "search_api_version", search_api_version(spec)) != search_api_version(spec):
+                raise BuildError(f"managed graph requires exact Search {search_api_version(spec)} API version")
             try:
                 status = executor.adapter.knowledge_source_status(index_names(spec)["knowledge_source"])
             except Exception:  # telemetry is best-effort; verification below is authoritative
@@ -54,16 +55,15 @@ def reconcile(executor, spec: BuildSpec) -> dict:
             "plan_id": desired.plan_id,
             "search_resource_id": search_resource_id(spec),
             "tenant_id": spec.tenant_id,
-            "preview_entitlement": "unverified_before_attempt",
             "state": "attempt_requested",
         }
-        if record != expected:
+        if _managed_attempt_identity(record) != expected:
             raise BuildError("managed build attempt journal differs from the exact plan, "
                              "generation, service identity or attempt state")
-        version = getattr(executor.adapter, "search_api_version", SEARCH_API_VERSION)
-        if version != SEARCH_API_VERSION:
-            raise BuildError(f"managed graph requires Search {SEARCH_API_VERSION}")
-        service_evidence = _require_managed_entitlement(spec, executor.adapter)
+        version = getattr(executor.adapter, "search_api_version", search_api_version(spec))
+        if version != search_api_version(spec):
+            raise BuildError(f"managed graph requires Search {search_api_version(spec)}")
+        service_evidence = _verify_managed_target(spec, executor.adapter)
         verified = executor.verify(spec)
         _complete_journal(spec, names["knowledge_source"], original)
         return {**verified, "plan_id": desired.plan_id, "service": service_evidence,

@@ -8,7 +8,8 @@ from ekg_core.models import BuildSpec, Operation, Plan, OntologyMode, SourceKind
 from ekg_core.ontology import load_ontology
 from .estimates import plan_estimates
 from .preflight import route, scope, target_blockers
-from .preview import PREVIEW_ENTITLEMENT_UNVERIFIABLE, probe_error
+from .target_validation import graph_input_error
+from .managed_pipeline import search_api_version, uses_inline_jsonld
 
 
 def plan(spec: BuildSpec) -> Plan:
@@ -44,13 +45,14 @@ def plan(spec: BuildSpec) -> Plan:
             evidence=("schema_hash", "document_count"),
         ))
     if ontology:
-        operations.extend([
-            Operation(
+        if not uses_inline_jsonld(spec):
+            operations.append(Operation(
                 id="ensure-ontology-index", plane="build", action="ensure",
                 resource="search_index", name="ontology",
                 risk="remote_mutation", reversible=True, requires_approval=True,
                 evidence=("schema_id", "document_count"),
-            ),
+            ))
+        operations.extend([
             Operation(
                 id="create-managed-knowledge-source", plane="build", action="create",
                 resource="knowledge_source", name="managed-blob",
@@ -129,7 +131,7 @@ def plan(spec: BuildSpec) -> Plan:
                         "choose --ontology owl_file or schema_org")
     blockers.extend(grounding_blockers(spec, ontology is not None))
     if ontology:
-        evidence_error = probe_error(spec)
+        evidence_error = graph_input_error(spec)
         if evidence_error:
             blockers.append(evidence_error)
         if not all((spec.embedding_deployment, spec.embedding_model, spec.embedding_dimensions,
@@ -160,15 +162,18 @@ def plan(spec: BuildSpec) -> Plan:
     if ontology:
         from .managed_pipeline import extraction_settings
         identity["managed_extraction"] = extraction_settings(spec)
+        if uses_inline_jsonld(spec):
+            identity["inline_ontology"] = {
+                "schema_id": ontology.schema_id,
+                "transport": "inlineJsonLd",
+                "search_api_version": search_api_version(spec),
+            }
     if spec.readers:
         identity["readers"] = list(spec.readers)
     return Plan(
         plan_id=stable_id("build-plan", identity),
         operations=tuple(operations),
         warnings=warnings + ((
-            f"{PREVIEW_ENTITLEMENT_UNVERIFIABLE} Explicit approval permits one exact-service "
-            "journaled attempt; 400/403 or timeout must not be retried automatically.",
-        ) if ontology and not blockers else ()) + ((
             f"Grants read access to {len(spec.readers)} "
             f"{'identity' if len(spec.readers) == 1 else 'identities'} on the new build "
             "(Search Index Data Reader on its content and graph indexes). The Build "
@@ -179,10 +184,15 @@ def plan(spec: BuildSpec) -> Plan:
         ) if spec.grounding_index and not blockers else ()),
         blocked_by=tuple(blockers),
         route=decision,
-        scope={**scope(spec, decision),
-               "ontology_schema_id": ontology.schema_id if ontology else None,
-               **({"trial": trial_scope(spec)} if spec.trial else {})}
-        if decision else {},
+        scope=({
+            **scope(spec, decision),
+            "ontology_schema_id": ontology.schema_id if ontology else None,
+            **({
+                "ontology_transport": "inlineJsonLd",
+                "search_api_version": search_api_version(spec),
+            } if ontology and uses_inline_jsonld(spec) else {}),
+            **({"trial": trial_scope(spec)} if spec.trial else {}),
+        } if decision or ontology else {}),
         estimates=plan_estimates(spec) if ontology else {},
         grounding=grounding_block(spec) if ontology else {},
     )

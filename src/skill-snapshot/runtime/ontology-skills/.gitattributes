@@ -1,0 +1,6 @@
+* text=auto eol=lf
+*.owl -text
+*.ttl -text
+tests/fixtures/** -text
+# Preserve generated frontend document and attribution hashes across checkouts.
+src/ontology_apps/ui/** -text -diff

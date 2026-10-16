@@ -1,4 +1,4 @@
-"""The standard approval card for every gate.
+"""The standard approval card for every gate (docs/operator.md#approval-card).
 
     APPROVAL: <what, one line>
     Tenant: <name> (<id prefix>…) · Subscription: <name> · Resource group: <rg> (new|existing)

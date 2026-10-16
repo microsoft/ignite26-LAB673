@@ -12,12 +12,12 @@ Use this path to explain a class from its cited passages or to compare two saved
 
 ## Evidence
 
-- `ontology-skills-ontology_evidence` or `ontology-consume evidence <Class> [--version N] [--limit N]` lists the passages that support a class. Quote each excerpt as returned and name its source.
+- `ontology-consume evidence <Class> [--version N] [--limit N]` lists the passages that support a class. Quote each excerpt as returned and name its source.
 - If a class has no evidence, say so. Imported versions carry no passages. Do not invent a justification.
 
 ## Diff
 
-- `ontology-skills-ontology_diff` or `ontology-consume diff <a> <b>` shows classes and properties added, removed, and changed between two versions, including coverage regressions.
+- `ontology-consume diff <a> <b>` shows classes and properties added, removed, and changed between two versions, including coverage regressions.
 - Explain the change in plain words first. Give version numbers only because the question named them.
 
 ## Return

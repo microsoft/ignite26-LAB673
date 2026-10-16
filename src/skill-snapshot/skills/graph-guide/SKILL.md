@@ -1,32 +1,30 @@
 ---
 name: graph-guide
-description: 'Explain whether to use foundry-iq-skills, ekg-skills, azure-kusto-graph-skills, or the grounding, grz and ontology companions, and what stays planned. WHEN: "do I need a graph", "which Azure retrieval route fits", "when is an ontology needed". DO NOT USE FOR: writing graph queries or changing Azure.'
+description: 'Explain plain retrieval, entity extraction (entity-skills), knowledge graphs (ekg-skills), GraphRAG communities (grz-skills), candidate ontologies (ontology-skills), optional grounding (grounding-skills) and Kusto graph (azure-kusto-graph-skills), and how CLI, optional Apps and standalone presentation fit. WHEN: "do I need a graph", "how do the graph skills fit together", "when is an ontology needed". DO NOT USE FOR: picking a route for specific data (graph-choose), running the chain (graph-demo), writing queries or changing Azure.'
 license: MIT
 compatibility: Advisory only. Requires the user's question and any stated current plugin availability.
 metadata:
   author: Microsoft
-  version: "0.1.0-snapshot.0e44f94"
+  version: "0.0.0-snapshot"
 ---
 
 # Graph guide
 
-Explain only. Ask about data shape and answer shape before routing. Load one
-reference at a time.
-
-This graph-only snapshot does not bundle `foundry-iq-skills` or
-`azure-kusto-graph-skills`; references to them describe external routes.
+Explain only. Say the technique with the domain alongside, for example "GraphRAG (grz-skills)". Pick one
+retrieval kind and say why. Never run Azure commands, sign in or install anything.
 
 | Need | Load |
 |---|---|
-| Plain-language choice between retrieval, knowledge graph, and Kusto graph | [Decision guide](references/decision-guide.md) |
-| Published plugin install or readiness checks | [Install and checks](references/install-and-checks.md) |
-| Companion plugins and the planned entity stage | [Decision guide](references/decision-guide.md) |
+| Techniques, ontology options, hand-offs, wrong premises | [Decision guide](references/decision-guide.md) |
+| Historical measured numbers and what is not measured | [Measured results](references/measured-results.md) |
+| Read-only checks, install and optional Apps | [Install and checks](references/install-and-checks.md) |
 
-## Shared rules
+## Rules
 
-- Available routes: `foundry-iq-skills`, `ekg-skills`, `grounding-skills`, `grz-skills`, `ontology-skills`, and `azure-kusto-graph-skills`.
-- Planned only: `entity-skills` (automated entity linking and extraction). Describe it as future work; give no install or command lines.
-- If one or a few passages answer the question, route to `foundry-iq-skills`.
-- If the answer needs multi-hop entity links over Azure AI Search, route to `ekg-skills`.
-- If the data already lives in Kusto or Azure Data Explorer, route to `azure-kusto-graph-skills`.
-- Never install anything, sign in, or mutate Azure from this skill. Run only read-only checks, then hand off after the user approves the route.
+- One or two passages answer it: `foundry-iq` skill, no graph.
+- A chain across documents: knowledge graph (ekg-skills). Themes across the corpus: GraphRAG (grz-skills).
+- Data already in Kusto or Azure Data Explorer: `azure-kusto-graph-skills`.
+- Execution is skills, then domain CLI, then domain services. Apps are optional presentation, never required. Never invent a universal graph command.
+- Unsure which route fits specific data: `graph-choose`. Whole chain on one dataset: `graph-demo`.
+- Quote measured numbers; never extrapolate them to other corpora.
+- If a CLI is missing, show the install lines and wait; never install it.

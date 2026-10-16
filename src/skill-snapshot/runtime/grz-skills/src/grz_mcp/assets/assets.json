@@ -1,0 +1,11 @@
+{
+  "version": "grz-app-assets-v1",
+  "files": {
+    "explorer.html": "e1906f35e87d1dfa41774831fe033913b21083529ca9c6ea98c90088c4871d56",
+    "evidence.html": "c9724e004ab9c0b406b520fbf4198e80459308d5a677f15e6bc8aec07ed0fadf",
+    "explorer.THIRD_PARTY_NOTICES.txt": "dcb4e6a0c780816ba22b63de05822779d09d943b4b245a2fc2aa8c18016b2fa1",
+    "evidence.THIRD_PARTY_NOTICES.txt": "dcb4e6a0c780816ba22b63de05822779d09d943b4b245a2fc2aa8c18016b2fa1",
+    "build-provenance.json": "aa29b7f2f29bfff12604a73ff5dcfa570f81a2bdc2cc5120f33600e7412ee822",
+    "bundle-report.json": "08ba2f45de24e0b02a8bc5d2fe8056f3fb62af5631c0e621b47d5193805fae70"
+  }
+}

@@ -1,250 +1,320 @@
-"""Minimal stdio JSON-RPC MCP server (grz-skills) for read-only GRZ Consume browsing."""
+"""Optional official MCP SDK Apps adapter over bounded GRZ reads."""
 
 from __future__ import annotations
 
-import io
 import json
-import sys
-from pathlib import Path
-from typing import Any, TextIO
+from collections.abc import Mapping
+from typing import TYPE_CHECKING, Any
 
 from grz_consume.config import ConsumeConfig, build_service
-from grz_consume.question import embed_question
 from grz_consume.service import ConsumeService
 from grz_core.cli_output import error_body
 from grz_core.contracts import ContractError
 from grz_core.doctor import installed_version
 
-PROTOCOL_VERSION = "2024-11-05"
+from . import apps
+
 SERVER_NAME = "grz-skills"
+ALIASES = {
+    "grz_explore": "grz_list_communities",
+    "grz_evidence": "grz_get_chunk",
+    "grz_app_list_members": "grz_list_members",
+}
 
-
-def _schema(properties: dict[str, Any], required: list[str] | None = None) -> dict[str, Any]:
-    return {
-        "type": "object",
-        "properties": properties,
-        "required": required or [],
-        "additionalProperties": False,
-    }
-
-
-PAGE_SIZE = {"type": "integer", "minimum": 1, "maximum": 1000, "default": 100}
-CURSOR = {"type": "string"}
-DESCRIPTOR_PATH = {"type": "string", "minLength": 1,
-                   "description": "Optional absolute path to a descriptor; overrides the one bound at start for this call."}
-TOOLS: list[dict[str, Any]] = [
-    {
-        "name": "grz_status",
-        "description": "Return verified descriptor and sidecar status for the bound GRZ generation.",
-        "inputSchema": _schema({"descriptor_path": DESCRIPTOR_PATH}),
-        "annotations": {"readOnlyHint": True},
+# type, required, min, max; optional arguments may be omitted or explicitly null.
+ARGUMENTS: dict[str, dict[str, tuple[str, bool, int | None, int | None]]] = {
+    "grz_status": {},
+    "grz_list_communities": {
+        "level": ("integer", False, 0, None),
+        "page_size": ("integer", False, 1, 1000),
+        "cursor": ("string", False, None, None),
     },
-    {
-        "name": "grz_list_communities",
-        "description": "List communities at one level. Omit level to get the level with about 10-30 communities "
-                       "(grz_status reports it as browse_level); level 0 is the finest.",
-        "inputSchema": _schema({
-            "level": {"type": "integer", "minimum": 0},
-            "page_size": PAGE_SIZE,
-            "cursor": CURSOR,
-            "descriptor_path": DESCRIPTOR_PATH,
-        }),
-        "annotations": {"readOnlyHint": True},
+    "grz_get_community": {
+        "community_id": ("identifier", True, None, None),
+        "children_page_size": ("integer", False, 1, 1000),
+        "children_cursor": ("string", False, None, None),
     },
-    {
-        "name": "grz_get_community",
-        "description": "Get one community by community_id.",
-        "inputSchema": _schema({"community_id": {"type": "string", "minLength": 1},
-                                "descriptor_path": DESCRIPTOR_PATH}, ["community_id"]),
-        "annotations": {"readOnlyHint": True},
+    "grz_get_chunk": {"chunk_id": ("identifier", True, None, None)},
+    "grz_explore": {
+        "level": ("integer", False, 0, None),
+        "page_size": ("integer", False, 1, 1000),
+        "cursor": ("string", False, None, None),
     },
-    {
-        "name": "grz_list_members",
-        "description": "Without a question: members in stable order. With question or question_vector: that community's chunks ranked by similarity to the question, top_k distinct articles with scores.",
-        "inputSchema": _schema({
-            "community_id": {"type": "string", "minLength": 1},
-            "page_size": PAGE_SIZE,
-            "cursor": CURSOR,
-            "question": {"type": "string", "minLength": 1},
-            "question_vector": {"type": "array", "items": {"type": "number"}},
-            "top_k": {"type": "integer", "minimum": 1, "maximum": 50, "default": 10},
-            "descriptor_path": DESCRIPTOR_PATH,
-        }, ["community_id"]),
-        "annotations": {"readOnlyHint": True},
+    "grz_evidence": {"chunk_id": ("identifier", True, None, None)},
+    "grz_app_list_members": {
+        "community_id": ("identifier", True, None, None),
+        "page_size": ("integer", False, 1, 1000),
+        "cursor": ("string", False, None, None),
     },
-    {
-        "name": "grz_get_chunk",
-        "description": "Get public chunk evidence by chunk_id.",
-        "inputSchema": _schema({"chunk_id": {"type": "string", "minLength": 1},
-                                "descriptor_path": DESCRIPTOR_PATH}, ["chunk_id"]),
-        "annotations": {"readOnlyHint": True},
-    },
-    {
-        "name": "grz_doctor",
-        "description": "Read-only environment check: CLI version, Python, uv, Azure sign-in tenant, descriptor, "
-                       "sidecar health and reader access. Run it first, and again after any blocked result.",
-        "inputSchema": _schema({"descriptor_path": DESCRIPTOR_PATH}),
-        "annotations": {"readOnlyHint": True},
-    },
-]
+}
+APP_ONLY_TOOLS = frozenset(ARGUMENTS)
+
+if TYPE_CHECKING:
+    from mcp.server.context import CallNext, HandlerResult, ServerRequestContext
 
 
-class Server:
-    """Holds the descriptor bound at start and the services built for per-call descriptor_path overrides."""
-
-    def __init__(self, config: ConsumeConfig | None = None, service: ConsumeService | None = None):
-        self.config = config or ConsumeConfig()
-        self._services: dict[Path | None, ConsumeService] = {}
-        if service is not None:
-            self._services[None] = service
-
-    def config_for(self, descriptor_path: str | None) -> ConsumeConfig:
-        if descriptor_path is None:
-            return self.config
-        path = Path(descriptor_path)
-        if not path.is_absolute():
-            raise ContractError("ARGS_INVALID", "descriptor_path must be an absolute path")
-        return self.config.with_descriptor(path)
-
-    def service(self, descriptor_path: str | None = None) -> ConsumeService:
-        key = None if descriptor_path is None else Path(descriptor_path)
-        if key not in self._services:
-            self._services[key] = build_service(self.config_for(descriptor_path))
-        return self._services[key]
+def _invalid(detail: str) -> ContractError:
+    return ContractError("ARGS_INVALID", detail)
 
 
-def _validate_args(schema: dict[str, Any], args: Any) -> dict[str, Any]:
-    if args is None:
-        args = {}
-    if not isinstance(args, dict):
-        raise ContractError("ARGS_INVALID", "Tool arguments must be an object")
-    extra = set(args) - set(schema["properties"])
+def _validate_arguments(name: str, arguments: Any) -> dict[str, Any]:
+    if name not in ARGUMENTS:
+        raise ContractError("TOOL_NOT_FOUND", f"No tool named {name!r}")
+    if not isinstance(arguments, dict):
+        raise _invalid("Tool arguments must be an object")
+    if any(type(key) is not str for key in arguments):
+        raise _invalid("Tool argument names must be strings")
+    schema = ARGUMENTS[name]
+    extra = set(arguments) - set(schema)
     if extra:
-        raise ContractError("ARGS_INVALID", f"Unsupported argument(s): {', '.join(sorted(extra))}")
-    for required in schema.get("required", []):
-        if required not in args:
-            raise ContractError("ARGS_INVALID", f"Missing required argument: {required}")
-    for name, value in args.items():
-        spec = schema["properties"][name]
-        if spec.get("type") == "string" and (not isinstance(value, str) or (spec.get("minLength") and not value)):
-            raise ContractError("ARGS_INVALID", f"{name} must be a nonempty string")
-        if spec.get("type") == "integer" and (type(value) is not int or value < spec.get("minimum", -2**31) or value > spec.get("maximum", 2**31)):
-            raise ContractError("ARGS_INVALID", f"{name} must be an integer in range")
-        if spec.get("type") == "number" and (isinstance(value, bool) or not isinstance(value, (int, float))):
-            raise ContractError("ARGS_INVALID", f"{name} must be a number")
-        if spec.get("type") == "array":
-            item_type = (spec.get("items") or {}).get("type")
-            if not isinstance(value, list) or (item_type == "number" and any(isinstance(x, bool) or not isinstance(x, (int, float)) for x in value)):
-                raise ContractError("ARGS_INVALID", f"{name} must be an array of numbers")
-    return args
+        raise _invalid(f"Unsupported argument(s): {', '.join(sorted(extra))}")
+    for field, (kind, required, minimum, maximum) in schema.items():
+        if field not in arguments:
+            if required:
+                raise _invalid(f"Missing required argument: {field}")
+            continue
+        value = arguments[field]
+        if value is None:
+            if required:
+                raise _invalid(f"{field} must be a nonempty string")
+            continue
+        if kind in ("string", "identifier"):
+            if type(value) is not str or not value:
+                raise _invalid(f"{field} must be a nonempty string")
+            if kind == "string" and value == "null":
+                raise _invalid(f"{field} must not be the string 'null'; omit it or send JSON null")
+        elif kind == "integer":
+            if type(value) is not int or (minimum is not None and value < minimum) or (maximum is not None and value > maximum):
+                bounds = f"{minimum}..{maximum}" if maximum is not None else f">={minimum}"
+                raise _invalid(f"{field} must be an integer in range {bounds}")
+    return arguments
 
 
 def _content(value: Any, *, is_error: bool = False) -> dict[str, Any]:
-    return {"content": [{"type": "text", "text": json.dumps(value, sort_keys=True, ensure_ascii=False, allow_nan=False)}], "isError": is_error}
+    return {
+        "content": [{"type": "text", "text": json.dumps(value, sort_keys=True, ensure_ascii=False, allow_nan=False)}],
+        "isError": is_error,
+    }
 
 
-def _call_tool(server: Server | ConsumeService, name: str, arguments: Any) -> dict[str, Any]:
-    if isinstance(server, ConsumeService):
-        server = Server(service=server)
-    tool = next((tool for tool in TOOLS if tool["name"] == name), None)
+def _dispatch(
+    service: ConsumeService,
+    name: str,
+    arguments: dict[str, Any],
+) -> dict[str, Any]:
     try:
-        if tool is None:
-            raise ContractError("TOOL_NOT_FOUND", f"No tool named {name!r}")
-        args = _validate_args(tool["inputSchema"], arguments)
-        if name == "grz_doctor":
-            from grz_consume.doctor import run_doctor
-            from grz_core.doctor import ok
-
-            config = server.config_for(args.get("descriptor_path"))
-            report = run_doctor(config, self_test=lambda: ok("mcp_self_test", f"{SERVER_NAME} is running"))
-            return _content(report, is_error=False)
-        service = server.service(args.get("descriptor_path"))
-        if name == "grz_status":
+        action = ALIASES.get(name, name)
+        if action == "grz_status":
             result = service.status()
-        elif name == "grz_list_communities":
-            level = args["level"] if "level" in args else service.browse_level()
-            result = {**service.list_communities(level, args.get("page_size", 100), args.get("cursor")), "level": level}
-        elif name == "grz_get_community":
-            result = service.get_community(args["community_id"])
-        elif name == "grz_list_members":
-            if args.get("question") and args.get("question_vector") is not None:
-                raise ContractError("ARGS_INVALID", "Use question or question_vector, not both")
-            if args.get("question") or args.get("question_vector") is not None:
-                if args.get("cursor") is not None or "page_size" in args:
-                    raise ContractError("ARGS_INVALID", "page_size/cursor are not valid with a question")
-                vector = (args["question_vector"] if args.get("question_vector") is not None else
-                          embed_question(args["question"], service.descriptor.embedding_model_id, service.descriptor.dimension))
-                result = service.rank_members(args["community_id"], vector, args.get("top_k", 10))
-            else:
-                result = service.list_members(args["community_id"], args.get("page_size", 100), args.get("cursor"))
+        elif action == "grz_list_communities":
+            level = arguments.get("level")
+            if level is None:
+                level = service.browse_level()
+            result = {
+                **service.list_communities(level, arguments.get("page_size", 100) or 100,
+                                           arguments.get("cursor")),
+                "level": level,
+            }
+        elif action == "grz_get_community":
+            result = service.get_community(arguments["community_id"],
+                                           arguments.get("children_page_size", 1000) or 1000,
+                                           arguments.get("children_cursor"))
+        elif action == "grz_list_members":
+            result = service.list_members(arguments["community_id"],
+                                          arguments.get("page_size", 100) or 100,
+                                          arguments.get("cursor"))
+        elif action == "grz_get_chunk":
+            result = service.get_chunk(arguments["chunk_id"])
         else:
-            result = service.get_chunk(args["chunk_id"])
+            raise ContractError("TOOL_NOT_FOUND", f"No tool named {name!r}")
         return _content(result)
     except (ContractError, ValueError, OSError, TypeError, ImportError) as exc:
         return _content(error_body(exc, "QUERY_INVALID"), is_error=True)
 
 
-def _success(request_id: Any, result: Any) -> dict[str, Any]:
-    return {"jsonrpc": "2.0", "id": request_id, "result": result}
+def _call_tool(
+    service: ConsumeService,
+    name: str,
+    arguments: Any,
+) -> dict[str, Any]:
+    """In-process tool dispatch shared by SDK handlers and focused service tests."""
+    try:
+        checked = _validate_arguments(name, arguments)
+    except ContractError as exc:
+        return _content(error_body(exc, "QUERY_INVALID"), is_error=True)
+    return _dispatch(service, name, checked)
 
 
-def _error(request_id: Any, code: int, message: str) -> dict[str, Any]:
-    return {"jsonrpc": "2.0", "id": request_id, "error": {"code": code, "message": message}}
+def _sdk_result(result: dict[str, Any]) -> Any:
+    from mcp.types import CallToolResult, TextContent
+
+    text = result["content"][0]["text"]
+    return CallToolResult(
+        content=[TextContent(text=text)],
+        structuredContent=json.loads(text),
+        isError=result["isError"],
+    )
 
 
-def handle_message(server: Server | ConsumeService, message: Any) -> dict[str, Any] | None:
-    if not isinstance(message, dict) or message.get("jsonrpc") != "2.0" or not isinstance(message.get("method"), str):
-        return _error(message.get("id") if isinstance(message, dict) else None, -32600, "Invalid Request")
-    method = message["method"]
-    request_id = message.get("id")
-    is_notification = "id" not in message
-    params = message.get("params", {})
-    if method == "notifications/initialized":
-        return None
-    if is_notification:
-        return None
-    if method == "initialize":
-        return _success(request_id, {
-            "protocolVersion": PROTOCOL_VERSION,
-            "capabilities": {"tools": {}},
-            "serverInfo": {"name": SERVER_NAME, "version": installed_version() or "unknown"},
+def _strip_discovery_extension(result: Any) -> Any:
+    if isinstance(result, dict):
+        capabilities = dict(result.get("capabilities") or {})
+        extensions = dict(capabilities.get("extensions") or {})
+        extensions.pop(apps.EXTENSION, None)
+        if extensions:
+            capabilities["extensions"] = extensions
+        else:
+            capabilities.pop("extensions", None)
+        return {**result, "capabilities": capabilities}
+    capabilities = result.capabilities
+    extensions = dict(capabilities.extensions or {})
+    extensions.pop(apps.EXTENSION, None)
+    capabilities = capabilities.model_copy(update={"extensions": extensions or None})
+    return result.model_copy(update={"capabilities": capabilities})
+
+
+class AppsSessionMiddleware:
+    """Gate app metadata, tools and resources against each connection's negotiated support."""
+
+    async def __call__(
+        self,
+        ctx: ServerRequestContext[Any, Any],
+        call_next: CallNext,
+    ) -> HandlerResult:
+        from mcp.server.apps import client_supports_apps
+        from mcp.shared.exceptions import MCPError
+        from mcp.types import ListResourcesResult, ListToolsResult
+
+        apps_enabled = client_supports_apps(ctx)
+        if ctx.params is None:
+            params: dict[str, Any] = {}
+        elif isinstance(ctx.params, Mapping):
+            params = dict(ctx.params)
+        else:
+            raise MCPError(-32602, "Request parameters must be an object")
+
+        if ctx.method == "tools/call":
+            if set(params) - {"name", "arguments", "_meta"}:
+                raise MCPError(-32602, "Unsupported tools/call parameter")
+            name = params.get("name")
+            if not isinstance(name, str) or name not in ARGUMENTS:
+                raise MCPError(-32601, "Tool not found")
+            if not apps_enabled:
+                raise MCPError(-32601, "Tool not found")
+            arguments = params.get("arguments", {})
+            try:
+                _validate_arguments(name, arguments)
+            except ContractError as exc:
+                raise MCPError(-32602, str(exc)) from exc
+            return await call_next(ctx)
+
+        if ctx.method == "resources/read":
+            if not apps_enabled:
+                raise MCPError(-32002, "Resource not found")
+            uri = params.get("uri")
+            if set(params) - {"uri", "_meta"} or not isinstance(uri, str) or uri not in apps.RESOURCES:
+                raise MCPError(-32002, "Resource not found")
+
+        if not apps_enabled and ctx.method == "tools/list":
+            return ListToolsResult(tools=[])
+        if not apps_enabled and ctx.method == "resources/list":
+            return ListResourcesResult(resources=[])
+        result = await call_next(ctx)
+        if ctx.method == "server/discover" and not apps_enabled:
+            return _strip_discovery_extension(result)
+        return result
+
+
+def create_server(config: ConsumeConfig, service: ConsumeService | None = None) -> Any:
+    """Bind one read scope and verified Apps assets before accepting sessions."""
+    from mcp.server.apps import Apps, ResourceCsp, ResourcePermissions
+    from mcp.server.mcpserver import MCPServer
+    from mcp.types import ToolAnnotations
+
+    loaded_assets = apps.load_assets()
+    extension = Apps()
+    csp = ResourceCsp(connectDomains=[], resourceDomains=[], frameDomains=[], baseUriDomains=[])
+    permissions = ResourcePermissions()
+    for uri, (filename, title) in apps.RESOURCES.items():
+        extension.add_html_resource(
+            uri=uri,
+            html=loaded_assets[filename],
+            name=title,
+            csp=csp,
+            permissions=permissions,
+            prefers_border=True,
+        )
+
+    bound_service = service
+
+    def get_service() -> ConsumeService:
+        nonlocal bound_service
+        if bound_service is None:
+            bound_service = build_service(config)
+        return bound_service
+
+    read_only = ToolAnnotations(readOnlyHint=True)
+    app_only = {"ui": {"visibility": ["app"]}}
+
+    def invoke(name: str, arguments: dict[str, Any]) -> Any:
+        return _sdk_result(_dispatch(get_service(), name, arguments))
+
+    @extension.tool(resource_uri="ui://grz/explorer.html", visibility=["model"],
+                    name="grz_explore", description="Present a GRZ community explorer.",
+                    annotations=read_only)
+    def grz_explore(level: int | None = None, page_size: int | None = 100,
+                    cursor: str | None = None) -> Any:
+        return invoke("grz_explore", {"level": level, "page_size": page_size, "cursor": cursor})
+
+    @extension.tool(resource_uri="ui://grz/evidence.html", visibility=["model"],
+                    name="grz_evidence", description="Present GRZ chunk evidence.",
+                    annotations=read_only)
+    def grz_evidence(chunk_id: str) -> Any:
+        return invoke("grz_evidence", {"chunk_id": chunk_id})
+
+    server = MCPServer(
+        name=SERVER_NAME,
+        version=installed_version() or "unknown",
+        extensions=[extension],
+        middleware=[AppsSessionMiddleware()],
+    )
+
+    @server.tool(name="grz_status", description="Return verified status for the server-bound GRZ generation.",
+                 annotations=read_only, meta=app_only)
+    def grz_status() -> Any:
+        return invoke("grz_status", {})
+
+    @server.tool(name="grz_list_communities",
+                 description="List a bounded page of communities at one hierarchy level.",
+                 annotations=read_only, meta=app_only)
+    def grz_list_communities(level: int | None = None, page_size: int | None = 100,
+                             cursor: str | None = None) -> Any:
+        return invoke("grz_list_communities", {"level": level, "page_size": page_size, "cursor": cursor})
+
+    @server.tool(name="grz_get_community", description="Get one community and a bounded page of its children.",
+                 annotations=read_only, meta=app_only)
+    def grz_get_community(community_id: str, children_page_size: int | None = 1000,
+                          children_cursor: str | None = None) -> Any:
+        return invoke("grz_get_community", {
+            "community_id": community_id,
+            "children_page_size": children_page_size,
+            "children_cursor": children_cursor,
         })
-    if method == "ping":
-        return _success(request_id, {})
-    if method == "tools/list":
-        return _success(request_id, {"tools": TOOLS})
-    if method == "tools/call":
-        if not isinstance(params, dict) or not isinstance(params.get("name"), str):
-            return _error(request_id, -32600, "Invalid Request")
-        return _success(request_id, _call_tool(server, params["name"], params.get("arguments", {})))
-    return _error(request_id, -32601, "Method not found")
 
+    @server.tool(name="grz_get_chunk", description="Get public chunk evidence by chunk ID.",
+                 annotations=read_only, meta=app_only)
+    def grz_get_chunk(chunk_id: str) -> Any:
+        return invoke("grz_get_chunk", {"chunk_id": chunk_id})
 
-def serve(server: Server | ConsumeService, stdin: TextIO = sys.stdin, stdout: TextIO = sys.stdout) -> int:
-    for line in stdin:
-        try:
-            message = json.loads(line)
-        except json.JSONDecodeError:
-            print(json.dumps(_error(None, -32700, "Parse error"), sort_keys=True), file=stdout, flush=True)
-            continue
-        response = handle_message(server, message)
-        if response is not None:
-            print(json.dumps(response, sort_keys=True, ensure_ascii=False, allow_nan=False), file=stdout, flush=True)
-    return 0
+    @server.tool(name="grz_app_list_members",
+                 description="List community members in stable order without model calls.",
+                 annotations=read_only, meta=app_only)
+    def grz_app_list_members(community_id: str, page_size: int | None = 100,
+                             cursor: str | None = None) -> Any:
+        return invoke("grz_app_list_members", {
+            "community_id": community_id,
+            "page_size": page_size,
+            "cursor": cursor,
+        })
 
-
-def self_test(server: Server) -> dict[str, Any]:
-    """Start the protocol loop in memory, list tools, and exit; touches no data."""
-    requests = [
-        {"jsonrpc": "2.0", "id": 1, "method": "initialize", "params": {}},
-        {"jsonrpc": "2.0", "method": "notifications/initialized"},
-        {"jsonrpc": "2.0", "id": 2, "method": "tools/list"},
-    ]
-    out = io.StringIO()
-    serve(server, io.StringIO("".join(json.dumps(r) + "\n" for r in requests)), out)
-    responses = [json.loads(line) for line in out.getvalue().splitlines()]
-    info = responses[0]["result"]["serverInfo"]
-    tools = [tool["name"] for tool in responses[1]["result"]["tools"]]
-    if info["name"] != SERVER_NAME or not tools:
-        raise ContractError("MCP_SELF_TEST_FAILED", "Server did not initialize or list tools")
-    return {"status": "ok", "server": info["name"], "version": info["version"], "tools": tools}
+    return server

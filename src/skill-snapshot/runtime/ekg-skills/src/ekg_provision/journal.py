@@ -27,6 +27,8 @@ def _write_json(path: Path, value: dict[str, Any]) -> None:
 def journal_spec(spec: ProvisioningSpec) -> dict[str, Any]:
     """Journal spec shape; omits empty optional fields so older records still compare."""
     value = asdict(spec)
+    if spec.public_data is None:
+        value.pop("public_data")
     if not spec.model_deployments:
         value.pop("model_deployments")
     if spec.build_access is None:

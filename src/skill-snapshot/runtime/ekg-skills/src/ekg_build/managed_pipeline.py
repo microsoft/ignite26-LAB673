@@ -4,9 +4,20 @@ import hashlib
 from urllib.parse import urlparse
 
 from ekg_core import grounding
-from ekg_core.models import BuildSpec, Ontology
+from ekg_core.models import BuildSpec, Ontology, OntologyMode
+from ekg_core.ontology import load_ontology
 
 SEARCH_API_VERSION = "2026-08-01-preview"
+INLINE_JSONLD_API_VERSION = "2026-11-01-preview"
+
+
+def search_api_version(spec: BuildSpec) -> str:
+    return (INLINE_JSONLD_API_VERSION
+            if spec.ontology_mode is OntologyMode.INLINE_JSONLD else SEARCH_API_VERSION)
+
+
+def uses_inline_jsonld(spec: BuildSpec) -> bool:
+    return spec.ontology_mode is OntologyMode.INLINE_JSONLD
 
 # The service resolves nothing against a grounding index without a non-empty cascade.
 GROUNDING_CASCADE = ("exact", "smart", "starts_with")
@@ -131,8 +142,9 @@ def ontology_rows(ontology: Ontology, graph_name: str) -> list[dict]:
     return rows
 
 
-def knowledge_source(spec: BuildSpec, *, name: str, ontology_name: str,
-                     graph_name: str, prefix: str) -> dict:
+def knowledge_source(spec: BuildSpec, *, name: str, ontology_name: str | None,
+                     graph_name: str, prefix: str,
+                     ontology: Ontology | None = None) -> dict:
     target = spec.target
     if not target.subscription_id or not target.resource_group:
         raise ValueError("managed Blob ingestion needs explicit subscription and resource group")
@@ -167,6 +179,20 @@ def knowledge_source(spec: BuildSpec, *, name: str, ontology_name: str,
     )
     if not storage_id or storage_id.rsplit("/", 1)[-1].casefold() != storage_name.casefold():
         raise ValueError("managed Blob ingestion needs the exact destination Storage ARM ID")
+    if uses_inline_jsonld(spec):
+        ontology = ontology or load_ontology(
+            spec.ontology_mode, path=spec.ontology_path,
+            schema_org_profile=spec.schema_org_profile,
+            schema_org_version=spec.schema_org_version,
+            resolve_imports=spec.resolve_imports,
+        )
+        if ontology is None or ontology.inline_jsonld is None:
+            raise ValueError("inline_jsonld mode requires its validated local document")
+        ontology_binding = {"inlineJsonLd": ontology.inline_jsonld}
+    else:
+        if not ontology_name:
+            raise ValueError("indexed ontology mode requires an ontology index name")
+        ontology_binding = {"indexName": ontology_name}
     return {
         "name": name, "kind": "azureBlob",
         "azureBlobParameters": {
@@ -179,7 +205,7 @@ def knowledge_source(spec: BuildSpec, *, name: str, ontology_name: str,
                 "disableImageVerbalization": True,
                 "contentExtractionMode": "minimal",
                 "graphExtraction": {
-                    "graphName": graph_name, "ontology": {"indexName": ontology_name},
+                    "graphName": graph_name, "ontology": ontology_binding,
                     "minEdgeConfidence": 0.0,
                     **({"grounding": {"cascade": list(GROUNDING_CASCADE),
                                   "index": {"indexName": spec.grounding_index}}}

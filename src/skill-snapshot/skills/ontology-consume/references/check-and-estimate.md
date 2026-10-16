@@ -8,11 +8,11 @@
 
 ## Use this path
 
-Use this path to validate any OWL file or to price a proposal without saving a plan.
+Use this path to validate an OWL file, or hand off a pricing request without writing state.
 
 ## Check a file
 
-`ontology-skills-ontology_check` or `ontology-consume check <file>` validates an RDF/XML file against the flat-owl profile and prints its SHA-256. It reports every violation in document order by rule code:
+`ontology-consume check <file>` validates an RDF/XML file against the flat-owl profile and prints its SHA-256. It reports every violation in document order by rule code:
 
 - `doctype`, `not_well_formed`: no DOCTYPE or ENTITY, well-formed XML with an `rdf:RDF` root. Nothing else is reported.
 - `ontology_count`, `imports`: exactly one `owl:Ontology`, and no `owl:imports`.
@@ -25,7 +25,11 @@ Fixing a file is out of scope here. Offer to import it into ontology-build as a 
 
 ## Estimate
 
-`ontology-skills-ontology_plan_estimate` prices a proposal and never saves a plan or calls a model. Saving a plan, approving, and running belong to ontology-build.
+There is no read-only estimate verb in `ontology-consume`. Hand off to `ontology-build` with the
+same absolute `--state-dir` and requested budget; do not execute its plan under this read-only skill.
+The build skill's `plan --model-max-spend-usd <cap>` samples the connected corpus and **persists**
+a priced plan. It calls no model, but running propose/refine/critique still requires approval of
+the exact card. Never label persisted planning a nonpersisting preview.
 
 ## Return
 

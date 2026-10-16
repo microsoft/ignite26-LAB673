@@ -1,0 +1,31 @@
+{
+  "resources": {
+    "explorer": {
+      "rawHtmlBytes": 489679,
+      "gzipHtmlBytes": 139969,
+      "gzipJsCssBytes": 139732,
+      "budgetBytes": 204800,
+      "sha256": "e1906f35e87d1dfa41774831fe033913b21083529ca9c6ea98c90088c4871d56",
+      "graphDependencies": 0
+    },
+    "evidence": {
+      "rawHtmlBytes": 489669,
+      "gzipHtmlBytes": 139962,
+      "gzipJsCssBytes": 139732,
+      "budgetBytes": 204800,
+      "sha256": "c9724e004ab9c0b406b520fbf4198e80459308d5a677f15e6bc8aec07ed0fadf",
+      "graphDependencies": 0
+    }
+  },
+  "domainIsolation": {
+    "result": "passed"
+  },
+  "contractChecks": {
+    "command": "node node_modules/vitest/vitest.mjs run tests/unit/grz.test.ts -t \"preserves failures for both supported GRZ schema versions\"",
+    "result": "passed",
+    "schemaVersions": [
+      "grz-sidecar-v1",
+      "grz-sidecar-v2"
+    ]
+  }
+}

@@ -28,17 +28,16 @@ CheckStatus = Literal["ok", "FAIL", "skip"]
 
 CHECKS: tuple[str, ...] = (
     "cli_version", "python", "uv", "azure_signin", "state_dir", "journal", "grz_descriptor",
-    "sidecar_reader", "grz_manifest", "model_data_plane", "model_deployment", "mcp_self_test",
+    "sidecar_reader", "grz_manifest", "model_data_plane", "model_deployment",
 )
 """`ontology-build doctor` checks, in output order. Each FAIL maps to error code `DOCTOR_<NAME.upper()>`."""
 
-CONSUME_CHECKS: tuple[str, ...] = ("cli_version", "python", "uv", "state_dir", "journal", "mcp_self_test")
+CONSUME_CHECKS: tuple[str, ...] = ("cli_version", "python", "uv", "state_dir", "journal")
 """`ontology-consume doctor` checks (no Azure)."""
 
 MIN_PYTHON = (3, 12)
 PACKAGE = "ontology-skills"
-PLUGIN_INSTALL = "reinstall the ontology-skills plugin so the plugin and the CLI match"
-UNSTAMPED_PLUGIN_VERSION = "0.0.0-placeholder"
+PLUGIN_INSTALL = "copilot plugin install ontology-skills@ontology-skills"
 COGNITIVE_ARM_API_VERSION = "2024-10-01"
 ARM = "https://management.azure.com"
 
@@ -119,11 +118,6 @@ def installed_version() -> str | None:
         return None
 
 
-def _release_line(value: object) -> str:
-    """MAJOR.MINOR of a version; the plugin build number is stamped separately from the CLI's."""
-    return ".".join(str(value).split(".")[:2])
-
-
 def check_cli_version(ctx: DoctorContext, earlier: dict[str, Check]) -> Check:
     from ontology_core import __version__
 
@@ -136,7 +130,7 @@ def check_cli_version(ctx: DoctorContext, earlier: dict[str, Check]) -> Check:
         plugin = json.loads(manifest.read_text(encoding="utf-8")).get("version")
     except (OSError, ValueError) as exc:
         raise Blocked("DOCTOR_CLI_VERSION", f"cannot read {manifest}: {exc}") from exc
-    if plugin != UNSTAMPED_PLUGIN_VERSION and _release_line(plugin) != _release_line(installed):
+    if plugin != installed:
         raise Blocked("DOCTOR_CLI_VERSION", f"CLI {installed} does not match plugin {plugin} ({manifest})",
                       next_step=f"{errors.CODES['DOCTOR_CLI_VERSION']}; then `{PLUGIN_INSTALL}`")
     return _ok("cli_version", f"ontology-skills {installed} (plugin {plugin})", version=installed)
@@ -394,16 +388,6 @@ def check_model_deployment(ctx: DoctorContext, earlier: dict[str, Check]) -> Che
     raise Blocked("DOCTOR_MODEL_DEPLOYMENT", f"{where}: HTTP {response.status}")
 
 
-# --------------------------------------------------------------------------- MCP
-
-
-def check_mcp_self_test(ctx: DoctorContext, earlier: dict[str, Check]) -> Check:
-    from ontology_mcp import server
-
-    report = server.self_test(Path(ctx.state_dir))
-    return _ok("mcp_self_test", f"{len(report['tools'])} read-only tools listed")
-
-
 CHECK_FUNCTIONS: dict[str, CheckFn] = {
     "cli_version": check_cli_version,
     "python": check_python,
@@ -416,7 +400,6 @@ CHECK_FUNCTIONS: dict[str, CheckFn] = {
     "grz_manifest": check_grz_manifest,
     "model_data_plane": check_model_data_plane,
     "model_deployment": check_model_deployment,
-    "mcp_self_test": check_mcp_self_test,
 }
 
 

@@ -9,6 +9,7 @@ from .planner import plan
 def render_bicep_parameters(spec: ProvisioningSpec) -> dict:
     from .network import validate_network
     validate_network(spec)
+    reviewed = plan(spec)
     return {
         "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
         "contentVersion": "1.0.0.0",
@@ -30,10 +31,16 @@ def render_bicep_parameters(spec: ProvisioningSpec) -> dict:
             "publicTestExpiresAt": {"value": spec.public_test.expires_at if spec.public_test else ""},
             "publicTestTenantId": {"value": spec.public_test.tenant_id if spec.public_test else ""},
             "syntheticDataOnly": {"value": spec.public_test.synthetic_data_only if spec.public_test else False},
-            "expectedPlanId": {"value": plan(spec).plan_id if spec.network or spec.public_test else ""},
+            **({
+                "publicDataEnabled": {"value": True},
+                "publicDataOnly": {"value": spec.public_data.public_data_only},
+                "publicDataExpiresAt": {"value": spec.public_data.expires_at},
+                "publicDataTenantId": {"value": spec.public_data.tenant_id},
+            } if spec.public_data else {}),
+            "expectedPlanId": {"value": reviewed.plan_id if spec.network or spec.public_endpoint else ""},
             "approvedPlanId": {"value": ""},
-            "expectedSubscriptionId": {"value": spec.target.subscription_id if spec.network or spec.public_test else ""},
-            "expectedResourceGroup": {"value": spec.target.resource_group if spec.network or spec.public_test else ""},
+            "expectedSubscriptionId": {"value": spec.target.subscription_id if spec.network or spec.public_endpoint else ""},
+            "expectedResourceGroup": {"value": spec.target.resource_group if spec.network or spec.public_endpoint else ""},
         },
     }
 
@@ -47,14 +54,28 @@ def _deployment_steps(spec: ProvisioningSpec) -> str:
     )
 
 
+def _access_steps(spec: ProvisioningSpec) -> str:
+    if spec.build_access is None:
+        return ""
+    from .access import plain_writes
+    return "".join(
+        f"- [ ] {line}.\n"
+        for operation in plan(spec).operations
+        if operation.resource in ("search_identity", "blob_container", "role_assignment")
+        for line in plain_writes(spec, (operation,))
+    )
+
+
 def render_portal_checklist(spec: ProvisioningSpec) -> str:
     location = spec.target.location or "<approved-region>"
     from .network import ZONES, validate_network
     validate_network(spec)
     from .public_test import validate_public_test
     validate_public_test(spec)
-    if spec.public_test:
-        test = spec.public_test
+    if spec.public_endpoint:
+        test = spec.public_endpoint
+        label = "public-data Entra" if spec.public_data else "public-test"
+        policy = "publicly available corpus only; no non-public data" if spec.public_data else "synthetic data only"
         if test.mode == "entra_only":
             ingress = (
                 "Internet-reachable **all public networks**: NO IP firewall; access relies "
@@ -70,15 +91,15 @@ def render_portal_checklist(spec: ProvisioningSpec) -> str:
             storage = f"firewall default **Deny**, IP rules **Allow only** `{', '.join(test.egress_ips)}`"
             openai = f"firewall default **Deny**, IP rules **only** `{', '.join(test.egress_ips)}`"
             client = "Verify from the approved VPN client; reject other public IPs."
-        return f"""# Temporary public-test Portal checklist (review only)
+        return f"""# Temporary {label} Portal checklist (review only)
 
 - [ ] Confirm the explicitly selected tenant `{test.tenant_id}` and subscription `{spec.target.subscription_id}`.
 - [ ] Confirm isolated `{spec.target.location}` resource group `{spec.target.resource_group}` is absent and separately approved for creation.
-- [ ] Confirm **{test.mode}** mode: {ingress} Expiry `{test.expires_at}` UTC; **synthetic data only**.
+- [ ] Confirm **{test.mode}** mode: {ingress} Expiry `{test.expires_at}` UTC; **{policy}**.
 - [ ] Search `{spec.search_name}` Basic, system identity: {search}; trusted services **off** (`networkRuleSet.bypass=None`); disable API-key/local authentication.
 - [ ] Storage `{spec.storage_name}` Standard_LRS StorageV2: public endpoint **Enabled**, {storage}, trusted services **None**; disable public blob, Shared Key, local users and SFTP; prefer OAuth in Portal, require HTTPS/TLS 1.2. Account/service SAS are blocked by `allowSharedKeyAccess=false`; **Entra-backed user-delegation Blob SAS remains possible**. Do not mint or use SAS.
 - [ ] OpenAI `{spec.openai_name}` S0: public endpoint **Enabled**, {openai}, trusted services **None**; disable local-key authentication.
-{_deployment_steps(spec)}- [ ] Verify effective ARM settings and authenticated Search/Storage data-plane reads before writes; use separately approved Entra RBAC. {client}
+{_deployment_steps(spec)}{_access_steps(spec)}- [ ] Verify effective ARM settings and authenticated Search/Storage data-plane reads before data writes; use the approved scoped Entra RBAC. {client}
 - [ ] Manually remove test resources before `{test.expires_at}` UTC under separate cleanup review; expiry does not disable/delete anything automatically.
 
 **Review only:** Bicep public deployment deliberately fails closed; use only the gated SDK CLI after a separate exact-plan approval. This checklist creates nothing.
@@ -125,12 +146,14 @@ This checklist creates nothing automatically. Without separately approved privat
 
 
 def write_artifacts(spec: ProvisioningSpec, output: str | Path) -> tuple[Path, Path]:
+    rendered = render_bicep_parameters(spec)
+    checklist = render_portal_checklist(spec)
     root = Path(output)
     root.mkdir(parents=True, exist_ok=True)
     parameters = root / "parameters.json"
     portal = root / "portal.md"
     import json
 
-    parameters.write_text(json.dumps(render_bicep_parameters(spec), indent=2) + "\n", encoding="utf-8")
-    portal.write_text(render_portal_checklist(spec), encoding="utf-8")
+    parameters.write_text(json.dumps(rendered, indent=2) + "\n", encoding="utf-8")
+    portal.write_text(checklist, encoding="utf-8")
     return parameters, portal

@@ -101,6 +101,11 @@ class HttpStats:
             sent = 0
         self.observe(response.status_code, sent=sent, received=len(response.content or b""))
 
+    def observe_embedding_response(self, response: Any) -> None:
+        """Buffer non-streaming embedding responses before an HTTPX response hook counts them."""
+        response.read()
+        self.observe_response(response)
+
     def add_usage(self, usage: Any) -> None:
         """Record model token usage reported by an OpenAI response, when present."""
         if not isinstance(usage, dict):

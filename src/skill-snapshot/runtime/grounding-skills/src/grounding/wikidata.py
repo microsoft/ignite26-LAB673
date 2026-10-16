@@ -13,7 +13,7 @@ from .errors import GroundingError, ServiceError
 from .normalize import WIKIDATA_EDGE_CAP
 
 API_URL = "https://www.wikidata.org/w/api.php"
-USER_AGENT = "grounding-skills/0.1 (https://github.com/microsoft/GitHub-Copilot-for-Azure; bounded seed queries, low rate) httpx"
+USER_AGENT = "grounding-skills/0.1 (https://github.com/microsoft/azure-skills; bounded seed queries, low rate) httpx"
 NAMESPACE = "wikidata:CC0"
 EDGE_CONFIDENCE = 0.9
 MAX_DEPTH = 2

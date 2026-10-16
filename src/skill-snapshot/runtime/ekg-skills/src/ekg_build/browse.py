@@ -27,14 +27,14 @@ def write_descriptor(descriptor: dict[str, Any], out: str | None, previous: list
     os.replace(temporary, path)
     if set_current:
         write_current(path)
-    prompt = ("Using the ekg-skills MCP tools, answer \"<your question>\" from the graph "
+    prompt = ("Using the ekg-consume CLI or graph Apps, answer \"<your question>\" from the graph "
               "and cite the source file for every hop.")
     login = f"az login --tenant {tenant_id}" if tenant_id else "az login"
     browse = {"descriptor_path": str(path),
               "search_endpoint": descriptor.get("endpoints", {}).get("search"),
               "auth": AUTH, "tenant_id": tenant_id, "current": set_current,
               "commands": [login, "copilot"], "example_prompt": prompt}
-    default_line = ("  then just ask; ekg-consume and the MCP tools use this descriptor by default."
+    default_line = ("  then just ask; ekg-consume and the graph Apps use this descriptor by default."
                     if set_current else
                     f"  the current pointer is unchanged; name this descriptor in the prompt "
                     f"(descriptor_path {path}) or pass --descriptor to ekg-consume.")

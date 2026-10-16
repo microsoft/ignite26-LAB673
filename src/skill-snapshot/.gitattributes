@@ -1,1 +1,4 @@
 * -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+runtime/ekg-skills/adapters/mcp/ui/** -text -whitespace
+runtime/grz-skills/src/grz_mcp/assets/** -text -whitespace
+runtime/ontology-skills/src/ontology_apps/ui/** -text -whitespace

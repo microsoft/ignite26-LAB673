@@ -12,7 +12,7 @@ BUILD_VERSION = "grz-build-v1"
 SIDECAR_VERSION = "grz-sidecar-v2"
 DESCRIPTOR_VERSION = "grz-descriptor-v1"
 ALGORITHM_REVISION = "grz-native-poc-v1"
-PINNED_DEPENDENCIES = {"numpy": "2.2.6", "GRZBuildPoc": "0.1.4-local"}
+PINNED_DEPENDENCIES = {"numpy": "2.5.4", "GRZBuildPoc": "0.1.4-local"}
 
 
 class ContractError(ValueError):

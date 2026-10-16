@@ -53,6 +53,7 @@ class AzureDataPlane:
         self.openai_endpoint = openai_endpoint.rstrip("/") if openai_endpoint else None
         self.embedding_deployment = embedding_deployment
         self.search_api_version = search_api_version
+        self._openai_client: Any = None
         self.http_stats = HttpStats()
 
     def _request(self, method: str, url: str, scope: str, *, json_body: Any = None,
@@ -200,23 +201,35 @@ class AzureDataPlane:
             raise RuntimeError("generated content page is malformed")
         return result["value"]
 
-    def _openai(self, deployment: str, path: str, body: dict[str, Any]) -> dict[str, Any]:
-        if not self.openai_endpoint:
-            raise ValueError("openai_endpoint is required")
-        return self._request(
-            "POST",
-            f"{self.openai_endpoint}/openai/deployments/{quote(deployment, safe='')}/"
-            f"{path}?api-version=2024-10-21",
-            "https://cognitiveservices.azure.com/.default", json_body=body,
-        )
-
     def embed(self, text: str) -> list[float]:
         if not self.embedding_deployment:
             raise ValueError("embedding_deployment is required for vector retrieval")
-        result = self._openai(self.embedding_deployment, "embeddings", {"input": text})
-        usage = result.get("usage") if isinstance(result, dict) else None
+        if not self.openai_endpoint:
+            raise ValueError("openai_endpoint is required")
+        result = self._openai().embeddings.create(
+            model=self.embedding_deployment, input=text,
+        )
+        usage = result.usage.model_dump() if result.usage else None
         self.http_stats.add_usage(usage)
-        return result["data"][0]["embedding"]
+        return list(result.data[0].embedding)
+
+    def _openai(self) -> Any:
+        if self._openai_client is None:
+            import httpx
+            from openai import OpenAI
+
+            transport = httpx.Client(
+                timeout=90, follow_redirects=False,
+                event_hooks={"response": [self.http_stats.observe_embedding_response]},
+            )
+            self._openai_client = OpenAI(
+                base_url=f"{self.openai_endpoint}/openai/v1/",
+                api_key=lambda: self.credential.get_token(
+                    "https://ai.azure.com/.default").token,
+                http_client=transport,
+                max_retries=0,
+            )
+        return self._openai_client
 
     def service_statistics(self) -> dict[str, Any]:
         return self._request("GET", self._search_url("servicestats"),
@@ -389,7 +402,7 @@ class AzureDataPlane:
 
     def graph_search(self, name: str, gql: str) -> dict[str, Any]:
         if self.search_api_version != "2026-08-01-preview":
-            raise ValueError("native graph probe requires Search 2026-08-01-preview")
+            raise ValueError("native graph probe requires Search API 2026-08-01-preview")
         result = self._request(
             "POST", self._search_url(f"{self._index_path(name)}/docs/search.graph"),
             "https://search.azure.com/.default",

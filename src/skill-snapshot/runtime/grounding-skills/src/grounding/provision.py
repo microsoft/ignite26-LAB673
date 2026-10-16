@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import time
 import uuid
-from typing import Any
+from typing import Any, Callable
 
 from . import API_VERSION
 from .azure import (AUTHZ_API, ROLE_IDS, SEARCH_ARM_API, Azure, endpoint_for, role_gaps, validate_endpoint)
@@ -22,20 +22,42 @@ def _service_id(sub: str, rg: str, name: str) -> str:
     return f"/subscriptions/{sub}/resourceGroups/{rg}/providers/Microsoft.Search/searchServices/{name}"
 
 
-def _summarize(svc: dict[str, Any]) -> dict[str, Any]:
-    props = svc.get("properties", {})
-    parts = svc.get("id", "").split("/")
+def _summarize(svc: Any) -> dict[str, Any]:
+    parts = (svc.id or "").split("/")
+    auth_options = svc.auth_options
     rg = parts[parts.index("resourceGroups") + 1] if "resourceGroups" in parts else ""
-    return {"name": svc.get("name"), "resource_group": rg, "location": svc.get("location"),
-            "sku": (svc.get("sku") or {}).get("name"), "endpoint": endpoint_for(svc.get("name", "")),
-            "provisioning_state": props.get("provisioningState"),
-            "local_auth_disabled": bool(props.get("disableLocalAuth")),
-            "entra_auth": bool(props.get("disableLocalAuth")) or "aadOrApiKey" in (props.get("authOptions") or {})}
+    return {"name": svc.name, "resource_group": rg, "location": svc.location,
+            "sku": svc.sku.name if svc.sku else None, "endpoint": endpoint_for(svc.name or ""),
+            "provisioning_state": svc.provisioning_state,
+            "local_auth_disabled": bool(svc.disable_local_auth),
+            "entra_auth": bool(svc.disable_local_auth) or bool(auth_options and auth_options.aad_or_api_key)}
+
+
+def _search_management_client(az: Azure, sub: str) -> Any:
+    from azure.mgmt.search import SearchManagementClient
+
+    return SearchManagementClient(credential=az.credential(), subscription_id=sub, api_version=SEARCH_ARM_API)
+
+
+def _search_sdk_call(operation: Callable[..., Any], *args: Any, **kwargs: Any) -> Any:
+    from azure.core.exceptions import HttpResponseError
+
+    try:
+        return operation(*args, **kwargs)
+    except HttpResponseError as exc:
+        status = exc.status_code or 0
+        detail = exc.message
+        if status in (401, 403):
+            raise AuthError("FORBIDDEN", f"Azure Search management request returned HTTP {status}",
+                            "Check the Entra roles for this identity (grounding-provision doctor).",
+                            detail=detail) from exc
+        raise ServiceError("SERVICE_HTTP", f"Azure Search management request returned HTTP {status}",
+                           detail=detail) from exc
 
 
 def list_services(az: Azure, sub: str) -> list[dict[str, Any]]:
-    r = az.arm("GET", f"/subscriptions/{sub}/providers/Microsoft.Search/searchServices", api=SEARCH_ARM_API)
-    return [_summarize(s) for s in r.get("value", [])]
+    with _search_management_client(az, sub) as client:
+        return [_summarize(s) for s in _search_sdk_call(client.services.list_by_subscription)]
 
 
 def probe_preview(az: Azure, endpoint: str) -> dict[str, Any]:
@@ -137,11 +159,11 @@ def create_plan(az: Azure, ident: dict[str, Any], *, resource_group: str, servic
         if s["name"] == service_name:
             svc_exists, svc_info = True, s
     if not svc_exists:
-        avail = az.arm("POST", f"/subscriptions/{sub}/providers/Microsoft.Search/checkNameAvailability",
-                       {"name": service_name, "type": "searchServices"}, api=SEARCH_ARM_API)
-        if avail.get("nameAvailable") is False:
+        with _search_management_client(az, sub) as client:
+            avail = _search_sdk_call(client.services.check_name_availability, service_name)
+        if avail.is_name_available is False:
             raise GroundingError("SERVICE_NAME_TAKEN", f"Search service name {service_name!r} is unavailable: "
-                                 f"{avail.get('message', avail.get('reason', ''))}",
+                                 f"{avail.message or avail.reason or ''}",
                                  "Choose a different --service-name (names are globally unique).")
     if svc_exists and svc_info["resource_group"].lower() != resource_group.lower():
         raise GroundingError("SERVICE_IN_OTHER_GROUP",
@@ -166,16 +188,17 @@ def create_plan(az: Azure, ident: dict[str, Any], *, resource_group: str, servic
                                       notices)}
 
 
-def _wait_service(az: Azure, sub: str, rg: str, name: str, timeout: float = 900.0) -> dict[str, Any]:
+def _wait_service(az: Azure, sub: str, rg: str, name: str, timeout: float = 900.0) -> Any:
     end = time.monotonic() + timeout
-    while time.monotonic() < end:
-        r = az.arm("GET", _service_id(sub, rg, name), api=SEARCH_ARM_API)
-        state = (r.get("properties") or {}).get("provisioningState")
-        if state == "succeeded":
-            return r
-        if state in ("failed", "deleting"):
-            raise ServiceError("PROVISIONING_FAILED", f"service provisioning state: {state}")
-        time.sleep(10)
+    with _search_management_client(az, sub) as client:
+        while time.monotonic() < end:
+            r = _search_sdk_call(client.services.get, rg, name)
+            state = (r.provisioning_state or "").lower()
+            if state == "succeeded":
+                return r
+            if state in ("failed", "deleting"):
+                raise ServiceError("PROVISIONING_FAILED", f"service provisioning state: {state}")
+            time.sleep(10)
     raise ServiceError("PROVISIONING_TIMEOUT", "service did not reach succeeded in time",
                        "Re-run create with the same --plan-id; it is idempotent.")
 
@@ -194,7 +217,12 @@ def create_apply(az: Azure, ident: dict[str, Any], plan_id: str, **kw: Any) -> d
         body = {"location": loc, "sku": {"name": plan["sku"]},
                 "properties": {"replicaCount": 1, "partitionCount": 1, "hostingMode": "default",
                                "publicNetworkAccess": "enabled", "disableLocalAuth": True}}
-        az.arm("PUT", _service_id(sub, rg, name), body, api=SEARCH_ARM_API)
+        with _search_management_client(az, sub) as client:
+            poller = _search_sdk_call(client.services.begin_create_or_update, rg, name, body)
+            _search_sdk_call(poller.result, timeout=900)
+            if not poller.done():
+                raise ServiceError("PROVISIONING_TIMEOUT", "service creation did not complete in time",
+                                   "Re-run create with the same --plan-id; it is idempotent.")
         actions.append("service_created")
     else:
         actions.append("service_reused")

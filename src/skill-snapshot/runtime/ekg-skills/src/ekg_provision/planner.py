@@ -12,8 +12,8 @@ def plan(spec: ProvisioningSpec, *, require_active: bool = True) -> Plan:
     validate_public_test(spec, require_active=require_active)
     operations: list[Operation] = []
     network = network_operations(spec)
-    if spec.build_access is not None and spec.public_test is None:
-        raise ValueError("build access (identity, container, roles) needs a public-test plan")
+    if spec.build_access is not None and spec.public_endpoint is None:
+        raise ValueError("build access (identity, container, roles) needs a public-test or public-data plan")
     before_search, after_models = access_operations(spec)
     if spec.create_resource_group:
         operations.append(Operation(
@@ -55,6 +55,8 @@ def plan(spec: ProvisioningSpec, *, require_active: bool = True) -> Plan:
     operations.extend(after_models)
     operations.extend(network)
     old_spec = asdict(spec)
+    if spec.public_data is None:
+        old_spec.pop("public_data")
     if spec.build_access is None:
         old_spec.pop("build_access")
     if not spec.model_deployments:
@@ -84,10 +86,11 @@ def plan(spec: ProvisioningSpec, *, require_active: bool = True) -> Plan:
             "the resource group must already exist or be included in a separately "
             "approved plan before networking can be executed",
         ) if network and not spec.create_resource_group else ()) + ((
-            "TEMPORARY PUBLIC TEST: synthetic data only; "
+            ("TEMPORARY PUBLIC DATA: publicly available corpus only; no non-public data; "
+             if spec.public_data else "TEMPORARY PUBLIC TEST: synthetic data only; ")
             + ("internet-reachable, Entra-authenticated endpoints (no IP firewall); "
                "user-delegation Blob SAS remains possible under Entra authority; "
-               if spec.public_test.mode == "entra_only" else
+               if spec.public_endpoint.mode == "entra_only" else
                "restrict access to the exact approved VPN egress IPs; ")
             + "manually remove resources before the stated expiry. "
             "Expiry is an apply gate, not automatic shutdown or cleanup.",
@@ -97,15 +100,15 @@ def plan(spec: ProvisioningSpec, *, require_active: bool = True) -> Plan:
              if spec.build_access else
              "PROVISIONING ONLY: This plan does not create data-plane RBAC"
              + ("" if spec.model_deployments else ", deploy models")
-             + ", ingest a graph, or grant Search managed graphExtraction preview "
-             "access. It cannot prove end-to-end EKG retrieval. A separately approved, "
-             "separately approved exact-service guarded Build and verified Consume are "
+             + ", ingest a graph or grant data-plane roles. It cannot prove end-to-end "
+             "EKG retrieval. A separately approved exact-service guarded Build "
+             "and verified Consume are "
              "required; Search indexer service-to-service access remains untested. "
              "Synthetic client-side push/query smoke needs separate data-plane "
              "approval and Entra roles.")
             + (" Run the IP-mode smoke from a client on the allowlist."
-               if spec.public_test.mode == "ip_allowlist" else ""),
-        ) if spec.public_test else ()),
+               if spec.public_endpoint.mode == "ip_allowlist" else ""),
+        ) if spec.public_endpoint else ()),
         required_permissions=(
             "Microsoft.Resources/subscriptions/resourceGroups/read",
             *(

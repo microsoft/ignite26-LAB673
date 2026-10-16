@@ -5,6 +5,7 @@ from __future__ import annotations
 from typing import Any
 
 from ekg_core import az_identity
+from ekg_core.resource_endpoints import canonical_resource_endpoint, cognitive_account_endpoint
 
 
 class AzureTargetReader:
@@ -43,7 +44,8 @@ class AzureTargetReader:
             endpoint = endpoints.get("blob")
         elif "/providers/Microsoft.CognitiveServices/accounts/" in resource_id:
             observed = self._inspect(resource_id, tenant_id, "2024-10-01")
-            endpoint = (observed.get("properties") or {}).get("endpoint")
+            endpoint = cognitive_account_endpoint(observed.get("properties") or {})
         else:
             raise ValueError("unsupported target ARM resource type")
-        return {**observed, "endpoint": endpoint.rstrip("/") if isinstance(endpoint, str) else None}
+        return {**observed, "endpoint": canonical_resource_endpoint(endpoint)
+                if isinstance(endpoint, str) else None}

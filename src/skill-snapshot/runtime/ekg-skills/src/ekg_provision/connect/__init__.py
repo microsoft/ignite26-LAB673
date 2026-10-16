@@ -95,6 +95,11 @@ def connect(spec: ConnectSpec, *, runner: Callable[..., Any] | None = None) -> d
     capacity = _capacity_report(spec, ids, openai, checks, runner, recorder)
     dimensions = _embedding_dimensions(spec, openai, candidates)
     roles = _role_review(spec, ids, selected, operator, recorder, runner)
+    for row in roles:
+        if row.get("permission_coverage") is not None and row["status"] != "assigned":
+            checks.append({"id": f"openai.roles.{row['principal']}",
+                           "status": "fail" if row["effective_access"] == "denied" else "unverified",
+                           "detail": row["detail"], "evidence": row})
     role_plan = setup_plan(spec, ids, storage, openai, roles, checks, runner)
     status, failed, complete = _connect_status(
         ids, spec, checks, candidates, role_plan, selected.get("search_identity"),

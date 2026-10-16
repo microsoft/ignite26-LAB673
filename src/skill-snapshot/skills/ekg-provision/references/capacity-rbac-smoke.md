@@ -1,23 +1,33 @@
 # Capacity, RBAC, smoke
 
+## Quick starts
+
+- "Review TPM quota, RBAC, and the smoke plan for this environment."
+- "Raise the chat deployment capacity."
+
 ## Use this path
 
-Use this path for bounded follow-on operations against existing provisioned resources: quota checks, TPM resizing, explicit RBAC plans, smoke tests, and cleanup evidence.
+Use this path for model quota and capacity, scoped role assignments, the synthetic smoke test, and cleanup evidence.
 
-## Read-only reviews
+## Capacity
 
-- `ekg-provision quota` checks model catalog availability and remaining TPM headroom.
-- `ekg-provision plan-capacity` reviews a capacity-only patch and prints the exact plan ID.
-- `ekg-provision plan-rbac` reviews the four data-role grants used by EKG's public-test path.
-- `ekg-provision plan-smoke` reviews a synthetic proof workflow.
-- `ekg-provision plan-cleanup` reads the local provisioning journal and proposes manual cleanup evidence only.
+1. `ekg-provision quota` (read-only) reads regional usage and the model catalog with the same deployment flags.
+2. `ekg-provision plan-capacity --capacity-deployment <name> --capacity <K>` shows current and desired capacity (thousands of tokens per minute), quota headroom, and the plan ID. Only SKU capacity changes; PTU is out of scope.
+3. After `approved <plan-id>`, run `capacity-update` with the same flags plus `--plan-id <id> --confirm-writes`. It refuses on drift or insufficient quota and verifies by fresh read. Above the quota limit, a quota request comes first.
 
-## Write gates
+## RBAC
 
-- `ekg-provision capacity-update`, `ekg-provision rbac-grant`, and `ekg-provision smoke-run` each require the exact approved plan ID and `--confirm-writes`.
-- `ekg-provision cleanup-approve` records approval of the cleanup plan but never deletes Azure resources.
-- Re-read drift or quota failures block the write; do not patch around them.
+1. `plan-rbac` is offline; `rbac-check` is read-only and checks the active tenant, subscription, and object ID.
+2. After approval, `rbac-grant` grants only four exact scoped data roles. Inherited access remains possible.
+
+## Smoke test
+
+`plan-smoke` then `smoke-run` tests one synthetic Blob, a Search index, a document push and query, and an optional embedding. It needs its own approval, verified ARM posture, a pre-existing container, and conditional cleanup. It does not prove an EKG workflow.
+
+## Cleanup
+
+`plan-cleanup --run-id <id>` is offline and manual-only. `cleanup-approve --run-id <id> --plan-id <id>` records approval and never deletes Azure resources. Never enable trusted services or widen ingress to make indexers reach Storage or OpenAI.
 
 ## Return
 
-State which bounded plan was reviewed, whether the result was read-only or applied, and what evidence source you used. Keep cost, role, and network claims tied to the exact reviewed plan.
+Separate reviewed plans from applied changes, and give one safe next action.

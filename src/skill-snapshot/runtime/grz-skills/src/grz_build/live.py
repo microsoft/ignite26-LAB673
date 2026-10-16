@@ -15,7 +15,7 @@ from grz_core.azure_auth import MANAGEMENT_SCOPE, create_default_credential, get
 from grz_core.contracts import ContractError, SourceIdentity, digest, validate_alias
 
 
-API_VERSION = "2024-07-01"
+API_VERSION = "2026-04-01"
 ARM_VERSION = "2023-11-01"
 
 
@@ -119,22 +119,10 @@ def default_arm_get(url: str, bearer_token: str) -> dict[str, Any]:
     return response.json()
 
 
-def default_data_get(endpoint: str, path: str, bearer_token: str) -> dict[str, Any]:
-    import requests
-    url = endpoint.rstrip("/") + path
-    response = requests.get(url, headers={"Authorization": f"Bearer {bearer_token}"}, timeout=30)
-    if response.status_code == 404:
-        raise ContractError("INDEX_MISSING", "Search data-plane resource not found")
-    if response.status_code >= 400:
-        raise ContractError("SEARCH_REQUEST_FAILED", f"Search REST GET failed with status {response.status_code}")
-    return response.json()
-
-
 class LiveAzureBuildStore(AzureBuildStore):
     def __init__(self, *args: Any, arm: dict[str, Any], service_stats: dict[str, Any],
                  index_client: Any, endpoint: str, fields: SourceFields,
-                 data_get: Callable[[str, str], dict[str, Any]], vector_query_factory: Any | None = None,
-                 **kwargs: Any):
+                 vector_query_factory: Any | None = None, **kwargs: Any):
         super().__init__(*args, **kwargs)
         self.vector_query_factory = vector_query_factory
         self.reader_grants: ReaderGrants | None = None
@@ -143,7 +131,6 @@ class LiveAzureBuildStore(AzureBuildStore):
         self.index_client = index_client
         self.endpoint = endpoint
         self.fields = fields
-        self._data_get = data_get
 
     def inspect(self, identity: SourceIdentity) -> dict[str, Any]:
         base = self.source.inspect(identity)
@@ -163,8 +150,11 @@ class LiveAzureBuildStore(AzureBuildStore):
         }
         return result
 
-    def index_stats(self, index: str) -> dict[str, Any]:
-        return self._data_get(self.endpoint, f"/indexes/{quote(index, safe='')}/stats?api-version={API_VERSION}")
+    def index_stats(self, index: str) -> Any:
+        try:
+            return self.index_client.get_index_statistics(index)
+        except Exception as exc:
+            raise ContractError("SEARCH_REQUEST_FAILED", "Cannot read Search index statistics") from exc
 
     def source_binding(self, inspected: dict[str, Any]) -> dict[str, Any]:
         binding = {
@@ -229,15 +219,21 @@ def safe_arm_snapshot(resource: dict[str, Any]) -> dict[str, Any]:
 
 
 def _quota_counter(counters: dict[str, Any], name: str) -> tuple[int | None, int | None]:
-    value = counters.get(name)
-    if not isinstance(value, dict):
+    value = get_field(counters, name)
+    if value is None:
         return None, None
-    usage, quota = value.get("usage"), value.get("quota")
+    usage, quota = get_field(value, "usage"), get_field(value, "quota")
     return (usage if isinstance(usage, int) else None, quota if isinstance(quota, int) else None)
 
 
 def _stat_counter(data: dict[str, Any], name: str) -> int:
-    value = data.get(name)
+    sdk_names = {"documentCount": "document_count", "storageSize": "storage_size",
+                 "vectorIndexSize": "vector_index_size"}
+    value = get_field(data, name, get_field(data, sdk_names.get(name, name)))
+    if value is not None and not isinstance(value, int):
+        usage = get_field(value, "usage", get_field(value, "value"))
+        if isinstance(usage, int):
+            return usage
     if isinstance(value, dict):
         for key in ("usage", "value"):
             if isinstance(value.get(key), int):
@@ -246,14 +242,15 @@ def _stat_counter(data: dict[str, Any], name: str) -> int:
 
 
 def headroom_snapshot(arm: dict[str, Any], service_stats: dict[str, Any], index_stats: dict[str, Any], source: dict[str, Any]) -> dict[str, Any]:
-    counters = service_stats.get("counters")
-    limits = service_stats.get("limits") if isinstance(service_stats.get("limits"), dict) else {}
-    if not isinstance(counters, dict):
+    counters = get_field(service_stats, "counters")
+    limits = get_field(service_stats, "limits")
+    if counters is None:
         raise ContractError("SEARCH_HEADROOM_INSUFFICIENT", "Search service stats counters are unavailable")
     index_count, index_quota = _quota_counter(counters, "indexesCount")
     storage_used, storage_quota = _quota_counter(counters, "storageSize")
     vector_used, vector_quota = _quota_counter(counters, "vectorIndexSize")
-    max_storage_per_index = limits.get("maxStoragePerIndex")
+    max_storage_per_index = get_field(limits, "maxStoragePerIndex",
+                                      get_field(limits, "max_storage_per_index"))
     required = (index_count, index_quota, storage_used, storage_quota, vector_used, vector_quota, max_storage_per_index)
     if any(not isinstance(value, int) for value in required):
         raise ContractError("SEARCH_HEADROOM_INSUFFICIENT", "Search index/storage/vector quotas must be known")
@@ -282,14 +279,17 @@ def headroom_snapshot(arm: dict[str, Any], service_stats: dict[str, Any], index_
 
 
 def publication_approval(args: Any, endpoint: str, arm: dict[str, Any], service_stats: dict[str, Any],
-                         data_get: Callable[[str, str], dict[str, Any]], count: int, dimension: int) -> PublicationApproval:
+                         index_client: Any, count: int, dimension: int) -> PublicationApproval:
     """Derive write attestations from this command's real inputs; read-only commands get none, so writes fail closed."""
     command = getattr(args, "command", None)
     writes = command == "apply" and bool(getattr(args, "confirm_writes", False))
     cutover = command == "publish" and bool(getattr(args, "approve_cutover", False))
     headroom = budget = write = cutover_approval = ""
     if writes or cutover:
-        index_stats = data_get(endpoint, f"/indexes/{quote(args.source_index, safe='')}/stats?api-version={API_VERSION}")
+        try:
+            index_stats = index_client.get_index_statistics(args.source_index)
+        except Exception as exc:
+            raise ContractError("SEARCH_REQUEST_FAILED", "Cannot read source index statistics for publication approval") from exc
         snapshot = headroom_snapshot(arm, service_stats, index_stats, {"dimension": dimension, "expected_count": count})
         headroom = f"headroom:free_storage={snapshot['free_storage']}"
     if writes:
@@ -325,7 +325,6 @@ def display_names(arm_get: Callable[[str, str], dict[str, Any]], management: str
 
 def create_live_store(args: Any, *, credential: Any | None = None,
                       arm_get: Callable[[str, str], dict[str, Any]] = default_arm_get,
-                      data_get_raw: Callable[[str, str, str], dict[str, Any]] = default_data_get,
                       index_client_factory: Any | None = None, search_client_factory: Any | None = None,
                       vector_query_factory: Any | None = None,
                       arm_request: ArmRequest = default_arm_request) -> tuple[LiveAzureBuildStore, SourceIdentity, dict[str, Any]]:
@@ -346,10 +345,6 @@ def create_live_store(args: Any, *, credential: Any | None = None,
         raise ContractError("SEARCH_SERVICE_MISMATCH", "ARM returned a different Search service")
     if props.get("endpoint") and props.get("endpoint").rstrip("/") != endpoint:
         raise ContractError("SEARCH_SERVICE_MISMATCH", "ARM endpoint does not match --search-service")
-    search_token = get_token(credential, "https://search.azure.com/.default", args.tenant_id)
-    def data_get(ep: str, path: str) -> dict[str, Any]:
-        return data_get_raw(ep, path, search_token)
-    service_stats = data_get(endpoint, f"/servicestats?api-version={API_VERSION}")
     if index_client_factory is None or search_client_factory is None:
         try:
             from azure.search.documents import SearchClient
@@ -360,8 +355,14 @@ def create_live_store(args: Any, *, credential: Any | None = None,
         search_client_factory = search_client_factory or SearchClient
     index_factory = index_client_factory
     search_factory = search_client_factory
-    index_client = index_factory(endpoint=endpoint, credential=credential, audience="https://search.azure.com")
-    source_client = search_factory(endpoint=endpoint, index_name=args.source_index, credential=credential, audience="https://search.azure.com")
+    client_options = {"credential": credential, "audience": "https://search.azure.com",
+                      "api_version": API_VERSION, "permit_redirects": False}
+    index_client = index_factory(endpoint=endpoint, **client_options)
+    source_client = search_factory(endpoint=endpoint, index_name=args.source_index, **client_options)
+    try:
+        service_stats = index_client.get_service_statistics()
+    except Exception as exc:
+        raise ContractError("SEARCH_REQUEST_FAILED", "Cannot read Search service statistics") from exc
     fields = SourceFields(args.key_field, args.text_field, args.source_field, args.vector_field,
                           args.key_field, tuple(args.security_field or ()),
                           getattr(args, "source_visibility", None) or "per-document")
@@ -378,11 +379,12 @@ def create_live_store(args: Any, *, credential: Any | None = None,
     from grz_adapters import AzurePublicationAdapter, AzureSourceAdapter
     source = AzureSourceAdapter(source_client, index_client, fields, approval=SourceExportApproval(
         args.tenant_id, endpoint, args.source_index, args.owner_approval, args.security_inspection, args.frozen_evidence))
-    publisher = AzurePublicationAdapter(index_client, lambda index: search_factory(endpoint=endpoint, index_name=index, credential=credential, audience="https://search.azure.com"),
-        approval=publication_approval(args, endpoint, arm, service_stats, data_get, count, vector["dimension"]),
+    publisher = AzurePublicationAdapter(index_client, lambda index: search_factory(
+        endpoint=endpoint, index_name=index, **client_options),
+        approval=publication_approval(args, endpoint, arm, service_stats, index_client, count, vector["dimension"]),
 )
     store = LiveAzureBuildStore(source, publisher, arm=arm, service_stats=service_stats,
-                                index_client=index_client, endpoint=endpoint, fields=fields, data_get=data_get,
+                                index_client=index_client, endpoint=endpoint, fields=fields,
                                 vector_query_factory=vector_query_factory)
     store.reader_grants = ReaderGrants(arm.get("id") or arm_url.split("?", 1)[0].removeprefix("https://management.azure.com"),
                                        management, arm_request)

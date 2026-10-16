@@ -15,23 +15,20 @@ from ekg_core.ontology import load_ontology
 from ekg_core.telemetry import TelemetryRecorder, adapter_http_stats, service_window_event
 
 from .adapters import DataPlane, SearchRequestError
-from .managed_pipeline import (
-    EDGE_FIELDS, SEARCH_API_VERSION, generated, knowledge_source, ontology_index,
-    ontology_rows,
-)
+from .managed_pipeline import generated, knowledge_source, uses_inline_jsonld
 from .planner import plan, verification_blockers
 from .preflight import ResourceReader, preflight
 from .blob_sources import BlobReader, inventory_blob_prefix, read_pinned_blob, recheck_blob_inventory
 from .local_sources import approved_local_bytes, approved_local_sample
-from .preview import probe_error, search_resource_id
+from .target_validation import graph_input_error, search_resource_id
 
 
 class BuildError(RuntimeError):
     pass
 
 
-def _require_managed_entitlement(spec: BuildSpec, adapter: DataPlane) -> dict[str, Any]:
-    reason = probe_error(spec)
+def _verify_managed_target(spec: BuildSpec, adapter: DataPlane) -> dict[str, Any]:
+    reason = graph_input_error(spec)
     if reason:
         raise BuildError(reason)
     resource_id = search_resource_id(spec)
@@ -54,8 +51,8 @@ def _require_managed_entitlement(spec: BuildSpec, adapter: DataPlane) -> dict[st
         or properties.get("endpoint") != spec.target.search_endpoint
     ):
         raise BuildError("exact Search service identity, region, SKU or endpoint differs; no writes permitted")
-    return {"status": "guarded_attempt_requires_approval", "technically_verified": False,
-            "evidence_origin": "fresh_arm_service_identity_only",
+    return {"status": "target_verified",
+            "evidence_origin": "fresh_arm_service_identity",
             "resource_id": resource_id, "region": observed["location"], "sku": sku["name"],
             "tenant_id": spec.tenant_id}
 
@@ -121,7 +118,7 @@ def generation(spec: BuildSpec) -> str:
     for name, data in corpus_files(spec.corpus_source):
         digest.update(name.encode())
         digest.update(hashlib.sha256(data).digest())
-    if spec.ontology_mode is OntologyMode.OWL_FILE:
+    if spec.ontology_mode in {OntologyMode.OWL_FILE, OntologyMode.INLINE_JSONLD}:
         digest.update(Path(spec.ontology_path or "").read_bytes())
     return stable_id("ekg", {
         "spec": spec,
@@ -138,6 +135,8 @@ def index_names(spec: BuildSpec) -> dict[str, str]:
     suffix = generation(spec)
     if spec.ontology_mode is OntologyMode.NONE:
         return {"content": f"ekg-content-{suffix}"}
+    if uses_inline_jsonld(spec):
+        return {"knowledge_source": f"ekg-managed-{suffix}"}
     return {"ontology": f"ekg-ontology-{suffix}",
             "knowledge_source": f"ekg-managed-{suffix}"}
 
@@ -198,7 +197,7 @@ def _source_record(spec: BuildSpec, state: str) -> dict[str, Any]:
     desired = plan(spec)
     names = index_names(spec)
     definition = knowledge_source(
-        spec, name=names["knowledge_source"], ontology_name=names["ontology"],
+        spec, name=names["knowledge_source"], ontology_name=names.get("ontology"),
         graph_name=names["knowledge_source"], prefix=staging_prefix(spec),
     )
     return {
@@ -206,7 +205,7 @@ def _source_record(spec: BuildSpec, state: str) -> dict[str, Any]:
         "scope": desired.scope, "generation": generation(spec),
         "knowledge_source": names["knowledge_source"],
         "create_request_hash": hash_json(definition), "create_receipt": None,
-        "preview_entitlement": "unverified_before_attempt", "state": state,
+        "state": state,
         "counts": {}, "timings_ms": {}, "readers": list(spec.readers),
     }
 
@@ -287,11 +286,19 @@ def _journal(spec: BuildSpec, record: dict[str, Any]) -> bytes:
     if spec.source is None and corpus.is_dir() and path.resolve().is_relative_to(corpus.resolve()):
         raise BuildError("managed build journal must be outside the corpus")
     original = json.dumps(record, sort_keys=True).encode("utf-8")
+    path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("xb") as stream:
         stream.write(original)
         stream.flush()
         os.fsync(stream.fileno())
     return original
+
+
+def _managed_attempt_identity(record: dict[str, Any]) -> dict[str, Any]:
+    # Retained attempts may carry this obsolete informational marker, not an approval.
+    if record.get("preview_entitlement") == "unverified_before_attempt":
+        return {key: value for key, value in record.items() if key != "preview_entitlement"}
+    return record
 
 
 def _read_attempt_journal(spec: BuildSpec) -> tuple[dict[str, Any], bytes]:
@@ -451,7 +458,7 @@ class BuildExecutor:
             "search_arm_observed", "storage_arm_observed", "openai_arm_observed",
         )):
             raise BuildError("TARGET_VERIFICATION_REQUIRED: all exact target identities must be observed")
-        return _require_managed_entitlement(spec, self.adapter)
+        return _verify_managed_target(spec, self.adapter)
 
     def inspect(self, spec: BuildSpec) -> dict[str, Any]:
         desired = plan(spec)
@@ -462,7 +469,7 @@ class BuildExecutor:
                 return {"plan_id": desired.plan_id, "status": "blocked",
                         "blocked_by": list(desired.blocked_by)}
             return {"plan_id": desired.plan_id,
-                    **_require_managed_entitlement(spec, self.adapter)}
+                    **_verify_managed_target(spec, self.adapter)}
         names = index_names(spec)
         if spec.ontology_mode is OntologyMode.NONE:
             return {"plan_id": desired.plan_id,

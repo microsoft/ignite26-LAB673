@@ -1,4 +1,4 @@
-"""`doctor`, `connect`, `inspect`, `plan` and the MCP plan estimate.
+"""`doctor`, `connect`, `inspect` and `plan`.
 
 Glue only: probes and sampling live in grz_reader/sampler, pricing in planning.
 """
@@ -223,21 +223,3 @@ def plan(paths: StatePaths, request: Any) -> dict[str, Any]:
     with StateLock(paths, "plan"):
         planning.save_plan(paths, Journal(paths), built)
     return dict(planning.result(built))
-
-
-def estimate(paths: StatePaths, request: Any) -> dict[str, Any]:
-    """`plan` without saving anything: the MCP `ontology_plan_estimate` tool."""
-    from ontology_build import planning
-
-    if request.seed is not None and not Path(request.seed).is_absolute():
-        raise Blocked("IMPORT_INVALID", f"seed must be an absolute path, got {str(request.seed)!r}",
-                      next_step="pass the seed file as an absolute path")
-    config, reader = reader_for(paths)
-    seed = planning.load_seed(paths, request.seed)
-    built, _sample = planning.build_plan(config, reader, request, seed=seed)
-    body = dict(planning.result(built))
-    body.pop("plan_id", None)
-    cap = max(request.max_spend_usd, float(planning.minimum_cap(built)))
-    body["saved"] = False
-    body["next_step"] = f"ontology-build plan --model-max-spend-usd {cap:g}" + planning.plan_flags(request)
-    return body

@@ -2,10 +2,10 @@
 name: grz-build
 description: 'Build, verify, publish, and retire a GRZ community sidecar index in Azure AI Search from chunk vectors (preview; public or synthetic data only). WHEN: planning, applying, verifying, publishing, reconciling, or retiring a GRZ build. DO NOT USE FOR: browsing communities or answering corpus questions.'
 license: MIT
-compatibility: Azure sign-in, Copilot CLI, grz-skills MCP for doctor, and the grz-build CLI for every build step and approved write.
+compatibility: Azure sign-in (Entra), Copilot CLI, and the grz-build CLI for every step and approved write.
 metadata:
   author: Microsoft
-  version: "0.1.0-snapshot.0e44f94"
+  version: "0.0.0-snapshot"
 ---
 
 # GRZ build (preview)
@@ -20,7 +20,7 @@ Load one path only.
 
 ## Shared rules
 
-Run `grz-skills-grz_doctor` or `grz-build doctor --json` first, and again after any blocked result. Add `--json` to every CLI command and follow the returned `next_step`. Name the exact tenant, subscription, resource group, and Search service before any sign-in. Entra only; never accept or print keys or tokens.
+Run `grz-build doctor --json` first, and again after any blocked result. Add `--json` to every command and follow the returned `next_step`. Name the exact tenant, subscription, resource group, and Search service before any sign-in. Entra only; never accept or print keys or tokens.
 
 Every write gate (`plan`, `verify`, `plan-retire`) returns an `approval_card`. Show its `text` verbatim and wait for the exact `reply` line (`approved <plan-id>`). A plain "yes" is not approval, and an approval covers only the card shown. Never retry an uncertain write; reconcile first.
 

@@ -25,7 +25,7 @@ from ekg_core.telemetry import TelemetryRecorder
 from .adapters import SearchRequestError
 from .executor import _indexer_time_quota_checkpoint, _source_bytes, hash_json, source_provenance
 from .generations import _generation_of
-from .managed_pipeline import knowledge_source
+from .managed_pipeline import knowledge_source, search_api_version, uses_inline_jsonld
 
 REBUILD = "this needs a rebuild: run `ekg-build`"
 INDEXER_POLLS = 120
@@ -65,13 +65,23 @@ def _definition_blockers(spec: BuildSpec, descriptor: dict[str, Any], generation
                              schema_org_profile=spec.schema_org_profile,
                              schema_org_version=spec.schema_org_version,
                              resolve_imports=spec.resolve_imports)
-    if ontology is None or ontology.schema_id != (descriptor.get("ontology") or {}).get("schema_id"):
+    recorded_ontology = descriptor.get("ontology") or {}
+    if (ontology is None or ontology.schema_id != recorded_ontology.get("schema_id")
+            or (recorded_ontology.get("mode") is not None
+                and ontology.source_kind != recorded_ontology.get("mode"))):
         return ["the ontology changed; " + REBUILD]
+    recorded_api_version = endpoints.get("search_api_version")
+    if ((uses_inline_jsonld(spec) and recorded_api_version != search_api_version(spec))
+            or (recorded_api_version is not None
+                and recorded_api_version != search_api_version(spec))):
+        return ["the Search API version differs from the published build; " + REBUILD]
     if live is None:
         return ["the published knowledge source no longer exists; " + REBUILD]
     name = endpoints["knowledge_source"]
-    want = _bound(knowledge_source(spec, name=name, ontology_name=f"ekg-ontology-{generation}",
-                                   graph_name=name, prefix=generation))
+    want = _bound(knowledge_source(
+        spec, name=name,
+        ontology_name=None if uses_inline_jsonld(spec) else f"ekg-ontology-{generation}",
+        graph_name=name, prefix=generation, ontology=ontology))
     have = _bound(live)
     return [f"the {part} changed; {REBUILD}" for part in want if have[part] != want[part]][:1]
 
@@ -89,7 +99,7 @@ def _bound(definition: dict[str, Any]) -> dict[str, list[Any]]:
     return {"source location": [blob.get("containerName"), blob.get("folderPath")],
             "model deployments": model("embeddingModel") + model("chatCompletionModel"),
             "extraction settings": [graph.get(key) for key in _EXTRACTION_KEYS] + [
-                (graph.get("ontology") or {}).get("indexName"),
+                json.dumps(graph.get("ontology"), sort_keys=True),
                 (((graph.get("grounding") or {}).get("index")) or {}).get("indexName"),
                 (graph.get("extraction") or {}).get("reasoningEffort")]}
 

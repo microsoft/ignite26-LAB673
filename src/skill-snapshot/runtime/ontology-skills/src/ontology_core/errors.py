@@ -1,7 +1,7 @@
 """Error codes, the one next step for each, and the blocked/error envelope.
 
 Every failure the plugin reports is a `Blocked` exception carrying a code from
-`CODES`. The CLI and MCP layers turn it into
+`CODES`. The CLI and optional Apps layer turn it into
 `{"status", "error_code", "error", "next_step"}` and exit with `EXIT_BLOCKED`.
 `next_step` templates use `{placeholders}`; any placeholder the raiser does not
 supply is rendered as `<name>` so the step is still readable.
@@ -18,7 +18,8 @@ EXIT_BLOCKED = 2
 
 _PLAN_AGAIN = "`ontology-build plan …` again, then approve the new plan ID"
 _REPUBLISH = "republish the GRZ generation, then `ontology-build connect`"
-_REINSTALL = "uv tool install --force --python 3.12 <the installed ontology-skills plugin folder>"
+_REINSTALL = ('uv tool install --force --python 3.12 '
+              '"<plugin-root>/runtime/ontology-skills"')
 _SIGN_IN = "az login --tenant {tenant_id}  # {tenant_name}"
 _DESCRIPTOR = "pass the `descriptor.json` written by `grz-build publish` (grz-descriptor-v1)"
 
@@ -74,8 +75,9 @@ CODES: dict[str, str] = {
     "BASE_IRI_INVALID": "pass a `--base-iri` that ends with `#` and has no whitespace, quotes or angle brackets",
     "OUTPUT_EXISTS": "choose another `--output` or pass `--force`",
     "EXPORT_FORMAT_UNSUPPORTED": (
-        "export writes flat-owl RDF/XML only: pass `--format owl` and an `--output` ending in .owl, .rdf or "
-        ".xml, then convert with an RDF tool if you need another syntax"),
+        "pass `--format owl` with .owl/.rdf/.xml, or `--format jsonld` with .jsonld; Turtle is unsupported"),
+    "JSONLD_EXPORT_UNSUPPORTED": "revise the ontology to use only the supported flat class/property profile",
+    "JSONLD_PROFILE_VIOLATION": "inspect the profile violations and reduce or revise the ontology before export",
     "EMPTY_ONTOLOGY": "the result had no valid classes; review the hygiene report",
     "NO_CURRENT": "`ontology-build approve --version <n> --schema-id <id>` to record the current ontology",
     "CURRENT_INVALID": "re-approve or re-export the version to rewrite the current pointer",
@@ -98,7 +100,6 @@ CODES: dict[str, str] = {
         'ask an owner to run: `az role assignment create --role "Cognitive Services OpenAI User" '
         "--assignee {you} --scope {account}`; otherwise fix `--model-endpoint`"),
     "DOCTOR_MODEL_DEPLOYMENT": "fix `--model-deployment`, or check `--subscription-id/--model-resource-group`",
-    "DOCTOR_MCP_SELF_TEST": _REINSTALL,
 }
 
 INTERNAL_ERROR = "INTERNAL_ERROR"

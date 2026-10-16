@@ -7,12 +7,13 @@ from ekg_core.models import BuildSpec, Event, OntologyMode, stable_id
 from ekg_core.ontology import load_ontology
 from ekg_core.telemetry import TelemetryRecorder, adapter_http_stats
 from .adapters import SearchRequestError
-from .managed_pipeline import (SEARCH_API_VERSION, generated, grounding_live_blocker,
-                               knowledge_source, ontology_index, ontology_rows)
+from .managed_pipeline import (generated, grounding_live_blocker,
+                               knowledge_source, ontology_index, ontology_rows,
+                               search_api_version, uses_inline_jsonld)
 from .executor import (
     BuildError, _await_index_count, _complete_journal, _create_source_journal, _document_schema, _failure_detail,
     _journal, _read_attempt_journal, _source_bytes, _source_record, _advance_source_journal,
-    _require_managed_entitlement, _sync_status, _synchronization_event, corpus_files, generation, hash_json,
+    _verify_managed_target, _sync_status, _synchronization_event, corpus_files, generation, hash_json,
     index_names, plan, source_provenance, staging_prefix,
 )
 def _source_inputs(executor, spec):
@@ -21,8 +22,8 @@ def _source_inputs(executor, spec):
         if not callable(getattr(executor.adapter, "search_page", None)):
             raise BuildError("SOURCE_PAGINATION_REQUIRED: exhaustive generated content readback is unavailable")
         service = executor._source_targets(spec)
-        if getattr(executor.adapter, "search_api_version", SEARCH_API_VERSION) != SEARCH_API_VERSION:
-            raise BuildError("managed graph requires exact preview API version")
+        if getattr(executor.adapter, "search_api_version", search_api_version(spec)) != search_api_version(spec):
+            raise BuildError(f"managed graph requires exact Search {search_api_version(spec)} API version")
         names = index_names(spec)
         prefix = staging_prefix(spec)
         mapping = source_provenance(spec)
@@ -34,24 +35,29 @@ def _source_inputs(executor, spec):
         )
         if ontology is None:
             raise BuildError("managed graph requires an ontology")
-        rows = ontology_rows(ontology, names["knowledge_source"])
+        rows = [] if uses_inline_jsonld(spec) else ontology_rows(
+            ontology, names["knowledge_source"])
         definition = knowledge_source(
-            spec, name=names["knowledge_source"], ontology_name=names["ontology"],
-            graph_name=names["knowledge_source"], prefix=prefix,
+            spec, name=names["knowledge_source"], ontology_name=names.get("ontology"),
+            graph_name=names["knowledge_source"], prefix=prefix, ontology=ontology,
         )
         if Path(spec.build_journal or "").exists():
             raise BuildError("managed build journal exists; reconcile the recorded attempt, or "
                              "plan another build with a new --build-journal path")
         statistics = executor.adapter.service_statistics()
         capacity = (statistics.get("counters") or {}).get("indexesCount") or {}
+        required_index_headroom = 2 if uses_inline_jsonld(spec) else 3
         if not isinstance(capacity.get("usage"), int) or not isinstance(
             capacity.get("quota"), int
-        ) or capacity["quota"] - capacity["usage"] < 3:
-            raise BuildError("Search index headroom is unknown or less than three indexes")
-        if any(executor.adapter.get_index(name) is not None for name in (
-            names["ontology"], f"{names['knowledge_source']}-index",
-            f"{names['knowledge_source']}-graph-index",
-        )) or executor.adapter.get_knowledge_source(names["knowledge_source"]) is not None:
+        ) or capacity["quota"] - capacity["usage"] < required_index_headroom:
+            raise BuildError(
+                f"Search index headroom is unknown or less than {required_index_headroom} indexes")
+        expected_indexes = [f"{names['knowledge_source']}-index",
+                            f"{names['knowledge_source']}-graph-index"]
+        if not uses_inline_jsonld(spec):
+            expected_indexes.append(names["ontology"])
+        if any(executor.adapter.get_index(name) is not None for name in expected_indexes) \
+                or executor.adapter.get_knowledge_source(names["knowledge_source"]) is not None:
             raise BuildError("managed generation already exists; refusing to overwrite")
         # The final complete in-memory snapshot is checked immediately before the first write.
         contents = _source_bytes(spec, executor.blob_reader)
@@ -131,6 +137,12 @@ def _stage_source(executor, spec, mapping, contents, original, timings, events, 
             }))
             return original
 def _index_source_ontology(executor, spec, names, ontology, rows, contents, original, timings, events, recorder):
+            if uses_inline_jsonld(spec):
+                return _advance_source_journal(
+                    spec, original, state="synchronizing",
+                    counts={"source": len(contents), "staged": len(contents)},
+                    timings_ms=timings, telemetry=recorder.events,
+                )
             started = time.perf_counter()
             schema = ontology_index(names["ontology"])
             with recorder.span("ontology_index") as span:
@@ -237,9 +249,8 @@ def _finish_source_apply(executor, spec, names, prefix, service, contents, origi
                 "run_id": f"build-{prefix}", "plan_id": plan(spec).plan_id,
                 "counts": {"source": len(contents), "staged": len(contents), **verified["counts"]},
                 "phase_latency_ms": timings, "evidence_origin": "read_only_generated_index_checks",
-                "uncertainty": ["Preview entitlement is evidenced only by this accepted attempt."],
                 "next_action": "Publish after fresh read-only verification of the exact generation.",
-                "preview_readiness": {**service, "status": "accepted_for_this_service"},
+                "target_verification": service,
             }))
             return original, ApplyResult(tuple(events), True)
 def _apply_source(executor, spec: BuildSpec, *, wait_for_sync: bool = True) -> ApplyResult:
@@ -277,10 +288,10 @@ def _apply_source(executor, spec: BuildSpec, *, wait_for_sync: bool = True) -> A
 def _apply_managed(executor, spec: BuildSpec) -> ApplyResult:
         if plan(spec).blocked_by:
             raise BuildError("; ".join(plan(spec).blocked_by))
-        service_evidence = _require_managed_entitlement(spec, executor.adapter)
-        version = getattr(executor.adapter, "search_api_version", SEARCH_API_VERSION)
-        if version != SEARCH_API_VERSION:
-            raise BuildError(f"managed graph requires Search {SEARCH_API_VERSION}")
+        service_evidence = _verify_managed_target(spec, executor.adapter)
+        version = getattr(executor.adapter, "search_api_version", search_api_version(spec))
+        if version != search_api_version(spec):
+            raise BuildError(f"managed graph requires Search {search_api_version(spec)}")
         grounding_blocker = grounding_live_blocker(executor.adapter, spec)
         if grounding_blocker:
             raise BuildError(grounding_blocker)
@@ -295,10 +306,10 @@ def _apply_managed(executor, spec: BuildSpec) -> ApplyResult:
             raise BuildError("managed graph requires an ontology")
         prefix = staging_prefix(spec)
         graph_name = names["knowledge_source"]
-        rows = ontology_rows(ontology, graph_name)
+        rows = [] if uses_inline_jsonld(spec) else ontology_rows(ontology, graph_name)
         definition = knowledge_source(
-            spec, name=graph_name, ontology_name=names["ontology"],
-            graph_name=graph_name, prefix=prefix,
+            spec, name=graph_name, ontology_name=names.get("ontology"),
+            graph_name=graph_name, prefix=prefix, ontology=ontology,
         )
         if Path(spec.build_journal or "").exists():
             raise BuildError("managed build journal exists; reconcile the recorded attempt, or "
@@ -307,17 +318,22 @@ def _apply_managed(executor, spec: BuildSpec) -> ApplyResult:
             statistics = executor.adapter.service_statistics()
         except SearchRequestError as error:
             if error.status == 400:
-                raise BuildError("Search does not accept required 2026-08-01-preview API") from error
+                raise BuildError(
+                    f"Search does not accept required {search_api_version(spec)} API") from error
             raise
         counters = statistics.get("counters") or {}
         capacity = counters.get("indexesCount") or {}
+        required_index_headroom = 2 if uses_inline_jsonld(spec) else 3
         if not isinstance(capacity.get("usage"), int) or not isinstance(
             capacity.get("quota"), int
-        ) or capacity["quota"] - capacity["usage"] < 3:
-            raise BuildError("Search index headroom is unknown or less than three indexes")
-        if (executor.adapter.get_index(names["ontology"]) is not None or
-                executor.adapter.get_index(f"{graph_name}-index") is not None or
-                executor.adapter.get_index(f"{graph_name}-graph-index") is not None or
+        ) or capacity["quota"] - capacity["usage"] < required_index_headroom:
+            raise BuildError(
+                f"Search index headroom is unknown or less than {required_index_headroom} indexes")
+        expected_indexes = [f"{graph_name}-index", f"{graph_name}-graph-index"]
+        if not uses_inline_jsonld(spec):
+            expected_indexes.append(names["ontology"])
+        if (any(executor.adapter.get_index(index_name) is not None
+                for index_name in expected_indexes) or
                 executor.adapter.get_knowledge_source(graph_name) is not None):
             raise BuildError("managed generation already exists; refusing to overwrite")
         timings: dict[str, float] = {}
@@ -327,7 +343,6 @@ def _apply_managed(executor, spec: BuildSpec) -> ApplyResult:
                                    "plan_id": plan(spec).plan_id,
                                    "search_resource_id": service_evidence["resource_id"],
                                    "tenant_id": spec.tenant_id,
-                                   "preview_entitlement": "unverified_before_attempt",
                                    "state": "attempt_requested"})
         try:
             started = time.perf_counter()
@@ -342,23 +357,24 @@ def _apply_managed(executor, spec: BuildSpec) -> ApplyResult:
                 "latency_ms": timings["stage_ms"],
             }))
             started = time.perf_counter()
-            schema = ontology_index(names["ontology"])
-            executor.adapter.create_index(schema)
-            executor.adapter.upload(names["ontology"], rows)
-            _await_index_count(executor.adapter, names["ontology"], len(rows))
-            timings["ontology_ms"] = round((time.perf_counter() - started) * 1000, 3)
-            events.append(Event("ensure-ontology-index", "verified", "ontology indexed", {
-                "schema_id": ontology.schema_id, "document_count": len(rows),
-                "schema_hash": hash_json(schema), "latency_ms": timings["ontology_ms"],
-            }))
+            if not uses_inline_jsonld(spec):
+                schema = ontology_index(names["ontology"])
+                executor.adapter.create_index(schema)
+                executor.adapter.upload(names["ontology"], rows)
+                _await_index_count(executor.adapter, names["ontology"], len(rows))
+                timings["ontology_ms"] = round((time.perf_counter() - started) * 1000, 3)
+                events.append(Event("ensure-ontology-index", "verified", "ontology indexed", {
+                    "schema_id": ontology.schema_id, "document_count": len(rows),
+                    "schema_hash": hash_json(schema), "latency_ms": timings["ontology_ms"],
+                }))
             started = time.perf_counter()
             try:
                 executor.adapter.create_knowledge_source(definition)
             except SearchRequestError as error:
                 if error.status in {400, 403}:
                     raise BuildError(
-                        f"managed graph preview unavailable or request rejected (HTTP {error.status}); "
-                        "inspect entitlement and model/identity contract"
+                        f"Search rejected the managed Knowledge Source request (HTTP {error.status}); "
+                        "inspect the API version, request contract and model/identity configuration"
                     ) from error
                 raise
             timings["create_ms"] = round((time.perf_counter() - started) * 1000, 3)
@@ -386,7 +402,8 @@ def _apply_managed(executor, spec: BuildSpec) -> ApplyResult:
             timings["verify_ms"] = round((time.perf_counter() - started) * 1000, 3)
             evidence = {
                 "document_count": verified["counts"]["content"],
-                "ontology_document_count": len(rows),
+                **({"ontology_document_count": len(rows)}
+                   if not uses_inline_jsonld(spec) else {}),
                 "graph_document_count": verified["counts"]["graph"],
                 "graph_provenance_sample_count": verified["graph_provenance_sample_count"],
                 "edge_count": None,
@@ -396,12 +413,6 @@ def _apply_managed(executor, spec: BuildSpec) -> ApplyResult:
                 "time_to_build_ms": round((time.perf_counter() - started_total) * 1000, 3),
                 "indexes": verified["created_resources"],
                 "knowledge_source": graph_name,
-                "preview_readiness": {
-                    **service_evidence,
-                    "status": "accepted_for_this_service",
-                    "technically_verified": True,
-                    "evidence_origin": "verified_knowledge_source_post_and_generated_resources",
-                },
             }
             events.append(Event("verify-managed-synchronization", "verified",
                                 "generated indexes and synchronization verified", {

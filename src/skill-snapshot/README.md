@@ -3,33 +3,34 @@
 This is a **testing-only snapshot**, not a published or assured release. It
 packages the production skill and runtime files from
 [Foundry-IQ-Skills PR 2344752](https://msdata.visualstudio.com/Azure%20Search/_git/Foundry-IQ-Skills/pullrequest/2344752),
-at commit `0e44f9464deb180b13aea0fb4875d2cb2755e3aa`. Do not replace it with
+at commit `e92776ca1df6c691f4b097b09217c1fb674b6eb7`. Do not replace it with
 the moving feature branch or a marketplace package when reproducing a run.
 
 The pinned source defines one unified `foundry-iq-skills` plugin. This snapshot
 ships only its 13 graph-related skills as `graph-skills-snapshot`, with four
-Python runtimes and five MCP server registrations. The general Foundry IQ skill
-and its operations library are not included.
+Python runtimes and three MCP server registrations: Azure plus the optional EKG
+and GRZ Apps adapters. The general Foundry IQ skill, its operations library,
+and the four entity skills and their runtime are not included.
 Source guidance sometimes calls runtime families companion plugins; here they
 are bundled in this one plugin.
 
 Skill guidance remains under `skills\<skill-name>` and production Python
-packages remain under `runtime\<family>`. The four runtime packages and all
-five native binaries retain their existing paths and bytes.
+packages remain under `runtime\<family>`. The four runtime packages retain their
+existing paths. All five native binaries retain their existing paths and bytes.
 
 ## Skills and entry points
 
 | Family | Skills | Runtime commands |
 |---|---|---|
 | Graph routing | [graph-choose](skills/graph-choose/SKILL.md), [graph-demo](skills/graph-demo/SKILL.md), [graph-guide](skills/graph-guide/SKILL.md) | Routing only |
-| Enterprise knowledge graph | [ekg-provision](skills/ekg-provision/SKILL.md), [ekg-build](skills/ekg-build/SKILL.md), [ekg-consume](skills/ekg-consume/SKILL.md) | `ekg-provision`, `ekg-build`, `ekg-consume`, `ekg-mcp` |
-| Grounding | [grounding-provision](skills/grounding-provision/SKILL.md), [grounding-build](skills/grounding-build/SKILL.md), [grounding-consume](skills/grounding-consume/SKILL.md) | `grounding-provision`, `grounding-build`, `grounding-consume`, `grounding-mcp` |
-| Topic communities | [grz-build](skills/grz-build/SKILL.md), [grz-consume](skills/grz-consume/SKILL.md) | `grz-build`, `grz-consume`, `grz-mcp` |
-| Ontology | [ontology-build](skills/ontology-build/SKILL.md), [ontology-consume](skills/ontology-consume/SKILL.md) | `ontology-build`, `ontology-consume`, `ontology-mcp` |
+| Enterprise knowledge graph | [ekg-provision](skills/ekg-provision/SKILL.md), [ekg-build](skills/ekg-build/SKILL.md), [ekg-consume](skills/ekg-consume/SKILL.md) | `ekg-provision`, `ekg-build`, `ekg-consume`; optional `ekg-apps` |
+| Grounding | [grounding-provision](skills/grounding-provision/SKILL.md), [grounding-build](skills/grounding-build/SKILL.md), [grounding-consume](skills/grounding-consume/SKILL.md) | `grounding-provision`, `grounding-build`, `grounding-consume` |
+| Topic communities | [grz-build](skills/grz-build/SKILL.md), [grz-consume](skills/grz-consume/SKILL.md) | `grz-build`, `grz-consume`; optional `grz-mcp` |
+| Ontology | [ontology-build](skills/ontology-build/SKILL.md), [ontology-consume](skills/ontology-consume/SKILL.md) | `ontology-build`, `ontology-consume`; optional `ontology-apps` |
 
 Foundry IQ document retrieval and KB binding are external routes, not included
 skills. The Kusto graph route is also external and is not included. Automated entity linking
-and extraction through `entity-skills` is not implemented in this snapshot.
+and extraction through `entity-skills` is an upstream workflow, external to this snapshot.
 Native EKG graph extraction is a separate supported preview route.
 
 ## Install the local runtimes
@@ -47,9 +48,9 @@ uv tool install --python 3.12 --index-url $env:UV_INDEX_URL "$snapshot\runtime\g
 uv tool install --python 3.12 --index-url $env:UV_INDEX_URL "$snapshot\runtime\ontology-skills"
 ```
 
-Keep runtimes in separate environments: GRZ pins `azure-search-documents==11.6.0`,
-while ontology pins `azure-search-documents==12.0.0`. The Python manifests define
-the direct production dependencies; there is no locked transitive dependency
+Keep runtimes in separate environments. GRZ, EKG consume and ontology now pin
+`azure-search-documents==12.0.0`; all four manifests retain the updated exact
+upstream production dependency pins. There is no locked transitive dependency
 set or offline wheelhouse in this snapshot. Installation resolves dependencies
 through public PyPI and requires network access.
 
@@ -63,6 +64,31 @@ runtime paths; verify that your host expands it. Each subprocess is configured
 with public PyPI or npm. Azure MCP uses the source's
 `@azure/mcp@latest` registration and is therefore not pinned by this snapshot.
 No dependencies or MCP server packages were installed to create this snapshot.
+
+### Optional Apps adapters
+
+Ordinary operations use the domain CLIs directly and do not require MCP.
+Grounding has no MCP adapter. EKG and GRZ register Apps-only presentation
+adapters; clients without negotiated Apps support do not receive their tools
+or resources. Missing or altered UI assets fail explicitly, without a fallback.
+HTML, notices and provenance retain their exact accepted upstream bytes.
+
+For a manually launched adapter, install the matching extra in its isolated
+runtime environment:
+
+```powershell
+uv tool install --python 3.12 --index-url $env:UV_INDEX_URL "$snapshot\runtime\ekg-skills[apps,consume]"
+uv tool install --python 3.12 --index-url $env:UV_INDEX_URL "$snapshot\runtime\grz-skills[azure,embed,apps]"
+uv tool install --python 3.12 --index-url $env:UV_INDEX_URL "$snapshot\runtime\ontology-skills[apps]"
+```
+
+Use `--reinstall` if that runtime was already installed without the required extras.
+The optional adapters pin the official MCP Python SDK to `2.3.0`.
+`ekg-apps --descriptor <absolute-descriptor-path>` and
+`grz-mcp --descriptor <absolute-descriptor-path> --endpoint <search-endpoint> --auth entra`
+bind their reads to a published generation. Ontology is not auto-registered:
+launch `ontology-apps --state-dir <absolute-state-directory>` explicitly.
+Host-rendered Apps acceptance is not established by this port.
 
 ## GRZ native runtime prerequisite
 
@@ -159,6 +185,13 @@ processes with task-isolated auth/config state, not a shared default profile.
 4. Grounding is optional: `grounding-build` loads an edgeList grounding index
    from CSV, JSONL or Wikidata; use `grounding-consume` to inspect readiness.
 
+The refreshed journeys retain observed resource endpoints and identity bindings,
+reject mixed legacy/source arguments, and keep exact plan inputs through
+apply, reconcile, verify and publish. Ontology supports a separate JSON-LD export
+without replacing the approved OWL pointer. GRZ validates canonical Search
+origins and uses bounded reads; graph-demo documents artifact handoffs rather
+than assuming that a successful help command proves live readiness.
+
 Typical read-only local checks after installation are `ekg-build --version`,
 `grounding-build --version`, `grz-build --version` and `ontology-build --version`.
 Version checks and imports are not proof of live service readiness.
@@ -175,6 +208,8 @@ Snapshot-only adaptations exclude the general Foundry IQ skill and its
 operations library; GRZ's offline fixture backend, fixture artifact generator,
 full-generation test reader and developer simulator; runtime development
 dependencies and test configuration; and EKG sample fixture data.
+Router references to Foundry IQ, entity, Kusto and standalone presentation
+describe external routes, not additional bundled tools.
 Production GRZ Azure reads/writes and the native adapter remain. The CLI's
 explicit native-binary argument is connected to the actual build runner.
 Native clustering uses the approved source binding's vector field instead of

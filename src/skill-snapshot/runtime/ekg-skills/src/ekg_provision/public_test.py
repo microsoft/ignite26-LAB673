@@ -4,17 +4,28 @@ import ipaddress
 import re
 from datetime import datetime, timedelta, timezone
 
-from ekg_core.models import ProvisioningSpec, PublicTestSpec
+from ekg_core.models import ProvisioningSpec, PublicDataSpec, PublicTestSpec
 
 
 MAX_DURATION = timedelta(hours=72)
 
 
 def validate_public_test(spec: ProvisioningSpec, *, require_active: bool = True) -> None:
-    test = spec.public_test
+    test = spec.public_endpoint
     if test is None:
         return
-    if not isinstance(test, PublicTestSpec):
+    if spec.public_data is not None:
+        if not isinstance(test, PublicDataSpec):
+            raise ValueError("public_data must be a PublicDataSpec")
+        if test.public_data_only is not True:
+            raise ValueError("public-data requires independent public-data-only acknowledgement")
+        if test.mode != "entra_only" or test.egress_ips:
+            raise ValueError("public-data requires entra_only with no IP rules")
+        if spec.build_access is None or {item.role for item in spec.model_deployments} != {
+            "embedding", "chat"
+        }:
+            raise ValueError("public-data requires identity, private container, six roles and both models")
+    elif not isinstance(test, PublicTestSpec):
         raise ValueError("public_test must be a PublicTestSpec")
     if spec.network is not None or spec.content_understanding_name is not None:
         raise ValueError("public test cannot use private networking or Content Understanding")
@@ -36,7 +47,7 @@ def validate_public_test(spec: ProvisioningSpec, *, require_active: bool = True)
         raise ValueError("public test resource group cannot end in a period")
     if spec.search_sku != "basic":
         raise ValueError("public test requires Search Basic for firewall support")
-    if test.synthetic_data_only is not True:
+    if isinstance(test, PublicTestSpec) and test.synthetic_data_only is not True:
         raise ValueError("public test requires synthetic-data-only acknowledgement")
     if test.mode not in ("ip_allowlist", "entra_only"):
         raise ValueError("public test requires an explicit supported ingress mode")

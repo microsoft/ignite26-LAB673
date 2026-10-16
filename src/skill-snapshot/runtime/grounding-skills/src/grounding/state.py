@@ -14,7 +14,7 @@ def state_dir() -> Path:
     if override:
         base = Path(override)
     elif sys.platform == "win32":
-        base = Path(os.environ.get("LOCAL" + "APP" + "DATA") or Path.home() / ("App" + "Data") / "Local") / "grounding-skills"
+        base = Path(os.environ.get("LOCALAPPDATA") or Path.home() / ("App" + "Data") / "Local") / "grounding-skills"
     else:
         base = Path(os.environ.get("XDG_STATE_HOME") or Path.home() / ".local" / "state") / "grounding-skills"
     return base

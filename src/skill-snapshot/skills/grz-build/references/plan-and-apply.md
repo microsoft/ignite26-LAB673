@@ -12,9 +12,12 @@ Use this path to go from a Search source index with stored chunk vectors to a ve
 
 ## Preflight
 
-1. Run `grz-build --version`. If missing, read the [local runtime installation instructions](../../../README.md#install-the-local-runtimes) first. Install or run the shipped `runtime/grz-skills[azure,embed]` package with dependencies from public PyPI. Check the [native prerequisite](../../../README.md#grz-native-runtime-prerequisite) before apply; this snapshot has no fixture fallback.
-2. Run `grz-build doctor --json` (or `grz-skills-grz_doctor`) with the same `--tenant-id`, `--state-dir`, and Search flags you will use. Doctor only reads. Fix the first `fail` check using the top-level `next_step`; `warn` does not block.
+1. Run `grz-build --version`. If missing, show `uv tool install --python 3.12 "<plugin-root>/runtime/grz-skills[azure,embed]"` and wait for the operator. Never self-install; use the approved feed when required. Missing uv: https://docs.astral.sh/uv/getting-started/installation/.
+2. Put global flags **before** the verb: `grz-build --backend azure --state-dir <absolute-state> --tenant-id <tenant> <Search/source flags> doctor --json`. Retain that scope on every command. Doctor only reads. Follow the first `fail` check's `next_step`; `warn` does not block.
 3. For community naming, add `--naming-endpoint`, `--naming-deployment`, and `--naming-resource-group` to doctor. It lists models and does a read-only deployment GET, with no completion and no spend.
+
+Check the [shipped native runtime](../../../README.md#grz-native-runtime-prerequisite) before apply.
+This snapshot has no fixture backend or simulator fallback.
 
 ## Inspect and plan (`--backend azure`)
 

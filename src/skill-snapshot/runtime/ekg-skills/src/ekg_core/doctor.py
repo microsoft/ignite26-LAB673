@@ -1,4 +1,4 @@
-"""Read-only operator-environment checks shared by every ekg-skills CLI and the MCP server.
+"""Read-only operator-environment checks shared by every ekg-skills CLI.
 
 ``doctor`` never signs in, never writes to Azure or disk, and sends no completions or
 embeddings (the model checks only list models and read deployment metadata). A check
@@ -30,9 +30,7 @@ SEARCH_RESOURCE = "https://search.azure.com"
 SEARCH_API_VERSION = "2024-07-01"
 GROUNDING_API_VERSION = "2026-08-01-preview"
 OPENAI_API_VERSION = "2024-10-01"
-OPENAI_RESOURCE = "https://cognitiveservices.azure.com"
-OPENAI_DATA_API_VERSION = "2024-10-21"
-OPENAI_USER_ROLE = "Cognitive Services OpenAI User"
+OPENAI_RESOURCE = "https://ai.azure.com"
 _AUTH_DENIED = ("401", "403", "forbidden", "unauthorized", "permissiondenied",
                 "authorizationfailed")
 MIN_PYTHON = (3, 12)
@@ -366,7 +364,7 @@ def check_model_data_plane(endpoint: str | None, resource_id: str | None, signed
                             runner: Runner) -> dict[str, Any]:
     """List models on the data plane with the caller's Entra token (no completion, no spend).
 
-    Success proves the data-plane role real model calls need; ARM metadata cannot."""
+    Success proves only model-list access for this caller, not inference or a named role."""
     if not endpoint:
         return _check("model_data_plane", "skip", "no --openai-endpoint or descriptor endpoint")
     if not signed_in:
@@ -375,7 +373,7 @@ def check_model_data_plane(endpoint: str | None, resource_id: str | None, signed
     if not endpoint.startswith("https://"):
         return _check("model_data_plane", "fail", "OpenAI endpoint must be https",
                       "DOCTOR_MODEL_ENDPOINT")
-    url = (f"{endpoint.rstrip('/')}/openai/models?api-version={OPENAI_DATA_API_VERSION}")
+    url = f"{endpoint.rstrip('/')}/openai/v1/models"
     try:
         done = runner([az_executable(runner), "rest", "--method", "get", "--url", url,
                        "--resource", OPENAI_RESOURCE, "--output", "json"],
@@ -384,12 +382,13 @@ def check_model_data_plane(endpoint: str | None, resource_id: str | None, signed
         return _check("model_data_plane", "fail", "cannot reach the OpenAI endpoint",
                       "DOCTOR_MODEL_ENDPOINT")
     if done.returncode == 0:
-        return _check("model_data_plane", "ok", f"can list models with your Entra token "
-                      f"({OPENAI_USER_ROLE} role present; no completion sent)")
+        return _check("model_data_plane", "ok", "can list models with your Entra token; "
+                      "inference permissions and the Search identity's access remain unverified "
+                      "(no completion sent)")
     # Classify from stderr without echoing it: it may hold account details.
     if any(marker in (done.stderr or "").lower() for marker in _AUTH_DENIED):
-        return _check("model_data_plane", "fail", f"your identity lacks {OPENAI_USER_ROLE} "
-                      "on the model account", "DOCTOR_MODEL_ROLE", scope=scope)
+        return _check("model_data_plane", "fail", "model listing was denied for this caller; "
+                      "this does not establish a missing role", "DOCTOR_MODEL_ROLE", scope=scope)
     return _check("model_data_plane", "fail", "cannot reach the OpenAI endpoint",
                   "DOCTOR_MODEL_ENDPOINT")
 
@@ -415,27 +414,13 @@ def check_model_deployment(resource_id: str | None, deployment: str | None, sign
     return _check("model_deployment", "ok", f"deployment {deployment} exists (metadata only)")
 
 
-def check_mcp(runner: Runner) -> dict[str, Any]:
-    try:
-        done = runner([sys.executable, "-m", "adapters.mcp.stdio", "--self-test"],
-                      capture_output=True, text=True, timeout=60, check=False)
-    except (OSError, subprocess.TimeoutExpired):
-        return _check("mcp_self_test", "fail", "ekg-mcp --self-test did not finish",
-                      "DOCTOR_MCP")
-    if done.returncode != 0:
-        return _check("mcp_self_test", "fail", "ekg-mcp --self-test failed", "DOCTOR_MCP")
-    lines = (done.stdout or "").strip().splitlines()
-    return _check("mcp_self_test", "ok", lines[0] if lines else "ekg-mcp started")
-
-
 def doctor(prog: str, *, tenant_id: str | None = None, state_dir: str | None = None,
            build_journal: str | None = None, provision_journal: bool = False,
            descriptor: str | None = None, search_endpoint: str | None = None,
            index: str | None = None, openai_resource_id: str | None = None,
            deployment: str | None = None, openai_endpoint: str | None = None,
            grounding_index: str | None = None, grounding_graph_name: str | None = None,
-           runner: Runner = subprocess.run,
-           self_test: bool = True) -> dict[str, Any]:
+           runner: Runner = subprocess.run) -> dict[str, Any]:
     checks = [check_cli_version(), check_python(), check_uv()]
     signin = check_azure_signin(tenant_id, runner)
     checks.append(signin)
@@ -458,8 +443,6 @@ def doctor(prog: str, *, tenant_id: str | None = None, state_dir: str | None = N
     checks.append(check_model_data_plane(openai_endpoint or endpoints.get("openai"),
                                          openai_resource_id, signed_in, runner))
     checks.append(check_model_deployment(openai_resource_id, deployment, signed_in, runner))
-    if self_test:
-        checks.append(check_mcp(runner))
     failed = next((item for item in checks if item["status"] == "fail"), None)
     result: dict[str, Any] = {"status": "blocked" if failed else "ok", "tenant_id": tenant_id,
                               "checks": checks}

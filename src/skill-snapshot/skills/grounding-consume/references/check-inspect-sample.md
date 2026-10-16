@@ -10,7 +10,7 @@
 
 All are read-only. JSON on stdout, tenant and subscription on stderr. Flags: `--endpoint <url>` (default: saved connection), `--index <name>`.
 
-- `grounding-consume check --index <name>` (MCP: `grounding-skills-grounding_consume_check`): returns `ok`, `profile_kind`, `document_count`, `sample_query_ok`, `descriptor_found`, `problems[]`. Fails when the graph profile is missing, not `edgeList`, or has an unmapped or mistyped role.
+- `grounding-consume check --index <name>`: returns `ok`, `profile_kind`, `document_count`, `sample_query_ok`, `descriptor_found`, `problems[]`. Fails when the graph profile is missing, not `edgeList`, or has an unmapped or mistyped role.
 - `grounding-consume inspect --index <name>`: profile mapping, fields, document count, storage size, and aggregates over a sample (top predicates, graph names, origin labels), plus the build descriptor when present.
 - `grounding-consume sample --index <name> [-n 10] [--query <text>] [--predicate <name>]`: example edges with subject, predicate, object, ids, graph name, confidence, and origin label.
 

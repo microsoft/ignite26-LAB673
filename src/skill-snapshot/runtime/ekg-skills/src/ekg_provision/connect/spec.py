@@ -7,7 +7,6 @@ from ekg_core.az_identity import IdentityError, az_json
 ARM = "https://management.azure.com"
 DEFAULT_RUNNER: Callable[..., Any] = subprocess.run
 SEARCH_DATA_API_VERSION = "2024-07-01"
-OPENAI_DATA_API_VERSION = "2024-10-21"
 _TYPES = {"search": ("Microsoft.Search/searchServices", "2025-05-01"), "storage": ("Microsoft.Storage/storageAccounts", "2023-05-01"), "openai": ("Microsoft.CognitiveServices/accounts", OPENAI_API_VERSION), "identity": ("Microsoft.ManagedIdentity/userAssignedIdentities", "2023-01-31")}
 _ID = re.compile(r"/subscriptions/([^/]+)/resourceGroups/([^/]+)/providers/"
                  r"([^/]+/[^/]+)/([^/]+)", re.IGNORECASE)
@@ -17,9 +16,6 @@ ACCEPTED_ROLES = {
     "Storage Blob Data Contributor": ("Storage Blob Data Contributor", "Storage Blob Data Owner"),
     "Storage Blob Data Reader": ("Storage Blob Data Reader", "Storage Blob Data Contributor",
                                  "Storage Blob Data Owner"),
-    "Cognitive Services OpenAI User": ("Cognitive Services OpenAI User",
-                                       "Cognitive Services OpenAI Contributor",
-                                       "Cognitive Services User"),
 }
 EMBEDDING_DIMENSIONS = {"text-embedding-3-small": 1536, "text-embedding-3-large": 3072, "text-embedding-ada-002": 1536}
 UNVERIFIED_ROLE = ("No direct or inherited assignment to this principal was found. Group, "

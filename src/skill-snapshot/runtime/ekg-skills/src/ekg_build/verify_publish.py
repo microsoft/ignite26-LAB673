@@ -1,7 +1,10 @@
 from ekg_core.models import BuildSpec, OntologyMode
 from ekg_core.ontology import load_ontology
 
-from .managed_pipeline import EDGE_FIELDS, generated, knowledge_source, ontology_index, ontology_rows
+from .managed_pipeline import (
+    EDGE_FIELDS, generated, knowledge_source, ontology_index, ontology_rows,
+    search_api_version, uses_inline_jsonld,
+)
 from .executor import (
     BuildError, _identity_readback_matches, _read_attempt_journal, _source_record,
     _sync_status, corpus_files, generation, hash_json, index_names, plan, source_provenance,
@@ -20,7 +23,7 @@ def _verify_source_journal(executor, spec):
             expected = _source_record(spec, "attempt_requested")
             if any(record.get(key) != expected[key] for key in (
                 "version", "run_id", "plan_id", "scope", "generation",
-                "knowledge_source", "preview_entitlement", "create_request_hash",
+                "knowledge_source", "create_request_hash",
             )) or record.get("state") not in {
                 "attempt_requested", "indexing", "synchronizing", "failed", "verified",
             }:
@@ -53,9 +56,12 @@ def _verify_managed(executor, spec, names, record):
             raise BuildError("managed Knowledge Source is missing or incompatible")
         ingestion = (live.get("azureBlobParameters") or {}).get("ingestionParameters") or {}
         graph = ingestion.get("graphExtraction") or {}
-        if graph.get("graphName") != name or (graph.get("ontology") or {}).get(
-            "indexName"
-        ) != names["ontology"]:
+        ontology_binding = graph.get("ontology") or {}
+        expected_ontology_binding = (
+            {"inlineJsonLd": ontology.inline_jsonld}
+            if uses_inline_jsonld(spec) else {"indexName": names["ontology"]}
+        )
+        if graph.get("graphName") != name or ontology_binding != expected_ontology_binding:
             raise BuildError("managed Knowledge Source graph/ontology binding differs")
         if spec.grounding_index and (((graph.get("grounding") or {}).get("index") or {}).get(
                 "indexName") != spec.grounding_index):
@@ -67,32 +73,32 @@ def _verify_managed(executor, spec, names, record):
             resource = executor.adapter.get_resource(kind, resources[key])
             if not resource or resource.get("name") != resources[key]:
                 raise BuildError(f"managed generated {key} is missing")
-        indexes = {
-            "ontology": executor.adapter.get_index(names["ontology"]),
-            "content": executor.adapter.get_index(resources["index"]),
-            "graph": executor.adapter.get_index(resources["graphIndex"]),
-        }
+        indexes = {"content": executor.adapter.get_index(resources["index"]),
+                   "graph": executor.adapter.get_index(resources["graphIndex"])}
+        if not uses_inline_jsonld(spec):
+            indexes["ontology"] = executor.adapter.get_index(names["ontology"])
         if any(value is None for value in indexes.values()):
             raise BuildError("managed Knowledge Source generated indexes are missing")
-        ontology_schema = indexes["ontology"] or {}
-        profile = ontology_schema.get("graphProfile")
-        if not isinstance(profile, dict):
-            raise BuildError("ontology edge-list graph profile is missing")
-        mappings = profile.get("fields")
-        if (profile.get("kind") != "edgeList" or not isinstance(mappings, dict)
-                or any(mappings.get(key) != value for key, value in EDGE_FIELDS.items())
-                or any(key not in EDGE_FIELDS and
-                       (key != "sourceDocumentIdField" or value is not None)
-                       for key, value in mappings.items())):
-            raise BuildError("ontology edge-list graph profile is missing")
-        expected = ontology_index(names["ontology"])
-        actual_fields = {field.get("name"): field for field in ontology_schema.get("fields", [])
-                         if isinstance(field, dict)}
-        if any(
-            actual_fields.get(field["name"], {}).get("type") != field["type"]
-            for field in expected["fields"]
-        ):
-            raise BuildError("ontology index field types differ from the managed contract")
+        if not uses_inline_jsonld(spec):
+            ontology_schema = indexes["ontology"] or {}
+            profile = ontology_schema.get("graphProfile")
+            if not isinstance(profile, dict):
+                raise BuildError("ontology edge-list graph profile is missing")
+            mappings = profile.get("fields")
+            if (profile.get("kind") != "edgeList" or not isinstance(mappings, dict)
+                    or any(mappings.get(key) != value for key, value in EDGE_FIELDS.items())
+                    or any(key not in EDGE_FIELDS and
+                           (key != "sourceDocumentIdField" or value is not None)
+                           for key, value in mappings.items())):
+                raise BuildError("ontology edge-list graph profile is missing")
+            expected = ontology_index(names["ontology"])
+            actual_fields = {field.get("name"): field for field in ontology_schema.get("fields", [])
+                             if isinstance(field, dict)}
+            if any(
+                actual_fields.get(field["name"], {}).get("type") != field["type"]
+                for field in expected["fields"]
+            ):
+                raise BuildError("ontology index field types differ from the managed contract")
         content = indexes["content"] or {}
         content_fields = {
             item.get("name"): item for item in content.get("fields", [])
@@ -111,23 +117,19 @@ def _verify_managed(executor, spec, names, record):
         _sync_status(executor.adapter.knowledge_source_status(name)) or (
             _raise_incomplete()
         )
-        counts = {
-            key: executor.adapter.count(index_name)
-            for key, index_name in (
-                ("ontology", names["ontology"]),
-                ("content", resources["index"]),
-                ("graph", resources["graphIndex"]),
-            )
-        }
-        if counts["ontology"] != len(ontology_rows(ontology, name)):
-            raise BuildError("managed ontology row count differs")
+        counts = {"content": executor.adapter.count(resources["index"]),
+                  "graph": executor.adapter.count(resources["graphIndex"])}
+        if not uses_inline_jsonld(spec):
+            counts["ontology"] = executor.adapter.count(names["ontology"])
+            if counts["ontology"] != len(ontology_rows(ontology, name)):
+                raise BuildError("managed ontology row count differs")
         source_count = spec.source_manifest.document_count if spec.source_manifest else len(
             corpus_files(spec.corpus_source)
         )
         if counts["content"] < source_count or counts["graph"] == 0:
             raise BuildError("managed content or graph index has insufficient documents")
         evidence_sample = None
-        if spec.graph_retrieval:
+        if spec.graph_retrieval and ontology.edge_types:
             for domain, predicate, range_name in ontology.edge_types:
                 gql = (f"MATCH (s:`{domain}`)-[r:`{predicate}`]->"
                        f"(o:`{range_name}`) RETURN r LIMIT 1")
@@ -149,8 +151,8 @@ def _verify_managed(executor, spec, names, record):
             mapping = source_provenance(spec)
             binding = live.get("azureBlobParameters") or {}
             expected_definition = knowledge_source(
-                spec, name=name, ontology_name=names["ontology"],
-                graph_name=name, prefix=staging_prefix(spec),
+                spec, name=name, ontology_name=names.get("ontology"),
+                graph_name=name, prefix=staging_prefix(spec), ontology=ontology,
             )
             expected_binding = expected_definition["azureBlobParameters"]
             expected_identity = expected_binding["ingestionParameters"]["identity"]
@@ -226,6 +228,10 @@ def verify(executor, spec: BuildSpec) -> dict:
         blockers = verification_blockers(desired)
         if blockers:
             raise BuildError("; ".join(blockers))
+        if (spec.ontology_mode is not OntologyMode.NONE
+                and getattr(executor.adapter, "search_api_version", search_api_version(spec))
+                != search_api_version(spec)):
+            raise BuildError(f"managed graph requires Search {search_api_version(spec)}")
         record = _verify_source_journal(executor, spec)
         names = index_names(spec)
         if spec.ontology_mode is OntologyMode.NONE:

@@ -17,7 +17,9 @@ _SCOPE_KEYS = {
     "subscription_id", "search_resource_id", "storage_resource_id",
     "openai_resource_id", "storage_container", "staging_prefix", "search_endpoint",
     "storage_endpoint", "openai_endpoint", "ontology_schema_id",
+    "ontology_transport", "search_api_version",
 }
+_SCOPE_OPTIONAL_KEYS = {"ontology_transport", "search_api_version"}
 _ERROR_CODES = {"SOURCE_DRIFT", "REMOTE_OUTCOME_UNVERIFIED", "BUILD_ATTEMPT_FAILED"}
 
 
@@ -47,7 +49,8 @@ def read_build_status(journal_path: str, run_id: str) -> dict[str, Any]:
     } or not isinstance(record.get("scope"), dict) or not isinstance(record.get("plan_id"), str):
         return base
     scope = record["scope"]
-    if (set(scope) != _SCOPE_KEYS
+    if (not (_SCOPE_KEYS - _SCOPE_OPTIONAL_KEYS).issubset(scope)
+            or not set(scope).issubset(_SCOPE_KEYS)
             or any(value is not None and not isinstance(value, (str, int))
                    or isinstance(value, bool) for value in scope.values())
             or not isinstance(scope.get("manifest_digest"), str)
@@ -153,7 +156,7 @@ def build_status(spec: BuildSpec, *, run_id: str | None = None,
             "next_action": "Provide an exact local build journal path.",
         }
     if spec.source_manifest is None:
-        from .executor import generation, index_names
+        from .executor import _managed_attempt_identity, generation, index_names
         base = {
             "phase": "build.status", "status": "unverified", "plan_id": desired.plan_id,
             "scope": exact_scope, "evidence": {"origin": "local_build_journal"},
@@ -166,10 +169,12 @@ def build_status(spec: BuildSpec, *, run_id: str | None = None,
             record = json.loads(Path(spec.build_journal).read_text(encoding="utf-8"))
         except (OSError, UnicodeError, json.JSONDecodeError):
             return {**base, "code": "JOURNAL_SCOPE_MISMATCH"}
+        if isinstance(record, dict):
+            record = _managed_attempt_identity(record)
         expected = {
             "generation": generation(spec), "knowledge_source": index_names(spec)["knowledge_source"],
             "plan_id": desired.plan_id, "search_resource_id": exact_scope.get("search_resource_id"),
-            "tenant_id": spec.tenant_id, "preview_entitlement": "unverified_before_attempt",
+            "tenant_id": spec.tenant_id,
         }
         if not isinstance(record, dict) or any(record.get(key) != value for key, value in expected.items()) \
                 or set(record) != {*expected, "state"} \

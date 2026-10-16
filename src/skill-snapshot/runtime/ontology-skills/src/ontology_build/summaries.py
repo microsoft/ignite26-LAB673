@@ -166,7 +166,8 @@ def _approve(r: dict[str, Any]) -> Lines:
 
 
 def _export(r: dict[str, Any]) -> Lines:
-    return [f"Exported v{r['version']} to {r['output']}", f"sha256: {r['owl_sha256']}",
+    digest = r.get("owl_sha256") or r.get("jsonld_sha256")
+    return [f"Exported v{r['version']} to {r['output']}", f"sha256: {digest}",
             f"Schema ID: {r['schema_id']}"]
 
 

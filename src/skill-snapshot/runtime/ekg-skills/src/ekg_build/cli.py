@@ -1,6 +1,7 @@
 from __future__ import annotations
 import argparse
 import json
+import shlex
 import sys
 from dataclasses import asdict
 from pathlib import Path
@@ -13,7 +14,7 @@ from ekg_core.models import (
 from .adapters import AzureDataPlane
 from .deployment import descriptor, publish
 from .executor import BuildExecutor
-from .managed_pipeline import SEARCH_API_VERSION
+from .managed_pipeline import SEARCH_API_VERSION, search_api_version
 from .planner import plan
 from .preflight import preflight
 from .status import read_build_status
@@ -32,7 +33,9 @@ _PLAN_VERB = {"apply": "plan", "retire": "plan-retire", "update": "plan-update"}
 
 def _spec_arguments() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(add_help=False)
-    parser.add_argument("--corpus")
+    parser.add_argument("--corpus", help="legacy local corpus path; cannot be combined with "
+                        "any --source-* option (use --source-kind, --source-reference and "
+                        "--source-manifest for explicit sources)")
     parser.add_argument("--source-kind", choices=[kind.value for kind in SourceKind])
     parser.add_argument("--source-reference")
     parser.add_argument("--source-resource-id")
@@ -380,7 +383,7 @@ def _handle_update(args, spec) -> dict:
     adapter = AzureDataPlane(search_endpoint=args.search_endpoint,
                              storage_endpoint=args.storage_endpoint,
                              credential=az_identity.cli_credential(args.tenant_id),
-                             search_api_version=SEARCH_API_VERSION)
+                             search_api_version=search_api_version(spec))
     _check_tenant(adapter, args.tenant_id)
     if args.command == "plan-update":
         review = content.update_plan(adapter, spec, args.descriptor[0])
@@ -588,7 +591,7 @@ def _handle_result(args, spec, desired):
                              storage_endpoint=args.storage_endpoint,
                              openai_endpoint=args.openai_endpoint,
                              embedding_deployment=args.embedding_deployment,
-                             search_api_version=(SEARCH_API_VERSION
+                             search_api_version=(search_api_version(spec)
                                                  if spec.ontology_mode is not OntologyMode.NONE
                                                  else "2024-07-01"))
     if spec.source_manifest:
@@ -645,6 +648,38 @@ def _source(args):
         ) if args.source_kind else None
     except ValueError as error:
         raise Blocked("USAGE", str(error)) from error
+
+
+_EXPLICIT_SOURCE_FLAGS = {
+    "--source-kind", "--source-reference", "--source-resource-id", "--source-container",
+    "--source-prefix", "--source-library-id", "--source-manifest",
+}
+
+
+def _check_source_flags(args, argv: list[str]) -> None:
+    conflicts = sorted(flag for flag in _EXPLICIT_SOURCE_FLAGS
+                       if getattr(args, flag[2:].replace("-", "_"), None) is not None)
+    if getattr(args, "corpus", None) is None or not conflicts:
+        return
+    corrected = []
+    index = 0
+    while index < len(argv):
+        part = argv[index]
+        option = part.split("=", 1)[0]
+        if option.startswith("--") and "--corpus".startswith(option):
+            index += 1 if "=" in part else 2
+        else:
+            corrected.append(part)
+            index += 1
+    command = shlex.join([PROG, *corrected])
+    raise Blocked(
+        "USAGE", f"--corpus is legacy-only and cannot be combined with {', '.join(conflicts)}. "
+        f"Use explicit sources by removing --corpus (POSIX shell): {command}. "
+        "Complete any missing source flags, then review a fresh plan before writes.",
+        result={"conflicting_flags": ["--corpus", *conflicts],
+                "corrected_args": [PROG, *corrected], "corrected_command": command,
+                "corrected_command_shell": "posix"},
+    )
 
 
 def _manifest(args, source):
@@ -765,7 +800,7 @@ def _run(args) -> dict:
         from .managed_pipeline import grounding_live_blocker
         found = grounding_live_blocker(
             AzureDataPlane(search_endpoint=spec.target.search_endpoint,
-                           search_api_version=SEARCH_API_VERSION), spec)
+                           search_api_version=search_api_version(spec)), spec)
         if found:
             desired = replace(desired, blocked_by=(*desired.blocked_by, found))
     return _handle_result(args, spec, desired)
@@ -808,12 +843,14 @@ def _say(result, args) -> None:
 
 
 def main(argv: list[str] | None = None) -> None:
+    argv = list(sys.argv[1:] if argv is None else argv)
     args = parse(_parser(), argv, _DEFAULTS)
     if args.command == "doctor":
         from ekg_core import doctor
         doctor.run(PROG, args)
         return
     try:
+        _check_source_flags(args, argv)
         result = _run(args)
     except Blocked as blocked:
         report(blocked, prog=PROG, command=args.command)

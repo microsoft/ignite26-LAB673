@@ -535,6 +535,26 @@ class ExportManifest(Record):
     grz: ExportGrz | None = None
 
 
+@dataclass
+class JsonLdExportManifest(Record):
+    """`exports/jsonld-export-manifest.<hash12>.json`; never replaces the OWL manifest or current pointer."""
+
+    SCHEMA: ClassVar[str] = "jsonld-export-manifest"
+    schema_id: str
+    version: int
+    format: Literal["jsonld"]
+    jsonld_sha256: str
+    output: str
+    base_iri: str
+    tool_version: str
+    created_at: str
+    profile: Literal["inline-jsonld-v1"] = "inline-jsonld-v1"
+    plan_id: str | None = None
+    prompt_sha256: str | None = None
+    model: VersionModel | None = None
+    grz: ExportGrz | None = None
+
+
 # --------------------------------------------------------------------------- run files
 
 
@@ -584,5 +604,5 @@ class LockInfo(Record):
 
 RECORDS: dict[str, type[Record]] = {
     cls.SCHEMA: cls for cls in (Ontology, Config, Plan, Version, EvidenceRecord, Approval, Diff,
-                                ExportManifest, Sample, LockInfo)
+                                ExportManifest, JsonLdExportManifest, Sample, LockInfo)
 }

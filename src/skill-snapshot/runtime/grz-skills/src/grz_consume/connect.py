@@ -9,6 +9,7 @@ from grz_core.azure_auth import create_default_credential, validate_tenant
 from grz_core.contracts import ContractError, Descriptor
 
 from .search_store import AzureSearchReadStore, QueryOnlyPolicy
+from .endpoint import validate_search_endpoint
 
 
 def build_store(
@@ -21,6 +22,7 @@ def build_store(
     credential: Any | None = None,
 ) -> AzureSearchReadStore:
     descriptor.validate()
+    endpoint = validate_search_endpoint(endpoint)
     if auth == "query-key":
         key = query_key or os.environ.get("GRZ_SEARCH_QUERY_KEY")
         if not key:
@@ -34,4 +36,5 @@ def build_store(
         validate_tenant(credential, tenant or "")
     else:
         raise ContractError("QUERY_INVALID", "--auth must be query-key or entra")
-    return AzureSearchReadStore(endpoint, credential, policies=[QueryOnlyPolicy(descriptor.physical_index, auth)])
+    return AzureSearchReadStore(endpoint, credential,
+                                policies=[QueryOnlyPolicy(descriptor.physical_index, auth, endpoint=endpoint)])

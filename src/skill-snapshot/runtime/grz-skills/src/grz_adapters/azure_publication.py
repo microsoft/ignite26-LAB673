@@ -6,17 +6,13 @@ import json
 import math
 from dataclasses import dataclass
 from typing import Any
-from urllib.parse import quote
 
-from grz_core.contracts import ContractError, canonical_json, digest, require_public
+from grz_core.contracts import ContractError, digest, require_public
 
 from .azure_source import get_field
 from .sidecar_schema import (
     check_created_index, generation_index_definition, load_sidecar_schema, prepare_document, sdk_index_model,
 )
-
-ALIAS_API_VERSION = "2025-08-01-preview"
-
 
 @dataclass(frozen=True)
 class PublicationApproval:
@@ -235,10 +231,7 @@ class AzurePublicationAdapter:
 
     def resolve_alias(self, alias: str) -> str | None:
         try:
-            if _is_sdk_client(self.index_client):
-                record = self._sdk_alias_request("GET", alias)
-            else:
-                record = self.index_client.get_alias(alias)
+            record = self.index_client.get_alias(alias)
         except Exception as exc:
             if _status(exc) == 404:
                 return None
@@ -251,10 +244,7 @@ class AzurePublicationAdapter:
     def aliases_by_index(self, indexes: list[str]) -> dict[str, list[str]]:
         """Every alias on the service that binds one of ``indexes``; other aliases are not reported."""
         try:
-            if _is_sdk_client(self.index_client):
-                records = self._sdk_alias_request("GET", "").get("value", [])
-            else:
-                records = list(self.index_client.list_aliases())
+            records = list(self.index_client.list_aliases())
         except Exception as exc:
             raise ContractError("ALIAS_UNAVAILABLE", "Cannot list Search aliases or insufficient rights") from exc
         wanted = set(indexes)
@@ -265,24 +255,6 @@ class AzurePublicationAdapter:
                     bound.setdefault(index, []).append(get_field(record, "name"))
         return bound
 
-    def _sdk_alias_request(self, method: str, alias: str, target: str | None = None) -> Any:
-        """Pinned SDK 11.6.0 has no alias models/methods; reuse its authenticated pipeline."""
-        from azure.core.exceptions import HttpResponseError
-        from azure.core.rest import HttpRequest
-
-        endpoint = self.index_client._endpoint.rstrip("/")
-        # SDK 11.6.0 pins GA 2024-07-01, which rejects /aliases with HTTP 400; aliases need a preview version.
-        version = ALIAS_API_VERSION
-        suffix = f"/aliases/{quote(alias, safe='')}" if method != "POST" and alias else "/aliases"
-        url = f"{endpoint}{suffix}?api-version={version}"
-        body = None if target is None else canonical_json({"name": alias, "indexes": [target]})
-        request = HttpRequest(method, url, headers={"Content-Type": "application/json"},
-                              content=body)
-        response = self.index_client.send_request(request)
-        if response.status_code >= 400:
-            raise HttpResponseError(message="Search alias request failed", response=response)
-        return response.json() if method == "GET" else None
-
     def switch_alias(self, alias: str, expected: str | None, target: str) -> None:
         self._approve(target, cutover=True, alias=alias)
         if target not in self.verified_indexes:
@@ -292,14 +264,11 @@ class AzurePublicationAdapter:
         if self.resolve_alias(alias) != expected:
             raise ContractError("ALIAS_CHANGED", "Serving alias no longer points to expected prior generation")
         try:
-            if _is_sdk_client(self.index_client):
-                self._sdk_alias_request("POST" if expected is None else "PUT", alias, target)
+            payload = {"name": alias, "indexes": [target]}
+            if expected is None:
+                self.index_client.create_alias(payload)
             else:
-                payload = {"name": alias, "indexes": [target]}
-                if expected is None:
-                    self.index_client.create_alias(payload)
-                else:
-                    self.index_client.create_or_update_alias(payload)
+                self.index_client.create_or_update_alias(payload)
         except Exception as exc:
             raise ContractError("ALIAS_UNAVAILABLE", "Alias mutation failed or rights insufficient; previous generation must remain serving") from exc
         if self.resolve_alias(alias) != target:

@@ -26,7 +26,7 @@ def add_source_args(p) -> None:
     p.add_argument("--license", default="", dest="license_text", help="licence summary recorded in the descriptor")
 
 
-def make_plan(a, az, ident, persist: bool) -> dict:
+def make_plan(a, az, ident, persist: bool = True) -> dict:
     seeds = a.seed if a.wikidata else None
     edges, extra = build.load_edges(file=a.file, fmt=a.format, wikidata_seeds=seeds, depth=a.depth,
                                     edge_cap=a.edge_cap, source_label=a.source_label, graph_name=a.graph_name, with_labels=a.with_labels,
@@ -38,12 +38,16 @@ def make_plan(a, az, ident, persist: bool) -> dict:
 
 
 def main(argv: list[str] | None = None) -> int:
-    p = parser("grounding-build", "Plan and load a grounding index from an edge file or a Wikidata seed.")
+    p = parser("grounding-build", "Preview, plan and load a grounding index from an edge file or a Wikidata seed.")
     sub = p.add_subparsers(dest="cmd", required=True)
-    pl = sub.add_parser("plan", help="dry run: normalize, validate, report counts and the plan ID (no Azure writes)")
-    add_identity_args(pl)
-    add_endpoint_arg(pl)
-    add_source_args(pl)
+    for name, helptext in (
+        ("preview", "non-persisting preview: normalize, validate and report counts (no Azure or local writes)"),
+        ("plan", "save an authoritative plan for exact-ID approval (no Azure writes)"),
+    ):
+        plan = sub.add_parser(name, help=helptext)
+        add_identity_args(plan)
+        add_endpoint_arg(plan)
+        add_source_args(plan)
     ap = sub.add_parser("apply", help="create the index and upload edges; needs the exact approved --plan-id")
     add_identity_args(ap)
     ap.add_argument("--plan-id", default="")
@@ -80,9 +84,13 @@ def main(argv: list[str] | None = None) -> int:
                                          graph_name=a.graph_name)
             plan["dry_run"] = True
             return plan
-        if a.cmd == "plan":
-            plan = make_plan(a, az, ident, persist=True)
+        if a.cmd in ("preview", "plan"):
+            persist = a.cmd == "plan"
+            plan = make_plan(a, az, ident, persist=persist)
             plan["dry_run"] = True
+            if not persist:
+                plan["preview"] = True
+                plan["saved"] = False
             return plan
         return build.apply(az, ident, a.plan_id, batch_size=a.batch_size,
                            stop_after_batches=getattr(a, "stop_after_batches", None), resume=a.cmd == "resume")

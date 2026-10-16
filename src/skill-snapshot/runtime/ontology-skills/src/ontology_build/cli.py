@@ -283,10 +283,11 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--version", type=_non_negative_int, dest="version_n", required=True)
     p.add_argument("--schema-id", required=True)
 
-    p = verb("export", "write an approved version as flat-owl RDF/XML")
+    p = verb("export", "write an approved version as flat-owl RDF/XML or inline-compatible JSON-LD")
     p.add_argument("--version", type=_non_negative_int, dest="version_n")
     p.add_argument("--output", required=True)
-    p.add_argument("--format", choices=("owl", "ttl"), default="owl")
+    p.add_argument("--format", choices=("owl", "ttl", "jsonld"), default="owl",
+                   help="owl writes RDF/XML (default); jsonld writes inline-compatible JSON-LD; ttl is unsupported")
     p.add_argument("--base-iri")
     p.add_argument("--force", action="store_true")
 

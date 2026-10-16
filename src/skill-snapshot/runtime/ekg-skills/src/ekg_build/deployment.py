@@ -2,12 +2,12 @@ from __future__ import annotations
 
 from ekg_core.models import BuildSpec, DeploymentDescriptor, OntologyMode, stable_id
 from ekg_core.ontology import load_ontology
-from .executor import (BuildError, BuildExecutor, _require_managed_entitlement, generation,
+from .executor import (BuildError, BuildExecutor, _verify_managed_target, generation,
                        hash_json, index_names, source_provenance)
-from .managed_pipeline import SEARCH_API_VERSION
-from .preview import probe_error
+from .managed_pipeline import search_api_version
 from .planner import plan, verification_blockers
 from .status import build_status
+from .target_validation import graph_input_error
 
 
 def descriptor(spec: BuildSpec, *, endpoints: dict[str, str] | None = None,
@@ -16,8 +16,9 @@ def descriptor(spec: BuildSpec, *, endpoints: dict[str, str] | None = None,
     if blockers:
         raise BuildError("; ".join(blockers))
     if spec.ontology_mode is not OntologyMode.NONE and verified is not None:
-        if probe_error(spec):
-            raise BuildError(probe_error(spec))
+        reason = graph_input_error(spec)
+        if reason:
+            raise BuildError(reason)
     provenance = None
     if spec.source_manifest is not None:
         if build_status(spec)["code"] != "JOURNAL_VERIFIED":
@@ -65,7 +66,7 @@ def descriptor(spec: BuildSpec, *, endpoints: dict[str, str] | None = None,
         resolved["content_index"] = resources["index"]
         resolved["graph_index"] = resources["graphIndex"]
         resolved["knowledge_source"] = verified["knowledge_source"]
-        resolved["search_api_version"] = SEARCH_API_VERSION
+        resolved["search_api_version"] = search_api_version(spec)
     elif not ontology:
         try:
             resolved["content_index"] = index_names(spec)["content"]
@@ -79,7 +80,9 @@ def descriptor(spec: BuildSpec, *, endpoints: dict[str, str] | None = None,
         capabilities={
             "document_retrieval": spec.vector_retrieval and
                                   (not ontology or verified is not None),
-            "graph_retrieval": bool(ontology and spec.graph_retrieval and verified),
+            "graph_retrieval": bool(
+                ontology and ontology.edge_types and spec.graph_retrieval and verified
+            ),
             "agentic_retrieval": False,
         },
         endpoints=resolved,
@@ -90,7 +93,7 @@ def descriptor(spec: BuildSpec, *, endpoints: dict[str, str] | None = None,
 def publish(spec: BuildSpec, executor: BuildExecutor) -> DeploymentDescriptor:
     """Only publish a serving descriptor after read-only remote verification."""
     if spec.ontology_mode is not OntologyMode.NONE and spec.source_manifest is None:
-        _require_managed_entitlement(spec, executor.adapter)
+        _verify_managed_target(spec, executor.adapter)
     verified = executor.verify(spec)
     executor.last_verified = verified
     published = descriptor(spec, verified=verified)

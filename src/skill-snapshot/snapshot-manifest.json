@@ -5,9 +5,9 @@
   "source": {
     "repository": "https://dev.azure.com/msdata/Azure%20Search/_git/Foundry-IQ-Skills",
     "pull_request": "https://msdata.visualstudio.com/Azure%20Search/_git/Foundry-IQ-Skills/pullrequest/2344752",
-    "commit": "0e44f9464deb180b13aea0fb4875d2cb2755e3aa",
-    "release_config_sha256": "9804be282ea573db3814934e68cdb6d33fef2b5d97e337d5ff25338dcf21cc43",
-    "packager_sha256": "6aa849a81270a5648bad517704a6a0b187f8b3da0444e3f998478306fba3be45"
+    "commit": "e92776ca1df6c691f4b097b09217c1fb674b6eb7",
+    "release_config_sha256": "5416fa9f4a91b6db81f865963992a4296bd55b5e7a7203f36124a59ed0eb41b8",
+    "packager_sha256": "ae82145f067b48137085cd2e4ff0da01d10ce0199f35a5aa4faf704db3b7b1e0"
   },
   "skills": [
     "graph-choose",
@@ -25,7 +25,11 @@
     "ontology-consume"
   ],
   "excluded_skills": [
-    "foundry-iq"
+    "foundry-iq",
+    "entity-build",
+    "entity-consume",
+    "entity-get-started",
+    "entity-provision"
   ],
   "runtimes": [
     "ekg-skills",
@@ -36,9 +40,7 @@
   "mcp_servers": [
     "azure",
     "ekg-skills",
-    "grounding-skills",
-    "grz-skills",
-    "ontology-skills"
+    "grz-skills"
   ],
   "package_feeds": {
     "pypi": "https://pypi.org/simple/",
@@ -48,16 +50,16 @@
     "Snapshot Git attributes disable text conversion to preserve inventory hashes on every platform.",
     "Snapshot ignore rules expose only the fourteen explicitly allowed native bin assets.",
     "Only 13 graph-related source skills and all four graph production Python runtimes are included.",
-    "The general Foundry IQ skill and its operations library are excluded; graph-router references to it describe an external route.",
+    "Foundry IQ and entity skills/runtimes are excluded; graph-router references to them describe external routes.",
     "Skills and runtime packages remain in separate top-level directories; all runtime and native assets retain their existing paths.",
     "Evaluation routes, scripts and supporting guides are omitted.",
     "GRZ fixture backend, native fixture generator, full-generation test reader and developer simulator are omitted.",
     "GRZ Azure build/read paths and native output conversion are retained.",
     "Explicit GRZ CLI native-binary now reaches the build runner; source/env overrides precede distribution locations.",
     "Runtime development/test dependencies, test configuration, EKG sample fixture data and internal contribution records are omitted.",
-    "Runtime production smoke and MCP protocol self-check functions are retained.",
+    "Ordinary operations use domain CLIs without MCP; EKG and GRZ register optional Apps adapters, and ontology's optional Apps adapter requires an explicit absolute state directory.",
     "Skill/plugin versions are provisional snapshots, not assured or published releases.",
-    "Python dependency manifests retain source runtime constraints; no transitive lockfile or wheelhouse is shipped.",
+    "Python dependency manifests retain updated exact upstream production pins and optional Apps extras; no transitive lockfile or wheelhouse is shipped.",
     "Azure MCP @latest remains an external, unpinned dependency.",
     "Five native platform builds come from user-supplied archives, not the pinned Python source; byte-identical vendor references are shared at the bin root.",
     "All shipped native checksums and OS/CPU headers are verified; only Windows x64 was live-tested. Windows Authenticode status is NotSigned.",
@@ -65,7 +67,8 @@
     "Unix executables may require chmod +x after installation; the runner verifies checksums before checking execute permission.",
     "The user-supplied archive includes no third-party notice or standalone license file; this is not a signed customer release.",
     "Native community labeling configuration requires AOAI URI/key-environment fields not supplied by the Python build adapter.",
-    "Native clustering reads the vector field from the approved source binding instead of assuming vector."
+    "Native clustering reads the vector field from the approved source binding instead of assuming vector.",
+    "Accepted EKG, GRZ and ontology Apps HTML, notices and provenance are copied byte-for-byte from the pinned source, without line-ending normalization."
   ],
   "native_assets": [
     {
@@ -146,14 +149,14 @@
   ],
   "manifest_path": "snapshot-manifest.json",
   "manifest_self_hash": "excluded-to-avoid-self-reference",
-  "payload_file_count": 286,
+  "payload_file_count": 310,
   "payload_digest_algorithm": "SHA256(sorted UTF8(path + NUL + file_sha256 + LF))",
-  "payload_sha256": "a7290b006eb6f7fde5932c569be162a111f0855c7905cd0a8bb03c299ba2441d",
+  "payload_sha256": "d4fa29676667a0c545fe3d4c4b90e1e7018b030e7d0454722d7396461a1dd7e6",
   "files": [
     {
       "path": ".gitattributes",
-      "sha256": "308a40fa1d89ae5ea4390b4c9b46a0108b09f171f07898f25d451fa0c69c4e9f",
-      "size_bytes": 72,
+      "sha256": "cf493e4aa595d311d454a72e6f4fb9e8288c536da1a3eb729f6bc7ca704665bf",
+      "size_bytes": 253,
       "origin": "snapshot-packaging-metadata",
       "adaptation": "Preserve exact snapshot bytes across Git checkouts"
     },
@@ -166,14 +169,14 @@
     },
     {
       "path": ".mcp.json",
-      "sha256": "0ead87a7ca585fd740feffda3c2db8501f80ca3eb6888c0d9dbff906279f376d",
-      "size_bytes": 1533,
+      "sha256": "5379918f48c6fd02f0f88e4b0a428a82f701b2328c21576ebfe406ba523e5bb8",
+      "size_bytes": 978,
       "origin": "generated-from-pinned-release-config",
       "adaptation": "Temporary snapshot metadata, provisional version and public package registries"
     },
     {
       "path": ".plugin/plugin.json",
-      "sha256": "86dfc6432e215c26f517747c3f859444e1657c22ea81d3ba2660684c70a127fe",
+      "sha256": "5b2a8c7a1fccbbdd8ae092a32c77d938add94ebd8a161414a90a1cb7f0537b44",
       "size_bytes": 661,
       "origin": "generated-from-pinned-release-config",
       "adaptation": "Temporary snapshot metadata, provisional version and public package registries"
@@ -187,8 +190,8 @@
     },
     {
       "path": "README.md",
-      "sha256": "9af5e183c41a04ef19e8b8c764bdc25b757c1e5685007a7e017e6498ac7192ba",
-      "size_bytes": 12225,
+      "sha256": "dfc3635ef5d1d0508905d7cfa291b458275f9de06a04d8bbab9c8d33e2289687",
+      "size_bytes": 14340,
       "origin": "generated-from-pinned-release-config",
       "adaptation": "Temporary snapshot metadata, provisional version and public package registries"
     },
@@ -213,53 +216,93 @@
       "modified": false
     },
     {
-      "path": "runtime/ekg-skills/adapters/mcp/plugin.py",
-      "sha256": "be63a8ae52687495480b2227845b84ba25090008e3b86b51fbde24025411fae1",
-      "size_bytes": 14202,
+      "path": "runtime/ekg-skills/adapters/mcp/apps_sdk.py",
+      "sha256": "e4507549a70301b237f1188dfb5cc73b4036112c23f1e8e49a95e5534f1813cf",
+      "size_bytes": 10393,
       "origin": "pinned-source",
-      "source_path": "runtime/ekg-skills/adapters/mcp/plugin.py",
-      "source_sha256": "7f3b5d7ef7026588ceb70c225168d06ca93cd1ba191c2d1d9ecb332f22378b99",
-      "normalized_source_sha256": "be63a8ae52687495480b2227845b84ba25090008e3b86b51fbde24025411fae1",
+      "source_path": "runtime/ekg-skills/adapters/mcp/apps_sdk.py",
+      "source_sha256": "6e9bbe401aa4a5e129f36be94687aab51f3ae94a4e7894df6e952b7853638bee",
+      "normalized_source_sha256": "e4507549a70301b237f1188dfb5cc73b4036112c23f1e8e49a95e5534f1813cf",
       "modified": false
     },
     {
-      "path": "runtime/ekg-skills/adapters/mcp/server.py",
-      "sha256": "fd42c9faf1951cd7210331b4e1a5bf97091dcb51971449f50a5b0a8b6c6775a8",
-      "size_bytes": 13867,
+      "path": "runtime/ekg-skills/adapters/mcp/ui/build-provenance.json",
+      "sha256": "88f217dd68f4f3fec63c92f4f0c88e4ea4309c1e90fb15a1c3f481b7bacba5bd",
+      "size_bytes": 1190,
       "origin": "pinned-source",
-      "source_path": "runtime/ekg-skills/adapters/mcp/server.py",
-      "source_sha256": "5e84d78240e7b0127f3131dfb901fd3dc674996f09abe616f7e80102628162db",
-      "normalized_source_sha256": "fd42c9faf1951cd7210331b4e1a5bf97091dcb51971449f50a5b0a8b6c6775a8",
+      "source_path": "runtime/ekg-skills/adapters/mcp/ui/build-provenance.json",
+      "source_sha256": "88f217dd68f4f3fec63c92f4f0c88e4ea4309c1e90fb15a1c3f481b7bacba5bd",
+      "normalized_source_sha256": "88f217dd68f4f3fec63c92f4f0c88e4ea4309c1e90fb15a1c3f481b7bacba5bd",
       "modified": false
     },
     {
-      "path": "runtime/ekg-skills/adapters/mcp/stdio.py",
-      "sha256": "be2cf61f82edffd63c7b961080af3667121decf00da96cb2b498ad44a5d07afc",
-      "size_bytes": 21617,
+      "path": "runtime/ekg-skills/adapters/mcp/ui/bundle-report.json",
+      "sha256": "365da32d3572b0ba785fa7606750b8b529399a7f94ca87ed6725b3e397ec931f",
+      "size_bytes": 596,
       "origin": "pinned-source",
-      "source_path": "runtime/ekg-skills/adapters/mcp/stdio.py",
-      "source_sha256": "61a9f34a1b76414698cf5951a20344b4891323674a5ca40fa4db323b80c29518",
-      "normalized_source_sha256": "be2cf61f82edffd63c7b961080af3667121decf00da96cb2b498ad44a5d07afc",
+      "source_path": "runtime/ekg-skills/adapters/mcp/ui/bundle-report.json",
+      "source_sha256": "365da32d3572b0ba785fa7606750b8b529399a7f94ca87ed6725b3e397ec931f",
+      "normalized_source_sha256": "365da32d3572b0ba785fa7606750b8b529399a7f94ca87ed6725b3e397ec931f",
+      "modified": false
+    },
+    {
+      "path": "runtime/ekg-skills/adapters/mcp/ui/evidence.THIRD_PARTY_NOTICES.txt",
+      "sha256": "dcb4e6a0c780816ba22b63de05822779d09d943b4b245a2fc2aa8c18016b2fa1",
+      "size_bytes": 46363,
+      "origin": "pinned-source",
+      "source_path": "runtime/ekg-skills/adapters/mcp/ui/evidence.THIRD_PARTY_NOTICES.txt",
+      "source_sha256": "dcb4e6a0c780816ba22b63de05822779d09d943b4b245a2fc2aa8c18016b2fa1",
+      "normalized_source_sha256": "dcb4e6a0c780816ba22b63de05822779d09d943b4b245a2fc2aa8c18016b2fa1",
+      "modified": false
+    },
+    {
+      "path": "runtime/ekg-skills/adapters/mcp/ui/evidence.html",
+      "sha256": "bab64bcc50593b376a7594b062b0e0c126a86e00c3fd6a0ff6761063388203ae",
+      "size_bytes": 478745,
+      "origin": "pinned-source",
+      "source_path": "runtime/ekg-skills/adapters/mcp/ui/evidence.html",
+      "source_sha256": "bab64bcc50593b376a7594b062b0e0c126a86e00c3fd6a0ff6761063388203ae",
+      "normalized_source_sha256": "bab64bcc50593b376a7594b062b0e0c126a86e00c3fd6a0ff6761063388203ae",
+      "modified": false
+    },
+    {
+      "path": "runtime/ekg-skills/adapters/mcp/ui/graph.THIRD_PARTY_NOTICES.txt",
+      "sha256": "30e4be45fc7341c0bf6fdfba5007de8914f4da96cc40fb0a11b81c93ec7f8484",
+      "size_bytes": 127285,
+      "origin": "pinned-source",
+      "source_path": "runtime/ekg-skills/adapters/mcp/ui/graph.THIRD_PARTY_NOTICES.txt",
+      "source_sha256": "30e4be45fc7341c0bf6fdfba5007de8914f4da96cc40fb0a11b81c93ec7f8484",
+      "normalized_source_sha256": "30e4be45fc7341c0bf6fdfba5007de8914f4da96cc40fb0a11b81c93ec7f8484",
+      "modified": false
+    },
+    {
+      "path": "runtime/ekg-skills/adapters/mcp/ui/graph.html",
+      "sha256": "9c5d6cb701d55848fbf60aef7822b38faa02b6514012e7282baceec2d1aadc3e",
+      "size_bytes": 1895246,
+      "origin": "pinned-source",
+      "source_path": "runtime/ekg-skills/adapters/mcp/ui/graph.html",
+      "source_sha256": "9c5d6cb701d55848fbf60aef7822b38faa02b6514012e7282baceec2d1aadc3e",
+      "normalized_source_sha256": "9c5d6cb701d55848fbf60aef7822b38faa02b6514012e7282baceec2d1aadc3e",
       "modified": false
     },
     {
       "path": "runtime/ekg-skills/pyproject.toml",
-      "sha256": "6f70f712acd4bf5c58658fb69784b16ccb022208a60485732a82157f3b99b822",
-      "size_bytes": 1088,
+      "sha256": "591c46538ba42a3575912a59e75e15cddd7cad10c4efb314748fbd16052a8463",
+      "size_bytes": 1243,
       "origin": "pinned-source",
       "source_path": "runtime/ekg-skills/pyproject.toml",
-      "source_sha256": "fb16b2e7ea6147a40a990b541eece1616cf23a55bb210e07202a78568a3b00ec",
-      "normalized_source_sha256": "30affad42678ec1e498a5e8f43b388075d6d3164fd8024a48b5505e70a322f2a",
+      "source_sha256": "9c7602f313b5d735f31aae0702c595da193a071b5326caf9d8d497472d405ee1",
+      "normalized_source_sha256": "93d287f882b3478dd76232245ce150ed18040bad7571eca50d692a21722cfd5a",
       "modified": true
     },
     {
       "path": "runtime/ekg-skills/src/ekg_build/__init__.py",
-      "sha256": "ab7df000a71eb26a4ca1b4c749edf7e944a6f9794da073b92908e5eebad50dfe",
-      "size_bytes": 169,
+      "sha256": "f94eb39297af5b76e14cb1fc2215fc02eccfa1990907ec844e535d07478f9b45",
+      "size_bytes": 88,
       "origin": "pinned-source",
       "source_path": "runtime/ekg-skills/src/ekg_build/__init__.py",
-      "source_sha256": "f4fde4b737bd90d8423dd25085b44c1d7d372e7c5ad60fc3f1aa2215295db33a",
-      "normalized_source_sha256": "ab7df000a71eb26a4ca1b4c749edf7e944a6f9794da073b92908e5eebad50dfe",
+      "source_sha256": "b555ac2514c5693e563f0d79ec0d8aeb93462e3622bc751063ed477ffeef7678",
+      "normalized_source_sha256": "f94eb39297af5b76e14cb1fc2215fc02eccfa1990907ec844e535d07478f9b45",
       "modified": false
     },
     {
@@ -274,12 +317,12 @@
     },
     {
       "path": "runtime/ekg-skills/src/ekg_build/adapters.py",
-      "sha256": "387a4665725e097d096ae97b87c7f1f112466ef05e0ea894577ac4bf3dd1c300",
-      "size_bytes": 21860,
+      "sha256": "0be1a4a59fcf55d0cd676b4f55c1e9ca64a2d66c83ee38e52787d9fe7a073120",
+      "size_bytes": 22237,
       "origin": "pinned-source",
       "source_path": "runtime/ekg-skills/src/ekg_build/adapters.py",
-      "source_sha256": "e5cc4ace8fb029ef95873e363f8375166c2b5c7a60739f5cb2d0396e5411f625",
-      "normalized_source_sha256": "387a4665725e097d096ae97b87c7f1f112466ef05e0ea894577ac4bf3dd1c300",
+      "source_sha256": "13ed8c3a927d2e7d7badf5ec96cc3ca17fc1eca4b81c6a5fac002c18c0847889",
+      "normalized_source_sha256": "0be1a4a59fcf55d0cd676b4f55c1e9ca64a2d66c83ee38e52787d9fe7a073120",
       "modified": false
     },
     {
@@ -304,42 +347,32 @@
     },
     {
       "path": "runtime/ekg-skills/src/ekg_build/browse.py",
-      "sha256": "67699b94cb3a5a3d29d0a8b2eecb335cabab77b3edaa0957c140cd1b4dd29753",
-      "size_bytes": 2506,
+      "sha256": "bfb8d8217e79a3edb195103b6d21e92033b488ec11d8c8966eb12716bc626ceb",
+      "size_bytes": 2516,
       "origin": "pinned-source",
       "source_path": "runtime/ekg-skills/src/ekg_build/browse.py",
-      "source_sha256": "4ec89c08950f64bbe206424b46c87e40070c5f360e2a6611a0ef719943135d28",
-      "normalized_source_sha256": "67699b94cb3a5a3d29d0a8b2eecb335cabab77b3edaa0957c140cd1b4dd29753",
+      "source_sha256": "db635d378cb175ee33b45d3ab3f1f13b523498dc6d450919477440c973e0fcf6",
+      "normalized_source_sha256": "bfb8d8217e79a3edb195103b6d21e92033b488ec11d8c8966eb12716bc626ceb",
       "modified": false
     },
     {
       "path": "runtime/ekg-skills/src/ekg_build/cli.py",
-      "sha256": "fb3954951a8f23ddcb0b34ebce3a01f14f7a8566d5630a01cc8abdd30f9f4bac",
-      "size_bytes": 42067,
+      "sha256": "a876d11ac80d2d0e47aa74d4dd0e2736dae36d5a6a33ad2c07149b67fbf6b94c",
+      "size_bytes": 43752,
       "origin": "pinned-source",
       "source_path": "runtime/ekg-skills/src/ekg_build/cli.py",
-      "source_sha256": "be51afc3250b759a6a0d37143015f13ca89f1c935fc3a8b75961f79481f3dd74",
-      "normalized_source_sha256": "fb3954951a8f23ddcb0b34ebce3a01f14f7a8566d5630a01cc8abdd30f9f4bac",
+      "source_sha256": "2cd1fa69cf56807bc7df448fc3988407efb3768d25a469276dbc32393f3f1258",
+      "normalized_source_sha256": "a876d11ac80d2d0e47aa74d4dd0e2736dae36d5a6a33ad2c07149b67fbf6b94c",
       "modified": false
     },
     {
       "path": "runtime/ekg-skills/src/ekg_build/deployment.py",
-      "sha256": "805d0cabf1cdec6494fd6e39c7cd3faff194df2f81aeb7823f4877ce7ea6d5e8",
-      "size_bytes": 5068,
+      "sha256": "0061310849c3a3d6d22cdef19ff8129b19fc0cac1a82bb28cc10e7458181cb9b",
+      "size_bytes": 5151,
       "origin": "pinned-source",
       "source_path": "runtime/ekg-skills/src/ekg_build/deployment.py",
-      "source_sha256": "578e59b75ef86b423a91b7ebd22a248aed625ef3c73f9e653dbe1be3a168d48d",
-      "normalized_source_sha256": "805d0cabf1cdec6494fd6e39c7cd3faff194df2f81aeb7823f4877ce7ea6d5e8",
-      "modified": false
-    },
-    {
-      "path": "runtime/ekg-skills/src/ekg_build/enablement.py",
-      "sha256": "a6b233516286a7fe6e34a13d3539d9f09e8c6bd69e509ebdb71c02c719ffd3de",
-      "size_bytes": 4482,
-      "origin": "pinned-source",
-      "source_path": "runtime/ekg-skills/src/ekg_build/enablement.py",
-      "source_sha256": "e1f79dbc5aae7efc4c98224466c91f6e4126bcdaaf1788c7b22f32e0273bc62f",
-      "normalized_source_sha256": "a6b233516286a7fe6e34a13d3539d9f09e8c6bd69e509ebdb71c02c719ffd3de",
+      "source_sha256": "cdb42bf1886c31160e1c3ca33d3f893ea3b60d6d6bb120e9d4b9cd1a054e3205",
+      "normalized_source_sha256": "0061310849c3a3d6d22cdef19ff8129b19fc0cac1a82bb28cc10e7458181cb9b",
       "modified": false
     },
     {
@@ -354,12 +387,12 @@
     },
     {
       "path": "runtime/ekg-skills/src/ekg_build/executor.py",
-      "sha256": "f2b9e7c18b4cb0e34b52556dae6fa5407c7f350bad364f1542899469d949ccfd",
-      "size_bytes": 23143,
+      "sha256": "f5f3ff1c0416e7dc2b2ce7d54aef9981dba451fbde49c10837ec1c75713107d9",
+      "size_bytes": 23509,
       "origin": "pinned-source",
       "source_path": "runtime/ekg-skills/src/ekg_build/executor.py",
-      "source_sha256": "52a8780571054c69c0f307ff88848882f2ea1bab2517b58125bf78f6a5c511b0",
-      "normalized_source_sha256": "f2b9e7c18b4cb0e34b52556dae6fa5407c7f350bad364f1542899469d949ccfd",
+      "source_sha256": "88c465aa9d654a73d91fb30c4467c58f8a1cee19247b87b1b8495820fb7bbac1",
+      "normalized_source_sha256": "f5f3ff1c0416e7dc2b2ce7d54aef9981dba451fbde49c10837ec1c75713107d9",
       "modified": false
     },
     {
@@ -394,42 +427,32 @@
     },
     {
       "path": "runtime/ekg-skills/src/ekg_build/managed_pipeline.py",
-      "sha256": "17f71d10b3287442c0accc7c8d05fc349fa8e9695e27771f2aee09badab71de5",
-      "size_bytes": 10948,
+      "sha256": "7403e1da9d3fbf3aea173eb91304bd684e5e97e1c37e62cb9672a35d46e37762",
+      "size_bytes": 12103,
       "origin": "pinned-source",
       "source_path": "runtime/ekg-skills/src/ekg_build/managed_pipeline.py",
-      "source_sha256": "5e7a9ee3d11446b43df1a10500c4f647ffce1573775a2819639305f54dfcd47d",
-      "normalized_source_sha256": "17f71d10b3287442c0accc7c8d05fc349fa8e9695e27771f2aee09badab71de5",
+      "source_sha256": "d19754ec14daee8140750ca2c84e80742de204fc8f5b5c341218bb8573b15e84",
+      "normalized_source_sha256": "7403e1da9d3fbf3aea173eb91304bd684e5e97e1c37e62cb9672a35d46e37762",
       "modified": false
     },
     {
       "path": "runtime/ekg-skills/src/ekg_build/planner.py",
-      "sha256": "dde5d3282dccfcf54d5f1e58d8be941f6c86439aac2827eff6ce04273b8f00aa",
-      "size_bytes": 12199,
+      "sha256": "81e9fd0dc30547fa707ebf7eefd5c167683f01e30834c70adf760d90817b19a7",
+      "size_bytes": 12555,
       "origin": "pinned-source",
       "source_path": "runtime/ekg-skills/src/ekg_build/planner.py",
-      "source_sha256": "205b356a6c29efd02a749d8ecf02c9774b0c160b01651b7c06999a2ca308e1f5",
-      "normalized_source_sha256": "dde5d3282dccfcf54d5f1e58d8be941f6c86439aac2827eff6ce04273b8f00aa",
+      "source_sha256": "17ef979478363a02ddcbf3de519244f01d16e16e0bd57a26641d5900b224e64c",
+      "normalized_source_sha256": "81e9fd0dc30547fa707ebf7eefd5c167683f01e30834c70adf760d90817b19a7",
       "modified": false
     },
     {
       "path": "runtime/ekg-skills/src/ekg_build/preflight.py",
-      "sha256": "3cb639ea6f1d033ac3770ea8c4bfb0be66cf7fced7ca00f84267f208e0057b70",
+      "sha256": "f62ce2360bc2f7b5ad44a961627854abfe6ab271e98ac93ac9b8e88da4806b38",
       "size_bytes": 14614,
       "origin": "pinned-source",
       "source_path": "runtime/ekg-skills/src/ekg_build/preflight.py",
-      "source_sha256": "7e7781733f5116b6009cde41bbd08934327165ff51cc03f5025f2ae5e7cf12bb",
-      "normalized_source_sha256": "3cb639ea6f1d033ac3770ea8c4bfb0be66cf7fced7ca00f84267f208e0057b70",
-      "modified": false
-    },
-    {
-      "path": "runtime/ekg-skills/src/ekg_build/preview.py",
-      "sha256": "db6aa90aa7c8e5acd5e0440d5201dc7d0ca2108aba2ff8132590354f43c6aada",
-      "size_bytes": 2240,
-      "origin": "pinned-source",
-      "source_path": "runtime/ekg-skills/src/ekg_build/preview.py",
-      "source_sha256": "48c31c82666a91def5a796af1e6e41e2c325a40a7fbbff8d5a145ae00bd19c58",
-      "normalized_source_sha256": "db6aa90aa7c8e5acd5e0440d5201dc7d0ca2108aba2ff8132590354f43c6aada",
+      "source_sha256": "5c072268da66f76036ae2a07adef53bd0fab9275c2306e51507b8bac5dde4ec0",
+      "normalized_source_sha256": "f62ce2360bc2f7b5ad44a961627854abfe6ab271e98ac93ac9b8e88da4806b38",
       "modified": false
     },
     {
@@ -444,12 +467,12 @@
     },
     {
       "path": "runtime/ekg-skills/src/ekg_build/reconcile.py",
-      "sha256": "21a2c67246200a385809179b14ffd2bc1b296a5da305ebb441ae15bcbb6156b3",
-      "size_bytes": 4108,
+      "sha256": "77741ce120a53926e2dfff924f556ec5a9262dc22d35f449790b0669a4a9ce19",
+      "size_bytes": 4134,
       "origin": "pinned-source",
       "source_path": "runtime/ekg-skills/src/ekg_build/reconcile.py",
-      "source_sha256": "20bcf9e414db84589b8d36501eceb8d09cef7778b23eefa4a67833bb53a28ce6",
-      "normalized_source_sha256": "21a2c67246200a385809179b14ffd2bc1b296a5da305ebb441ae15bcbb6156b3",
+      "source_sha256": "12b7ac69f16631263048aed4575bb9591aa1b7b5e8e4f90f23011094811c50c4",
+      "normalized_source_sha256": "77741ce120a53926e2dfff924f556ec5a9262dc22d35f449790b0669a4a9ce19",
       "modified": false
     },
     {
@@ -464,32 +487,42 @@
     },
     {
       "path": "runtime/ekg-skills/src/ekg_build/staging.py",
-      "sha256": "b0aee09edaeb42070027b6be850a4b7e50887c0e95ec511904b28037cc7d7326",
-      "size_bytes": 29711,
+      "sha256": "dad063323f47fa3cc7f507fdffd1d7b563963c227dee6d256b7918f26fd03a4d",
+      "size_bytes": 30371,
       "origin": "pinned-source",
       "source_path": "runtime/ekg-skills/src/ekg_build/staging.py",
-      "source_sha256": "8381736958e84415fecc77be6b0fcfca706a613260c24a2c5a5928518b0ec65b",
-      "normalized_source_sha256": "b0aee09edaeb42070027b6be850a4b7e50887c0e95ec511904b28037cc7d7326",
+      "source_sha256": "e669e1394b739538a5fe72bb83d015dcec5fe08220c68c5867900b69346fe423",
+      "normalized_source_sha256": "dad063323f47fa3cc7f507fdffd1d7b563963c227dee6d256b7918f26fd03a4d",
       "modified": false
     },
     {
       "path": "runtime/ekg-skills/src/ekg_build/status.py",
-      "sha256": "6f0576672dc5e7abc09226aa2d85e58af0748789043909bad8ffa53c9ce898a5",
-      "size_bytes": 10656,
+      "sha256": "e4b3286453275c5308871dc141fbb625a0047516a987886fb6940ac34a7ced34",
+      "size_bytes": 10922,
       "origin": "pinned-source",
       "source_path": "runtime/ekg-skills/src/ekg_build/status.py",
-      "source_sha256": "aca90af8433f2ee6e6d123c7c203f5f07eb7c8cc524307bae0c6e3c31443db67",
-      "normalized_source_sha256": "6f0576672dc5e7abc09226aa2d85e58af0748789043909bad8ffa53c9ce898a5",
+      "source_sha256": "4b776425f0a795cecbd12f4314517841bd8a506c660264bbd8e6ebbfe964617c",
+      "normalized_source_sha256": "e4b3286453275c5308871dc141fbb625a0047516a987886fb6940ac34a7ced34",
       "modified": false
     },
     {
       "path": "runtime/ekg-skills/src/ekg_build/target_reader.py",
-      "sha256": "461f5c94d91885203a278058fbd94d7cd1ab62414193b1782157e90f1233e691",
-      "size_bytes": 2472,
+      "sha256": "4d1b5474723ee662d129751fc6a48058d2a0cf31f7acd170bcb55f91b3c6b536",
+      "size_bytes": 2611,
       "origin": "pinned-source",
       "source_path": "runtime/ekg-skills/src/ekg_build/target_reader.py",
-      "source_sha256": "5fa87bef1493a8582396815dec1a0ba77edbda8a797017003ecd258626263a2f",
-      "normalized_source_sha256": "461f5c94d91885203a278058fbd94d7cd1ab62414193b1782157e90f1233e691",
+      "source_sha256": "3a2c94a42ac03f9b5f52979cd8de3af7da9d9dab97f57c394c058c850d515c0a",
+      "normalized_source_sha256": "4d1b5474723ee662d129751fc6a48058d2a0cf31f7acd170bcb55f91b3c6b536",
+      "modified": false
+    },
+    {
+      "path": "runtime/ekg-skills/src/ekg_build/target_validation.py",
+      "sha256": "032c049cb1b7715e501d5c8b953ccd76b2a47e01f4b431339409f1d2af8cfbdd",
+      "size_bytes": 1750,
+      "origin": "pinned-source",
+      "source_path": "runtime/ekg-skills/src/ekg_build/target_validation.py",
+      "source_sha256": "8f716af0e8b76c6c34c513daca48978b4813dcf35afcdbd8a5e62a6808631f98",
+      "normalized_source_sha256": "032c049cb1b7715e501d5c8b953ccd76b2a47e01f4b431339409f1d2af8cfbdd",
       "modified": false
     },
     {
@@ -514,22 +547,22 @@
     },
     {
       "path": "runtime/ekg-skills/src/ekg_build/update.py",
-      "sha256": "3bdcbb7a5ed2c46d7a6959cfaebc959c603fbf2e23eee83b1948bf4d326225b6",
-      "size_bytes": 20149,
+      "sha256": "3c69cd30004e7072d9a2724b8347865fedee2b3338666b90b6ca325a88c3a284",
+      "size_bytes": 20773,
       "origin": "pinned-source",
       "source_path": "runtime/ekg-skills/src/ekg_build/update.py",
-      "source_sha256": "22341fede60b15db2d871a66b87a849af86adf45485ade2f9146491d46fbd787",
-      "normalized_source_sha256": "3bdcbb7a5ed2c46d7a6959cfaebc959c603fbf2e23eee83b1948bf4d326225b6",
+      "source_sha256": "bc86b9d6db4383e7ad6ff94b13c600a37b5594ef1b83665a63a2480998387eb9",
+      "normalized_source_sha256": "3c69cd30004e7072d9a2724b8347865fedee2b3338666b90b6ca325a88c3a284",
       "modified": false
     },
     {
       "path": "runtime/ekg-skills/src/ekg_build/verify_publish.py",
-      "sha256": "c5e5be9e7231ef3e689e78b3066f01ef349c9ee1a9b9d50206579af58c619597",
-      "size_bytes": 14031,
+      "sha256": "b9791007eaf908446cc3fc60553d1b1acf38fdac9b9f6d0d2cf273ebeae4f715",
+      "size_bytes": 14726,
       "origin": "pinned-source",
       "source_path": "runtime/ekg-skills/src/ekg_build/verify_publish.py",
-      "source_sha256": "66e9e8a6e7deeaf9cc9710788f34463de2b768cd665987884ed437280fc2ac0f",
-      "normalized_source_sha256": "c5e5be9e7231ef3e689e78b3066f01ef349c9ee1a9b9d50206579af58c619597",
+      "source_sha256": "138a627b1ce86237b87140e04f38389998290367e01ad8955749cd18fafa9c99",
+      "normalized_source_sha256": "b9791007eaf908446cc3fc60553d1b1acf38fdac9b9f6d0d2cf273ebeae4f715",
       "modified": false
     },
     {
@@ -564,22 +597,22 @@
     },
     {
       "path": "runtime/ekg-skills/src/ekg_consume/adapters.py",
-      "sha256": "65bdc8d886bbbfb43549db070efdbf789427464432f669e15bcff898af6f48ce",
-      "size_bytes": 7115,
+      "sha256": "8fa804a7e19f4d05ec5339132a23b00bb01b2883791d00ac587097541bfde5fc",
+      "size_bytes": 7764,
       "origin": "pinned-source",
       "source_path": "runtime/ekg-skills/src/ekg_consume/adapters.py",
-      "source_sha256": "2dc45349b5675c4b055e7150a828dac1de5e9e39207803f9e41455d6dd265656",
-      "normalized_source_sha256": "65bdc8d886bbbfb43549db070efdbf789427464432f669e15bcff898af6f48ce",
+      "source_sha256": "c675567c046c2fa8611dcf9199d454a736b1aa7dab69d88a3551643dd5bc5241",
+      "normalized_source_sha256": "8fa804a7e19f4d05ec5339132a23b00bb01b2883791d00ac587097541bfde5fc",
       "modified": false
     },
     {
       "path": "runtime/ekg-skills/src/ekg_consume/cli.py",
-      "sha256": "e711057d8cd3299950a67af540bf7529e6ff765472dd2b17c06393abfc3f1e03",
-      "size_bytes": 5374,
+      "sha256": "dd4113f90e6a5e567f72914cdeb986058e9b79d51dfb987923f68ae540c10abd",
+      "size_bytes": 5980,
       "origin": "pinned-source",
       "source_path": "runtime/ekg-skills/src/ekg_consume/cli.py",
-      "source_sha256": "4cb93defc096fd54a332d969862483867c827de1fd1a4684d9108ec2dcedbc3d",
-      "normalized_source_sha256": "e711057d8cd3299950a67af540bf7529e6ff765472dd2b17c06393abfc3f1e03",
+      "source_sha256": "84ad982a87b37dc8032d589d3c0ced1e369fdeeafe83a1fa4565881c8737a320",
+      "normalized_source_sha256": "dd4113f90e6a5e567f72914cdeb986058e9b79d51dfb987923f68ae540c10abd",
       "modified": false
     },
     {
@@ -594,12 +627,12 @@
     },
     {
       "path": "runtime/ekg-skills/src/ekg_consume/service.py",
-      "sha256": "b9e02d758b2931578c7e82f55e8b1aa67b65b58490ae2a0de0f805817092960d",
-      "size_bytes": 19987,
+      "sha256": "8fba6e918a5a8f3195b5beea22acd491ef8cdce93b140ad47c48a9d2ba0fef36",
+      "size_bytes": 22516,
       "origin": "pinned-source",
       "source_path": "runtime/ekg-skills/src/ekg_consume/service.py",
-      "source_sha256": "4107ba98b7e2cbbe70209375696a09e1b3716c5bc040fddd84ea6d321e183e2e",
-      "normalized_source_sha256": "b9e02d758b2931578c7e82f55e8b1aa67b65b58490ae2a0de0f805817092960d",
+      "source_sha256": "8e43e073813aa661f762bfa61bb271ab21a8794761f20c60f1d6294275f5ad3f",
+      "normalized_source_sha256": "8fba6e918a5a8f3195b5beea22acd491ef8cdce93b140ad47c48a9d2ba0fef36",
       "modified": false
     },
     {
@@ -634,12 +667,12 @@
     },
     {
       "path": "runtime/ekg-skills/src/ekg_core/cli.py",
-      "sha256": "051f16e549ff97a24aeb1d5995cce83114f5ebf2dd92e29470112104242163a7",
-      "size_bytes": 14160,
+      "sha256": "4acf84baeb0861e4938f8a7a33219095b45cc359b2681976922e973d7f5a68a9",
+      "size_bytes": 14508,
       "origin": "pinned-source",
       "source_path": "runtime/ekg-skills/src/ekg_core/cli.py",
-      "source_sha256": "d08bbd901a11b29173e3c5ea613fee33789afe5bb1004079d8d518c4dde07b44",
-      "normalized_source_sha256": "051f16e549ff97a24aeb1d5995cce83114f5ebf2dd92e29470112104242163a7",
+      "source_sha256": "2bc0a3318c41eebf00544e3fc8abe63d992078f8fed3e7bfed42ed8558607199",
+      "normalized_source_sha256": "4acf84baeb0861e4938f8a7a33219095b45cc359b2681976922e973d7f5a68a9",
       "modified": false
     },
     {
@@ -654,12 +687,12 @@
     },
     {
       "path": "runtime/ekg-skills/src/ekg_core/doctor.py",
-      "sha256": "bfa79b514708dc076820d88d03e2cbf6de343b3bc068388e6ccda59397ba464b",
-      "size_bytes": 30378,
+      "sha256": "62e953beed9d2c4a93de420683c4db751c81bac80b5f4d3804ba684c54242e96",
+      "size_bytes": 29565,
       "origin": "pinned-source",
       "source_path": "runtime/ekg-skills/src/ekg_core/doctor.py",
-      "source_sha256": "f43fcb25b407579bd239242c6fb1828480747fb27b37e9c62869d3ce7050096d",
-      "normalized_source_sha256": "bfa79b514708dc076820d88d03e2cbf6de343b3bc068388e6ccda59397ba464b",
+      "source_sha256": "4cf41be7869cb6905a2a72a04d56a40a53d76f766e5b1250dacc1e839bcc7ec6",
+      "normalized_source_sha256": "62e953beed9d2c4a93de420683c4db751c81bac80b5f4d3804ba684c54242e96",
       "modified": false
     },
     {
@@ -684,22 +717,22 @@
     },
     {
       "path": "runtime/ekg-skills/src/ekg_core/models.py",
-      "sha256": "e9514d870c17c622da7403dba3fdf6d19305ba23b3d99de3febdf586cdf23745",
-      "size_bytes": 21851,
+      "sha256": "21233946bee691ee5f274effe01daa4ac0afbd9f121be764b6b7761d99f82745",
+      "size_bytes": 22530,
       "origin": "pinned-source",
       "source_path": "runtime/ekg-skills/src/ekg_core/models.py",
-      "source_sha256": "6d12f3c26d84eef9143e663f37d878118f16a0e33a75e9adfc0854d5dba1ac9f",
-      "normalized_source_sha256": "e9514d870c17c622da7403dba3fdf6d19305ba23b3d99de3febdf586cdf23745",
+      "source_sha256": "e544d9096f968bdf3e454e717c61da24536745efb1a6fec9a5c1fc743145c6b5",
+      "normalized_source_sha256": "21233946bee691ee5f274effe01daa4ac0afbd9f121be764b6b7761d99f82745",
       "modified": false
     },
     {
       "path": "runtime/ekg-skills/src/ekg_core/ontology.py",
-      "sha256": "0c0726dfb3f8f56e856d08d8cb146ff222917cbdd849b1ff9b5345f2a12d7b49",
-      "size_bytes": 5559,
+      "sha256": "92447050a3fcbe6f64bcead5b90a163e5b1fedc705f6f1d4ef00f5e35821f13b",
+      "size_bytes": 18462,
       "origin": "pinned-source",
       "source_path": "runtime/ekg-skills/src/ekg_core/ontology.py",
-      "source_sha256": "2386a9baa99a4f6c5b680984c05ea244b7a8c434f6091b226f5339931ef07b24",
-      "normalized_source_sha256": "0c0726dfb3f8f56e856d08d8cb146ff222917cbdd849b1ff9b5345f2a12d7b49",
+      "source_sha256": "d5918e68875384d7f966c909b0e0e1eb54d8ae9f7e9c0b05ce2f5442262e93ed",
+      "normalized_source_sha256": "92447050a3fcbe6f64bcead5b90a163e5b1fedc705f6f1d4ef00f5e35821f13b",
       "modified": false
     },
     {
@@ -710,6 +743,16 @@
       "source_path": "runtime/ekg-skills/src/ekg_core/pricing.py",
       "source_sha256": "e24ac648deec9e6b0da83eee0a60bf5a5e9a575e99363ea842fb3d12af34fb13",
       "normalized_source_sha256": "999fe28c0523fe070631569d6fc68741cdc11897e322f6a991279255789f9576",
+      "modified": false
+    },
+    {
+      "path": "runtime/ekg-skills/src/ekg_core/resource_endpoints.py",
+      "sha256": "10925831d7bb109b5ba560ad50302fdaa2044775f3d4ce2ec369850b76c7ad6b",
+      "size_bytes": 1391,
+      "origin": "pinned-source",
+      "source_path": "runtime/ekg-skills/src/ekg_core/resource_endpoints.py",
+      "source_sha256": "09a65ef92a20a8bebad746f0e7a32c33c60963aaf5455692e4df70c503d956b3",
+      "normalized_source_sha256": "10925831d7bb109b5ba560ad50302fdaa2044775f3d4ce2ec369850b76c7ad6b",
       "modified": false
     },
     {
@@ -724,22 +767,22 @@
     },
     {
       "path": "runtime/ekg-skills/src/ekg_core/telemetry.py",
-      "sha256": "98220c50a5d966fff13c26aa1488ac96db5033e7e3e2c228fd314a20cede430a",
-      "size_bytes": 13237,
+      "sha256": "1d6a4e2af974f15fbd162121d48f954cd85e401793c4625809e3d4d21da74887",
+      "size_bytes": 13465,
       "origin": "pinned-source",
       "source_path": "runtime/ekg-skills/src/ekg_core/telemetry.py",
-      "source_sha256": "30cfefdd0993c37f36c194bb7d29a626dd4ffe3277215eaa0d5b679f4141a925",
-      "normalized_source_sha256": "98220c50a5d966fff13c26aa1488ac96db5033e7e3e2c228fd314a20cede430a",
+      "source_sha256": "b96f3abd0fb76dc4bd75c012a19be9549d6a1264e28efd20fc2d5afb659bdb50",
+      "normalized_source_sha256": "1d6a4e2af974f15fbd162121d48f954cd85e401793c4625809e3d4d21da74887",
       "modified": false
     },
     {
       "path": "runtime/ekg-skills/src/ekg_core/validation.py",
-      "sha256": "2358a6188ddbd84c9da0095cc542d4fad0255073068a5230df8fff851b82580f",
-      "size_bytes": 5726,
+      "sha256": "c8246546d9c9f1aa1acc2863eb5ef03f0b9fa0325913d1b966f464c146bd6ef9",
+      "size_bytes": 6239,
       "origin": "pinned-source",
       "source_path": "runtime/ekg-skills/src/ekg_core/validation.py",
-      "source_sha256": "18983a6bd9b1b2d10e377439e42676eeb9ce5bc60e5f4c756c3ac84332ab3766",
-      "normalized_source_sha256": "2358a6188ddbd84c9da0095cc542d4fad0255073068a5230df8fff851b82580f",
+      "source_sha256": "760ea526363add97be8b050584c157a408c0c81ea53dbf1e5479ace9fbc19c20",
+      "normalized_source_sha256": "c8246546d9c9f1aa1acc2863eb5ef03f0b9fa0325913d1b966f464c146bd6ef9",
       "modified": false
     },
     {
@@ -774,12 +817,12 @@
     },
     {
       "path": "runtime/ekg-skills/src/ekg_provision/backends.py",
-      "sha256": "9ca54ef167d1bfff5f42fdf829dc34e72c146b4b3b50d60e122b2cdf4126c284",
-      "size_bytes": 45013,
+      "sha256": "ebbcee22b375f73de12a1039e7edd191103dedd65ad4894d928f239924ae69d9",
+      "size_bytes": 46309,
       "origin": "pinned-source",
       "source_path": "runtime/ekg-skills/src/ekg_provision/backends.py",
-      "source_sha256": "069f6df5198b3ae6739ffe3b35b88698f316b7e3d5f6c7c74e5942b283dfd7a9",
-      "normalized_source_sha256": "9ca54ef167d1bfff5f42fdf829dc34e72c146b4b3b50d60e122b2cdf4126c284",
+      "source_sha256": "fd4ede700c98d8d9f7f777ea96131470ad2ed8745c1da68cc17c8f83f19944ba",
+      "normalized_source_sha256": "ebbcee22b375f73de12a1039e7edd191103dedd65ad4894d928f239924ae69d9",
       "modified": false
     },
     {
@@ -794,22 +837,32 @@
     },
     {
       "path": "runtime/ekg-skills/src/ekg_provision/cli.py",
-      "sha256": "a9935771f3decbca54114194a4cd8f4c8f60b873b850edaa4973714ea12cea6d",
-      "size_bytes": 33327,
+      "sha256": "0e110117ff75e3330bdaa8083c33faff9f516825311fd16f312634f56b5d7693",
+      "size_bytes": 36372,
       "origin": "pinned-source",
       "source_path": "runtime/ekg-skills/src/ekg_provision/cli.py",
-      "source_sha256": "e31b71d30fff53696249260fff031b3bde651c1fc4da94ea7c85284210b9f3e5",
-      "normalized_source_sha256": "a9935771f3decbca54114194a4cd8f4c8f60b873b850edaa4973714ea12cea6d",
+      "source_sha256": "0a7df58076572f1f5cb49b6245e1c0645656a2719ddd3f8750c51ccfe1f50251",
+      "normalized_source_sha256": "0e110117ff75e3330bdaa8083c33faff9f516825311fd16f312634f56b5d7693",
       "modified": false
     },
     {
       "path": "runtime/ekg-skills/src/ekg_provision/connect/__init__.py",
-      "sha256": "2871ab270e6ba7315229805c164b785f75a64d2c992e430a1959c2ce89f6b6b0",
-      "size_bytes": 11071,
+      "sha256": "f9bb32e0072bd52224bfe471067c94ca1a7acf1b125b6323dd41fb8fabd113f1",
+      "size_bytes": 11421,
       "origin": "pinned-source",
       "source_path": "runtime/ekg-skills/src/ekg_provision/connect/__init__.py",
-      "source_sha256": "c6ea81acc64f1a175be64848632fef8e36d3e099dc306b23968aab5769340e23",
-      "normalized_source_sha256": "2871ab270e6ba7315229805c164b785f75a64d2c992e430a1959c2ce89f6b6b0",
+      "source_sha256": "dbaf18a3365df5eacac2df8e41d81e5b765b32654acda356d583ae043f79d04d",
+      "normalized_source_sha256": "f9bb32e0072bd52224bfe471067c94ca1a7acf1b125b6323dd41fb8fabd113f1",
+      "modified": false
+    },
+    {
+      "path": "runtime/ekg-skills/src/ekg_provision/connect/openai_roles.py",
+      "sha256": "7de6f2581205e744e51625dc57e42d13674ac73f887832466311cf51f10f003a",
+      "size_bytes": 11750,
+      "origin": "pinned-source",
+      "source_path": "runtime/ekg-skills/src/ekg_provision/connect/openai_roles.py",
+      "source_sha256": "de4e2095d497d736d368a5408d70ed42901c31cdaffb68af962c49447ef3d567",
+      "normalized_source_sha256": "7de6f2581205e744e51625dc57e42d13674ac73f887832466311cf51f10f003a",
       "modified": false
     },
     {
@@ -824,52 +877,52 @@
     },
     {
       "path": "runtime/ekg-skills/src/ekg_provision/connect/resources.py",
-      "sha256": "ad487c51ce94e010a2d428527553bef186c53f1db8b97cb5c4e4532ca86c8d12",
-      "size_bytes": 16832,
+      "sha256": "157d4e6956013c72834bb87ee613df5bd6ab0b1a92732d85fcc646b0b45bd0ab",
+      "size_bytes": 17091,
       "origin": "pinned-source",
       "source_path": "runtime/ekg-skills/src/ekg_provision/connect/resources.py",
-      "source_sha256": "04ce717e390d855326ff1e8c66c746f2e37a8b85c2d656464459a17eac550541",
-      "normalized_source_sha256": "ad487c51ce94e010a2d428527553bef186c53f1db8b97cb5c4e4532ca86c8d12",
+      "source_sha256": "030ee6846291b9dce23758a25a1c200373bf2a8c480a4be177165b03a8936b40",
+      "normalized_source_sha256": "157d4e6956013c72834bb87ee613df5bd6ab0b1a92732d85fcc646b0b45bd0ab",
       "modified": false
     },
     {
       "path": "runtime/ekg-skills/src/ekg_provision/connect/roles.py",
-      "sha256": "ad3460f4333fca646681a7955d05f68ecfb2be0778952389be42f64c0e26afc7",
-      "size_bytes": 4842,
+      "sha256": "7a025bf11f13b84c01a8e7fe06959784388482a235e58ebaebbc3b6abe5c4579",
+      "size_bytes": 5312,
       "origin": "pinned-source",
       "source_path": "runtime/ekg-skills/src/ekg_provision/connect/roles.py",
-      "source_sha256": "18d1c9fad75b8490295ce4f91ffbbda5f79f63d2c45527494018015a9ec53a02",
-      "normalized_source_sha256": "ad3460f4333fca646681a7955d05f68ecfb2be0778952389be42f64c0e26afc7",
+      "source_sha256": "3741937d8117d9f176acae6e870df2e3a42db67fbfedbf6efe3a04ea009a2de8",
+      "normalized_source_sha256": "7a025bf11f13b84c01a8e7fe06959784388482a235e58ebaebbc3b6abe5c4579",
       "modified": false
     },
     {
       "path": "runtime/ekg-skills/src/ekg_provision/connect/setup.py",
-      "sha256": "573395c3487c9b9c1410e602e27e9cfc136b13e6f391562fb13b148792b1503c",
-      "size_bytes": 6790,
+      "sha256": "161a9852b0a4a2c0ba796ebe4b5d35c0b79e5bb75f401acc70207e6b596975d9",
+      "size_bytes": 6829,
       "origin": "pinned-source",
       "source_path": "runtime/ekg-skills/src/ekg_provision/connect/setup.py",
-      "source_sha256": "bd7607053943d8ae75f6e68e37aa1d7b2d423fcb1a96b274920e11ff5130e3ce",
-      "normalized_source_sha256": "573395c3487c9b9c1410e602e27e9cfc136b13e6f391562fb13b148792b1503c",
+      "source_sha256": "7baf99bd5f8ca180ec3a4449be298d9ee09d6e0246507b4df2c33b1351aa125b",
+      "normalized_source_sha256": "161a9852b0a4a2c0ba796ebe4b5d35c0b79e5bb75f401acc70207e6b596975d9",
       "modified": false
     },
     {
       "path": "runtime/ekg-skills/src/ekg_provision/connect/spec.py",
-      "sha256": "2baf15736d9c6c02ac01084939d8809680f1c6a421e83006513e582524755b32",
-      "size_bytes": 7443,
+      "sha256": "532e404dfb6e5dd89c46ee7a820929f4a10eac0187131b3ee7de7ef71f1b910e",
+      "size_bytes": 7184,
       "origin": "pinned-source",
       "source_path": "runtime/ekg-skills/src/ekg_provision/connect/spec.py",
-      "source_sha256": "79b5ea217ce5937a93ee14513f6a0ae9144c9d0fdb9836acb5508ad90e69ea68",
-      "normalized_source_sha256": "2baf15736d9c6c02ac01084939d8809680f1c6a421e83006513e582524755b32",
+      "source_sha256": "aa1600fc04498a2a61b3d6b0f1d68b4c9f600fb41f864594c495d94a6c572589",
+      "normalized_source_sha256": "532e404dfb6e5dd89c46ee7a820929f4a10eac0187131b3ee7de7ef71f1b910e",
       "modified": false
     },
     {
       "path": "runtime/ekg-skills/src/ekg_provision/journal.py",
-      "sha256": "dbd66f57697f4657371a36ce82263930c07ca1ab2b7c1f443df96347eb7cc63a",
-      "size_bytes": 9212,
+      "sha256": "209ec1bcb92f513c583640aab05cba29c02cd6856588a61791fc9b5c59590e24",
+      "size_bytes": 9278,
       "origin": "pinned-source",
       "source_path": "runtime/ekg-skills/src/ekg_provision/journal.py",
-      "source_sha256": "fa2096fa92540e48dfc576f5b7da903e1e522169b86a43275595da786885e14a",
-      "normalized_source_sha256": "dbd66f57697f4657371a36ce82263930c07ca1ab2b7c1f443df96347eb7cc63a",
+      "source_sha256": "6042afaf26fb1215d4254e090e977f0ac72c348e4b07cc7e17f7822f8b44ba66",
+      "normalized_source_sha256": "209ec1bcb92f513c583640aab05cba29c02cd6856588a61791fc9b5c59590e24",
       "modified": false
     },
     {
@@ -884,22 +937,22 @@
     },
     {
       "path": "runtime/ekg-skills/src/ekg_provision/planner.py",
-      "sha256": "253a88e2ee0583faffc229775ad014719b1c4db649be774c476a9fcd310f50b2",
-      "size_bytes": 6850,
+      "sha256": "b5ef50fd3d49f91dae7c4d0c03c419e3a8bdc7fa1b64f28ed6466c9b289ac3e6",
+      "size_bytes": 7017,
       "origin": "pinned-source",
       "source_path": "runtime/ekg-skills/src/ekg_provision/planner.py",
-      "source_sha256": "a705fcab110ac6c219db2dee291a9de680e8fe6640d586a4e718909dc1e08f63",
-      "normalized_source_sha256": "253a88e2ee0583faffc229775ad014719b1c4db649be774c476a9fcd310f50b2",
+      "source_sha256": "284a40bae3450157e68761bba5096423fbeb10618500afd7d09057bf833b43b9",
+      "normalized_source_sha256": "b5ef50fd3d49f91dae7c4d0c03c419e3a8bdc7fa1b64f28ed6466c9b289ac3e6",
       "modified": false
     },
     {
       "path": "runtime/ekg-skills/src/ekg_provision/public_test.py",
-      "sha256": "ca87ba34ae83c13da8578849fd640b1671c6e438c6111b27c62513476086244d",
-      "size_bytes": 3753,
+      "sha256": "db9a0bd078f377e7d13997f43e6dc13dbd7fb6eb1828ec509207a4e190a4f923",
+      "size_bytes": 4492,
       "origin": "pinned-source",
       "source_path": "runtime/ekg-skills/src/ekg_provision/public_test.py",
-      "source_sha256": "1e778003518a5edac4db5c1f1cb3a5cf68b3f014a9e5663c40699eb6c9b06356",
-      "normalized_source_sha256": "ca87ba34ae83c13da8578849fd640b1671c6e438c6111b27c62513476086244d",
+      "source_sha256": "7db1a9cfd9abb69f22e75a497b7dac24efd4ed5c62e471e549bc170185d942e9",
+      "normalized_source_sha256": "db9a0bd078f377e7d13997f43e6dc13dbd7fb6eb1828ec509207a4e190a4f923",
       "modified": false
     },
     {
@@ -914,32 +967,32 @@
     },
     {
       "path": "runtime/ekg-skills/src/ekg_provision/renderers.py",
-      "sha256": "73d1af0fa01134a1231e707cf7dfb6f03f037ae8f5175cc473f20725f290a689",
-      "size_bytes": 8467,
+      "sha256": "2f1c1936c4349df80ab35079b83a43767521fcb265c701881b6d22d46386b62e",
+      "size_bytes": 9499,
       "origin": "pinned-source",
       "source_path": "runtime/ekg-skills/src/ekg_provision/renderers.py",
-      "source_sha256": "2ea0d65e289787c105b75fddfd20e2efb5adb4f6b797c49984c4e147bebb6c22",
-      "normalized_source_sha256": "73d1af0fa01134a1231e707cf7dfb6f03f037ae8f5175cc473f20725f290a689",
+      "source_sha256": "c0eb993adc19c9d3acb29c80ecbe0bd036e99e4027e00a24fdc894737b8f0ae0",
+      "normalized_source_sha256": "2f1c1936c4349df80ab35079b83a43767521fcb265c701881b6d22d46386b62e",
       "modified": false
     },
     {
       "path": "runtime/ekg-skills/src/ekg_provision/smoke.py",
-      "sha256": "0eac93c21211a000cb6a3a4694841a71f9a10c86eb31a528a8a5d68b5cf4cc55",
-      "size_bytes": 20308,
+      "sha256": "9999f7f24ac393bb1e181fe7bef8ea809e025a4bf9a5812b9bf3d8259eefcf96",
+      "size_bytes": 20260,
       "origin": "pinned-source",
       "source_path": "runtime/ekg-skills/src/ekg_provision/smoke.py",
-      "source_sha256": "af1c1ad337f436ab97d2bc4054957b870a1a33b16b27b2a5d773715ddd981422",
-      "normalized_source_sha256": "0eac93c21211a000cb6a3a4694841a71f9a10c86eb31a528a8a5d68b5cf4cc55",
+      "source_sha256": "c96bb61eb32bced58f3f6fc0b7e1877baf46a2823a2ef9805edead5f018bd1a9",
+      "normalized_source_sha256": "9999f7f24ac393bb1e181fe7bef8ea809e025a4bf9a5812b9bf3d8259eefcf96",
       "modified": false
     },
     {
       "path": "runtime/grounding-skills/pyproject.toml",
-      "sha256": "9fd826c8c68382e827e12f5b991e3414d9fbc1e10e3ebacd65956e97087911c4",
-      "size_bytes": 967,
+      "sha256": "666dca142f645930f7365a997b7d05410874228a7b709daf36e2f02547c7d73d",
+      "size_bytes": 800,
       "origin": "pinned-source",
       "source_path": "runtime/grounding-skills/pyproject.toml",
-      "source_sha256": "0a3422efe37fd07b1a4c242eade08cb302a51a872f2989e1e38580733afdb2ba",
-      "normalized_source_sha256": "0740134b19b974949a4f371e4832a494162d5d60463f6e154b6d3490d66b7200",
+      "source_sha256": "03ea050a68e68fc565c32fe60217dd54ba639934575c9484663a6eeaed5d0864",
+      "normalized_source_sha256": "aa57fd1d918144040e2d7241111c7b46dcaf9e8969b45423c94335b5f3e9de52",
       "modified": true
     },
     {
@@ -984,12 +1037,12 @@
     },
     {
       "path": "runtime/grounding-skills/src/grounding/cli_build.py",
-      "sha256": "66071856b8449450addf7a4744b06fb29c63d38a56ad71b138463a9e9a2becea",
-      "size_bytes": 5297,
+      "sha256": "b146f508bb850eb16c8119584d717b1cbfbe4b35ed49657168a3add35f3e1b8b",
+      "size_bytes": 5659,
       "origin": "pinned-source",
       "source_path": "runtime/grounding-skills/src/grounding/cli_build.py",
-      "source_sha256": "c7b52ff97c4dd2eb7d85b14ec2bb860a63857e9d55567589e5826cd943bb2712",
-      "normalized_source_sha256": "66071856b8449450addf7a4744b06fb29c63d38a56ad71b138463a9e9a2becea",
+      "source_sha256": "f966a47740de12e6eb0f140420334f2fd0aa69ed9d4b28e4ca256b32d8e62b5f",
+      "normalized_source_sha256": "b146f508bb850eb16c8119584d717b1cbfbe4b35ed49657168a3add35f3e1b8b",
       "modified": false
     },
     {
@@ -1053,16 +1106,6 @@
       "modified": false
     },
     {
-      "path": "runtime/grounding-skills/src/grounding/mcp_server.py",
-      "sha256": "86b4494db569e05a25994ca3546b1d5d3f864717df360714c8ff79dda7588abf",
-      "size_bytes": 6807,
-      "origin": "pinned-source",
-      "source_path": "runtime/grounding-skills/src/grounding/mcp_server.py",
-      "source_sha256": "a55b34d0bdb5d1240e9c6a499256f36ce254ad1392c5f7ffac56721257842939",
-      "normalized_source_sha256": "86b4494db569e05a25994ca3546b1d5d3f864717df360714c8ff79dda7588abf",
-      "modified": false
-    },
-    {
       "path": "runtime/grounding-skills/src/grounding/names.py",
       "sha256": "f7e49e91526482dc2b0efd04d1665d07a8cdf81ef7599ad2130019774aa15335",
       "size_bytes": 1895,
@@ -1094,12 +1137,12 @@
     },
     {
       "path": "runtime/grounding-skills/src/grounding/provision.py",
-      "sha256": "7becf3e06b9a2a3b833f032b6568cef5af72876f3db62b54a02a42b432d3bb10",
-      "size_bytes": 12984,
+      "sha256": "7f0a6657b1a30a49a20671c2b5ffe7168498717294c4ee7ea212258066a87974",
+      "size_bytes": 14246,
       "origin": "pinned-source",
       "source_path": "runtime/grounding-skills/src/grounding/provision.py",
-      "source_sha256": "abe55317e659eee9ef2f96da7479754f076660202ffc86502d39e37b8018b2e9",
-      "normalized_source_sha256": "7becf3e06b9a2a3b833f032b6568cef5af72876f3db62b54a02a42b432d3bb10",
+      "source_sha256": "044d43bfea9d72e91b6dc84d4318b80095f180d96f126df1b8787065eb91f162",
+      "normalized_source_sha256": "7f0a6657b1a30a49a20671c2b5ffe7168498717294c4ee7ea212258066a87974",
       "modified": false
     },
     {
@@ -1114,22 +1157,55 @@
     },
     {
       "path": "runtime/grounding-skills/src/grounding/state.py",
-      "sha256": "4caa64509aa849bc3f2929255b099814e100ef3c91a4d983788f64a95137e99b",
-      "size_bytes": 2793,
+      "sha256": "caa29fef4c4723dc542681789bcc118edd73883e1df1de0058e7bac7a3ee9ff5",
+      "size_bytes": 2783,
       "origin": "pinned-source",
       "source_path": "runtime/grounding-skills/src/grounding/state.py",
-      "source_sha256": "0494c04a13731b3432c2ab8fc555dd52158ce95ac75acc687976ce17d33cab7b",
-      "normalized_source_sha256": "4caa64509aa849bc3f2929255b099814e100ef3c91a4d983788f64a95137e99b",
+      "source_sha256": "f06417a0afc50b4edb3744e480326ddeafa6ab419b0b8a023ec80619be55989f",
+      "normalized_source_sha256": "caa29fef4c4723dc542681789bcc118edd73883e1df1de0058e7bac7a3ee9ff5",
       "modified": false
     },
     {
       "path": "runtime/grounding-skills/src/grounding/wikidata.py",
-      "sha256": "3de046b340f833e01cf07d244464973d2cd476bc840d7da422535eebd28ee27e",
-      "size_bytes": 10523,
+      "sha256": "36b6e78e43a09f79655c8a8bda2a84e3632ccb5e84f3b4d1e53debf641aee9c0",
+      "size_bytes": 10511,
       "origin": "pinned-source",
       "source_path": "runtime/grounding-skills/src/grounding/wikidata.py",
-      "source_sha256": "0a1d293b7d959b6d63a7c8de5215f1929cce87063fed2caa88c17ca339966c82",
-      "normalized_source_sha256": "3de046b340f833e01cf07d244464973d2cd476bc840d7da422535eebd28ee27e",
+      "source_sha256": "293176a66acd3156b9c48cb414f3a8536294ca935ede0659dded3b59efa4b414",
+      "normalized_source_sha256": "36b6e78e43a09f79655c8a8bda2a84e3632ccb5e84f3b4d1e53debf641aee9c0",
+      "modified": false
+    },
+    {
+      "path": "runtime/grz-skills/bin/GRZBuildPoc.exe",
+      "sha256": "6aa6ac85ed84436ce9676178c252eede85891b9d1717aca66cae095830354579",
+      "size_bytes": 76907282,
+      "origin": "user-supplied-native-archive",
+      "source_archive": "GRZBuildPoc-0.1.4-local-win-x64.zip",
+      "source_archive_sha256": "24019d4f150a11a49d6fc7d59c100de8516fcddfb5013884ec014eaf8873fdc4",
+      "archive_entry": "GRZBuildPoc.exe",
+      "source_sha256": "6aa6ac85ed84436ce9676178c252eede85891b9d1717aca66cae095830354579",
+      "modified": false
+    },
+    {
+      "path": "runtime/grz-skills/bin/PACKAGING-AND-SIGNING.md",
+      "sha256": "4f0990448a9e40624bd0155c6c59a4341a260d6b6f54a98e03aa52cccda31299",
+      "size_bytes": 23753,
+      "origin": "user-supplied-native-archive",
+      "source_archive": "GRZBuildPoc-0.1.4-local-win-x64.zip",
+      "source_archive_sha256": "24019d4f150a11a49d6fc7d59c100de8516fcddfb5013884ec014eaf8873fdc4",
+      "archive_entry": "PACKAGING-AND-SIGNING.md",
+      "source_sha256": "4f0990448a9e40624bd0155c6c59a4341a260d6b6f54a98e03aa52cccda31299",
+      "modified": false
+    },
+    {
+      "path": "runtime/grz-skills/bin/README.md",
+      "sha256": "f4796a6a4299ed754923367a1e05665cabe285d35eaa2d2e99eb36a397defee0",
+      "size_bytes": 9855,
+      "origin": "user-supplied-native-archive",
+      "source_archive": "GRZBuildPoc-0.1.4-local-win-x64.zip",
+      "source_archive_sha256": "24019d4f150a11a49d6fc7d59c100de8516fcddfb5013884ec014eaf8873fdc4",
+      "archive_entry": "README.md",
+      "source_sha256": "f4796a6a4299ed754923367a1e05665cabe285d35eaa2d2e99eb36a397defee0",
       "modified": false
     },
     {
@@ -1162,14 +1238,15 @@
       "adaptation": "Authorized task Search/model settings; no credential values"
     },
     {
-      "path": "runtime/grz-skills/bin/GRZBuildPoc.exe",
-      "sha256": "6aa6ac85ed84436ce9676178c252eede85891b9d1717aca66cae095830354579",
-      "size_bytes": 76907282,
+      "path": "runtime/grz-skills/bin/linux-arm64/GRZBuildPoc",
+      "sha256": "53b3282daa20590cebfc035843e8b675083f15e8924ea99c0c1b78890886c253",
+      "size_bytes": 84428623,
       "origin": "user-supplied-native-archive",
-      "source_archive": "GRZBuildPoc-0.1.4-local-win-x64.zip",
-      "source_archive_sha256": "24019d4f150a11a49d6fc7d59c100de8516fcddfb5013884ec014eaf8873fdc4",
-      "archive_entry": "GRZBuildPoc.exe",
-      "source_sha256": "6aa6ac85ed84436ce9676178c252eede85891b9d1717aca66cae095830354579",
+      "source_archive": "GRZBuildPoc-0.1.4-local-linux-arm64.tar.gz",
+      "source_archive_sha256": "e36dc6e5e4fdc4b0ab25cdf2b3c0ae75dde14eb90d4827fa7f7c12c96cb2fa77",
+      "archive_entry": "./GRZBuildPoc",
+      "source_sha256": "53b3282daa20590cebfc035843e8b675083f15e8924ea99c0c1b78890886c253",
+      "platform": "linux-arm64",
       "modified": false
     },
     {
@@ -1185,15 +1262,15 @@
       "modified": false
     },
     {
-      "path": "runtime/grz-skills/bin/linux-arm64/GRZBuildPoc",
-      "sha256": "53b3282daa20590cebfc035843e8b675083f15e8924ea99c0c1b78890886c253",
-      "size_bytes": 84428623,
+      "path": "runtime/grz-skills/bin/linux-x64/GRZBuildPoc",
+      "sha256": "7095407bc5b3499056e2f94401d6eed22b103f2db947aae114e96b17fcaab66a",
+      "size_bytes": 76940845,
       "origin": "user-supplied-native-archive",
-      "source_archive": "GRZBuildPoc-0.1.4-local-linux-arm64.tar.gz",
-      "source_archive_sha256": "e36dc6e5e4fdc4b0ab25cdf2b3c0ae75dde14eb90d4827fa7f7c12c96cb2fa77",
+      "source_archive": "GRZBuildPoc-0.1.4-local-linux-x64.tar.gz",
+      "source_archive_sha256": "cf367de517683b7ed8f63cfef3488b7ca3e6e68291cd1c251c25101f3cb425a9",
       "archive_entry": "./GRZBuildPoc",
-      "source_sha256": "53b3282daa20590cebfc035843e8b675083f15e8924ea99c0c1b78890886c253",
-      "platform": "linux-arm64",
+      "source_sha256": "7095407bc5b3499056e2f94401d6eed22b103f2db947aae114e96b17fcaab66a",
+      "platform": "linux-x64",
       "modified": false
     },
     {
@@ -1209,15 +1286,15 @@
       "modified": false
     },
     {
-      "path": "runtime/grz-skills/bin/linux-x64/GRZBuildPoc",
-      "sha256": "7095407bc5b3499056e2f94401d6eed22b103f2db947aae114e96b17fcaab66a",
-      "size_bytes": 76940845,
+      "path": "runtime/grz-skills/bin/osx-arm64/GRZBuildPoc",
+      "sha256": "772fc9b3e3460ea5f12473bcd87e205b2bb33f48b66105273da2f8ef6764dcbe",
+      "size_bytes": 83511036,
       "origin": "user-supplied-native-archive",
-      "source_archive": "GRZBuildPoc-0.1.4-local-linux-x64.tar.gz",
-      "source_archive_sha256": "cf367de517683b7ed8f63cfef3488b7ca3e6e68291cd1c251c25101f3cb425a9",
+      "source_archive": "GRZBuildPoc-0.1.4-local-osx-arm64.tar.gz",
+      "source_archive_sha256": "bac00b7b20d73109a345ea8a356529aa91ba350167bc7b01283b0c2b0079ac8d",
       "archive_entry": "./GRZBuildPoc",
-      "source_sha256": "7095407bc5b3499056e2f94401d6eed22b103f2db947aae114e96b17fcaab66a",
-      "platform": "linux-x64",
+      "source_sha256": "772fc9b3e3460ea5f12473bcd87e205b2bb33f48b66105273da2f8ef6764dcbe",
+      "platform": "osx-arm64",
       "modified": false
     },
     {
@@ -1233,15 +1310,15 @@
       "modified": false
     },
     {
-      "path": "runtime/grz-skills/bin/osx-arm64/GRZBuildPoc",
-      "sha256": "772fc9b3e3460ea5f12473bcd87e205b2bb33f48b66105273da2f8ef6764dcbe",
-      "size_bytes": 83511036,
+      "path": "runtime/grz-skills/bin/osx-x64/GRZBuildPoc",
+      "sha256": "151c7ff70f0f43ece1e20b789c229b9492e5442e11eb61fb837ac468d4d7c348",
+      "size_bytes": 76407884,
       "origin": "user-supplied-native-archive",
-      "source_archive": "GRZBuildPoc-0.1.4-local-osx-arm64.tar.gz",
-      "source_archive_sha256": "bac00b7b20d73109a345ea8a356529aa91ba350167bc7b01283b0c2b0079ac8d",
+      "source_archive": "GRZBuildPoc-0.1.4-local-osx-x64.tar.gz",
+      "source_archive_sha256": "9305ead0042b9970126b6539ae8c41c0f077a992a8591c9b117ffc3a9bdb3546",
       "archive_entry": "./GRZBuildPoc",
-      "source_sha256": "772fc9b3e3460ea5f12473bcd87e205b2bb33f48b66105273da2f8ef6764dcbe",
-      "platform": "osx-arm64",
+      "source_sha256": "151c7ff70f0f43ece1e20b789c229b9492e5442e11eb61fb837ac468d4d7c348",
+      "platform": "osx-x64",
       "modified": false
     },
     {
@@ -1257,47 +1334,13 @@
       "modified": false
     },
     {
-      "path": "runtime/grz-skills/bin/osx-x64/GRZBuildPoc",
-      "sha256": "151c7ff70f0f43ece1e20b789c229b9492e5442e11eb61fb837ac468d4d7c348",
-      "size_bytes": 76407884,
-      "origin": "user-supplied-native-archive",
-      "source_archive": "GRZBuildPoc-0.1.4-local-osx-x64.tar.gz",
-      "source_archive_sha256": "9305ead0042b9970126b6539ae8c41c0f077a992a8591c9b117ffc3a9bdb3546",
-      "archive_entry": "./GRZBuildPoc",
-      "source_sha256": "151c7ff70f0f43ece1e20b789c229b9492e5442e11eb61fb837ac468d4d7c348",
-      "platform": "osx-x64",
-      "modified": false
-    },
-    {
-      "path": "runtime/grz-skills/bin/PACKAGING-AND-SIGNING.md",
-      "sha256": "4f0990448a9e40624bd0155c6c59a4341a260d6b6f54a98e03aa52cccda31299",
-      "size_bytes": 23753,
-      "origin": "user-supplied-native-archive",
-      "source_archive": "GRZBuildPoc-0.1.4-local-win-x64.zip",
-      "source_archive_sha256": "24019d4f150a11a49d6fc7d59c100de8516fcddfb5013884ec014eaf8873fdc4",
-      "archive_entry": "PACKAGING-AND-SIGNING.md",
-      "source_sha256": "4f0990448a9e40624bd0155c6c59a4341a260d6b6f54a98e03aa52cccda31299",
-      "modified": false
-    },
-    {
-      "path": "runtime/grz-skills/bin/README.md",
-      "sha256": "f4796a6a4299ed754923367a1e05665cabe285d35eaa2d2e99eb36a397defee0",
-      "size_bytes": 9855,
-      "origin": "user-supplied-native-archive",
-      "source_archive": "GRZBuildPoc-0.1.4-local-win-x64.zip",
-      "source_archive_sha256": "24019d4f150a11a49d6fc7d59c100de8516fcddfb5013884ec014eaf8873fdc4",
-      "archive_entry": "README.md",
-      "source_sha256": "f4796a6a4299ed754923367a1e05665cabe285d35eaa2d2e99eb36a397defee0",
-      "modified": false
-    },
-    {
       "path": "runtime/grz-skills/pyproject.toml",
-      "sha256": "82b69295e80aae7f16a5cf6945ae41b3e042194cb1174e57fbde1c3938283bf3",
-      "size_bytes": 1573,
+      "sha256": "2ad473242cc886796763716fb96bbb0a0ff6caf9956c9c8d0bb56c9277c7765d",
+      "size_bytes": 1498,
       "origin": "pinned-source",
       "source_path": "runtime/grz-skills/pyproject.toml",
-      "source_sha256": "6a21924e3a69ae0af3139f0567d497f24ecc22fd97db0d4d564c1bb1ce40d3ff",
-      "normalized_source_sha256": "1f9cc728c6fef9c8a64406fcdb97638585df194975fd152a330f90c36c0c4e44",
+      "source_sha256": "21228cf0f777adbbbbd950c6558aa2a13cfe7a603a87b9322b9d9fa21d3b9584",
+      "normalized_source_sha256": "ef143107517ed4a0146af45e5e5b12034d33fad18eb1f8630b848046cfab68fc",
       "modified": true
     },
     {
@@ -1322,12 +1365,12 @@
     },
     {
       "path": "runtime/grz-skills/src/grz_adapters/azure_publication.py",
-      "sha256": "0d71bc5d9cc09f0d28e2db09dc38c4562c466058baac57c91a7e015be5609075",
-      "size_bytes": 16789,
+      "sha256": "bd18bc665a55ff4e63da48a53b97c53f069b2d03e186d4e884737f01c8fb3e47",
+      "size_bytes": 15089,
       "origin": "pinned-source",
       "source_path": "runtime/grz-skills/src/grz_adapters/azure_publication.py",
-      "source_sha256": "189436cbf8947990d8198728d92c46e35367ca7544e3733fea9d7784d7b9a3a6",
-      "normalized_source_sha256": "0d71bc5d9cc09f0d28e2db09dc38c4562c466058baac57c91a7e015be5609075",
+      "source_sha256": "ef2f0599e19cb8043325735f793ef372dc4f9da6b0f70a564a5d93c2fc58283f",
+      "normalized_source_sha256": "bd18bc665a55ff4e63da48a53b97c53f069b2d03e186d4e884737f01c8fb3e47",
       "modified": false
     },
     {
@@ -1346,8 +1389,8 @@
       "size_bytes": 14266,
       "origin": "pinned-source",
       "source_path": "runtime/grz-skills/src/grz_adapters/native_adapter.py",
-      "source_sha256": "b06412e3f1e022cae442f807e334d984bd7a053c26709c106eff6b22249048ac",
-      "normalized_source_sha256": "1bbbb78490331130e92fc657b6bfd3fc3981de4ba4682cbf7afddf14418b7bab",
+      "source_sha256": "77b9e2db842bf7a0b7cd279d185f858c0bf758a65b529aed9cbb5a769628dc1a",
+      "normalized_source_sha256": "640bbfe1840671b91600dab6fe060e29871b56df518cb37ff0c200f94a8f7970",
       "modified": true
     },
     {
@@ -1442,12 +1485,12 @@
     },
     {
       "path": "runtime/grz-skills/src/grz_build/doctor.py",
-      "sha256": "8fc5ec8292fca8e31b2d2fce9746038749b0d31bef244f3a93b9a8915e2982a8",
-      "size_bytes": 4423,
+      "sha256": "53831ccd45dd59462277ce5696d584c7ecc6fb049fddf15ce0914548600b70b6",
+      "size_bytes": 4360,
       "origin": "pinned-source",
       "source_path": "runtime/grz-skills/src/grz_build/doctor.py",
-      "source_sha256": "d90c929c0a346798e39d82e7c2c1a7dba7d94d97ea023ac3b2e8c7c0b9f6c1c9",
-      "normalized_source_sha256": "8fc5ec8292fca8e31b2d2fce9746038749b0d31bef244f3a93b9a8915e2982a8",
+      "source_sha256": "cfae52c97794bb6092d9027f0963f0b030086334d5030e3b9b2af1b842de106e",
+      "normalized_source_sha256": "53831ccd45dd59462277ce5696d584c7ecc6fb049fddf15ce0914548600b70b6",
       "modified": false
     },
     {
@@ -1482,12 +1525,12 @@
     },
     {
       "path": "runtime/grz-skills/src/grz_build/live.py",
-      "sha256": "57995f4fdd6d1c4e92f67d90a5e0d6d32d174c9e75dddf365fcaed02073f691f",
-      "size_bytes": 21808,
+      "sha256": "586adf7aa11eeea85f7fbf830be7f045ef45f747783b42d50316d9aa55c849b7",
+      "size_bytes": 21631,
       "origin": "pinned-source",
       "source_path": "runtime/grz-skills/src/grz_build/live.py",
-      "source_sha256": "c144be6a3b6dd483cf80c3c6ae86c5b13afe3dec9695b6ac958d171c290de555",
-      "normalized_source_sha256": "57995f4fdd6d1c4e92f67d90a5e0d6d32d174c9e75dddf365fcaed02073f691f",
+      "source_sha256": "de759ca51c8b3c9dcbd7405c92416f43724e2b2ce1120ed0550cf54879523473",
+      "normalized_source_sha256": "586adf7aa11eeea85f7fbf830be7f045ef45f747783b42d50316d9aa55c849b7",
       "modified": false
     },
     {
@@ -1612,12 +1655,12 @@
     },
     {
       "path": "runtime/grz-skills/src/grz_consume/bounded_azure.py",
-      "sha256": "23c1b6782fc18ecfd5300271b454ec1c9664c36acb5f3a6872c2a1e65da5dd07",
-      "size_bytes": 11389,
+      "sha256": "06077697bb7102c50526762e6bd4aa9f83d96788f87400ce29b84c87487455a9",
+      "size_bytes": 11482,
       "origin": "pinned-source",
       "source_path": "runtime/grz-skills/src/grz_consume/bounded_azure.py",
-      "source_sha256": "fb672f41845612cab07deab72e57662bdc3db4e1a0cff5b572b71ae162b83c2c",
-      "normalized_source_sha256": "23c1b6782fc18ecfd5300271b454ec1c9664c36acb5f3a6872c2a1e65da5dd07",
+      "source_sha256": "a03022ed3aac040d93ab18e953cbfdec56cebb7610e070def7d1ae79ebd3ed2c",
+      "normalized_source_sha256": "06077697bb7102c50526762e6bd4aa9f83d96788f87400ce29b84c87487455a9",
       "modified": false
     },
     {
@@ -1632,52 +1675,62 @@
     },
     {
       "path": "runtime/grz-skills/src/grz_consume/cli.py",
-      "sha256": "4a15d34906a53ac8b33fe46d45be2fbac368ebeb33c0ecca7b443a8c5c19cba4",
-      "size_bytes": 6735,
+      "sha256": "a9a444a2c2c6f02d88b906a61a8b59e3208a55c32ce6ab2d52feaf7b953b3577",
+      "size_bytes": 6648,
       "origin": "pinned-source",
       "source_path": "runtime/grz-skills/src/grz_consume/cli.py",
-      "source_sha256": "5845f385fa4836ca40f6606a298247e2d43f75a48518a92eb1994b6c76a93e09",
-      "normalized_source_sha256": "426c34d5e498b5f93e5aad95116257d048041edd20f86622fd3ab703ac5dd667",
+      "source_sha256": "dccf4cdade33c25b39065f88fac626314c4fe7f5cf5cde90cf871d4273fb9b04",
+      "normalized_source_sha256": "b0c1ed37313a7761af0237ab42ca22a097d3421da3bdcc693f71108ed2e71c3b",
       "modified": true
     },
     {
       "path": "runtime/grz-skills/src/grz_consume/config.py",
-      "sha256": "2f68d279600e096335cfbf1e6910f53b526afcec58bdb97e99d1f8d4a8b297e4",
-      "size_bytes": 4109,
+      "sha256": "f588ff7954472d51f8cb92a040d787ec2399595e775d7bd0441b9df58fed2899",
+      "size_bytes": 4347,
       "origin": "pinned-source",
       "source_path": "runtime/grz-skills/src/grz_consume/config.py",
-      "source_sha256": "61f9263ada859565258bf3fdebb666a49a6b987ed66e3cd16daca6abf7aee419",
-      "normalized_source_sha256": "893230f0dddb272e44d54324a435ff55028b06783107ff40db4c4ccbee689545",
+      "source_sha256": "264cd2a8f80ebec994f24b5b23a5b0fa6261ae76d557d1c18ee762448d9d8b47",
+      "normalized_source_sha256": "480b2c45d50ddbda0620c10e2aa7d9200c494f0de56b4e2dc1639baeb91edafe",
       "modified": true
     },
     {
       "path": "runtime/grz-skills/src/grz_consume/connect.py",
-      "sha256": "fc86c061db98422fe5fae3595676be5924d78f007768c9bb65e55a5511051388",
-      "size_bytes": 1365,
+      "sha256": "8a7b43077bde5d8358a1f591e338ab32424fdca1fd35dc596c8f995a03cbab16",
+      "size_bytes": 1513,
       "origin": "pinned-source",
       "source_path": "runtime/grz-skills/src/grz_consume/connect.py",
-      "source_sha256": "aee1f61b20cd4fedcbeb53103b4886ba028d3a27daa9387c7c702933b182e7da",
-      "normalized_source_sha256": "fc86c061db98422fe5fae3595676be5924d78f007768c9bb65e55a5511051388",
+      "source_sha256": "3d5e0a75e59529ecba242466d3bb8ba891d39dc09b2318e129924b84613beefa",
+      "normalized_source_sha256": "8a7b43077bde5d8358a1f591e338ab32424fdca1fd35dc596c8f995a03cbab16",
       "modified": false
     },
     {
       "path": "runtime/grz-skills/src/grz_consume/doctor.py",
-      "sha256": "f0c2bca977e6443e00a0b3767b4edac2ccabd4f3cf8b8c7d04fa6bbcab6e0787",
-      "size_bytes": 3543,
+      "sha256": "24a9e0f7dc242a18c98cf41e5759f5ecf2d366f110af3f59e778e741bf871947",
+      "size_bytes": 3417,
       "origin": "pinned-source",
       "source_path": "runtime/grz-skills/src/grz_consume/doctor.py",
-      "source_sha256": "ccffb1d35cbe2a4b629d33d05b65efea37a9f116adab9989066bb191c4b46593",
-      "normalized_source_sha256": "321d45279031b8d1960c8887c9b401f7ff7502a11a908726f6c6a0d59b3b80a7",
+      "source_sha256": "94a532b264e8a7524aeb894a4a5cbeabb37b35ae182b289b933b5fb7fad3b108",
+      "normalized_source_sha256": "acb38afe2d9bf942074a987683199df95c2d3498a763f689f2d06c4e20a5adb6",
       "modified": true
     },
     {
+      "path": "runtime/grz-skills/src/grz_consume/endpoint.py",
+      "sha256": "41fb1bc42852254c4f60de80eb3974b81b2573a10bb617da0cfba85a661c7815",
+      "size_bytes": 657,
+      "origin": "pinned-source",
+      "source_path": "runtime/grz-skills/src/grz_consume/endpoint.py",
+      "source_sha256": "30e197e003ce86a8ced360bea428b09479c3dff35bee3a05092b1ecc9b375694",
+      "normalized_source_sha256": "41fb1bc42852254c4f60de80eb3974b81b2573a10bb617da0cfba85a661c7815",
+      "modified": false
+    },
+    {
       "path": "runtime/grz-skills/src/grz_consume/native_reader.py",
-      "sha256": "fd28fb23295653ec050277885bc3de13af9bb8298dd98006e935432e03aff54a",
-      "size_bytes": 9594,
+      "sha256": "f6738568516a61c58fd4d1bd65825447e6a3cd790580835f54377a7a4314f876",
+      "size_bytes": 10408,
       "origin": "pinned-source",
       "source_path": "runtime/grz-skills/src/grz_consume/native_reader.py",
-      "source_sha256": "29d3b8364442fa499ecfd1c12c135bd8a255f8717e3f9757f1c36f8988866c9f",
-      "normalized_source_sha256": "fd28fb23295653ec050277885bc3de13af9bb8298dd98006e935432e03aff54a",
+      "source_sha256": "e1897f9a95cf839823d91e6d8492d64a22b0f0c4ee7f6fec390257047386fbfb",
+      "normalized_source_sha256": "f6738568516a61c58fd4d1bd65825447e6a3cd790580835f54377a7a4314f876",
       "modified": false
     },
     {
@@ -1702,12 +1755,12 @@
     },
     {
       "path": "runtime/grz-skills/src/grz_consume/search_store.py",
-      "sha256": "5bd6532c2174da1ad998c890c43d075890c4581abdc7b189bd28e988e4313d78",
-      "size_bytes": 15088,
+      "sha256": "c7f444355a296c56980f143d6ac42b884e1c65f1e2f0a90098bde4d8c7b6642e",
+      "size_bytes": 16025,
       "origin": "pinned-source",
       "source_path": "runtime/grz-skills/src/grz_consume/search_store.py",
-      "source_sha256": "1ca9cc76e1d232f0446e248fb62d4eff284daa40929637354e2b448adf373549",
-      "normalized_source_sha256": "5bd6532c2174da1ad998c890c43d075890c4581abdc7b189bd28e988e4313d78",
+      "source_sha256": "dd5000fba5c527900917fbcaf057b67b457ca26d00cf42481d769662b768bde5",
+      "normalized_source_sha256": "c7f444355a296c56980f143d6ac42b884e1c65f1e2f0a90098bde4d8c7b6642e",
       "modified": false
     },
     {
@@ -1752,22 +1805,22 @@
     },
     {
       "path": "runtime/grz-skills/src/grz_core/cli_output.py",
-      "sha256": "eac6b4f91b21b36d4f07f7e6bab9f5e953762bd0e308b30d4d1ec810a0256fbf",
-      "size_bytes": 19603,
+      "sha256": "47cbf5faaae5734ddf07612685789cecb6e696e7e373d8a0f97436a3d47399f2",
+      "size_bytes": 19791,
       "origin": "pinned-source",
       "source_path": "runtime/grz-skills/src/grz_core/cli_output.py",
-      "source_sha256": "5c68889bc1f1e474b0db130aa10322c91635271c69f29adc5047897afde5994f",
-      "normalized_source_sha256": "84b82e02c2d67b2364477724479173b79a4f69feaadc7d8c75ba335602cdb94d",
+      "source_sha256": "7a3366d7dcb539c0d6f4375d2cf8fcee7ca5c2b1edb681cebee0a59e7ff52111",
+      "normalized_source_sha256": "6617b272680991e447f71284db8090cf7483b7390b7cbf82140667bc26373371",
       "modified": true
     },
     {
       "path": "runtime/grz-skills/src/grz_core/contracts.py",
-      "sha256": "27cbcd2de7d684e62206280838947b8ee57676a10da7a7e09af5281e5450b2af",
+      "sha256": "025206edc50e48ae688221e223202c0db13cf7001b4e7948ba94b6b7570ad6db",
       "size_bytes": 4718,
       "origin": "pinned-source",
       "source_path": "runtime/grz-skills/src/grz_core/contracts.py",
-      "source_sha256": "38eadcee04b548fbd078bf401dc308dbad1b2a2dd20191cb036aa427ba8210b3",
-      "normalized_source_sha256": "27cbcd2de7d684e62206280838947b8ee57676a10da7a7e09af5281e5450b2af",
+      "source_sha256": "5aa2b63da7a2f5c609847ebfe605a51bdffd03bcb3cc4d301b60028bd242620e",
+      "normalized_source_sha256": "025206edc50e48ae688221e223202c0db13cf7001b4e7948ba94b6b7570ad6db",
       "modified": false
     },
     {
@@ -1782,12 +1835,12 @@
     },
     {
       "path": "runtime/grz-skills/src/grz_core/doctor.py",
-      "sha256": "0546d2cd60ee563371a3cefcc097fa953b7db3316072faf66c593826d68710d3",
-      "size_bytes": 23966,
+      "sha256": "f55258a4181e84549dcabc7af05f5e5c4a771de953339bb7ad9d284394291d51",
+      "size_bytes": 23244,
       "origin": "pinned-source",
       "source_path": "runtime/grz-skills/src/grz_core/doctor.py",
-      "source_sha256": "91b1a7f37e09b61208e070f85d9c768bbfebf3928ff1f3b6f32687292b81515b",
-      "normalized_source_sha256": "0546d2cd60ee563371a3cefcc097fa953b7db3316072faf66c593826d68710d3",
+      "source_sha256": "6d248902839ecbe77e0ed1dae88779938263209d150ffed781bfeb228c4f81b3",
+      "normalized_source_sha256": "f55258a4181e84549dcabc7af05f5e5c4a771de953339bb7ad9d284394291d51",
       "modified": false
     },
     {
@@ -1821,34 +1874,214 @@
       "modified": false
     },
     {
-      "path": "runtime/grz-skills/src/grz_mcp/cli.py",
-      "sha256": "aa5518180f4184c3f0f7be8eb6cad0a4f76b0fe3e5a547e70b7d5d72d4cc2424",
-      "size_bytes": 1883,
+      "path": "runtime/grz-skills/src/grz_mcp/apps.py",
+      "sha256": "7d6594bff0bcc0eaaf76d3569ddfe9edfbc01d377e27421027a1067314ebefa8",
+      "size_bytes": 1747,
       "origin": "pinned-source",
-      "source_path": "runtime/grz-skills/src/grz_mcp/cli.py",
-      "source_sha256": "3eb9b985faa83b784bbf1a2ab15d21c47a649c2bec5727c7fdf17f208a50f36f",
-      "normalized_source_sha256": "aa5518180f4184c3f0f7be8eb6cad0a4f76b0fe3e5a547e70b7d5d72d4cc2424",
+      "source_path": "runtime/grz-skills/src/grz_mcp/apps.py",
+      "source_sha256": "8ef37b144a068018d22bdde3b2aab047f8937dbd10a655ebfd25cbb98c747e01",
+      "normalized_source_sha256": "7d6594bff0bcc0eaaf76d3569ddfe9edfbc01d377e27421027a1067314ebefa8",
       "modified": false
     },
     {
+      "path": "runtime/grz-skills/src/grz_mcp/assets/assets.json",
+      "sha256": "9d63af4441733383703007c1884f8e09973481f7230864cddecdd9bcb3c7a207",
+      "size_bytes": 639,
+      "origin": "pinned-source",
+      "source_path": "runtime/grz-skills/src/grz_mcp/assets/assets.json",
+      "source_sha256": "9d63af4441733383703007c1884f8e09973481f7230864cddecdd9bcb3c7a207",
+      "normalized_source_sha256": "9d63af4441733383703007c1884f8e09973481f7230864cddecdd9bcb3c7a207",
+      "modified": false
+    },
+    {
+      "path": "runtime/grz-skills/src/grz_mcp/assets/build-provenance.json",
+      "sha256": "aa29b7f2f29bfff12604a73ff5dcfa570f81a2bdc2cc5120f33600e7412ee822",
+      "size_bytes": 1466,
+      "origin": "pinned-source",
+      "source_path": "runtime/grz-skills/src/grz_mcp/assets/build-provenance.json",
+      "source_sha256": "aa29b7f2f29bfff12604a73ff5dcfa570f81a2bdc2cc5120f33600e7412ee822",
+      "normalized_source_sha256": "aa29b7f2f29bfff12604a73ff5dcfa570f81a2bdc2cc5120f33600e7412ee822",
+      "modified": false
+    },
+    {
+      "path": "runtime/grz-skills/src/grz_mcp/assets/bundle-report.json",
+      "sha256": "08ba2f45de24e0b02a8bc5d2fe8056f3fb62af5631c0e621b47d5193805fae70",
+      "size_bytes": 869,
+      "origin": "pinned-source",
+      "source_path": "runtime/grz-skills/src/grz_mcp/assets/bundle-report.json",
+      "source_sha256": "08ba2f45de24e0b02a8bc5d2fe8056f3fb62af5631c0e621b47d5193805fae70",
+      "normalized_source_sha256": "08ba2f45de24e0b02a8bc5d2fe8056f3fb62af5631c0e621b47d5193805fae70",
+      "modified": false
+    },
+    {
+      "path": "runtime/grz-skills/src/grz_mcp/assets/evidence.THIRD_PARTY_NOTICES.txt",
+      "sha256": "dcb4e6a0c780816ba22b63de05822779d09d943b4b245a2fc2aa8c18016b2fa1",
+      "size_bytes": 46363,
+      "origin": "pinned-source",
+      "source_path": "runtime/grz-skills/src/grz_mcp/assets/evidence.THIRD_PARTY_NOTICES.txt",
+      "source_sha256": "dcb4e6a0c780816ba22b63de05822779d09d943b4b245a2fc2aa8c18016b2fa1",
+      "normalized_source_sha256": "dcb4e6a0c780816ba22b63de05822779d09d943b4b245a2fc2aa8c18016b2fa1",
+      "modified": false
+    },
+    {
+      "path": "runtime/grz-skills/src/grz_mcp/assets/evidence.html",
+      "sha256": "c9724e004ab9c0b406b520fbf4198e80459308d5a677f15e6bc8aec07ed0fadf",
+      "size_bytes": 489669,
+      "origin": "pinned-source",
+      "source_path": "runtime/grz-skills/src/grz_mcp/assets/evidence.html",
+      "source_sha256": "c9724e004ab9c0b406b520fbf4198e80459308d5a677f15e6bc8aec07ed0fadf",
+      "normalized_source_sha256": "c9724e004ab9c0b406b520fbf4198e80459308d5a677f15e6bc8aec07ed0fadf",
+      "modified": false
+    },
+    {
+      "path": "runtime/grz-skills/src/grz_mcp/assets/explorer.THIRD_PARTY_NOTICES.txt",
+      "sha256": "dcb4e6a0c780816ba22b63de05822779d09d943b4b245a2fc2aa8c18016b2fa1",
+      "size_bytes": 46363,
+      "origin": "pinned-source",
+      "source_path": "runtime/grz-skills/src/grz_mcp/assets/explorer.THIRD_PARTY_NOTICES.txt",
+      "source_sha256": "dcb4e6a0c780816ba22b63de05822779d09d943b4b245a2fc2aa8c18016b2fa1",
+      "normalized_source_sha256": "dcb4e6a0c780816ba22b63de05822779d09d943b4b245a2fc2aa8c18016b2fa1",
+      "modified": false
+    },
+    {
+      "path": "runtime/grz-skills/src/grz_mcp/assets/explorer.html",
+      "sha256": "e1906f35e87d1dfa41774831fe033913b21083529ca9c6ea98c90088c4871d56",
+      "size_bytes": 489679,
+      "origin": "pinned-source",
+      "source_path": "runtime/grz-skills/src/grz_mcp/assets/explorer.html",
+      "source_sha256": "e1906f35e87d1dfa41774831fe033913b21083529ca9c6ea98c90088c4871d56",
+      "normalized_source_sha256": "e1906f35e87d1dfa41774831fe033913b21083529ca9c6ea98c90088c4871d56",
+      "modified": false
+    },
+    {
+      "path": "runtime/grz-skills/src/grz_mcp/cli.py",
+      "sha256": "4ea2a744169728926cf200d4d586886d849500b34325d438ee2b0fa859f232cc",
+      "size_bytes": 2000,
+      "origin": "pinned-source",
+      "source_path": "runtime/grz-skills/src/grz_mcp/cli.py",
+      "source_sha256": "a968b02042d871d350d93c58e57d587352fcfea1a8d02da67c0c1c1a3235e9df",
+      "normalized_source_sha256": "f12ac5305a68e4663bf9592f09c69d9085b80a4ed0aad65946ee1833660d2164",
+      "modified": true
+    },
+    {
       "path": "runtime/grz-skills/src/grz_mcp/mcp.py",
-      "sha256": "fc29219731eede9e9bfa12a4b73f6199554b0a58077a634066ebfc5c50feee51",
-      "size_bytes": 12193,
+      "sha256": "19aefb979cf2cc8a7a70ef50ca7a48d4b37dd4be3ba5fb7cbf435204fd81e99a",
+      "size_bytes": 13141,
       "origin": "pinned-source",
       "source_path": "runtime/grz-skills/src/grz_mcp/mcp.py",
-      "source_sha256": "7f462ad5e7f69caf7fea5aac80435a201e5d7ad8bffb6cf49a9d0a691884dfd5",
-      "normalized_source_sha256": "fc29219731eede9e9bfa12a4b73f6199554b0a58077a634066ebfc5c50feee51",
+      "source_sha256": "a6851e935192353e1a668b72fe66219883d623f20f3b454efe6396fb3a3073f3",
+      "normalized_source_sha256": "19aefb979cf2cc8a7a70ef50ca7a48d4b37dd4be3ba5fb7cbf435204fd81e99a",
+      "modified": false
+    },
+    {
+      "path": "runtime/ontology-skills/.gitattributes",
+      "sha256": "ab59fd3638170e6bf58e6a52eadd5f4f793b653650c8626b346d25e45a58e73d",
+      "size_bytes": 183,
+      "origin": "pinned-source",
+      "source_path": "runtime/ontology-skills/.gitattributes",
+      "source_sha256": "ab59fd3638170e6bf58e6a52eadd5f4f793b653650c8626b346d25e45a58e73d",
+      "normalized_source_sha256": "ab59fd3638170e6bf58e6a52eadd5f4f793b653650c8626b346d25e45a58e73d",
       "modified": false
     },
     {
       "path": "runtime/ontology-skills/pyproject.toml",
-      "sha256": "3784145980e3c72a05d6f29ef9b957f2d58a349dc27c4241f2bb0fd311ced1fb",
-      "size_bytes": 913,
+      "sha256": "7626a02e11a19f63a1ff6eed8b57fa0a95fa5db1f744435062968583ea897afa",
+      "size_bytes": 907,
       "origin": "pinned-source",
       "source_path": "runtime/ontology-skills/pyproject.toml",
-      "source_sha256": "82ce9a1373791794f29547674a027f0630be31dc85e60b5e3beb7819970727bd",
-      "normalized_source_sha256": "51536e2cd7a471ef57dff1843fdd58c023784efe9036c8bd3e7b8261c282969e",
+      "source_sha256": "6e48d0003c83c13d3a8f213de278ae60142ab27c5bce5c4dfe495845727640a0",
+      "normalized_source_sha256": "6e48d0003c83c13d3a8f213de278ae60142ab27c5bce5c4dfe495845727640a0",
       "modified": true
+    },
+    {
+      "path": "runtime/ontology-skills/src/ontology_apps/__init__.py",
+      "sha256": "4da96e9021642b4688d726730626b232fbc848191b24ae7e527e1d07a8f28137",
+      "size_bytes": 72,
+      "origin": "pinned-source",
+      "source_path": "runtime/ontology-skills/src/ontology_apps/__init__.py",
+      "source_sha256": "4da96e9021642b4688d726730626b232fbc848191b24ae7e527e1d07a8f28137",
+      "normalized_source_sha256": "4da96e9021642b4688d726730626b232fbc848191b24ae7e527e1d07a8f28137",
+      "modified": false
+    },
+    {
+      "path": "runtime/ontology-skills/src/ontology_apps/apps.py",
+      "sha256": "a432a42e81e6b1d7d99c39949f150dab63b6f96aafab3948ce8aaced11649c90",
+      "size_bytes": 9878,
+      "origin": "pinned-source",
+      "source_path": "runtime/ontology-skills/src/ontology_apps/apps.py",
+      "source_sha256": "a432a42e81e6b1d7d99c39949f150dab63b6f96aafab3948ce8aaced11649c90",
+      "normalized_source_sha256": "a432a42e81e6b1d7d99c39949f150dab63b6f96aafab3948ce8aaced11649c90",
+      "modified": false
+    },
+    {
+      "path": "runtime/ontology-skills/src/ontology_apps/cli.py",
+      "sha256": "b9ae81941083846a5cb6e04e26eb6928791e607b5cf0690efb197b4b13949f91",
+      "size_bytes": 1194,
+      "origin": "pinned-source",
+      "source_path": "runtime/ontology-skills/src/ontology_apps/cli.py",
+      "source_sha256": "b9ae81941083846a5cb6e04e26eb6928791e607b5cf0690efb197b4b13949f91",
+      "normalized_source_sha256": "b9ae81941083846a5cb6e04e26eb6928791e607b5cf0690efb197b4b13949f91",
+      "modified": false
+    },
+    {
+      "path": "runtime/ontology-skills/src/ontology_apps/ui/build-provenance.json",
+      "sha256": "93a2621c39b4dd1dc08ec62746a3d7be1ad601386168b61ee546180bd3ec87fc",
+      "size_bytes": 1079,
+      "origin": "pinned-source",
+      "source_path": "runtime/ontology-skills/src/ontology_apps/ui/build-provenance.json",
+      "source_sha256": "93a2621c39b4dd1dc08ec62746a3d7be1ad601386168b61ee546180bd3ec87fc",
+      "normalized_source_sha256": "93a2621c39b4dd1dc08ec62746a3d7be1ad601386168b61ee546180bd3ec87fc",
+      "modified": false
+    },
+    {
+      "path": "runtime/ontology-skills/src/ontology_apps/ui/bundle-report.json",
+      "sha256": "ab48ca8c7da8b2805a4744331a9a4b93284cbe77c67c976115e881f022cf744a",
+      "size_bytes": 495,
+      "origin": "pinned-source",
+      "source_path": "runtime/ontology-skills/src/ontology_apps/ui/bundle-report.json",
+      "source_sha256": "ab48ca8c7da8b2805a4744331a9a4b93284cbe77c67c976115e881f022cf744a",
+      "normalized_source_sha256": "ab48ca8c7da8b2805a4744331a9a4b93284cbe77c67c976115e881f022cf744a",
+      "modified": false
+    },
+    {
+      "path": "runtime/ontology-skills/src/ontology_apps/ui/evidence.THIRD_PARTY_NOTICES.txt",
+      "sha256": "dcb4e6a0c780816ba22b63de05822779d09d943b4b245a2fc2aa8c18016b2fa1",
+      "size_bytes": 46363,
+      "origin": "pinned-source",
+      "source_path": "runtime/ontology-skills/src/ontology_apps/ui/evidence.THIRD_PARTY_NOTICES.txt",
+      "source_sha256": "dcb4e6a0c780816ba22b63de05822779d09d943b4b245a2fc2aa8c18016b2fa1",
+      "normalized_source_sha256": "dcb4e6a0c780816ba22b63de05822779d09d943b4b245a2fc2aa8c18016b2fa1",
+      "modified": false
+    },
+    {
+      "path": "runtime/ontology-skills/src/ontology_apps/ui/evidence.html",
+      "sha256": "d4d8604dd13204fe42705f328fda526f3a95f78146f131065a95e990d0902d26",
+      "size_bytes": 475395,
+      "origin": "pinned-source",
+      "source_path": "runtime/ontology-skills/src/ontology_apps/ui/evidence.html",
+      "source_sha256": "d4d8604dd13204fe42705f328fda526f3a95f78146f131065a95e990d0902d26",
+      "normalized_source_sha256": "d4d8604dd13204fe42705f328fda526f3a95f78146f131065a95e990d0902d26",
+      "modified": false
+    },
+    {
+      "path": "runtime/ontology-skills/src/ontology_apps/ui/ontology.THIRD_PARTY_NOTICES.txt",
+      "sha256": "30e4be45fc7341c0bf6fdfba5007de8914f4da96cc40fb0a11b81c93ec7f8484",
+      "size_bytes": 127285,
+      "origin": "pinned-source",
+      "source_path": "runtime/ontology-skills/src/ontology_apps/ui/ontology.THIRD_PARTY_NOTICES.txt",
+      "source_sha256": "30e4be45fc7341c0bf6fdfba5007de8914f4da96cc40fb0a11b81c93ec7f8484",
+      "normalized_source_sha256": "30e4be45fc7341c0bf6fdfba5007de8914f4da96cc40fb0a11b81c93ec7f8484",
+      "modified": false
+    },
+    {
+      "path": "runtime/ontology-skills/src/ontology_apps/ui/ontology.html",
+      "sha256": "ff637d544359badb6a4f9bf4da7e6450ad665b53aaa4dcfad9036f1d1fce14fb",
+      "size_bytes": 1894693,
+      "origin": "pinned-source",
+      "source_path": "runtime/ontology-skills/src/ontology_apps/ui/ontology.html",
+      "source_sha256": "ff637d544359badb6a4f9bf4da7e6450ad665b53aaa4dcfad9036f1d1fce14fb",
+      "normalized_source_sha256": "ff637d544359badb6a4f9bf4da7e6450ad665b53aaa4dcfad9036f1d1fce14fb",
+      "modified": false
     },
     {
       "path": "runtime/ontology-skills/src/ontology_build/__init__.py",
@@ -1856,7 +2089,7 @@
       "size_bytes": 112,
       "origin": "pinned-source",
       "source_path": "runtime/ontology-skills/src/ontology_build/__init__.py",
-      "source_sha256": "08eb803a6430111a853ffdaa7e5d5cd564dbc9dac5318773310b40866c827b32",
+      "source_sha256": "73896283bf6dd4ad7675bcac32e873783095931cb720793016bbd8cc40748799",
       "normalized_source_sha256": "73896283bf6dd4ad7675bcac32e873783095931cb720793016bbd8cc40748799",
       "modified": false
     },
@@ -1866,18 +2099,18 @@
       "size_bytes": 8017,
       "origin": "pinned-source",
       "source_path": "runtime/ontology-skills/src/ontology_build/approval.py",
-      "source_sha256": "3c322585793171f779e84ad1a850d6a25201a6c9ebd95ebe3f7227fad3b7145e",
+      "source_sha256": "fdcf9db180e30810b100bf6991c450e8f2ceaebe2f7b81d277da8964d63737e5",
       "normalized_source_sha256": "fdcf9db180e30810b100bf6991c450e8f2ceaebe2f7b81d277da8964d63737e5",
       "modified": false
     },
     {
       "path": "runtime/ontology-skills/src/ontology_build/approval_card.py",
-      "sha256": "2bdba944b3f5a5be234896ab34c3a7c6949f77660cd095c318ad329ea6cf56b4",
-      "size_bytes": 4975,
+      "sha256": "1483452b9b41680b606d2e78388eff82f72df6251b931d0463261707cd2596ff",
+      "size_bytes": 5008,
       "origin": "pinned-source",
       "source_path": "runtime/ontology-skills/src/ontology_build/approval_card.py",
-      "source_sha256": "f8f5f2d660019a1f0350230ad4ed48c474435e2c4863e47e3787ba175becc71a",
-      "normalized_source_sha256": "2bdba944b3f5a5be234896ab34c3a7c6949f77660cd095c318ad329ea6cf56b4",
+      "source_sha256": "1483452b9b41680b606d2e78388eff82f72df6251b931d0463261707cd2596ff",
+      "normalized_source_sha256": "1483452b9b41680b606d2e78388eff82f72df6251b931d0463261707cd2596ff",
       "modified": false
     },
     {
@@ -1886,28 +2119,28 @@
       "size_bytes": 5133,
       "origin": "pinned-source",
       "source_path": "runtime/ontology-skills/src/ontology_build/budget.py",
-      "source_sha256": "5d38e6b9a87c3e8d0a301d9316780df893c9201ad6f7008cd7130fa936a669a4",
+      "source_sha256": "3f83b169b7fca81cba587f4f78389f20041887ecf170b3cc47325cf4a4c2f13a",
       "normalized_source_sha256": "3f83b169b7fca81cba587f4f78389f20041887ecf170b3cc47325cf4a4c2f13a",
       "modified": false
     },
     {
       "path": "runtime/ontology-skills/src/ontology_build/cli.py",
-      "sha256": "0199e545846bf608c16ce566d69cc8049c21d85cdc8c9007fd820876a9b59ac9",
-      "size_bytes": 15078,
+      "sha256": "3851124bcc227be0d397b27990941c1c35c70b329a233ab8551ae908a8e88951",
+      "size_bytes": 15234,
       "origin": "pinned-source",
       "source_path": "runtime/ontology-skills/src/ontology_build/cli.py",
-      "source_sha256": "4ef2e33203c865d98ce169dd577466459bd6c3e499f1dee690aa9c8de5405827",
-      "normalized_source_sha256": "0199e545846bf608c16ce566d69cc8049c21d85cdc8c9007fd820876a9b59ac9",
+      "source_sha256": "3851124bcc227be0d397b27990941c1c35c70b329a233ab8551ae908a8e88951",
+      "normalized_source_sha256": "3851124bcc227be0d397b27990941c1c35c70b329a233ab8551ae908a8e88951",
       "modified": false
     },
     {
       "path": "runtime/ontology-skills/src/ontology_build/connection.py",
-      "sha256": "35ebe21df035750e9a769097787001c8a0fab5aa792aa806234c86add156d74d",
-      "size_bytes": 12094,
+      "sha256": "138cdc4cb8e547c617d10e3299add985d1769f9ca58630d11722f10daf5d62df",
+      "size_bytes": 11173,
       "origin": "pinned-source",
       "source_path": "runtime/ontology-skills/src/ontology_build/connection.py",
-      "source_sha256": "f2604c07a5551ac4b1455de9f7d929f84ad507368cc65a3f12090a2b594539f5",
-      "normalized_source_sha256": "35ebe21df035750e9a769097787001c8a0fab5aa792aa806234c86add156d74d",
+      "source_sha256": "138cdc4cb8e547c617d10e3299add985d1769f9ca58630d11722f10daf5d62df",
+      "normalized_source_sha256": "138cdc4cb8e547c617d10e3299add985d1769f9ca58630d11722f10daf5d62df",
       "modified": false
     },
     {
@@ -1916,19 +2149,19 @@
       "size_bytes": 33420,
       "origin": "pinned-source",
       "source_path": "runtime/ontology-skills/src/ontology_build/critique.py",
-      "source_sha256": "e845eb0bae40f916ea16289d969a6a17a7a2c2505a9aa31e80663a0d9d1f8919",
+      "source_sha256": "a1b3998ccdd08a85a0fc0eef7c9e5a4897d88e46475e82511e6159930960ac4c",
       "normalized_source_sha256": "a1b3998ccdd08a85a0fc0eef7c9e5a4897d88e46475e82511e6159930960ac4c",
       "modified": false
     },
     {
       "path": "runtime/ontology-skills/src/ontology_build/export.py",
-      "sha256": "e2f7f5e5d11ef8e946e55d03ab4901c1d2ab9846bc5cddd98309f66295fa4925",
-      "size_bytes": 9181,
+      "sha256": "3910e0cc95940e80f2b843f09d630e0868faf6774e1d109bfe93661e82b60e13",
+      "size_bytes": 12000,
       "origin": "pinned-source",
       "source_path": "runtime/ontology-skills/src/ontology_build/export.py",
-      "source_sha256": "f57a80940f9bf54414dab5cbdc222408a6ba70b6d5bc5a890676dabe3aad852b",
-      "normalized_source_sha256": "f9290f32079ba469035ac9651f14a1d464250068932ee581a27887edc5ab6e7c",
-      "modified": true
+      "source_sha256": "3910e0cc95940e80f2b843f09d630e0868faf6774e1d109bfe93661e82b60e13",
+      "normalized_source_sha256": "3910e0cc95940e80f2b843f09d630e0868faf6774e1d109bfe93661e82b60e13",
+      "modified": false
     },
     {
       "path": "runtime/ontology-skills/src/ontology_build/grz_reader.py",
@@ -1936,7 +2169,7 @@
       "size_bytes": 20301,
       "origin": "pinned-source",
       "source_path": "runtime/ontology-skills/src/ontology_build/grz_reader.py",
-      "source_sha256": "7071dc5a0b1add29398e3ae669bfa8423a44e2fe1a8cdf7ba3f500bdd9dbe086",
+      "source_sha256": "25ff6aace242d967e3b9368fe82b2ac4e36ec302d73e36c603d30f5fa5330c86",
       "normalized_source_sha256": "25ff6aace242d967e3b9368fe82b2ac4e36ec302d73e36c603d30f5fa5330c86",
       "modified": false
     },
@@ -1946,18 +2179,18 @@
       "size_bytes": 9480,
       "origin": "pinned-source",
       "source_path": "runtime/ontology-skills/src/ontology_build/model_client.py",
-      "source_sha256": "4832270cbd9de70d1c2142f4dca208feceb3c50ebd5040fc8a082d62f62dece3",
+      "source_sha256": "7164a21df8dc7f04b2e9f7b8ea0d8fe86b51b57c04578f231d73aaf9c54812f8",
       "normalized_source_sha256": "7164a21df8dc7f04b2e9f7b8ea0d8fe86b51b57c04578f231d73aaf9c54812f8",
       "modified": false
     },
     {
       "path": "runtime/ontology-skills/src/ontology_build/planning.py",
-      "sha256": "e03e985fbc5e0945d593530c450fafda00fe6c7b50d59c8dae20b9d42a69e6db",
-      "size_bytes": 17145,
+      "sha256": "d62424928f383bbd848b12237b994f34fc81d2030beaa0ba968f1d86413a66ed",
+      "size_bytes": 17100,
       "origin": "pinned-source",
       "source_path": "runtime/ontology-skills/src/ontology_build/planning.py",
-      "source_sha256": "3b006a920a5565f64d5e923914af3704f238d485501b270ab301f7db965fd840",
-      "normalized_source_sha256": "e03e985fbc5e0945d593530c450fafda00fe6c7b50d59c8dae20b9d42a69e6db",
+      "source_sha256": "d62424928f383bbd848b12237b994f34fc81d2030beaa0ba968f1d86413a66ed",
+      "normalized_source_sha256": "d62424928f383bbd848b12237b994f34fc81d2030beaa0ba968f1d86413a66ed",
       "modified": false
     },
     {
@@ -1966,7 +2199,7 @@
       "size_bytes": 12652,
       "origin": "pinned-source",
       "source_path": "runtime/ontology-skills/src/ontology_build/prompts.py",
-      "source_sha256": "b0d12b3275a9a11aa6879a54b97b6ebf9bb0a4b217cc36eb2e80e8a1822087b3",
+      "source_sha256": "3b6f231e6af00e4f9757d72ac10213bf7c38d8f2042d4cf1396df28a5556b72f",
       "normalized_source_sha256": "3b6f231e6af00e4f9757d72ac10213bf7c38d8f2042d4cf1396df28a5556b72f",
       "modified": false
     },
@@ -1976,18 +2209,18 @@
       "size_bytes": 16655,
       "origin": "pinned-source",
       "source_path": "runtime/ontology-skills/src/ontology_build/propose.py",
-      "source_sha256": "8adce82f086ab15fb03065039d378049470b3fac3fb207d94158d4ae8b08011f",
+      "source_sha256": "1b66ba214f7509e7d310093d8642d9d722fa496032d79dd68f520daaff18bc4f",
       "normalized_source_sha256": "1b66ba214f7509e7d310093d8642d9d722fa496032d79dd68f520daaff18bc4f",
       "modified": false
     },
     {
       "path": "runtime/ontology-skills/src/ontology_build/reconcile.py",
-      "sha256": "513c0603520d0a7406c9bddad6474347068c7e1467a154245357bf9e25e1d422",
-      "size_bytes": 7591,
+      "sha256": "eb1f39be9ac088148659ec236e74158a86da26652914a4f4a3e2c3bf41825a6f",
+      "size_bytes": 7948,
       "origin": "pinned-source",
       "source_path": "runtime/ontology-skills/src/ontology_build/reconcile.py",
-      "source_sha256": "7c435753ce0c6e71fc74905cf840136cbf0ca97822ae02539bf8d5cfa4b71886",
-      "normalized_source_sha256": "513c0603520d0a7406c9bddad6474347068c7e1467a154245357bf9e25e1d422",
+      "source_sha256": "eb1f39be9ac088148659ec236e74158a86da26652914a4f4a3e2c3bf41825a6f",
+      "normalized_source_sha256": "eb1f39be9ac088148659ec236e74158a86da26652914a4f4a3e2c3bf41825a6f",
       "modified": false
     },
     {
@@ -1996,7 +2229,7 @@
       "size_bytes": 10548,
       "origin": "pinned-source",
       "source_path": "runtime/ontology-skills/src/ontology_build/refine.py",
-      "source_sha256": "f1e30a911ffbf25a9e33014e0d256376fc29fe4ff25e719fe888b3d0e5d33aa0",
+      "source_sha256": "03c40dcc85a3bfbe6a00a14e76e4fd5b67a7e3d8bb3d053f38d74f8bd9fec7ee",
       "normalized_source_sha256": "03c40dcc85a3bfbe6a00a14e76e4fd5b67a7e3d8bb3d053f38d74f8bd9fec7ee",
       "modified": false
     },
@@ -2006,7 +2239,7 @@
       "size_bytes": 18629,
       "origin": "pinned-source",
       "source_path": "runtime/ontology-skills/src/ontology_build/revise.py",
-      "source_sha256": "1b14dfb2ac685008b7855265cc69d33794645983605e11714e207c48f95d0f55",
+      "source_sha256": "751ff75e54fba4937b55221a20875187288aca356026852a05ddaa1fb8c88bd0",
       "normalized_source_sha256": "751ff75e54fba4937b55221a20875187288aca356026852a05ddaa1fb8c88bd0",
       "modified": false
     },
@@ -2016,18 +2249,18 @@
       "size_bytes": 11834,
       "origin": "pinned-source",
       "source_path": "runtime/ontology-skills/src/ontology_build/sampler.py",
-      "source_sha256": "a85987bf1117e5b847b7ae97d21811ffff2678c4ce123f433806e495243d4310",
+      "source_sha256": "ef01e237e02049bcc4af705e455645eb821fbe96f332255d7b3a43949eecc005",
       "normalized_source_sha256": "ef01e237e02049bcc4af705e455645eb821fbe96f332255d7b3a43949eecc005",
       "modified": false
     },
     {
       "path": "runtime/ontology-skills/src/ontology_build/summaries.py",
-      "sha256": "7bca517cffbccb23f70a9f99171b16f9ab8e78256cae2752de5280178212b6ec",
-      "size_bytes": 12816,
+      "sha256": "16a606066c480e35188843f343e725e602da5d4ed790a6bc57b2cf6ac6a77c6a",
+      "size_bytes": 12866,
       "origin": "pinned-source",
       "source_path": "runtime/ontology-skills/src/ontology_build/summaries.py",
-      "source_sha256": "69ab568ef26ab1ffcc42e71571983fe030d23aede0a529e735fd62e409943c87",
-      "normalized_source_sha256": "7bca517cffbccb23f70a9f99171b16f9ab8e78256cae2752de5280178212b6ec",
+      "source_sha256": "16a606066c480e35188843f343e725e602da5d4ed790a6bc57b2cf6ac6a77c6a",
+      "normalized_source_sha256": "16a606066c480e35188843f343e725e602da5d4ed790a6bc57b2cf6ac6a77c6a",
       "modified": false
     },
     {
@@ -2036,7 +2269,7 @@
       "size_bytes": 56,
       "origin": "pinned-source",
       "source_path": "runtime/ontology-skills/src/ontology_consume/__init__.py",
-      "source_sha256": "c4bd93affc710dcf83a0ff7bc5a31d0c4a9096e32378f7e6373f5471d2ee9bf9",
+      "source_sha256": "48bdf6c4c6726cd046814905875fddcca1188117ec3cbd80de05d5dc65e70cbf",
       "normalized_source_sha256": "48bdf6c4c6726cd046814905875fddcca1188117ec3cbd80de05d5dc65e70cbf",
       "modified": false
     },
@@ -2046,7 +2279,7 @@
       "size_bytes": 6369,
       "origin": "pinned-source",
       "source_path": "runtime/ontology-skills/src/ontology_consume/cli.py",
-      "source_sha256": "6d5380cf7568c61de5474b1b08fc7b1bea59fb305331f09885790d328bd3f9ee",
+      "source_sha256": "2d54fa9690d5cc763d9f51edca7d3adfff0cfabc54411af46bcdfb48b72bfe94",
       "normalized_source_sha256": "2d54fa9690d5cc763d9f51edca7d3adfff0cfabc54411af46bcdfb48b72bfe94",
       "modified": false
     },
@@ -2056,18 +2289,18 @@
       "size_bytes": 3829,
       "origin": "pinned-source",
       "source_path": "runtime/ontology-skills/src/ontology_consume/mermaid.py",
-      "source_sha256": "8ea0368afd4609ba613b537facff9cb82c630774fb2910164da409db37b8aaf1",
+      "source_sha256": "36f075ee4cc0865922b9d8cbc307c5be1b2f6260c009a3e503257c2a44a919f3",
       "normalized_source_sha256": "36f075ee4cc0865922b9d8cbc307c5be1b2f6260c009a3e503257c2a44a919f3",
       "modified": false
     },
     {
       "path": "runtime/ontology-skills/src/ontology_consume/service.py",
-      "sha256": "5f7d03e9f113c45cfd72b20a1fb2c9c9c82bef8f1834f6f9a44d6fa2b6120769",
-      "size_bytes": 12328,
+      "sha256": "5850f289ad755c4dd7b4d300f34a52ce727048ce90a287194e47b53f2ee32699",
+      "size_bytes": 12340,
       "origin": "pinned-source",
       "source_path": "runtime/ontology-skills/src/ontology_consume/service.py",
-      "source_sha256": "709b8b09795146e2b6bd175fe810e435b7d1e1f41d61c6883b33579881aad930",
-      "normalized_source_sha256": "5f7d03e9f113c45cfd72b20a1fb2c9c9c82bef8f1834f6f9a44d6fa2b6120769",
+      "source_sha256": "5850f289ad755c4dd7b4d300f34a52ce727048ce90a287194e47b53f2ee32699",
+      "normalized_source_sha256": "5850f289ad755c4dd7b4d300f34a52ce727048ce90a287194e47b53f2ee32699",
       "modified": false
     },
     {
@@ -2076,7 +2309,7 @@
       "size_bytes": 383,
       "origin": "pinned-source",
       "source_path": "runtime/ontology-skills/src/ontology_core/__init__.py",
-      "source_sha256": "6c91c9721f897f24fa49b8ecd11b63148b39e047908de0a1a00c1055d975d947",
+      "source_sha256": "85294ff6e84230c2ec0a901fca575851622c20279687458ad43a0b0746ac0896",
       "normalized_source_sha256": "85294ff6e84230c2ec0a901fca575851622c20279687458ad43a0b0746ac0896",
       "modified": false
     },
@@ -2086,18 +2319,18 @@
       "size_bytes": 4045,
       "origin": "pinned-source",
       "source_path": "runtime/ontology-skills/src/ontology_core/azure_auth.py",
-      "source_sha256": "e7a07cb2bb90e59029aa5506142201ed5496f3b792e79b9a3ffc336285599246",
+      "source_sha256": "8d27d888d6b8e4552dd33e320ed5064586e6e9b6085acf8ed4cfbcabbcf239bc",
       "normalized_source_sha256": "8d27d888d6b8e4552dd33e320ed5064586e6e9b6085acf8ed4cfbcabbcf239bc",
       "modified": false
     },
     {
       "path": "runtime/ontology-skills/src/ontology_core/current.py",
-      "sha256": "44e76ee2e4b80e99d77e328b8c26de876c423dca3ccbe72cc8c871e551a8e10a",
-      "size_bytes": 3922,
+      "sha256": "ace911a9e649e5135aac962c646b6886b0785d05d1ae68eeb62be3623486491e",
+      "size_bytes": 3941,
       "origin": "pinned-source",
       "source_path": "runtime/ontology-skills/src/ontology_core/current.py",
-      "source_sha256": "33ca7c4800998ca76b350cf6e1a978d6c6dd4ea790f92de84db5d19a8376d225",
-      "normalized_source_sha256": "44e76ee2e4b80e99d77e328b8c26de876c423dca3ccbe72cc8c871e551a8e10a",
+      "source_sha256": "ace911a9e649e5135aac962c646b6886b0785d05d1ae68eeb62be3623486491e",
+      "normalized_source_sha256": "ace911a9e649e5135aac962c646b6886b0785d05d1ae68eeb62be3623486491e",
       "modified": false
     },
     {
@@ -2106,28 +2339,28 @@
       "size_bytes": 3338,
       "origin": "pinned-source",
       "source_path": "runtime/ontology-skills/src/ontology_core/diff.py",
-      "source_sha256": "d9bddfa2f008a0c0810ca5c025f840ebd4dc81fcf7328aa8932185e77acd8fab",
+      "source_sha256": "8f10f91635d3f74860a7265b80ac9d399bf4f6732d876238751a8bdd162b0198",
       "normalized_source_sha256": "8f10f91635d3f74860a7265b80ac9d399bf4f6732d876238751a8bdd162b0198",
       "modified": false
     },
     {
       "path": "runtime/ontology-skills/src/ontology_core/doctor.py",
-      "sha256": "06b72b334c96b7fafcf73aa3800ebe834ee1c343f51e6835cb2b88f01b4b4862",
-      "size_bytes": 23315,
+      "sha256": "f2cdb1a8260304c254a4e6152ab37d2891b79e6d63ae480fcb3c91f992dff1fa",
+      "size_bytes": 22584,
       "origin": "pinned-source",
       "source_path": "runtime/ontology-skills/src/ontology_core/doctor.py",
-      "source_sha256": "8bdffb1d9a594e07fc1ea592d942dcb4d642b040908b6b8e899e15ac0b4e04f6",
-      "normalized_source_sha256": "06b72b334c96b7fafcf73aa3800ebe834ee1c343f51e6835cb2b88f01b4b4862",
+      "source_sha256": "f2cdb1a8260304c254a4e6152ab37d2891b79e6d63ae480fcb3c91f992dff1fa",
+      "normalized_source_sha256": "f2cdb1a8260304c254a4e6152ab37d2891b79e6d63ae480fcb3c91f992dff1fa",
       "modified": false
     },
     {
       "path": "runtime/ontology-skills/src/ontology_core/errors.py",
-      "sha256": "bfe441ada31a1d888d8b59e522ecc0eb551a5ec33889a060ba224204e8bf477a",
-      "size_bytes": 9344,
+      "sha256": "94913173763736d405b7c972bacfd02a023188c8e4b4497fcf3a50b044da5f95",
+      "size_bytes": 9475,
       "origin": "pinned-source",
       "source_path": "runtime/ontology-skills/src/ontology_core/errors.py",
-      "source_sha256": "669023b8eb568b55b7fe18afb5c890f575134699673fa9c8d3671ff8d00b79b5",
-      "normalized_source_sha256": "bfe441ada31a1d888d8b59e522ecc0eb551a5ec33889a060ba224204e8bf477a",
+      "source_sha256": "94913173763736d405b7c972bacfd02a023188c8e4b4497fcf3a50b044da5f95",
+      "normalized_source_sha256": "94913173763736d405b7c972bacfd02a023188c8e4b4497fcf3a50b044da5f95",
       "modified": false
     },
     {
@@ -2136,7 +2369,7 @@
       "size_bytes": 3187,
       "origin": "pinned-source",
       "source_path": "runtime/ontology-skills/src/ontology_core/hashing.py",
-      "source_sha256": "2dc5a3ba55526d70e45ed7923a6fc06ae9784fed5db50b18a726b62dc3511839",
+      "source_sha256": "62940365935b6e4ac3861107fa0efc37a5e8d44e5b637ac7921d9f587be03710",
       "normalized_source_sha256": "62940365935b6e4ac3861107fa0efc37a5e8d44e5b637ac7921d9f587be03710",
       "modified": false
     },
@@ -2146,7 +2379,7 @@
       "size_bytes": 14189,
       "origin": "pinned-source",
       "source_path": "runtime/ontology-skills/src/ontology_core/http.py",
-      "source_sha256": "4ba94ee37613080b3d762933737824690304bc22991d9214adad37371ea2dc8a",
+      "source_sha256": "14ccc2d299ea638efdc950ee6677ca7e3ba8d9a49102610b071c2e76fd4e6d05",
       "normalized_source_sha256": "14ccc2d299ea638efdc950ee6677ca7e3ba8d9a49102610b071c2e76fd4e6d05",
       "modified": false
     },
@@ -2156,7 +2389,7 @@
       "size_bytes": 14466,
       "origin": "pinned-source",
       "source_path": "runtime/ontology-skills/src/ontology_core/hygiene.py",
-      "source_sha256": "a98935b6714db59dfff41f984649ba40f9948e7ae5017032a5504e79c4b4dae5",
+      "source_sha256": "2830f9383e69f8c1f73bfb291343d8ab6d428495dfe285da281943bd993e905f",
       "normalized_source_sha256": "2830f9383e69f8c1f73bfb291343d8ab6d428495dfe285da281943bd993e905f",
       "modified": false
     },
@@ -2166,8 +2399,28 @@
       "size_bytes": 9892,
       "origin": "pinned-source",
       "source_path": "runtime/ontology-skills/src/ontology_core/journal.py",
-      "source_sha256": "986e345e47fde45cb9d7480b90dc2c54408e61e9b568a0144f5faa7e28007a85",
+      "source_sha256": "9fd37e901637cef04663e1b7d568f588f715e00b50a450c638586975758ca563",
       "normalized_source_sha256": "9fd37e901637cef04663e1b7d568f588f715e00b50a450c638586975758ca563",
+      "modified": false
+    },
+    {
+      "path": "runtime/ontology-skills/src/ontology_core/jsonld_profile.py",
+      "sha256": "d7147c262befe26f4cff6328f60689713d5969f0744b05745ffe898fda5a67c0",
+      "size_bytes": 11489,
+      "origin": "pinned-source",
+      "source_path": "runtime/ontology-skills/src/ontology_core/jsonld_profile.py",
+      "source_sha256": "d7147c262befe26f4cff6328f60689713d5969f0744b05745ffe898fda5a67c0",
+      "normalized_source_sha256": "d7147c262befe26f4cff6328f60689713d5969f0744b05745ffe898fda5a67c0",
+      "modified": false
+    },
+    {
+      "path": "runtime/ontology-skills/src/ontology_core/jsonld_write.py",
+      "sha256": "a36e0abecffe76438f0e5eaeb0f612cf7612aed2d6f66b02fd088492be25c58b",
+      "size_bytes": 3704,
+      "origin": "pinned-source",
+      "source_path": "runtime/ontology-skills/src/ontology_core/jsonld_write.py",
+      "source_sha256": "a36e0abecffe76438f0e5eaeb0f612cf7612aed2d6f66b02fd088492be25c58b",
+      "normalized_source_sha256": "a36e0abecffe76438f0e5eaeb0f612cf7612aed2d6f66b02fd088492be25c58b",
       "modified": false
     },
     {
@@ -2176,18 +2429,18 @@
       "size_bytes": 5848,
       "origin": "pinned-source",
       "source_path": "runtime/ontology-skills/src/ontology_core/lint.py",
-      "source_sha256": "67145738d52c631e2168680a936977ac3cf99c418f247fc0b50e02c32d5ecead",
+      "source_sha256": "d119cf8d6417aef6e43e19eee7e9cca7bac47cec909ef129cfd6bbaebbe8f512",
       "normalized_source_sha256": "d119cf8d6417aef6e43e19eee7e9cca7bac47cec909ef129cfd6bbaebbe8f512",
       "modified": false
     },
     {
       "path": "runtime/ontology-skills/src/ontology_core/model.py",
-      "sha256": "488b2a93db12229a5e1996a84fb2d67c2b5d094e4a84795e00682287fea9d48d",
-      "size_bytes": 17940,
+      "sha256": "e7c3b3fd3696e459a903174f7259833d4e98b66cad48dfb06da23349b468d753",
+      "size_bytes": 18541,
       "origin": "pinned-source",
       "source_path": "runtime/ontology-skills/src/ontology_core/model.py",
-      "source_sha256": "a5d1e94e53ea84d7c774f94bbebb024d96c739cded38e3187c2b177590e9affa",
-      "normalized_source_sha256": "488b2a93db12229a5e1996a84fb2d67c2b5d094e4a84795e00682287fea9d48d",
+      "source_sha256": "e7c3b3fd3696e459a903174f7259833d4e98b66cad48dfb06da23349b468d753",
+      "normalized_source_sha256": "e7c3b3fd3696e459a903174f7259833d4e98b66cad48dfb06da23349b468d753",
       "modified": false
     },
     {
@@ -2196,7 +2449,7 @@
       "size_bytes": 2201,
       "origin": "pinned-source",
       "source_path": "runtime/ontology-skills/src/ontology_core/names.py",
-      "source_sha256": "3673e7737a9134863fdbabf6f12b8c38ab7d8debb6ac18b7f9834f022d3e5bc0",
+      "source_sha256": "a1e09c09cdf80292d520c6b902c1e094a97cf50e2ad71a563afb76d1a07f60e8",
       "normalized_source_sha256": "a1e09c09cdf80292d520c6b902c1e094a97cf50e2ad71a563afb76d1a07f60e8",
       "modified": false
     },
@@ -2206,7 +2459,7 @@
       "size_bytes": 3118,
       "origin": "pinned-source",
       "source_path": "runtime/ontology-skills/src/ontology_core/output.py",
-      "source_sha256": "7db34c416a20956ab1957e2d4407122e0ddc944ceebba37acc5f7de34588b5ad",
+      "source_sha256": "75f58b334fd61026fb8f496285ce8a9ee09c4ae9eb088404f4b8479d9203c752",
       "normalized_source_sha256": "75f58b334fd61026fb8f496285ce8a9ee09c4ae9eb088404f4b8479d9203c752",
       "modified": false
     },
@@ -2216,7 +2469,7 @@
       "size_bytes": 20071,
       "origin": "pinned-source",
       "source_path": "runtime/ontology-skills/src/ontology_core/owl_read.py",
-      "source_sha256": "811f540d1fa35e9d8f78ce33a4ece0ee4abbd08cea0132966bc59011b4695049",
+      "source_sha256": "5840a1c630738621a49de57eaf24ba4e621be572d2506de6cf3c4beb45ed6b29",
       "normalized_source_sha256": "5840a1c630738621a49de57eaf24ba4e621be572d2506de6cf3c4beb45ed6b29",
       "modified": false
     },
@@ -2226,18 +2479,18 @@
       "size_bytes": 4244,
       "origin": "pinned-source",
       "source_path": "runtime/ontology-skills/src/ontology_core/owl_write.py",
-      "source_sha256": "29b8c1ab31bcb58335888982cf1332abb7bde9e39ca02112a1768180d326b698",
+      "source_sha256": "69b877d8aa2d07d992fba81c09a3933423eb61b7b4ff29943f7dac70ccb9b638",
       "normalized_source_sha256": "69b877d8aa2d07d992fba81c09a3933423eb61b7b4ff29943f7dac70ccb9b638",
       "modified": false
     },
     {
       "path": "runtime/ontology-skills/src/ontology_core/profile.py",
-      "sha256": "8fb7348b2c9491f5bfca5c758a6f268285b89e5db28facc9fa91fa0fe7ec1f5a",
-      "size_bytes": 8114,
+      "sha256": "9b9b22b71fc2fd6d0ccadc903ce8604b755668a5c9c03f49e9b5612cf5c4f5b3",
+      "size_bytes": 8157,
       "origin": "pinned-source",
       "source_path": "runtime/ontology-skills/src/ontology_core/profile.py",
-      "source_sha256": "70f96f66b3a10a2e6acb3430948677cfb984a903c1859ce7975e310e9fa54b13",
-      "normalized_source_sha256": "8fb7348b2c9491f5bfca5c758a6f268285b89e5db28facc9fa91fa0fe7ec1f5a",
+      "source_sha256": "9b9b22b71fc2fd6d0ccadc903ce8604b755668a5c9c03f49e9b5612cf5c4f5b3",
+      "normalized_source_sha256": "9b9b22b71fc2fd6d0ccadc903ce8604b755668a5c9c03f49e9b5612cf5c4f5b3",
       "modified": false
     },
     {
@@ -2246,7 +2499,7 @@
       "size_bytes": 617,
       "origin": "pinned-source",
       "source_path": "runtime/ontology-skills/src/ontology_core/schemas/approval.schema.json",
-      "source_sha256": "7c52e9c485864e8f69ec891792d9a6147387a72b38d0978dc7dc1c3e3cc788fc",
+      "source_sha256": "064a41d00584d0a0d193a36eb75a575847125d1388435113e5c142d3c8130602",
       "normalized_source_sha256": "064a41d00584d0a0d193a36eb75a575847125d1388435113e5c142d3c8130602",
       "modified": false
     },
@@ -2256,7 +2509,7 @@
       "size_bytes": 2673,
       "origin": "pinned-source",
       "source_path": "runtime/ontology-skills/src/ontology_core/schemas/config.schema.json",
-      "source_sha256": "efb347cf8cdbfe00f144560d20b2d92a75f56cc741fa2bb45c19081cf90dfbc6",
+      "source_sha256": "3316dd1ef4e74ffa21a7e139907c20c23af5134e38b1ce9eab52cd7891199f50",
       "normalized_source_sha256": "3316dd1ef4e74ffa21a7e139907c20c23af5134e38b1ce9eab52cd7891199f50",
       "modified": false
     },
@@ -2266,7 +2519,7 @@
       "size_bytes": 3083,
       "origin": "pinned-source",
       "source_path": "runtime/ontology-skills/src/ontology_core/schemas/diff.schema.json",
-      "source_sha256": "66e9bb7cd3e4f9a1b251fa1176d0f39e1ec8bde86dd27ba2bea39b6fb757ae35",
+      "source_sha256": "105afe0b95afdbc52307ddf086eca1e3165b9cf40a4a9e0bff55a6d2e92e7f33",
       "normalized_source_sha256": "105afe0b95afdbc52307ddf086eca1e3165b9cf40a4a9e0bff55a6d2e92e7f33",
       "modified": false
     },
@@ -2276,7 +2529,7 @@
       "size_bytes": 715,
       "origin": "pinned-source",
       "source_path": "runtime/ontology-skills/src/ontology_core/schemas/evidence.schema.json",
-      "source_sha256": "b1ace13894afc5b312121aa499de388cd4ae97885b8e95f456d72a0e1a5fb8e5",
+      "source_sha256": "184e0021a0803f6a2afb9e6e0fddccdd7e4b3e44d1f7bb3e910353662c2c4179",
       "normalized_source_sha256": "184e0021a0803f6a2afb9e6e0fddccdd7e4b3e44d1f7bb3e910353662c2c4179",
       "modified": false
     },
@@ -2286,8 +2539,18 @@
       "size_bytes": 2580,
       "origin": "pinned-source",
       "source_path": "runtime/ontology-skills/src/ontology_core/schemas/export-manifest.schema.json",
-      "source_sha256": "e608882e6e142ee52233230fdfa1524ca7a67f88bbbe52730539dbef7cbf6dcd",
+      "source_sha256": "d7e624bd96f6bec514c0dcb5231e2aabb2b63ff939d168dbe33aad82a5b30cdf",
       "normalized_source_sha256": "d7e624bd96f6bec514c0dcb5231e2aabb2b63ff939d168dbe33aad82a5b30cdf",
+      "modified": false
+    },
+    {
+      "path": "runtime/ontology-skills/src/ontology_core/schemas/jsonld-export-manifest.schema.json",
+      "sha256": "5b904c6a34f04b8a542b538b66e61dc0909408cb756047cf0ab88373f9fc5719",
+      "size_bytes": 2572,
+      "origin": "pinned-source",
+      "source_path": "runtime/ontology-skills/src/ontology_core/schemas/jsonld-export-manifest.schema.json",
+      "source_sha256": "5b904c6a34f04b8a542b538b66e61dc0909408cb756047cf0ab88373f9fc5719",
+      "normalized_source_sha256": "5b904c6a34f04b8a542b538b66e61dc0909408cb756047cf0ab88373f9fc5719",
       "modified": false
     },
     {
@@ -2296,7 +2559,7 @@
       "size_bytes": 553,
       "origin": "pinned-source",
       "source_path": "runtime/ontology-skills/src/ontology_core/schemas/lock.schema.json",
-      "source_sha256": "e4beba00b01955e8f425d8389a816c6468a8d8c67c63e460c500f4b59df70499",
+      "source_sha256": "f609dcf9a84a0bd6f1026d13c39ba6af12b9d057a0ca15765a41d0b2d1fe42c8",
       "normalized_source_sha256": "f609dcf9a84a0bd6f1026d13c39ba6af12b9d057a0ca15765a41d0b2d1fe42c8",
       "modified": false
     },
@@ -2306,7 +2569,7 @@
       "size_bytes": 2316,
       "origin": "pinned-source",
       "source_path": "runtime/ontology-skills/src/ontology_core/schemas/ontology.schema.json",
-      "source_sha256": "6f92d0a86270a3c949e716b5d17ab9d2b6a1a2e79171c5f6c2d36a1482b23b07",
+      "source_sha256": "fd02a9d29ee79bfca169ced4d94214a201e01beb9ad2fe36480e1d6e5687b75a",
       "normalized_source_sha256": "fd02a9d29ee79bfca169ced4d94214a201e01beb9ad2fe36480e1d6e5687b75a",
       "modified": false
     },
@@ -2316,7 +2579,7 @@
       "size_bytes": 7310,
       "origin": "pinned-source",
       "source_path": "runtime/ontology-skills/src/ontology_core/schemas/plan.schema.json",
-      "source_sha256": "e7bdabf30c2328c2b73904ae929f0b6fa3648f3dfb1cb9548c4a2a0be83662a4",
+      "source_sha256": "233c5089d3d4eb4fcaf08fb54bc4581a0c791ca966b39171be1aa48dbdd87b99",
       "normalized_source_sha256": "233c5089d3d4eb4fcaf08fb54bc4581a0c791ca966b39171be1aa48dbdd87b99",
       "modified": false
     },
@@ -2326,7 +2589,7 @@
       "size_bytes": 2454,
       "origin": "pinned-source",
       "source_path": "runtime/ontology-skills/src/ontology_core/schemas/sample.schema.json",
-      "source_sha256": "c05fd6baee2ac0e05c1fcd6b4c1482e46e2ecaa91a66da35e4dac36b49305b22",
+      "source_sha256": "1144f1ee9fb4cba1d27623f23f89d35a14b59eb4207a40b375bc6ae23654cfd4",
       "normalized_source_sha256": "1144f1ee9fb4cba1d27623f23f89d35a14b59eb4207a40b375bc6ae23654cfd4",
       "modified": false
     },
@@ -2336,99 +2599,59 @@
       "size_bytes": 3697,
       "origin": "pinned-source",
       "source_path": "runtime/ontology-skills/src/ontology_core/schemas/version.schema.json",
-      "source_sha256": "01af760771daf7591876e0b43c5e82f114e6f37bda9bf2ef7a2f73f6d588f92b",
+      "source_sha256": "264ae649c44fd2bae757c474d29b6d9fa74226dfed80fe00fc774e50c7fc072b",
       "normalized_source_sha256": "264ae649c44fd2bae757c474d29b6d9fa74226dfed80fe00fc774e50c7fc072b",
       "modified": false
     },
     {
       "path": "runtime/ontology-skills/src/ontology_core/state.py",
-      "sha256": "4e9c42987e5c3abd5322540b05aa1be545ad766e25511565aa38f9983c3e11b4",
-      "size_bytes": 16967,
+      "sha256": "418fb180904a9a80c7f838abb3b328615a3e2484c5387aa358c7f81993bfd66c",
+      "size_bytes": 17130,
       "origin": "pinned-source",
       "source_path": "runtime/ontology-skills/src/ontology_core/state.py",
-      "source_sha256": "9aaea2819a17e284bc38229123837a98b2d6f569cef18feec5d57acb20b51ec8",
-      "normalized_source_sha256": "4e9c42987e5c3abd5322540b05aa1be545ad766e25511565aa38f9983c3e11b4",
-      "modified": false
-    },
-    {
-      "path": "runtime/ontology-skills/src/ontology_mcp/__init__.py",
-      "sha256": "b6994906f73a6d36d91bea061f0ea6153d55e22b90c2c73188bb911beae6b7d4",
-      "size_bytes": 46,
-      "origin": "pinned-source",
-      "source_path": "runtime/ontology-skills/src/ontology_mcp/__init__.py",
-      "source_sha256": "ebe8bb2b780cbd32ed54309d2e2de00b18098e81834e24dca6cb70f49a7e802d",
-      "normalized_source_sha256": "b6994906f73a6d36d91bea061f0ea6153d55e22b90c2c73188bb911beae6b7d4",
-      "modified": false
-    },
-    {
-      "path": "runtime/ontology-skills/src/ontology_mcp/cli.py",
-      "sha256": "555247e5eabc81b42a7dc2104b563b11d7e3df623a44bb1ed97c854ab7903946",
-      "size_bytes": 1498,
-      "origin": "pinned-source",
-      "source_path": "runtime/ontology-skills/src/ontology_mcp/cli.py",
-      "source_sha256": "86a3abd8c29061c3872019e4226e5fbb99f8c897b514b530ecd4e4310de774f2",
-      "normalized_source_sha256": "555247e5eabc81b42a7dc2104b563b11d7e3df623a44bb1ed97c854ab7903946",
-      "modified": false
-    },
-    {
-      "path": "runtime/ontology-skills/src/ontology_mcp/server.py",
-      "sha256": "c609826643d0887ffa6b17343122c65a8bd62d16b5d1f9f68faeac662a66d031",
-      "size_bytes": 4981,
-      "origin": "pinned-source",
-      "source_path": "runtime/ontology-skills/src/ontology_mcp/server.py",
-      "source_sha256": "e5a8700bc9f02bce9f84f758b5beb82c2e0beaa9da488b7e7460ebb40839f08b",
-      "normalized_source_sha256": "c609826643d0887ffa6b17343122c65a8bd62d16b5d1f9f68faeac662a66d031",
-      "modified": false
-    },
-    {
-      "path": "runtime/ontology-skills/src/ontology_mcp/tools.py",
-      "sha256": "96a88a998527c5995398fdeae77c54ae0f6794eae5a33665632c655662a987e4",
-      "size_bytes": 7724,
-      "origin": "pinned-source",
-      "source_path": "runtime/ontology-skills/src/ontology_mcp/tools.py",
-      "source_sha256": "f77de410e547131795ee8b10385c001c64a513c466463cd6ad932ca5c858165c",
-      "normalized_source_sha256": "96a88a998527c5995398fdeae77c54ae0f6794eae5a33665632c655662a987e4",
-      "modified": false
-    },
-    {
-      "path": "skills/ekg-build/references/plan-and-publish.md",
-      "sha256": "518cd057c6dc637dd69f131644d8d236d5234910afa86a08999c8f6dc80a85b8",
-      "size_bytes": 2561,
-      "origin": "pinned-source",
-      "source_path": "skills/ekg-build/references/plan-and-publish.md",
-      "source_sha256": "1ecaaf184d8b7b85f379e717a0460076a5dc413ec909d27ff7ca6ff9d479250e",
-      "normalized_source_sha256": "2aa9c347ad3267efda10fd3b86a9522199aaf0dd37ddb74111c5c2cdce3b6122",
-      "modified": true
-    },
-    {
-      "path": "skills/ekg-build/references/status-and-telemetry.md",
-      "sha256": "07ca0b9a3d17ca04d8a94724be9932305f8e21a30a149dde5fc85f71efdbe565",
-      "size_bytes": 1614,
-      "origin": "pinned-source",
-      "source_path": "skills/ekg-build/references/status-and-telemetry.md",
-      "source_sha256": "fc1a5236ff1739102bc99b060d78a9c9f9ed7e38c808628da31db111317c422c",
-      "normalized_source_sha256": "07ca0b9a3d17ca04d8a94724be9932305f8e21a30a149dde5fc85f71efdbe565",
-      "modified": false
-    },
-    {
-      "path": "skills/ekg-build/references/trial-update-retire.md",
-      "sha256": "0be8a9bb55a09b3e7e7dc99ac8bbafed2419e28b361d14a86297292aca925ecb",
-      "size_bytes": 1869,
-      "origin": "pinned-source",
-      "source_path": "skills/ekg-build/references/trial-update-retire.md",
-      "source_sha256": "f3f4c8cbb3048b0d6ae71aa6247f8a09943e2ac3e5f79aa2bed3b8af461cdc63",
-      "normalized_source_sha256": "0be8a9bb55a09b3e7e7dc99ac8bbafed2419e28b361d14a86297292aca925ecb",
+      "source_sha256": "418fb180904a9a80c7f838abb3b328615a3e2484c5387aa358c7f81993bfd66c",
+      "normalized_source_sha256": "418fb180904a9a80c7f838abb3b328615a3e2484c5387aa358c7f81993bfd66c",
       "modified": false
     },
     {
       "path": "skills/ekg-build/SKILL.md",
-      "sha256": "f3c38b99db469d1b4fe1bfd4d97e3a64cc5e861b6a9a58542b030e4bee00a07b",
-      "size_bytes": 1790,
+      "sha256": "edde8791fc6eb984f3ab7bd1837375324505530bc25b9e7fe6894ac021aba233",
+      "size_bytes": 1760,
       "origin": "pinned-source",
       "source_path": "skills/ekg-build/SKILL.md",
-      "source_sha256": "f2a0a3a228dbc6d836a7f3bfdce69591c70fd18f21a0fbffd40758e950fa2afd",
-      "normalized_source_sha256": "b43831bc23ad0a7c4e7c5db783b955a628c06ea895b31ed6c0f1ff92c17128f0",
+      "source_sha256": "a864b93b3fba16cf04e1c26a0a3988dea5ead830d918c0efbc01b983e5f72022",
+      "normalized_source_sha256": "328ebe2da11f20e5fe556684711d354053d0ff00ab53d16487af0ed4576d0fc8",
       "modified": true
+    },
+    {
+      "path": "skills/ekg-build/references/plan-and-publish.md",
+      "sha256": "a87bd3092321e89191cd0c29f3d56e1b7f76404faad76014223bb06d7f632b59",
+      "size_bytes": 3551,
+      "origin": "pinned-source",
+      "source_path": "skills/ekg-build/references/plan-and-publish.md",
+      "source_sha256": "51b0b268d579beabf891eac09a0eae12e1d47ac8ad6911faf3121da392f2a525",
+      "normalized_source_sha256": "a87bd3092321e89191cd0c29f3d56e1b7f76404faad76014223bb06d7f632b59",
+      "modified": false
+    },
+    {
+      "path": "skills/ekg-build/references/status-and-telemetry.md",
+      "sha256": "402ead3e159b930f187d155d4f13ca261fef6d8f8af4771bb7ea9774863b0c44",
+      "size_bytes": 1858,
+      "origin": "pinned-source",
+      "source_path": "skills/ekg-build/references/status-and-telemetry.md",
+      "source_sha256": "de5a95248edbe2a9555f51b99818c4f1abddba2acd90365e41e90cf1c9d3abb0",
+      "normalized_source_sha256": "402ead3e159b930f187d155d4f13ca261fef6d8f8af4771bb7ea9774863b0c44",
+      "modified": false
+    },
+    {
+      "path": "skills/ekg-build/references/trial-update-retire.md",
+      "sha256": "f17200c0295538b4d8b0bba11428cf7b9ab5b73ceefb9c1643b41155bada8de5",
+      "size_bytes": 2184,
+      "origin": "pinned-source",
+      "source_path": "skills/ekg-build/references/trial-update-retire.md",
+      "source_sha256": "df5ffdae5c0330517220bc5b3fa0b2d83caa9814060b0b953068bf18a6c6084f",
+      "normalized_source_sha256": "f17200c0295538b4d8b0bba11428cf7b9ab5b73ceefb9c1643b41155bada8de5",
+      "modified": false
     },
     {
       "path": "skills/ekg-build/version.json",
@@ -2441,44 +2664,44 @@
       "modified": false
     },
     {
+      "path": "skills/ekg-consume/SKILL.md",
+      "sha256": "df466de9706fda57537fe008daa7d0b55bfb8559cfbd7d890c475b155ca22a03",
+      "size_bytes": 1580,
+      "origin": "pinned-source",
+      "source_path": "skills/ekg-consume/SKILL.md",
+      "source_sha256": "a99f142b50cd4a12746b9cf9816518df6b98beb9b035f91b3dec065958625582",
+      "normalized_source_sha256": "6effe7ddee8bbc13c78a390b3a8232b42da89467485bf566a3f3077eebc72e0e",
+      "modified": true
+    },
+    {
       "path": "skills/ekg-consume/references/document-retrieval.md",
-      "sha256": "a5d74238e1c74007675a4fcfd63084a0ed67388d7901521eead1b374c1e29e5d",
-      "size_bytes": 1351,
+      "sha256": "c45ff77318ee385456fe30b57ab754176431e4132018b8bb160f86d29644799c",
+      "size_bytes": 1296,
       "origin": "pinned-source",
       "source_path": "skills/ekg-consume/references/document-retrieval.md",
-      "source_sha256": "f641be712475a682f35a1ef7e294b539b1e4cba0b61179a33b38c3b7ba378113",
-      "normalized_source_sha256": "a5d74238e1c74007675a4fcfd63084a0ed67388d7901521eead1b374c1e29e5d",
+      "source_sha256": "a69bead3b2af20b8aeaecb89af2dd7cb28b87b55b8605a4834a0d49d27b27a4a",
+      "normalized_source_sha256": "c45ff77318ee385456fe30b57ab754176431e4132018b8bb160f86d29644799c",
       "modified": false
     },
     {
       "path": "skills/ekg-consume/references/graph-traversal.md",
-      "sha256": "98ba30dfd37abe633a1b733e57285abec47c9e7c57b57cd57eb8928980764877",
-      "size_bytes": 1285,
+      "sha256": "7be6d87fad36f58b355f86927eaf05883e23ece0ad0baf429985f6a18b34dfec",
+      "size_bytes": 2022,
       "origin": "pinned-source",
       "source_path": "skills/ekg-consume/references/graph-traversal.md",
-      "source_sha256": "afd7d0ba597fd4355950086e3526720a37792553392c4af9a0330d2a303c036e",
-      "normalized_source_sha256": "98ba30dfd37abe633a1b733e57285abec47c9e7c57b57cd57eb8928980764877",
+      "source_sha256": "c517495f09186e0861fe4f8e22c1c225ff9b094eaf9645775573c8a1c9d7b9b9",
+      "normalized_source_sha256": "7be6d87fad36f58b355f86927eaf05883e23ece0ad0baf429985f6a18b34dfec",
       "modified": false
     },
     {
       "path": "skills/ekg-consume/references/health-and-capabilities.md",
-      "sha256": "09ff553ebf0a4daaab69edf400e9678575f6a13f7c93429996bec3bf6452de08",
-      "size_bytes": 1493,
+      "sha256": "baf17e89ede124f3385c8a82fd7595391910ea5c25555b991ebe1bdaf4cc3cdb",
+      "size_bytes": 1550,
       "origin": "pinned-source",
       "source_path": "skills/ekg-consume/references/health-and-capabilities.md",
-      "source_sha256": "c715eaf0fc66ffc42217d1772a7bcf3fbb5da61f9bdfa1fba66b5ddcecb0e661",
-      "normalized_source_sha256": "5fd1a8488596d3847a0c5d915d4aceecb60e8df0484e99fe5638f30dfb0fa743",
-      "modified": true
-    },
-    {
-      "path": "skills/ekg-consume/SKILL.md",
-      "sha256": "39a1a37c5e20ac645f60816ae4886b6aab2ab6458459c07536ed0f4d6b26f0d5",
-      "size_bytes": 1671,
-      "origin": "pinned-source",
-      "source_path": "skills/ekg-consume/SKILL.md",
-      "source_sha256": "9137d6e50b4e3cb1f5b4a9afbf518c2aefc3d6db34de5f4ed99b348f299fc0ee",
-      "normalized_source_sha256": "6c36f442550134cded77bd71e55ca8ad6c070c6c4f71f6c987a7ea17752029c8",
-      "modified": true
+      "source_sha256": "d66b8a2e5b7585850ac4d5ab2f2fdbd38b617a9e6427a5373e8eeaa34c5a946a",
+      "normalized_source_sha256": "baf17e89ede124f3385c8a82fd7595391910ea5c25555b991ebe1bdaf4cc3cdb",
+      "modified": false
     },
     {
       "path": "skills/ekg-consume/version.json",
@@ -2491,44 +2714,44 @@
       "modified": false
     },
     {
+      "path": "skills/ekg-provision/SKILL.md",
+      "sha256": "bc46b4eb23543762b7b1c80af9b4e64d098af68878a76004c9d900d7b24c032e",
+      "size_bytes": 1863,
+      "origin": "pinned-source",
+      "source_path": "skills/ekg-provision/SKILL.md",
+      "source_sha256": "84392ca6e3f6e593ffc4994c3de29aa66582a9304bba69b793945863cc104990",
+      "normalized_source_sha256": "a4280cebe4a8a49c34cf24ab716d48161b7f5f6102a67f0b309b6e701a1d4eb5",
+      "modified": true
+    },
+    {
       "path": "skills/ekg-provision/references/capacity-rbac-smoke.md",
-      "sha256": "c635c795a7948452aa63de60670d08fbe3ffdcca466e50ea0feff6909f969b6e",
-      "size_bytes": 1242,
+      "sha256": "a25095dc1c44d5047aa9ed4fa04dba431e9918564a365304ac1409e2f754163f",
+      "size_bytes": 1730,
       "origin": "pinned-source",
       "source_path": "skills/ekg-provision/references/capacity-rbac-smoke.md",
-      "source_sha256": "a1d3983ad5bbeebb4b64478e1bdd053b766472c16016fb5720036ebe88f0f221",
-      "normalized_source_sha256": "c635c795a7948452aa63de60670d08fbe3ffdcca466e50ea0feff6909f969b6e",
+      "source_sha256": "b262abf6de599f0f342ff44a8d65ead5a8fcb9fe3d4cf7d44e8d31cc004bf406",
+      "normalized_source_sha256": "a25095dc1c44d5047aa9ed4fa04dba431e9918564a365304ac1409e2f754163f",
       "modified": false
     },
     {
       "path": "skills/ekg-provision/references/connect-existing-resources.md",
-      "sha256": "37f0d7c5dd7dddbbda0405f0d937dddabdef1a353182a36cafd262794a09390f",
-      "size_bytes": 1697,
+      "sha256": "efb4fc6f7b32093621cffcc6b28b8d0cd9b11f32baea93720d9d4228501d21b9",
+      "size_bytes": 2211,
       "origin": "pinned-source",
       "source_path": "skills/ekg-provision/references/connect-existing-resources.md",
-      "source_sha256": "6bef8a585eb894d625f0c8777a6e017fe7cf7ec8e27e29ca572cf330dd1a3e19",
-      "normalized_source_sha256": "37f0d7c5dd7dddbbda0405f0d937dddabdef1a353182a36cafd262794a09390f",
+      "source_sha256": "f5a53dd43d79080241379ff6443126bd16c40689a728f04a990b455b3022fc78",
+      "normalized_source_sha256": "efb4fc6f7b32093621cffcc6b28b8d0cd9b11f32baea93720d9d4228501d21b9",
       "modified": false
     },
     {
       "path": "skills/ekg-provision/references/new-public-test-setup.md",
-      "sha256": "ecc8b5a0247fa82f085a5ad5feb749cb7b0966499db456bf1093533ec30aefb2",
-      "size_bytes": 1411,
+      "sha256": "375b01c23fcbc563979a91f43735be5146e6878b64183d1b581c9994b0f1b41d",
+      "size_bytes": 2137,
       "origin": "pinned-source",
       "source_path": "skills/ekg-provision/references/new-public-test-setup.md",
-      "source_sha256": "8591655cc1f16a36abd2c27c7e629dcb946be57b69e0516ceba3e6ec7ec1d4ed",
-      "normalized_source_sha256": "f840a6a4736ef467aa80764c8d37685d6a0c75e9807f7628ab26d6967d92a9d8",
-      "modified": true
-    },
-    {
-      "path": "skills/ekg-provision/SKILL.md",
-      "sha256": "c475820468d39959a7ac318eebdc26972eeba761ad31c161f8fcb7c3ff0ab0b4",
-      "size_bytes": 1592,
-      "origin": "pinned-source",
-      "source_path": "skills/ekg-provision/SKILL.md",
-      "source_sha256": "1587a7ca9ccdfa7faf2a23fa6a2164c7f1368d44b8dc9099146fc7169362009d",
-      "normalized_source_sha256": "2d2a4170c6f9596cced8122a5df33f5c745572263b55f802ec5e2454c6179fdd",
-      "modified": true
+      "source_sha256": "053c93dd10ceea7388c5f32abb5dc11fba7dc656ae95a80cd1891590a0a8342a",
+      "normalized_source_sha256": "375b01c23fcbc563979a91f43735be5146e6878b64183d1b581c9994b0f1b41d",
+      "modified": false
     },
     {
       "path": "skills/ekg-provision/version.json",
@@ -2541,34 +2764,34 @@
       "modified": false
     },
     {
+      "path": "skills/graph-choose/SKILL.md",
+      "sha256": "58ef8d63c57ceecdd867bf9b27e95b408f805aaefd6999b289446a2ef0e1c557",
+      "size_bytes": 1746,
+      "origin": "pinned-source",
+      "source_path": "skills/graph-choose/SKILL.md",
+      "source_sha256": "48b604ce27d808d6ee428a8d3794a16a7ebd203dc5edc7ca8e37b6f68a2873fa",
+      "normalized_source_sha256": "ca2355828c66883af4d25b05cb8f7add176ddeed137dd123fd30db1be17d5745",
+      "modified": true
+    },
+    {
       "path": "skills/graph-choose/references/install-and-checks.md",
-      "sha256": "df4ad21c7a5dfa0a588fcc4d6081d7209aebcde13b03567b86b7d6af5b21d106",
-      "size_bytes": 1158,
+      "sha256": "5cb61755357c8a1a405418e0e8644a3939cc2cdd3cc7aca7a20356609a780a3a",
+      "size_bytes": 3640,
       "origin": "pinned-source",
       "source_path": "skills/graph-choose/references/install-and-checks.md",
-      "source_sha256": "da1c7c66e014fcf98a85defc2edd95fda4dec39c9a6f1150000635cf8524466a",
-      "normalized_source_sha256": "e0135917da099fb7b627d063ce23a67a8eea1239f90bcfebce8c23e1a98d83a7",
+      "source_sha256": "334e0af7b595826b537a32f4e0016fa0075e2a7bba4b066c3f41e2be210fb470",
+      "normalized_source_sha256": "6e6d91bbb170c3292636c7e46fbd0fa28da01b1cd85b0ff25c29a1d52b11a0a0",
       "modified": true
     },
     {
       "path": "skills/graph-choose/references/route-table.md",
-      "sha256": "aeec011e2abbd401d3e9380b39385a51340f322eb4649a558bf2580863cf965b",
-      "size_bytes": 2206,
+      "sha256": "f63ef869b57c7c32aa160ff9c927e8d1b03547e7adcfd1b480dadff1e327b4b3",
+      "size_bytes": 3998,
       "origin": "pinned-source",
       "source_path": "skills/graph-choose/references/route-table.md",
-      "source_sha256": "27728bcb3812df17e648fb5596315df273803d0a5f27b3842e0fdb681cdb1f64",
-      "normalized_source_sha256": "7c4d1924c4c5f7263d05e7f5b5b34fe4ca787718108633bbfaa4c7918ee309f1",
-      "modified": true
-    },
-    {
-      "path": "skills/graph-choose/SKILL.md",
-      "sha256": "d619cf8eaf5330ff1008e2e766aa3eb25fd1f6c6c32478d4d42dbdc4f54e4952",
-      "size_bytes": 1734,
-      "origin": "pinned-source",
-      "source_path": "skills/graph-choose/SKILL.md",
-      "source_sha256": "9f258113912a015401db1649e7b9f315dd54321c6f1bcac920e4b931aadd3c48",
-      "normalized_source_sha256": "3f73715809357533bd991c8ca7db6ac9b92cf5b4bcb10f661c56530b19388e97",
-      "modified": true
+      "source_sha256": "eba7cf9a82e5d4c5fffef78d72421a26553212ac3afb4589c50063cf275b1c4c",
+      "normalized_source_sha256": "f63ef869b57c7c32aa160ff9c927e8d1b03547e7adcfd1b480dadff1e327b4b3",
+      "modified": false
     },
     {
       "path": "skills/graph-choose/version.json",
@@ -2581,34 +2804,44 @@
       "modified": false
     },
     {
-      "path": "skills/graph-demo/references/demo-flow.md",
-      "sha256": "1a77a6335f39f7ca0bebc78c2a96a0082666f401a625118f22b9e71fb21dba40",
-      "size_bytes": 2272,
+      "path": "skills/graph-demo/SKILL.md",
+      "sha256": "a897144ef1e46f63b76186d7d019b88f0801bc5eea19a31cb7cd4dde686b4f01",
+      "size_bytes": 1989,
       "origin": "pinned-source",
-      "source_path": "skills/graph-demo/references/demo-flow.md",
-      "source_sha256": "8675ebf2deee54ef6962d1a312ef8b58e4a724b26c0b8956ca073c6757cc000c",
-      "normalized_source_sha256": "1e228bd3d374d0a55b9a1edaf98e2e33ce466bfab58d1888ba43d1224802b2f9",
+      "source_path": "skills/graph-demo/SKILL.md",
+      "source_sha256": "cf84dbd9016fb23c965eaa8a7e37d39c6b0de729e25e55d74a9c7aba6338f72a",
+      "normalized_source_sha256": "4eee5aa3bf23213c1832e58671312a834ad48de380cc3e51344946340df10c2e",
       "modified": true
+    },
+    {
+      "path": "skills/graph-demo/references/handoffs.md",
+      "sha256": "6eb62d8aad0e482dfb6d074ceea257bcc6d8c9d4ec0b2ca794b05841f52b9bd6",
+      "size_bytes": 3977,
+      "origin": "pinned-source",
+      "source_path": "skills/graph-demo/references/handoffs.md",
+      "source_sha256": "27026ee9fbbc6158bf6fd7a2ff23d6d39c2df0e1bef581a77808f8a001b94c0e",
+      "normalized_source_sha256": "6eb62d8aad0e482dfb6d074ceea257bcc6d8c9d4ec0b2ca794b05841f52b9bd6",
+      "modified": false
     },
     {
       "path": "skills/graph-demo/references/install-and-checks.md",
-      "sha256": "df4ad21c7a5dfa0a588fcc4d6081d7209aebcde13b03567b86b7d6af5b21d106",
-      "size_bytes": 1158,
+      "sha256": "5cb61755357c8a1a405418e0e8644a3939cc2cdd3cc7aca7a20356609a780a3a",
+      "size_bytes": 3640,
       "origin": "pinned-source",
       "source_path": "skills/graph-demo/references/install-and-checks.md",
-      "source_sha256": "da1c7c66e014fcf98a85defc2edd95fda4dec39c9a6f1150000635cf8524466a",
-      "normalized_source_sha256": "e0135917da099fb7b627d063ce23a67a8eea1239f90bcfebce8c23e1a98d83a7",
+      "source_sha256": "334e0af7b595826b537a32f4e0016fa0075e2a7bba4b066c3f41e2be210fb470",
+      "normalized_source_sha256": "6e6d91bbb170c3292636c7e46fbd0fa28da01b1cd85b0ff25c29a1d52b11a0a0",
       "modified": true
     },
     {
-      "path": "skills/graph-demo/SKILL.md",
-      "sha256": "2dc35809dd796e4394cff58be8da8408154a0744cff602c250e6692370f8f0e7",
-      "size_bytes": 1449,
+      "path": "skills/graph-demo/references/open-items.md",
+      "sha256": "6a9d253a5cc7bca8a2c08d3135164642019b0df76d902ad6f703883c247d9749",
+      "size_bytes": 2144,
       "origin": "pinned-source",
-      "source_path": "skills/graph-demo/SKILL.md",
-      "source_sha256": "27ae07c34a62ba0c63294c390c63a7573257b1322a23e686b7875fcc8f3eee25",
-      "normalized_source_sha256": "32d3a299214643495e7cd1e33e25609e072ffe6e036f52d7ce3d814bfc19131b",
-      "modified": true
+      "source_path": "skills/graph-demo/references/open-items.md",
+      "source_sha256": "b1586fdb972fed92b5617c8c993e423baa24b987005b0923fbcb2a20858c7eb6",
+      "normalized_source_sha256": "6a9d253a5cc7bca8a2c08d3135164642019b0df76d902ad6f703883c247d9749",
+      "modified": false
     },
     {
       "path": "skills/graph-demo/version.json",
@@ -2621,34 +2854,44 @@
       "modified": false
     },
     {
+      "path": "skills/graph-guide/SKILL.md",
+      "sha256": "70f22b0688fc4b633e0215010d20b5345ba4c68f68386e5319abf4c94e0641a4",
+      "size_bytes": 1955,
+      "origin": "pinned-source",
+      "source_path": "skills/graph-guide/SKILL.md",
+      "source_sha256": "4097ac94b2fd8ed7a87dae0ac24c822632eda356bb5beca3c048759e708c046c",
+      "normalized_source_sha256": "1deb7060626172c667d199e3c2af7782ccba89e695b68cdc4512f7f75586d236",
+      "modified": true
+    },
+    {
       "path": "skills/graph-guide/references/decision-guide.md",
-      "sha256": "d37fcd5b8f0f2f86fa234c97641679680eb73bdd994bed1a490a8945df9bfb0d",
-      "size_bytes": 2064,
+      "sha256": "b9242ea40129b3fbfd85761a470eead758459353843d3173fa10b5eed9832278",
+      "size_bytes": 3542,
       "origin": "pinned-source",
       "source_path": "skills/graph-guide/references/decision-guide.md",
-      "source_sha256": "72a57b747a9ad41ddaf0386059c108c1153bda537e66fb955f6ba284728d141b",
-      "normalized_source_sha256": "d37fcd5b8f0f2f86fa234c97641679680eb73bdd994bed1a490a8945df9bfb0d",
+      "source_sha256": "8e05370f161ef052ab96cb4d0b359e0ac937e0e86d0f8997285f540d2c697fe8",
+      "normalized_source_sha256": "b9242ea40129b3fbfd85761a470eead758459353843d3173fa10b5eed9832278",
       "modified": false
     },
     {
       "path": "skills/graph-guide/references/install-and-checks.md",
-      "sha256": "df4ad21c7a5dfa0a588fcc4d6081d7209aebcde13b03567b86b7d6af5b21d106",
-      "size_bytes": 1158,
+      "sha256": "5cb61755357c8a1a405418e0e8644a3939cc2cdd3cc7aca7a20356609a780a3a",
+      "size_bytes": 3640,
       "origin": "pinned-source",
       "source_path": "skills/graph-guide/references/install-and-checks.md",
-      "source_sha256": "da1c7c66e014fcf98a85defc2edd95fda4dec39c9a6f1150000635cf8524466a",
-      "normalized_source_sha256": "e0135917da099fb7b627d063ce23a67a8eea1239f90bcfebce8c23e1a98d83a7",
+      "source_sha256": "334e0af7b595826b537a32f4e0016fa0075e2a7bba4b066c3f41e2be210fb470",
+      "normalized_source_sha256": "6e6d91bbb170c3292636c7e46fbd0fa28da01b1cd85b0ff25c29a1d52b11a0a0",
       "modified": true
     },
     {
-      "path": "skills/graph-guide/SKILL.md",
-      "sha256": "cd28ca822a20b9a3ffa403c9fd2ddfd9bfe2b2ae08230af85a01e06db1a8fb53",
-      "size_bytes": 1841,
+      "path": "skills/graph-guide/references/measured-results.md",
+      "sha256": "ec7bbe33972af6c5d037b18be6a1870796cd8200c9d535044ccc4c7625a63163",
+      "size_bytes": 2114,
       "origin": "pinned-source",
-      "source_path": "skills/graph-guide/SKILL.md",
-      "source_sha256": "36b09ba639ba79d5edc1d29989f004e43bef806bfce7ce54befdada68cb9b098",
-      "normalized_source_sha256": "5fafd3b7c224282cb5577b238ce14915e425cc55d83c45d130e58054d5c30358",
-      "modified": true
+      "source_path": "skills/graph-guide/references/measured-results.md",
+      "source_sha256": "7ba9ddff0773f1955dcdd969c24164d5eff6ae174bd518875039a14770e4c0a2",
+      "normalized_source_sha256": "ec7bbe33972af6c5d037b18be6a1870796cd8200c9d535044ccc4c7625a63163",
+      "modified": false
     },
     {
       "path": "skills/graph-guide/version.json",
@@ -2659,6 +2902,16 @@
       "source_sha256": "d0c579f38d0db12437972a38594e25a3a02170afec85fe4d5c66b8d3207e47bf",
       "normalized_source_sha256": "7e2e9cd9cd4ad12383d31800b0cfb464a3b402c83c158a51ce9b4fac81a5cf7b",
       "modified": false
+    },
+    {
+      "path": "skills/grounding-build/SKILL.md",
+      "sha256": "fa2a7b52c383356ee827ff610c0b0e7e41e59ecebd662b53772d30905ae24b4d",
+      "size_bytes": 1545,
+      "origin": "pinned-source",
+      "source_path": "skills/grounding-build/SKILL.md",
+      "source_sha256": "c92b2cc107098d8c8b2c8a92dee34712698be4a567d0338ec6a58a10e9b6a363",
+      "normalized_source_sha256": "ed6862817dc439e9387a9e9253d22ba732be5c09bd419f1fe4895b33c6c813a2",
+      "modified": true
     },
     {
       "path": "skills/grounding-build/references/align-and-resume.md",
@@ -2672,12 +2925,12 @@
     },
     {
       "path": "skills/grounding-build/references/own-data.md",
-      "sha256": "f8fde6a4231b0d885b88f7caa14b134c64849252af443a656aa98edb9215c148",
-      "size_bytes": 2417,
+      "sha256": "0aa8aeeff0ed7331ceb68cbf0231e7660921964bd50aadcb3532ef20763ca2a7",
+      "size_bytes": 2777,
       "origin": "pinned-source",
       "source_path": "skills/grounding-build/references/own-data.md",
-      "source_sha256": "33a201269a364663eabc46a03d9026c97cbc6c0627799d17061a7c814d93d044",
-      "normalized_source_sha256": "f8fde6a4231b0d885b88f7caa14b134c64849252af443a656aa98edb9215c148",
+      "source_sha256": "362f0dc9ed3e8104a7acba5af9244cff30cdbf6d549a9bc020dbce65679b77fb",
+      "normalized_source_sha256": "0aa8aeeff0ed7331ceb68cbf0231e7660921964bd50aadcb3532ef20763ca2a7",
       "modified": false
     },
     {
@@ -2691,16 +2944,6 @@
       "modified": false
     },
     {
-      "path": "skills/grounding-build/SKILL.md",
-      "sha256": "3ad3c059b0ca7baf3d6fb9f9959ad0fdaa99252706728d7f43bcd918bb297643",
-      "size_bytes": 1592,
-      "origin": "pinned-source",
-      "source_path": "skills/grounding-build/SKILL.md",
-      "source_sha256": "ef555bf49e4449c9962062ba1defa5a1da7aea623492aceafd7ed56e8b2e5ddc",
-      "normalized_source_sha256": "c9a71f2e05a0b65e3173b8cfee37e0d1b6e67e6eb22ff4c595faf1b0331c3dbb",
-      "modified": true
-    },
-    {
       "path": "skills/grounding-build/version.json",
       "sha256": "7e2e9cd9cd4ad12383d31800b0cfb464a3b402c83c158a51ce9b4fac81a5cf7b",
       "size_bytes": 187,
@@ -2711,13 +2954,23 @@
       "modified": false
     },
     {
+      "path": "skills/grounding-consume/SKILL.md",
+      "sha256": "1e24a7221beac146689ba2d44558c261de61d508a5eb44c4a75caa6367ca9109",
+      "size_bytes": 1391,
+      "origin": "pinned-source",
+      "source_path": "skills/grounding-consume/SKILL.md",
+      "source_sha256": "13bd836ac925ad84ce6677a593b3ccb1da8aac613983c6b6ee53810dbb6f6f0b",
+      "normalized_source_sha256": "c0bdda6ba1c1dd8a9ccf752cf2d11454e04d62e1b0fc75b1b336f5c757dd5dca",
+      "modified": true
+    },
+    {
       "path": "skills/grounding-consume/references/check-inspect-sample.md",
-      "sha256": "9dc337e4223cc3def333f19bf50a3e8ead3c74fb9430ca25d62695a2ce743a83",
-      "size_bytes": 1488,
+      "sha256": "5b568872866590d53db3f045159267050f938cfbf91a4a64a4e92a6ad10746d3",
+      "size_bytes": 1438,
       "origin": "pinned-source",
       "source_path": "skills/grounding-consume/references/check-inspect-sample.md",
-      "source_sha256": "6b9826f2fb223f9326e5375da8c272c7836bb00343831e3d1e9294a5c84904f6",
-      "normalized_source_sha256": "9dc337e4223cc3def333f19bf50a3e8ead3c74fb9430ca25d62695a2ce743a83",
+      "source_sha256": "3800c706fc1b0cdd40b7947872233a3b8ab2d3b008c00ca98b17bb311169e651",
+      "normalized_source_sha256": "5b568872866590d53db3f045159267050f938cfbf91a4a64a4e92a6ad10746d3",
       "modified": false
     },
     {
@@ -2732,23 +2985,13 @@
     },
     {
       "path": "skills/grounding-consume/references/readiness.md",
-      "sha256": "14c05db3348b9daad53b9026ee2c1964a52813081d46073071fff914eef5cb07",
-      "size_bytes": 1476,
+      "sha256": "2ac00fc542ccb7c17cc907cfeef796af79c209e6e81f07dce2846856afaf2b35",
+      "size_bytes": 1426,
       "origin": "pinned-source",
       "source_path": "skills/grounding-consume/references/readiness.md",
-      "source_sha256": "758f5c99074f649d4b80a812a8fa3a7ff63aeb65d92d646dd7098f6b5cc6262d",
-      "normalized_source_sha256": "14c05db3348b9daad53b9026ee2c1964a52813081d46073071fff914eef5cb07",
+      "source_sha256": "b228b6c4e80efdefdf2e2e1fafd7678c7737759fd99306d8b1103081d241ff4a",
+      "normalized_source_sha256": "2ac00fc542ccb7c17cc907cfeef796af79c209e6e81f07dce2846856afaf2b35",
       "modified": false
-    },
-    {
-      "path": "skills/grounding-consume/SKILL.md",
-      "sha256": "064171dcd50baac575876d6362a914764f9494b90d7055c154120b8c9e99ffab",
-      "size_bytes": 1527,
-      "origin": "pinned-source",
-      "source_path": "skills/grounding-consume/SKILL.md",
-      "source_sha256": "6e20d9a3ae60f5ee2fae62914992814cbbdc3f9ae3d3682423c7ca84e725e864",
-      "normalized_source_sha256": "add44e52aba4767599e2194aae300e63a910e34e3ffb71a3b94c08caafb28844",
-      "modified": true
     },
     {
       "path": "skills/grounding-consume/version.json",
@@ -2761,13 +3004,23 @@
       "modified": false
     },
     {
+      "path": "skills/grounding-provision/SKILL.md",
+      "sha256": "66c465896929f17af4454705baa69a670837daf6750df431ef5ad33a7c257da1",
+      "size_bytes": 1371,
+      "origin": "pinned-source",
+      "source_path": "skills/grounding-provision/SKILL.md",
+      "source_sha256": "dae19d94ca19ace128574f817c44105bb4155cfd78cc123dc6fce20d21a5cd52",
+      "normalized_source_sha256": "c4140546db7253a370ca8c9e3c4900180e475ddab21671fb2c6defb1a8c71645",
+      "modified": true
+    },
+    {
       "path": "skills/grounding-provision/references/connect-and-doctor.md",
-      "sha256": "fe59db3614a2645bbe128afff482f1bf7c67b6fb4d679465674c9423c4a40728",
-      "size_bytes": 1668,
+      "sha256": "48f6c06820f2e0b9bf6828a90c7d2a827032b127a402d2c80fb5b3ae57b49974",
+      "size_bytes": 1613,
       "origin": "pinned-source",
       "source_path": "skills/grounding-provision/references/connect-and-doctor.md",
-      "source_sha256": "f5d553abe5580bdb4e029912029e8e86fb294472f63be5c7bcbb7447fb94b77f",
-      "normalized_source_sha256": "fe59db3614a2645bbe128afff482f1bf7c67b6fb4d679465674c9423c4a40728",
+      "source_sha256": "05ec538a29297600cb5665112d093d2ba782d949da2dfdf896911a199fbf5021",
+      "normalized_source_sha256": "48f6c06820f2e0b9bf6828a90c7d2a827032b127a402d2c80fb5b3ae57b49974",
       "modified": false
     },
     {
@@ -2781,16 +3034,6 @@
       "modified": false
     },
     {
-      "path": "skills/grounding-provision/SKILL.md",
-      "sha256": "0d5639330d0463685dcbc74e2dbc70ecc4bbab43ab81e5f6c21babafd5e6a47c",
-      "size_bytes": 1418,
-      "origin": "pinned-source",
-      "source_path": "skills/grounding-provision/SKILL.md",
-      "source_sha256": "d4541606a231d5c2951d9b61563494551e69ff8a200f3f1347a00a26d1476ac2",
-      "normalized_source_sha256": "90851eaaf490b703e6c1a8bdb27b4c9a0656dfbdb3defb8ff8c45b66f0c6d4bd",
-      "modified": true
-    },
-    {
       "path": "skills/grounding-provision/version.json",
       "sha256": "7e2e9cd9cd4ad12383d31800b0cfb464a3b402c83c158a51ce9b4fac81a5cf7b",
       "size_bytes": 187,
@@ -2801,13 +3044,23 @@
       "modified": false
     },
     {
+      "path": "skills/grz-build/SKILL.md",
+      "sha256": "b37803aca3944cb2622882427a5e238b25e95561e14118b834a3612b0ab83cec",
+      "size_bytes": 1776,
+      "origin": "pinned-source",
+      "source_path": "skills/grz-build/SKILL.md",
+      "source_sha256": "9c1ac8e0ef465f6ffa662129a7c1581432e65fea1fc161c1a6dd83dc0a6ecbf2",
+      "normalized_source_sha256": "a5743a0ff98018e499e95414ea172f6f214f592e8f7d5475df9c3019f8a656e3",
+      "modified": true
+    },
+    {
       "path": "skills/grz-build/references/plan-and-apply.md",
-      "sha256": "0e16707d5e6a84917fed927d216c3454ff1d3ba38e5af0f53022834cba8f9d6e",
-      "size_bytes": 2923,
+      "sha256": "591aac858d1d9e2159d577ebab202efc0473752e9961fc90fb5f2d94ad56c551",
+      "size_bytes": 3016,
       "origin": "pinned-source",
       "source_path": "skills/grz-build/references/plan-and-apply.md",
-      "source_sha256": "055c08b8a0d348531062d20f9af1aa078728d6efb989daaa999fd7227942687c",
-      "normalized_source_sha256": "db6658cfbf3dac62e1130444240ed600b0c3ee1470bc2086f41e85289a3d4a73",
+      "source_sha256": "dcd2963573a99779afd2c762df075462f280789d6914963a60433b83ac261bfe",
+      "normalized_source_sha256": "fc55ceb489e97f1a4408b4c71f1f244be93233ff6ca98e0c35af9149d31e92c2",
       "modified": true
     },
     {
@@ -2831,16 +3084,6 @@
       "modified": false
     },
     {
-      "path": "skills/grz-build/SKILL.md",
-      "sha256": "1ae6084d6001ed923b45b0319dcbe68ea7f46557455ec997dbb1020396d89bb3",
-      "size_bytes": 1840,
-      "origin": "pinned-source",
-      "source_path": "skills/grz-build/SKILL.md",
-      "source_sha256": "eed558c6464a56a6b52d141037d4193a476c83b904edb688d4cac777a22d7950",
-      "normalized_source_sha256": "e90874718901a5f1557d3192271ebd4578cbb3314f5dd7d1f75d2009ad86e7dc",
-      "modified": true
-    },
-    {
       "path": "skills/grz-build/version.json",
       "sha256": "7e2e9cd9cd4ad12383d31800b0cfb464a3b402c83c158a51ce9b4fac81a5cf7b",
       "size_bytes": 187,
@@ -2851,43 +3094,43 @@
       "modified": false
     },
     {
+      "path": "skills/grz-consume/SKILL.md",
+      "sha256": "a4feae7a3652a32dd71c09b3d619013ba95968799576a63f7648e64c74963407",
+      "size_bytes": 1684,
+      "origin": "pinned-source",
+      "source_path": "skills/grz-consume/SKILL.md",
+      "source_sha256": "8e1593e0e63b88c0092b13323ea3b61aa465b77004a2631a5e902947d1a06cfc",
+      "normalized_source_sha256": "4ff5df588024660ce5be08d5dbb37af50cff93a955727fb695e3a11c1fb4ab96",
+      "modified": true
+    },
+    {
       "path": "skills/grz-consume/references/browse-topics.md",
-      "sha256": "502668e6d4d836afd41ac289db793b8c2121c349675d99e45e4c80610d2b4e6d",
-      "size_bytes": 1465,
+      "sha256": "5232c82e500c7ccc273094958b8bf43392d139b1624c6b3dbc2c9fec4b39d22a",
+      "size_bytes": 2455,
       "origin": "pinned-source",
       "source_path": "skills/grz-consume/references/browse-topics.md",
-      "source_sha256": "a110d9b6123e9384e5881fe13e8655b5c2fb9df43dee17f50c3759b749533305",
-      "normalized_source_sha256": "502668e6d4d836afd41ac289db793b8c2121c349675d99e45e4c80610d2b4e6d",
+      "source_sha256": "3a283b59db46cb01cc439d971264cb584da6e9775e9051dd319a8a105a7b46c5",
+      "normalized_source_sha256": "5232c82e500c7ccc273094958b8bf43392d139b1624c6b3dbc2c9fec4b39d22a",
       "modified": false
     },
     {
       "path": "skills/grz-consume/references/health-and-access.md",
-      "sha256": "a63f88ea8a477bab5f8f9e1ff0f073d8e1e1b4a3f686668f33873cb98ea66c0e",
-      "size_bytes": 1973,
+      "sha256": "abbaddb8d0741cc39ccc17de5bae4411626c0ad42942e40a247aa2a4c9fffd72",
+      "size_bytes": 1966,
       "origin": "pinned-source",
       "source_path": "skills/grz-consume/references/health-and-access.md",
-      "source_sha256": "8b6a43a54dfadac441e4a913cb2ec3f08060d043a1d8db09d6d281305dd85897",
-      "normalized_source_sha256": "59c0153dd54a2cabb5272a2148058e17ce6aae4e86e9590d0d5aacb4eea6f54b",
+      "source_sha256": "56e544d61cb98a33ecfb6c4946a5503d8bd163293ec031d756f6cf7d39663430",
+      "normalized_source_sha256": "9f3dec609689f9122456ef588309f397194669670e2c4799269264d7e4cb0647",
       "modified": true
     },
     {
       "path": "skills/grz-consume/references/rank-and-verify.md",
-      "sha256": "ffa9a4eb7b4e93e3eb9820b34304a36e102a10c9b39216021e9aa80510a4b7f4",
-      "size_bytes": 1454,
+      "sha256": "69aa5a6dfeb998d8e6c44412f7971a24a02e47eb412c717b17c7145754eb9347",
+      "size_bytes": 937,
       "origin": "pinned-source",
       "source_path": "skills/grz-consume/references/rank-and-verify.md",
-      "source_sha256": "38fcc5340fba6654374f05a034fc7e89214c65a7dcab202ed210d434b3dbf034",
-      "normalized_source_sha256": "cb6b61c9fb110514e75cba66eb4e0b4b897a9907cd4cdb7da8dbf12add337754",
-      "modified": true
-    },
-    {
-      "path": "skills/grz-consume/SKILL.md",
-      "sha256": "7658668ab86f16f8d6bf056c8d8a1f53ef74ca7d3ad52c1e415c5ebcfd38facd",
-      "size_bytes": 1700,
-      "origin": "pinned-source",
-      "source_path": "skills/grz-consume/SKILL.md",
-      "source_sha256": "ac2851a0eb3dba8c3de5c656b24badc68120c53b325998fd7e9bf93e702e0ad0",
-      "normalized_source_sha256": "4090b6c099dc28976428db4e2c800e59f360bfe5a9a3b690df62b8ee9b18f21c",
+      "source_sha256": "f8fc314aac807be41e481964d20d866255fbba0b22f71fd5ec38a2efcfd7cd65",
+      "normalized_source_sha256": "ae664bbeb3ab91974db065bc24dd1f5917bcb129d4cef61be3b6caddccdf8393",
       "modified": true
     },
     {
@@ -2901,14 +3144,24 @@
       "modified": false
     },
     {
+      "path": "skills/ontology-build/SKILL.md",
+      "sha256": "0d030ca057f64731965159e73568f4001c0d6ef96fd9e6caab44a2d62abf2771",
+      "size_bytes": 1725,
+      "origin": "pinned-source",
+      "source_path": "skills/ontology-build/SKILL.md",
+      "source_sha256": "c2fa45f7c46bdf604950c02980f05666628a57e5c3d8796ba90190389984a89f",
+      "normalized_source_sha256": "220640568424389ab9d25a0ac23b6b525f111c02a502468e6f1196519fb8abfe",
+      "modified": true
+    },
+    {
       "path": "skills/ontology-build/references/connect-plan-propose.md",
-      "sha256": "7e88cb295c96f68ec809d85ea4d4fdbcb90a8dafd822fe999ee50197df2b7f9d",
-      "size_bytes": 2425,
+      "sha256": "3385f27167a003a0a478512ffb738923d45593eec16a0f1bc6cf702c5ab4d7fc",
+      "size_bytes": 2542,
       "origin": "pinned-source",
       "source_path": "skills/ontology-build/references/connect-plan-propose.md",
-      "source_sha256": "caa9f9b25a79ea9d8b821928739747672d5bbd85121ac17e5c92df80190b65ca",
-      "normalized_source_sha256": "2a3dc1f835015c23864576423fd1a269fca31dbfc7636430a4e666d8e101d85b",
-      "modified": true
+      "source_sha256": "970bcdbbbd3376af81cc1d9bd1f31e6d1cd2c2a89c6b35c745b8e2ce09e07ffe",
+      "normalized_source_sha256": "3385f27167a003a0a478512ffb738923d45593eec16a0f1bc6cf702c5ab4d7fc",
+      "modified": false
     },
     {
       "path": "skills/ontology-build/references/refine-critique-revise.md",
@@ -2922,23 +3175,13 @@
     },
     {
       "path": "skills/ontology-build/references/review-approve-export.md",
-      "sha256": "136ab8a3c9c2f42b7a2fd871bd3160bd3bab0f09f75b2ff3e2588c95f5f1ab6d",
-      "size_bytes": 1994,
+      "sha256": "03a54377f25058c07e67ac0dcd057a1b8d8b966dc4886df1bffb0116b12f3cc5",
+      "size_bytes": 2233,
       "origin": "pinned-source",
       "source_path": "skills/ontology-build/references/review-approve-export.md",
-      "source_sha256": "1ee1917c9d47cff93c59b3d8e3c68f505dde02456e397e4e8cb9b10d0a625547",
-      "normalized_source_sha256": "136ab8a3c9c2f42b7a2fd871bd3160bd3bab0f09f75b2ff3e2588c95f5f1ab6d",
+      "source_sha256": "c17e8473b02d15edaff058922b5dbdbb83653bc36a5e6af03b5dc564d6e343b2",
+      "normalized_source_sha256": "03a54377f25058c07e67ac0dcd057a1b8d8b966dc4886df1bffb0116b12f3cc5",
       "modified": false
-    },
-    {
-      "path": "skills/ontology-build/SKILL.md",
-      "sha256": "82fad9d68d49d398677861bb3eec3dda291488944585182a9be6dbb30739daea",
-      "size_bytes": 1923,
-      "origin": "pinned-source",
-      "source_path": "skills/ontology-build/SKILL.md",
-      "source_sha256": "20449c7b24e9615cd865986aefdc113b0a12b1ddbd13780e6856cb6329a89b82",
-      "normalized_source_sha256": "9d2cb86abf1185f223675b9be6939eb66428e619d4b77b9bc191ab083ca22023",
-      "modified": true
     },
     {
       "path": "skills/ontology-build/version.json",
@@ -2951,44 +3194,44 @@
       "modified": false
     },
     {
+      "path": "skills/ontology-consume/SKILL.md",
+      "sha256": "1c8a571c5439b4d11e6ab49bd0536ee835818f74b58564fbd3e6042d6ee1d198",
+      "size_bytes": 1594,
+      "origin": "pinned-source",
+      "source_path": "skills/ontology-consume/SKILL.md",
+      "source_sha256": "6dd6e49400bd09b2d483bd4bca4e8245e9206fca32eb470308f07bda3f47d1ff",
+      "normalized_source_sha256": "fef3101700a6533dea908d1660e33530c7922ffd47f96457220b8415271faae7",
+      "modified": true
+    },
+    {
       "path": "skills/ontology-consume/references/browse-ontology.md",
-      "sha256": "ebd5bb36cd4826ce443cb16e6ea57d11640d631c09393d536001c696f6fb30bb",
-      "size_bytes": 1883,
+      "sha256": "2de6e2030efecc012ba855f7913343132b23b25e47a0c190b7d9ee37a8cc4d10",
+      "size_bytes": 2149,
       "origin": "pinned-source",
       "source_path": "skills/ontology-consume/references/browse-ontology.md",
-      "source_sha256": "edb2a1a0b61de75bee5be3e36ee5500e24d7f0b086988b58f62c80112cb7b078",
-      "normalized_source_sha256": "ebd5bb36cd4826ce443cb16e6ea57d11640d631c09393d536001c696f6fb30bb",
+      "source_sha256": "028f75d3f0db5706006147ae87878e6ffb22ea2221358eebbd8524c991ab4eb5",
+      "normalized_source_sha256": "2de6e2030efecc012ba855f7913343132b23b25e47a0c190b7d9ee37a8cc4d10",
       "modified": false
     },
     {
       "path": "skills/ontology-consume/references/check-and-estimate.md",
-      "sha256": "4d5b5e80f4f9be4e5423f8eff7504499fa2d57dc566bad8e2611992817f8d45c",
-      "size_bytes": 1795,
+      "sha256": "317921f644c356e4588d1ae393a55b21b165f5c205896359b1530dcd0a39611f",
+      "size_bytes": 2069,
       "origin": "pinned-source",
       "source_path": "skills/ontology-consume/references/check-and-estimate.md",
-      "source_sha256": "9c367f2d5bf11c823d82cc462e23ef92686a88f35f5a23b7d1848b65c1966593",
-      "normalized_source_sha256": "4d5b5e80f4f9be4e5423f8eff7504499fa2d57dc566bad8e2611992817f8d45c",
+      "source_sha256": "7eb33e5384cf7053538ba256d80479a1ee9d74b027ab8040df236738a356829c",
+      "normalized_source_sha256": "317921f644c356e4588d1ae393a55b21b165f5c205896359b1530dcd0a39611f",
       "modified": false
     },
     {
       "path": "skills/ontology-consume/references/evidence-and-diff.md",
-      "sha256": "c98d61e7b95cbc3f87708c7728b827cf8d53a652c4ed312c2cf8c6ee4f3f3267",
-      "size_bytes": 1155,
+      "sha256": "14ce152df8eb8a3d07819b13455bde13748bc27735507caa935c0ae4fc24839e",
+      "size_bytes": 1081,
       "origin": "pinned-source",
       "source_path": "skills/ontology-consume/references/evidence-and-diff.md",
-      "source_sha256": "02d3faed061e3d55be65958c2544d5289daae7ad0c2626effa499d8b1d2cdde4",
-      "normalized_source_sha256": "c98d61e7b95cbc3f87708c7728b827cf8d53a652c4ed312c2cf8c6ee4f3f3267",
+      "source_sha256": "dd82fdd4e9b2fe4837e8dc3e37b017bac2426ba0dcadd7f2d29c494e47704f1f",
+      "normalized_source_sha256": "14ce152df8eb8a3d07819b13455bde13748bc27735507caa935c0ae4fc24839e",
       "modified": false
-    },
-    {
-      "path": "skills/ontology-consume/SKILL.md",
-      "sha256": "8556bc5662492ca8a1d829af6e99b257a210825e10e91b7afbb9f57ee87478df",
-      "size_bytes": 1814,
-      "origin": "pinned-source",
-      "source_path": "skills/ontology-consume/SKILL.md",
-      "source_sha256": "d021b63c9d1d280a6aa81dbcaa1affbbda0306cd02709ac026e68ae952b0bd33",
-      "normalized_source_sha256": "ee13125274c43006321705fedf2b3ea5f5eb022a705bcdef38d6a99823097b59",
-      "modified": true
     },
     {
       "path": "skills/ontology-consume/version.json",

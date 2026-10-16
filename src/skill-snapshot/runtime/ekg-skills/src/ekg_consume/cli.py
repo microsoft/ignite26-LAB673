@@ -11,7 +11,7 @@ from ekg_core.descriptors import resolve_current
 from ekg_core.telemetry import CONSUME_LOG_ENV, append_consume_event, consume_event
 from ekg_core.validation import validate_deployment_descriptor
 from .runtime import CapabilityError, capabilities
-from .service import graph_query, retrieve
+from .service import compact_graph_result, graph_query, retrieve
 
 PROG = "ekg-consume"
 DESCRIPTOR_ENV = "EKG_DESCRIPTOR"
@@ -35,9 +35,12 @@ def _parser():
     mode.add_argument("--graph", action="store_true", help="native graph traversal")
     mode.add_argument("--lexical", action="store_true", help="keyword retrieval only")
     query.add_argument("--depth", type=int, default=2, help="graph hops (1..3)")
-    query.add_argument("--top", type=int, default=5, help="graph seeds per hop (1..10)")
+    query.add_argument("--top", type=int, default=5,
+                       help="results (1..100 for documents; 1..10 for graph seeds)")
     query.add_argument("--fanout", type=int, default=20,
                        help="graph rows per edge query (1..50)")
+    query.add_argument("--detail", choices=("compact", "full"),
+                       help="graph result evidence detail (default: full)")
     query.add_argument("--telemetry-log", default=os.environ.get(CONSUME_LOG_ENV),
                        help="append a timing event per query to this JSONL file "
                             f"(env {CONSUME_LOG_ENV})")
@@ -50,8 +53,10 @@ def _descriptor(path: str | None) -> dict:
             path = str(resolve_current())
         except (FileNotFoundError, ValueError) as error:
             raise Blocked("DESCRIPTOR_INVALID", f"no current descriptor: {error}") from error
+    if not Path(path).expanduser().is_absolute():
+        raise Blocked("DESCRIPTOR_INVALID", "descriptor path must be absolute")
     try:
-        descriptor = json.loads(Path(path).read_text(encoding="utf-8"))
+        descriptor = json.loads(Path(path).expanduser().read_text(encoding="utf-8"))
     except (OSError, ValueError) as error:
         raise Blocked("DESCRIPTOR_INVALID", f"cannot read {path}: {error}") from error
     errors = validate_deployment_descriptor(descriptor)
@@ -83,11 +88,17 @@ def _run(args) -> dict:
     descriptor = _descriptor(args.descriptor)
     if args.command == "capabilities":
         return capabilities(descriptor)
+    if args.detail and not args.graph:
+        raise Blocked("INVALID_INPUT", "--detail is only valid with --graph")
     started = time.time()
     try:
-        result = (graph_query(descriptor, args.query, depth=args.depth, top=args.top,
-                              fanout=args.fanout) if args.graph
-                  else retrieve(descriptor, args.query, vector=not args.lexical))
+        if args.graph:
+            result = graph_query(descriptor, args.query, depth=args.depth, top=args.top,
+                                 fanout=args.fanout)
+            if args.detail == "compact":
+                result = compact_graph_result(result)
+        else:
+            result = retrieve(descriptor, args.query, top=args.top, vector=not args.lexical)
     except CapabilityError as error:
         raise Blocked("CAPABILITY_UNAVAILABLE", str(error)) from error
     except ValueError as error:

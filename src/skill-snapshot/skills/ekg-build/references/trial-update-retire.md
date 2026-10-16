@@ -2,33 +2,33 @@
 
 ## Use this path
 
-Use this path for three mutable follow-ons: an OWL trial build, an in-place update of an already published generation, or retirement of unbound generations.
+Use this path for three follow-ons: an OWL trial build, an in-place update of a published generation, or retirement of unbound generations.
 
 ## OWL trial
 
-Offer a trial by default when `ontology_mode` is `owl_file` and the user has not already declined one.
+Offer a 50-document trial by default when the ontology is `owl_file`; the user may skip it.
 
-1. Plan the trial from the same BuildSpec shape, but with the sample setting on the CLI surface.
-2. After exact approval, run `ekg-build apply` for the trial generation.
-3. Run `ekg-build trial-report` after synchronization. Report the short summary, zero-hit classes or predicates, and whether the decision is go or no-go.
-4. A trial is never publishable. Cleanup requires its own approved retire plan.
+1. `ekg-build plan --sample 50` with the same flags. It has its own plan ID and card.
+2. After exact approval, `ekg-build apply --sample 50 --plan-id <id> --confirm-writes`.
+3. After synchronization, `ekg-build trial-report --sample 50` (add `--tenant-id` and `--openai-resource-id` for a dollar estimate). Report the summary, zero-hit classes and predicates, and the go or no-go decision. The extrapolation is a range; rare classes can miss a small sample.
+4. After a go, save `trial-report --sample 50 --json > trial-report.json` and plan the full build without `--sample`, with a new `--build-journal` and `--trial-report trial-report.json`. Reusing the trial journal blocks with `BUILD_JOURNAL_IN_USE`.
+5. A trial is never publishable. Its resources stay until a separately approved retire plan.
 
 ## In-place update
 
-Use this only when documents changed but the published generation keeps the same ontology, models, extraction settings, and source location.
+Use only when documents changed and the ontology, models, extraction settings, and source location did not.
 
-1. Read the published descriptor and the new source manifest.
-2. After approval of the update plan ID, use `ekg-build update`.
-3. If update reports waiting or stopped, follow its single `next_step`. Re-running the same approved update resumes that exact plan.
-4. If the review says rebuild is required, stop using update and return to the normal build plan path.
+1. `ekg-build plan-update` with the published descriptor and the new source manifest.
+2. After `approved <plan-id>`, run `ekg-build update --plan-id <id> --confirm-writes`. It uses no new index slots.
+3. If it stops or waits, follow its one `next_step`; rerunning the same plan ID resumes.
+4. If the plan says "this needs a rebuild", return to a normal build plan.
 
-## Retire old generations
+## Retire generations
 
-1. List protected generations with `ekg-skills-ekg_build_generations`, passing every serving descriptor path that must stay protected.
-2. Retire only unbound generations after a separate CLI review with `ekg-build plan-retire`.
-3. Wait for `approved <plan-id>` before `ekg-build retire`.
-4. Deletion is conditional on the reviewed ETag set. Never claim a generation is safe to delete without the fresh generation listing.
+1. `ekg-build generations --descriptor <serving descriptor>` for every descriptor that must stay protected.
+2. `ekg-build plan-retire` for unbound generations only. Add `--storage-endpoint` and `--storage-resource-id` to include staged blobs, and show the blob prefix and count.
+3. After `approved <plan-id>`, run `ekg-build retire --plan-id <id> --confirm-writes`. Each delete is conditional on the ETag reviewed in the plan.
 
 ## Return
 
-Separate measured evidence from proposed cleanup. State what was only reviewed, what was actually updated or deleted, and what still needs explicit approval.
+Separate measured evidence from proposed cleanup. State what was reviewed, what was changed or deleted, and what still needs approval.

@@ -8,7 +8,7 @@
 
 ## Command
 
-`grounding-consume ready --index <name> --graph-name <graph name>` (MCP: `grounding-skills-grounding_consume_ready`).
+`grounding-consume ready --index <name> --graph-name <graph name>`.
 
 Result is `PASS` or `FAIL` with `checks[]`:
 

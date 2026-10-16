@@ -75,7 +75,7 @@ def _role_operations(spec: ConnectSpec, rows: list[dict[str, Any]]) -> list[dict
         "principal_object_id": row["principal_object_id"],
         "principal_type": row["principal_type"], "requires_approval": True,
         "command": _grant_command(spec, row),
-    } for row in rows if row["status"] != "assigned"]
+    } for row in rows if row["status"] != "assigned" and row.get("grant_recommended", True)]
 
 
 def plain(operation: dict[str, Any]) -> str:

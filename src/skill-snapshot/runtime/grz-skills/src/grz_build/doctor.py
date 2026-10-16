@@ -93,6 +93,5 @@ def run_doctor(args: argparse.Namespace, *, credential: Any | None = None, get: 
         ("naming_data_plane", naming_data_plane),
         ("naming_deployment", naming_deployment),
         ("naming_model_lifecycle", naming_model_lifecycle),
-        ("mcp_self_test", lambda: d.check_mcp_self_test(run)),
     ], ok_next_step=f"run {CLI} inspect with your source flags, then plan.")
     return d.report(result, account=d.account_or_none(account), current=d.current_build())

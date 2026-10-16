@@ -60,6 +60,10 @@ NEXT_STEPS: dict[str, str] = {
                             "`{prog} plan-resume`; never retry an unknown-outcome write.",
     "PROVISION_FAILED": "Run `{prog} inspect` with the same flags to see what exists, then "
                         "review `{prog} plan-resume` before any further write.",
+    "PUBLIC_DATA_STOPPED": "Run `{prog} inspect` with the same flags and review the local "
+                           "journal. Do not retry, resume or clean up automatically. "
+                           "Review a fresh isolated plan and obtain new exact approval "
+                           "before further provisioning; cleanup needs separate approval.",
     "SMOKE_FAILED": "Run `{prog} inspect` to confirm what exists, then review "
                     "`{prog} plan-smoke` again.",
     "CAPACITY_BLOCKED": "Resolve the blocker, then run `{prog} plan-capacity` again and "
@@ -103,15 +107,14 @@ NEXT_STEPS: dict[str, str] = {
     "GROUNDING_INDEX_NOT_FOUND": "Check the grounding index name and Search endpoint (the "
                                  "index must already exist; ekg-skills never creates it), "
                                  "then run `{prog} doctor` again.",
-    "DOCTOR_MODEL_ROLE": "Ask an owner of the model account to run `az role assignment create "
-                         "--assignee <your-object-id> --role \"Cognitive Services OpenAI User\" "
-                         "--scope {scope}`, then run `{prog} doctor` again.",
+    "DOCTOR_MODEL_ROLE": "Ask an owner to verify model-list authorization at {scope}: "
+                         "assigned role-definition permissions, groups, active PIM, conditions "
+                         "and deny policy. Do not infer a missing role or grant one automatically; "
+                         "any optional grant needs separate approval. Then run `{prog} doctor` again.",
     "DOCTOR_MODEL_ENDPOINT": "Pass --openai-endpoint with the account's https endpoint (as "
                              "shown by `ekg-provision connect`), then run `{prog} doctor` again.",
     "DOCTOR_MODEL_DEPLOYMENT": "Fix the deployment name (list them with `ekg-provision "
                                "connect`), then run `{prog} doctor` again.",
-    "DOCTOR_MCP": "Reinstall the plugin so `ekg-mcp --self-test` succeeds, then run "
-                  "`{prog} doctor` again.",
 }
 
 

@@ -1,34 +1,31 @@
 ---
 name: graph-choose
-description: 'Choose the right published graph or retrieval plugin for a question and its data shape, then state the first safe handoff. WHEN: "which graph plugin should I use", "I have documents and need multi-hop answers", "should this stay in Kusto". DO NOT USE FOR: writing graph queries or performing Azure changes.'
+description: 'Triage "I have X, I want to answer Y" to one graph or retrieval route (foundry-iq-skills, entity-skills, ekg-skills, grz-skills, ontology-skills, grounding-skills, azure-kusto-graph-skills) and name the first handoff. WHEN: "which graph skill should I use", "I have documents and need multi-hop answers", "which ontology option", "should this stay in Kusto". DO NOT USE FOR: running Azure commands, installs, writing graph queries or explaining the techniques (graph-guide).'
 license: MIT
 compatibility: Advisory only. Requires the user's current data shape and desired answer shape.
 metadata:
   author: Microsoft
-  version: "0.1.0-snapshot.0e44f94"
+  version: "0.0.0-snapshot"
 ---
 
 # Graph choose
 
-Ask only what is missing, decide once, then route. Load one reference at a time.
-
-This graph-only snapshot does not bundle `foundry-iq-skills` or
-`azure-kusto-graph-skills`; references to them describe external routes.
+Ask only what is missing, pick one row, say why in one sentence, then route.
 
 | Need | Load |
 |---|---|
-| Route table, ontology choice, and the planned entity stage | [Route table](references/route-table.md) |
-| Published plugin install or readiness checks | [Install and checks](references/install-and-checks.md) |
+| Route table, ontology option and rules of thumb | [Route table](references/route-table.md) |
+| Read-only checks, install and optional Apps | [Install and checks](references/install-and-checks.md) |
 
-## Questions to settle
+## Two questions
 
-- What do you have: documents, an OWL file, a Search index with chunk vectors, or data in Kusto or Azure Data Explorer?
-- What answer do you need: one passage, a multi-hop entity path, or corpus-wide themes?
+- What do you have: documents, an OWL file, a Search index with chunk vectors, a published GRZ generation, or Kusto data?
+- What answer do you need: one passage, a multi-hop path, or corpus-wide themes?
 
-## Shared rules
+## Rules
 
-- Pick one route and explain why in one sentence.
-- Available routes: `foundry-iq-skills`, `ekg-skills`, `grounding-skills`, `grz-skills`, `ontology-skills`, and `azure-kusto-graph-skills`.
-- Planned only: `entity-skills` (automated entity linking and extraction). Mention it as future work; give no install or command lines.
-- Never run installs, sign-ins, or Azure changes from this skill.
-- After the user approves the route, hand off to the first owning skill or published plugin.
+- Take a position; do not list every option.
+- Choose the CLI route first. Add optional Apps only when presentation is requested in a compatible host.
+- Never run installs, sign-ins or Azure commands. Run only read-only checks for the chosen route.
+- Name the tenant before any sign-in. Keep plan IDs and journal paths out unless asked.
+- After the user approves the route, hand off to its owning skill. Route agreement is not write approval: the leaf shows the exact card and waits for `approved <plan-id>`.

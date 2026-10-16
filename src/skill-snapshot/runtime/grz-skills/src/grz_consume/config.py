@@ -12,6 +12,7 @@ from grz_core.contracts import ContractError, Descriptor
 from grz_core.current import read_current
 
 from .service import ConsumeService
+from .endpoint import validate_search_endpoint
 
 AUTH_MODES = ("query-key", "entra")
 
@@ -25,8 +26,12 @@ class ConsumeConfig:
     query_key: str | None = None
     from_current: bool = False
 
-    def with_descriptor(self, path: str | Path | None) -> "ConsumeConfig":
-        return self if path is None else replace(self, descriptor=Path(path))
+
+def descriptor_endpoint(descriptor: Descriptor) -> str:
+    """Published sidecars live on the source Search service, not the prior binding."""
+    service = descriptor.source_service
+    return validate_search_endpoint(service if service.startswith("https://") else
+                                    f"https://{service}.search.windows.net")
 
 
 def _env_path(name: str) -> Path | None:

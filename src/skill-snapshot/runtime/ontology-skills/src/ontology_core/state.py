@@ -127,6 +127,9 @@ class StatePaths:
     def export_manifest(self, schema_id: str) -> Path:
         return self.exports_dir / f"export-manifest.{hashing.schema_hash12(schema_id)}.json"
 
+    def jsonld_export_manifest(self, schema_id: str) -> Path:
+        return self.exports_dir / f"jsonld-export-manifest.{hashing.schema_hash12(schema_id)}.json"
+
     def judge_request(self, plan_id: str, round_: int, sample: int = 1) -> Path:
         return self.run_dir(plan_id) / f"{judge_call(round_, sample)}.request.json"
 

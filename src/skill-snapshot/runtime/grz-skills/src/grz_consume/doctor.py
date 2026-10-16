@@ -31,7 +31,7 @@ def check_sidecar(config: ConsumeConfig, signed_in: bool, descriptor_ok: bool = 
 
 
 def run_doctor(config: ConsumeConfig, *, which: Callable[[str], str | None] = shutil.which,
-               run: d.Runner = d._run, self_test: Callable[[], d.Check] | None = None) -> dict[str, Any]:
+               run: d.Runner = d._run) -> dict[str, Any]:
     seen: dict[str, d.Check] = {}
 
     def remember(name: str, check: Callable[[], d.Check]) -> Callable[[], d.Check]:
@@ -58,7 +58,6 @@ def run_doctor(config: ConsumeConfig, *, which: Callable[[str], str | None] = sh
         ("source_reader", lambda: d.skip("source_reader", "consume reads only the sidecar")),
         ("sidecar", lambda: check_sidecar(config, passed("azure_signin"),
                                                 config.descriptor is None or passed("descriptor"))),
-        ("mcp_self_test", self_test or (lambda: d.check_mcp_self_test(run))),
     ], ok_next_step=f"run {CLI} status with the same connection flags.")
     return d.report(result, account=d.account_or_none(account), current=current_of(config))
 

@@ -45,6 +45,14 @@ def validate_deployment_descriptor(value: Any) -> list[str]:
     elif any(not isinstance(key, str) or not isinstance(item, str)
              for key, item in endpoints.items()):
         errors.append("endpoints must map names to strings")
+    else:
+        ontology = value.get("ontology")
+        mode = ontology.get("mode") if isinstance(ontology, dict) else None
+        api_version = endpoints.get("search_api_version")
+        if mode == "inline_jsonld" and api_version != "2026-11-01-preview":
+            errors.append("inline_jsonld ontology requires Search 2026-11-01-preview")
+        elif api_version == "2026-11-01-preview" and mode != "inline_jsonld":
+            errors.append("Search 2026-11-01-preview requires inline_jsonld ontology")
     _validate_source_provenance(value, endpoints, errors)
     return errors
 

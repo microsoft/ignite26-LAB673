@@ -7,6 +7,9 @@ from typing import Any
 from urllib.parse import unquote, urlparse
 
 from grz_core.contracts import ContractError
+from .endpoint import validate_search_endpoint
+
+SEARCH_API_VERSION = "2026-04-01"
 
 try:
     from azure.core.pipeline.policies import SansIOHTTPPolicy
@@ -18,11 +21,12 @@ except ImportError:  # pragma: no cover
 class QueryOnlyPolicy(SansIOHTTPPolicy):
     """Client-side guard that permits only document reads on one physical index."""
 
-    def __init__(self, physical_index: str, auth: str = "entra"):
+    def __init__(self, physical_index: str, auth: str = "entra", *, endpoint: str | None = None):
         if not isinstance(physical_index, str) or not physical_index:
             raise ContractError("QUERY_ONLY_VIOLATION", "Physical index binding is required")
         self.physical_index = physical_index
         self.auth = auth
+        self.endpoint = validate_search_endpoint(endpoint) if endpoint is not None else None
 
     def on_response(self, request: Any, response: Any) -> None:
         status = getattr(getattr(response, "http_response", response), "status_code", None)
@@ -39,7 +43,10 @@ class QueryOnlyPolicy(SansIOHTTPPolicy):
         http = getattr(request, "http_request", request)
         method = str(getattr(http, "method", "")).upper()
         url = str(getattr(http, "url", ""))
-        path = unquote(urlparse(url).path)
+        parsed = urlparse(url)
+        if self.endpoint is not None and f"{parsed.scheme}://{parsed.netloc}" != self.endpoint:
+            raise ContractError("QUERY_ONLY_VIOLATION", "Request is not bound to the configured Search origin")
+        path = unquote(parsed.path)
         lowered = path.lower()
         if "/aliases" in lowered or lowered.rstrip("/").endswith("/indexes"):
             raise ContractError("QUERY_ONLY_VIOLATION", "Admin Search paths are not permitted")
@@ -59,21 +66,17 @@ class QueryOnlyPolicy(SansIOHTTPPolicy):
 
 
 
-def _select_without_vectors() -> list[str]:
+def _select_without_vectors(schema_version: str = "grz-sidecar-v1") -> list[str]:
     from grz_adapters.sidecar_schema import load_sidecar_schema
 
-    return [field["name"] for field in load_sidecar_schema()["fields"] if field["name"] != "chunk_vector"]
+    excluded = {"chunk_vector"}
+    if schema_version == "grz-sidecar-v1":
+        excluded.add("community_ids")
+    return [field["name"] for field in load_sidecar_schema()["fields"] if field["name"] not in excluded]
 
 
 def _search(client: Any, **kwargs: Any) -> Any:
-    try:
-        return client.search(**kwargs)
-    except TypeError as exc:
-        if "select" in kwargs and "unexpected keyword" in str(exc):
-            kwargs = dict(kwargs)
-            kwargs.pop("select", None)
-            return client.search(**kwargs)
-        raise
+    return client.search(**kwargs)
 
 
 def _literal(value: str) -> str:
@@ -90,8 +93,7 @@ class AzureSearchReadStore:
     """
 
     def __init__(self, endpoint: str, credential: Any, page_size: int = 500, *, policies: list[Any] | None = None):
-        if not endpoint.startswith("https://"):
-            raise ContractError("ENDPOINT_INVALID", "Azure endpoint must use HTTPS")
+        endpoint = validate_search_endpoint(endpoint)
         if type(page_size) is not int or not 1 <= page_size <= 1000:
             raise ContractError("PAGE_SIZE_INVALID", "Azure page size must be 1..1000")
         try:
@@ -103,6 +105,32 @@ class AzureSearchReadStore:
         self.page_size = page_size
         self._client_type = SearchClient
         self.policies = list(policies or [])
+        self._schema_versions: dict[tuple[str, str], str] = {}
+
+    def bind_schema(self, physical_index: str, generation_id: str, schema_version: str) -> None:
+        from grz_core.contracts import SIDECAR_VERSIONS
+
+        if schema_version not in SIDECAR_VERSIONS:
+            raise ContractError("SCHEMA_UNSUPPORTED", "Unsupported sidecar projection")
+        if not hasattr(self, "_schema_versions"):
+            self._schema_versions = {}
+        key = (physical_index, generation_id)
+        if key in self._schema_versions and self._schema_versions[key] != schema_version:
+            raise ContractError("SIDECAR_INTEGRITY_FAILED", "Published schema changed during browsing")
+        self._schema_versions[key] = schema_version
+
+    def _select(self, physical_index: str, generation_id: str, kind: str) -> list[str]:
+        if kind == "manifest":
+            return ["id", "sort_key", "kind", "generation_id", "visibility", "payload"]
+        version = getattr(self, "_schema_versions", {}).get((physical_index, generation_id), "grz-sidecar-v1")
+        return _select_without_vectors(version)
+
+    def _client(self, physical_index: str) -> Any:
+        return self._client_type(
+            endpoint=self.endpoint, index_name=physical_index, credential=self.credential,
+            audience="https://search.azure.com", api_version=SEARCH_API_VERSION, permit_redirects=False,
+            per_call_policies=[*self.policies, QueryOnlyPolicy(physical_index, endpoint=self.endpoint)],
+        )
 
     def _query(
         self, physical_index: str, kind: str, generation_id: str, *,
@@ -128,17 +156,14 @@ class AzureSearchReadStore:
             where += f" and level eq {level}"
         if after is not None:
             where += f" and sort_key gt {_literal(after)}"
-        kwargs = {"endpoint": self.endpoint, "index_name": physical_index, "credential": self.credential, "audience": "https://search.azure.com"}
-        if self.policies:
-            kwargs["per_call_policies"] = self.policies
-        client = self._client_type(**kwargs)
+        client = self._client(physical_index)
         try:
             page = [
                 {key: val for key, val in dict(item).items()
                  if not key.startswith("@search.") and val is not None and val != []}
                 for item in _search(client,
                     search_text="*", filter=where, order_by=["sort_key asc"],
-                    top=limit, include_total_count=False, select=_select_without_vectors(),
+                    top=limit, include_total_count=False, select=self._select(physical_index, generation_id, kind),
                 )
             ]
         finally:
@@ -174,10 +199,7 @@ class AzureSearchReadStore:
             if type(level) is not int or level < 0:
                 raise ContractError("LEVEL_INVALID", "level must be a nonnegative integer")
             where += f" and level eq {level}"
-        kwargs = {"endpoint": self.endpoint, "index_name": physical_index, "credential": self.credential, "audience": "https://search.azure.com"}
-        if self.policies:
-            kwargs["per_call_policies"] = self.policies
-        client = self._client_type(**kwargs)
+        client = self._client(physical_index)
         try:
             result = _search(client,
                 search_text="*",
@@ -227,17 +249,15 @@ class AzureSearchReadStore:
             f"kind eq 'evidence' and generation_id eq {_literal(generation_id)} and ("
             + " or ".join(f"chunk_id eq {_literal(chunk)}" for chunk in chunk_ids) + ")"
         )
-        kwargs = {"endpoint": self.endpoint, "index_name": physical_index, "credential": self.credential, "audience": "https://search.azure.com"}
-        if self.policies:
-            kwargs["per_call_policies"] = self.policies
-        client = self._client_type(**kwargs)
+        client = self._client(physical_index)
         try:
             rows = [
                 {key: val for key, val in dict(item).items()
                  if not key.startswith("@search.") and val is not None and val != []}
                 for item in _search(client,
                     search_text="*", filter=where, order_by=["chunk_id asc"],
-                    top=len(chunk_ids) + 1, include_total_count=False, select=_select_without_vectors(),
+                    top=len(chunk_ids) + 1, include_total_count=False,
+                    select=self._select(physical_index, generation_id, "evidence"),
                 )
             ]
         finally:
@@ -263,10 +283,7 @@ class AzureSearchReadStore:
             f"kind eq 'evidence' and generation_id eq {_literal(generation_id)} "
             f"and community_ids/any(c: c eq {_literal(community_id)})"
         )
-        kwargs = {"endpoint": self.endpoint, "index_name": physical_index, "credential": self.credential, "audience": "https://search.azure.com"}
-        if self.policies:
-            kwargs["per_call_policies"] = self.policies
-        client = self._client_type(**kwargs)
+        client = self._client(physical_index)
         try:
             rows = []
             # Pure vector query: adding search_text would make it hybrid and return RRF scores, not cosine.

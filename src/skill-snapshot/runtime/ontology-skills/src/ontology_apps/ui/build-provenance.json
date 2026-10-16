@@ -1,0 +1,31 @@
+{
+  "sourceCommit": "4341a61cdb3390e3e14bdb451ad2f50df2e14d75",
+  "sourceDirty": false,
+  "nodeVersion": "v22.22.0",
+  "platform": "win32",
+  "architecture": "x64",
+  "lockfileSha256": "fa214927c06137bd218220f427f52717b5dbe35ef3bf858b5a4aae7f6fdac05c",
+  "buildCommand": "npm ci && npm run build",
+  "resources": {
+    "evidence": {
+      "rawHtmlBytes": 475395,
+      "gzipHtmlBytes": 136837,
+      "gzipJsCssBytes": 136644,
+      "budgetBytes": 204800,
+      "sha256": "d4d8604dd13204fe42705f328fda526f3a95f78146f131065a95e990d0902d26",
+      "graphDependencies": 0
+    },
+    "ontology": {
+      "rawHtmlBytes": 1894693,
+      "gzipHtmlBytes": 543534,
+      "gzipJsCssBytes": 543360,
+      "budgetBytes": 1048576,
+      "sha256": "ff637d544359badb6a4f9bf4da7e6450ad665b53aaa4dcfad9036f1d1fce14fb",
+      "graphDependencies": 162
+    }
+  },
+  "notices": {
+    "evidence.THIRD_PARTY_NOTICES.txt": "dcb4e6a0c780816ba22b63de05822779d09d943b4b245a2fc2aa8c18016b2fa1",
+    "ontology.THIRD_PARTY_NOTICES.txt": "30e4be45fc7341c0bf6fdfba5007de8914f4da96cc40fb0a11b81c93ec7f8484"
+  }
+}

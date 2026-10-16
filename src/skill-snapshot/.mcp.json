@@ -15,26 +15,14 @@
     "ekg-skills": {
       "command": "uv",
       "args": [
+        "--directory",
+        "/",
         "tool",
         "run",
         "--isolated",
         "--from",
-        "${CLAUDE_PLUGIN_ROOT}/runtime/ekg-skills[build,consume,provision]",
-        "ekg-mcp"
-      ],
-      "env": {
-        "UV_INDEX_URL": "https://pypi.org/simple/"
-      }
-    },
-    "grounding-skills": {
-      "command": "uv",
-      "args": [
-        "tool",
-        "run",
-        "--isolated",
-        "--from",
-        "${CLAUDE_PLUGIN_ROOT}/runtime/grounding-skills[parquet]",
-        "grounding-mcp"
+        "${CLAUDE_PLUGIN_ROOT}/runtime/ekg-skills[apps,consume]",
+        "ekg-apps"
       ],
       "env": {
         "UV_INDEX_URL": "https://pypi.org/simple/"
@@ -43,28 +31,16 @@
     "grz-skills": {
       "command": "uv",
       "args": [
+        "--directory",
+        "/",
         "tool",
         "run",
         "--isolated",
         "--python",
         "3.12",
         "--from",
-        "${CLAUDE_PLUGIN_ROOT}/runtime/grz-skills[azure,embed]",
+        "${CLAUDE_PLUGIN_ROOT}/runtime/grz-skills[azure,embed,apps]",
         "grz-mcp"
-      ],
-      "env": {
-        "UV_INDEX_URL": "https://pypi.org/simple/"
-      }
-    },
-    "ontology-skills": {
-      "command": "uv",
-      "args": [
-        "tool",
-        "run",
-        "--isolated",
-        "--from",
-        "${CLAUDE_PLUGIN_ROOT}/runtime/ontology-skills",
-        "ontology-mcp"
       ],
       "env": {
         "UV_INDEX_URL": "https://pypi.org/simple/"
