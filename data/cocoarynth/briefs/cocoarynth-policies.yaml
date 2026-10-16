@@ -1,0 +1,135 @@
+index: cocoarynth-policies
+description: Company-wide policies, guides and reference material.
+
+briefs:
+  - id: label-claims-policy
+    title: "POL-03 Label and marketing claims policy"
+    type: policy
+    language: en
+    date: 2026-01-15
+    author: marcus-bell
+    audience: All staff
+    pages: 3
+    purpose: Rules for what Cocoarynth may print on wrappers and say in marketing. Used as the Part A file-source document.
+    entities: [origins.certifications, production.products]
+    content:
+      - Single-origin claim - all cocoa from one country and region; may come from several farms.
+      - Farm names on wrappers only when every contributing farm is listed.
+      - Organic seal - allowed only if the supplier's organic certificate is valid on the packing date and a transaction certificate for the bean lot is on file; expired or pending renewal means no seal.
+      - Other claims - direct trade, percentages, "fine flavor"; prohibited health claims.
+      - Who approves wrapper proofs.
+    visuals: []
+    avoid: [Names of specific suppliers whose certificates have lapsed]
+
+  - id: data-sharing-policy
+    title: "POL-05 Traceability data-sharing policy"
+    type: policy
+    language: en
+    date: 2026-02-01
+    author: jo-park
+    audience: All staff
+    pages: 3
+    purpose: What traceability details can be shared with retailers and customers.
+    entities: [retail.retailers]
+    content:
+      - Shareable - origin country and region, supplier name, farm names, harvest year, batch code.
+      - Not shareable - farmer personal names, phone numbers, addresses, GPS coordinates, prices paid.
+      - The same rules apply to every customer and retailer.
+      - How to answer customer "which farm?" questions.
+    visuals: []
+    avoid: []
+
+  - id: storage-handling-guide
+    title: "Chocolate storage and handling guide"
+    type: guide
+    language: en
+    date: 2025-10-01
+    author: marcus-bell
+    audience: Staff, carriers and retailers
+    pages: 3
+    purpose: Explains safe storage temperatures and what bloom is.
+    entities: [retail.storage_guidance]
+    content:
+      - Store and ship at 15–20 °C, under 60% relative humidity, away from odors.
+      - Bloom risk rises above 25 °C; fat bloom makes bars look grey, streaky or dusty; it is safe to eat but bars cannot be sold as first quality.
+      - Sugar bloom from condensation (cold to warm).
+      - Carrier rules - no unrefrigerated staging.
+    visuals: [{kind: photo, asset: bloomed-bar}, {kind: photo, asset: glossy-bar}, {kind: photo, asset: sugar-bloom-bar}]
+    avoid: [The July incident]
+
+  - id: sourcing-principles
+    title: "Cocoarynth sourcing principles"
+    type: policy
+    language: en
+    date: 2025-09-01
+    author: ana-ortega
+    audience: Public and staff
+    pages: 2
+    purpose: Why Cocoarynth pays above the commodity price and how it judges value.
+    entities: [commercial.market_reference]
+    content:
+      - Pay for flavor and quality, not volume; long-term relationships; premiums paid to farmers.
+      - Value test - a higher bean price must be justified by flavor (panel results) and by customers' willingness to pay.
+    visuals: []
+    avoid: [Specific prices]
+
+  - id: bean-quality-specification
+    title: "SPEC-01 Cocoa bean quality specification for suppliers"
+    type: policy
+    language: en
+    date: 2026-01-05
+    author: marcus-bell
+    audience: Suppliers
+    pages: 2
+    purpose: The quality terms written into every supply contract.
+    entities: [beans.receiving_limits, commercial.contracts]
+    content:
+      - Moisture, cut-test and off-flavor limits.
+      - Sample-match clause - Cocoarynth may reject a lot that does not taste like the approved sample, with full credit.
+      - Drying guidance - keep beans away from smoke, fuel and chemicals.
+    visuals: []
+    avoid: []
+
+  - id: product-launch-process
+    title: "Product launch process"
+    type: procedure
+    language: en
+    date: 2025-06-01
+    author: talia-brooks
+    audience: Sales, Production, Quality
+    pages: 2
+    purpose: Stage gates for new and limited-edition bars.
+    entities: []
+    content:
+      - Gates - recipe approval, released beans, production, packaging, retailer notice at least four weeks before launch.
+      - Production may not start until the bean lot is released by Quality.
+    visuals: []
+    avoid: []
+
+  - id: glossary
+    title: "Cocoarynth glossary"
+    type: reference
+    language: en
+    date: 2026-03-01
+    author: jo-park
+    audience: New staff
+    pages: 2
+    purpose: Plain-language definitions for terms used across Cocoarynth records.
+    entities: []
+    content: [Bean lot, batch, wrapper lot code, cut test, slaty, mouldy, bloom, landed cost, sample match, single origin, transaction certificate, sell-in.]
+    visuals: []
+    avoid: []
+
+  - id: org-chart
+    title: "Cocoarynth organization chart"
+    type: reference
+    language: en
+    date: 2026-07-01
+    author: jo-park
+    audience: All staff
+    pages: 1
+    purpose: Who does what at Cocoarynth and key external contacts.
+    entities: [company.people, company.partners]
+    content: [Departments and leads; supplier, carrier, lab and certifier contacts by role (no phone numbers or emails).]
+    visuals: [{kind: diagram, asset: org-chart}]
+    avoid: []

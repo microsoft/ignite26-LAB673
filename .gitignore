@@ -430,5 +430,6 @@ FodyWeavers.xsd
 
 .azure/
 .venv/
+.venv-*/
 __pycache__/
 *.pyc

@@ -1,0 +1,64 @@
+{
+  "currency": "USD",
+  "price_basis": "Landed cost per kg of dried beans delivered to the Portland factory: price paid to the supplier plus export, freight, import and handling fees.",
+  "market_reference": {
+    "description": "Fictional average world commodity price for cocoa beans, USD per kg, used for comparison only.",
+    "by_year": {"2024": 7.40, "2025": 7.90, "2026": 5.20}
+  },
+  "contracts": [
+    {"id": "CT-RC-2026", "supplier": "rio-claro", "year": 2026, "price_landed_usd_kg": 11.20, "volume_kg": 4000, "terms": "Fixed price for the season; quality bonus of USD 0.30/kg paid to members when cut test shows at least 80% well fermented.", "sample_match": true},
+    {"id": "CT-AR-2026", "supplier": "akwapim-ridge", "year": 2026, "price_landed_usd_kg": 9.40, "volume_kg": 3000, "terms": "Fixed price; community premium of USD 0.25/kg paid to the association for drying-mat frames.", "sample_match": true},
+    {"id": "CT-NH-2026", "supplier": "nuevo-horizonte", "year": 2026, "price_landed_usd_kg": 10.60, "volume_kg": 2000, "terms": "Organic premium of USD 0.40/kg applies only while the cooperative's organic certificate is valid.", "sample_match": true},
+    {"id": "CT-TS-2026", "supplier": "tsaravola", "year": 2026, "price_landed_usd_kg": 13.80, "volume_kg": 2400, "terms": "Estate price includes fermentation and drying on site; two shipments a year.", "sample_match": true},
+    {"id": "CT-LV-2026", "supplier": "loma-verde", "year": 2026, "price_landed_usd_kg": 10.10, "volume_kg": 360, "terms": "Trial lot. Cocoarynth may reject and receive full credit if the lot does not match the approved sample.", "sample_match": true}
+  ],
+  "prices_landed_usd_kg": {
+    "ecuador":            {"2024": 8.60,  "2025": 10.40, "2026": 11.20},
+    "ghana":              {"2024": 7.30,  "2025": 8.90,  "2026": 9.40},
+    "peru":               {"2024": 8.80,  "2025": 10.10, "2026": 10.60},
+    "madagascar":         {"2024": 11.50, "2025": 12.90, "2026": 13.80},
+    "dominican-republic": {"2026": 10.10}
+  },
+  "purchases_kg": {
+    "ecuador":            {"2024": 4200, "2025": 4600, "2026": 3900},
+    "ghana":              {"2024": 3100, "2025": 3300, "2026": 2900},
+    "peru":               {"2024": 2400, "2025": 2200, "2026": 1900},
+    "madagascar":         {"2024": 1800, "2025": 2100, "2026": 2300},
+    "dominican-republic": {"2026": 360}
+  },
+  "sell_in_units_2026": {
+    "months": ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep"],
+    "by_product_retailer": {
+      "EC72": {
+        "larkspur-market": [180, 170, 190, 200, 210, 220, 230, 220, 210],
+        "cacao-cabinet":   [60, 55, 60, 65, 70, 70, 75, 80, 240],
+        "pantry-lane":     [210, 190, 200, 220, 230, 240, 300, 260, 400],
+        "steeple-saucer":  [120, 120, 130, 140, 150, 150, 400, 160, 160],
+        "hoshizora-foods": [0, 0, 300, 0, 0, 450, 0, 0, 600]
+      },
+      "EC85": {
+        "cacao-cabinet":   [30, 30, 35, 35, 40, 40, 40, 45, 50],
+        "pantry-lane":     [90, 85, 90, 95, 100, 100, 105, 110, 150]
+      },
+      "GH68": {
+        "larkspur-market": [150, 140, 160, 170, 180, 190, 960, 160, 170],
+        "pantry-lane":     [160, 150, 160, 170, 170, 180, 300, 180, 190],
+        "steeple-saucer":  [140, 140, 150, 150, 160, 170, 600, 170, 170]
+      },
+      "PE70": {
+        "larkspur-market": [90, 85, 95, 100, 100, 105, 110, 100, 95],
+        "cacao-cabinet":   [40, 40, 45, 45, 50, 50, 50, 50, 120],
+        "pantry-lane":     [110, 100, 110, 110, 115, 120, 120, 115, 200]
+      },
+      "MG70": {
+        "cacao-cabinet":   [140, 150, 160, 170, 180, 190, 200, 210, 300],
+        "pantry-lane":     [130, 135, 140, 150, 160, 170, 180, 185, 195],
+        "hoshizora-foods": [0, 0, 800, 0, 0, 1000, 0, 0, 1200]
+      },
+      "MGNB": {
+        "cacao-cabinet":   [0, 0, 0, 0, 0, 0, 0, 0, 360]
+      }
+    },
+    "notes": "July GH68 Larkspur figure includes the 480-bar replacement shipment. Hoshizora orders arrive quarterly. MGNB September figure is pre-launch stock for the 1 October launch."
+  }
+}

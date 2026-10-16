@@ -1,0 +1,81 @@
+# Visual assets referenced by briefs. Charts are drawn from world data; photos come from MAI-Image-2.5
+# (1248x832 landscape or 1024x1024 square, no people/text/logos unless stated) or Wikimedia Commons CC0 only.
+# `derived` assets start from another asset and add code-drawn text (lot labels) or a scanned-paper effect.
+
+charts:
+  - {name: logger-04, data: retail.loggers.LOGGER-04, kind: line, notes: "Air °C vs time; shaded 15–20 °C recommended band; dashed 25 °C bloom-risk line."}
+  - {name: panel-overall, data: sensory.panels.PANEL-2026-09, kind: horizontal_bar, notes: "Overall score per origin, value labels on bars."}
+  - {name: panel-radar-madagascar-vs-ghana, data: sensory.panels.PANEL-2026-09, kind: radar, notes: "Seven attributes, two series."}
+  - {name: panel-radar-all, data: sensory.panels.PANEL-2026-09, kind: small_multiples_radar, notes: "One small radar per origin."}
+  - {name: redry-moisture-mg26-l02, data: beans.lots.MG26-L02, kind: line, notes: "Daily moisture checks 3–19 Aug falling from 8.6% to 7.1%; 7.5% limit line. Intermediate points authored in the brief."}
+  - {name: landed-price-by-origin, data: commercial.prices_landed_usd_kg, kind: grouped_bar, notes: "2024–2026 by origin, world reference as a line."}
+  - {name: purchases-by-origin, data: commercial.purchases_kg, kind: stacked_bar, notes: "kg per year by origin."}
+  - {name: sellin-by-product-2026, data: commercial.sell_in_units_2026, kind: stacked_bar, notes: "Monthly units by product, all retailers."}
+  - {name: sellin-mg70-by-retailer, data: commercial.sell_in_units_2026, kind: line, notes: "MG70 monthly units per retailer."}
+  - {name: margin-per-bar, data: [production.products, commercial.prices_landed_usd_kg], kind: bar, notes: "Wholesale price minus bean cost per bar, 2026."}
+  - {name: cut-test-summary-2026, data: beans.lots, kind: stacked_horizontal_bar, notes: "Cut-test categories per lot (300 beans)."}
+
+maps:
+  - {name: origins-world-map, source: code, notes: "Drawn in code (no external map data): equirectangular grid, shaded cacao belt 20°N–20°S, origin markers and Portland labeled."}
+
+diagrams:
+  - {name: org-chart, data: [company.people, company.departments], notes: "Boxes drawn in code; Cocoarynth staff only, external contacts as a side list."}
+
+photos:
+  - {name: fermentation-boxes, source: mai, status: generated}
+  - {name: bloomed-bar, source: mai, status: generated}
+  - name: wrapper-back-shelf
+    source: mai
+    prompt: "Phone photo looking down at the back of a single chocolate bar wrapped in plain matte brown kraft paper, rectangular bar shape with neatly folded paper ends visible at the left and right, the back of the wrapper is completely blank with no printing, lying flat and straight on a grey metal storage shelf in a grocery store back room, a cardboard case partly visible at the edge, cool fluorescent light, no text, no labels, no logos, no people"
+  - name: wrapper-back-counter
+    source: mai
+    prompt: "Phone photo looking down at the back of a single chocolate bar wrapped in plain matte brown kraft paper, rectangular bar shape with neatly folded paper ends visible at the left and right, the back of the wrapper is completely blank with no printing, lying flat and straight on a light wooden kitchen counter next to two broken squares of dark chocolate, warm natural window light, no text, no labels, no logos, no people"
+  - name: glossy-bar
+    source: mai
+    prompt: "Close-up product photograph of a dark chocolate bar with a smooth, glossy, even brown surface, partly unwrapped from plain brown kraft paper, on a white quality-lab bench, neutral daylight, no text, no logos, no people"
+  - name: sugar-bloom-bar
+    source: mai
+    prompt: "Extreme close-up product photograph of a dark chocolate bar with sugar bloom: the whole surface is covered in a dry, rough, powdery white dusting and tiny white speckles like fine frost, matte and gritty rather than streaky or greasy, a few droplet-shaped spots where condensation dried, partly unwrapped from plain brown kraft paper on a white quality-lab bench, neutral daylight, no text, no logos, no people"
+  - name: buffer-strip-rice-paddy
+    source: mai
+    prompt: "Documentary photograph of the edge of a small cacao plot in the Peruvian Amazon foothills: young cacao trees under Inga shade separated from a flooded green rice paddy by a very narrow grassy strip only a few steps wide, no hedge, overcast light, no people, no text"
+  - name: inga-hedge-planting
+    source: mai
+    prompt: "Documentary photograph of a newly planted row of young Inga tree seedlings with bamboo stakes forming a hedge along the edge of a cacao plot, a rice paddy in the background, Peruvian Amazon, soft morning light, no people, no text"
+  - name: dryer-chimney-racks
+    source: mai
+    prompt: "Documentary photograph on a small Dominican cacao farm: wooden drying racks covered with brown cacao beans beside a small brick wood-fired dryer whose metal chimney releases grey smoke that drifts over the racks, afternoon light, tropical vegetation, no people, no text"
+  - name: relocated-racks
+    source: mai
+    prompt: "Documentary photograph of wooden cacao drying racks with brown beans in an open sunny yard on a Dominican farm, a small brick dryer with a tall chimney visible far in the background, clear sky, no people, no text"
+  - name: greenhouse-drying-rain
+    source: mai
+    prompt: "Documentary photograph of cacao beans drying on raised wooden beds inside a plastic-covered greenhouse dryer on a Madagascar estate, heavy rain streaking down outside, open uncovered beds beside it partly covered with tarps, lush green trees, no people, no text"
+  - name: damp-jute-sacks
+    source: mai
+    prompt: "Photograph of seven stacked jute sacks of cocoa beans on a wooden pallet in a warehouse receiving area, the outer jute visibly darker and damp in patches, fluorescent light, a moisture meter lying on top, no people, no readable text, no logos"
+  - name: conditioning-room-trays
+    source: mai
+    prompt: "Photograph of cocoa beans spread in shallow perforated trays on steel racks in a small, clean, dehumidified factory conditioning room with a wall-mounted dehumidifier, cool light, no people, no readable text"
+  - name: overflow-bay
+    source: mai
+    prompt: "Photograph of a large open overflow bay in a regional truck depot in summer: a single shrink-wrapped pallet of cardboard cases sits on a concrete floor near an open roll-up door with bright hot sunlight outside, a small temperature logger clipped to the pallet, no people, no readable text, no logos"
+  - name: cacao-pods-ecuador
+    source: mai
+    prompt: "Documentary photograph of ripe yellow-orange cacao pods growing on the trunk of a cacao tree under mixed banana and tree shade on a coastal Ecuador farm, soft light, no people, no text"
+  - name: heap-fermentation-ghana
+    source: mai
+    prompt: "Documentary photograph of a cacao heap fermentation on a Ghanaian farm: a mound of pale fresh cacao beans on banana leaves partly covered with more banana leaves, red earth, plantain trees behind, no people, no text"
+  - name: solar-dryer-peru
+    source: mai
+    prompt: "Documentary photograph of a solar dryer for cacao in the Peruvian Amazon: a long tunnel of clear plastic sheeting over raised mesh beds of brown cacao beans, green hills behind, no people, no text"
+  - name: tasting-booths
+    source: mai
+    prompt: "Photograph of a small sensory evaluation room with white partitioned tasting booths, each with a tray holding three small squares of dark chocolate in paper cups, glasses of water and a scoring sheet, cool neutral light, no people, no readable text"
+
+derived:
+  - {name: wrapper-back-gh26-0706, from: wrapper-back-shelf, batch: GH26-0706, quad: [[400, 287], [941, 285], [972, 526], [381, 527]], notes: "Printed back panel plus inkjet lot code, warped onto the wrapper."}
+  - {name: wrapper-back-ec26-0811, from: wrapper-back-counter, batch: EC26-0811, quad: [[242, 318], [849, 316], [869, 532], [224, 536]], notes: "Printed back panel plus inkjet lot code, warped onto the wrapper."}
+  - {name: ticket-scans, from: html, effect: scanned, notes: "Collection tickets T-0402, T-0417, T-0418: printed form plus Marisol Vega's handwriting (Caveat; Kalam for codes), farmer signatures (Nothing You Could Do); T-0418 water-stained."}
+  - {name: field-notes-scan, from: code, effect: scanned, notes: "Notebook page in Yanelis Peña's handwriting (Reenie Beanie)."}
+  - {name: depot-log-scan, from: html, effect: scanned, notes: "Riverbend RD-7 form; Dana Whitfield (Shadows Into Light), M.R. (Kalam, black), heat advisory in red marker."}

@@ -1,0 +1,99 @@
+{
+  "retailers": [
+    {"id": "larkspur-market", "name": "Larkspur Market", "kind": "regional_grocer", "location": "Spokane, Washington, USA", "stores": 6, "contact": "priya-raman", "since": 2021},
+    {"id": "cacao-cabinet", "name": "The Cacao Cabinet", "kind": "specialty_shop", "location": "San Francisco, California, USA", "stores": 1, "contact": "mei-lindqvist", "since": 2020},
+    {"id": "pantry-lane", "name": "Pantry Lane", "kind": "online_marketplace", "location": "Reno, Nevada, USA (fulfillment)", "stores": 0, "contact": null, "since": 2022},
+    {"id": "steeple-saucer", "name": "Steeple & Saucer Cafés", "kind": "cafe_group", "location": "Seattle, Washington, USA", "stores": 8, "contact": "owen-gallagher", "since": 2023},
+    {"id": "hoshizora-foods", "name": "Hoshizora Foods", "kind": "overseas_distributor", "location": "Osaka, Japan", "stores": 0, "contact": "aiko-tanabe", "since": 2024}
+  ],
+  "shipments": [
+    {
+      "id": "SHP-2607-022", "retailer": "steeple-saucer", "carrier": "northwind", "route": "Portland to Seattle, direct",
+      "lines": [{"batch": "GH26-0706", "bars": 600}, {"batch": "EC26-0702", "bars": 400}],
+      "dispatched": "2026-07-09T14:00:00-07:00", "delivered": "2026-07-10T09:15:00-07:00", "depot_stops": []
+    },
+    {
+      "id": "SHP-2607-031", "retailer": "larkspur-market", "carrier": "northwind", "route": "Portland to Spokane via Riverbend depot", "pallet": "LM-P02",
+      "lines": [{"batch": "GH26-0706", "bars": 480}],
+      "dispatched": "2026-07-13T15:00:00-07:00", "delivered": "2026-07-15T10:30:00-07:00",
+      "depot_stops": [
+        {
+          "site": "riverbend-depot", "arrived": "2026-07-14T07:30:00-07:00", "departed": "2026-07-14T20:10:00-07:00",
+          "position": "riverbend-bay-4", "placed": "2026-07-14T08:00:00-07:00",
+          "reason": "Onward truck rescheduled to the evening; Cold Room 2 full with a produce consignment.",
+          "logger": "LOGGER-04", "recorded_by": "dana-whitfield"
+        }
+      ],
+      "weather": "National Weather Service heat advisory for the Tri-Cities on 14 July 2026; outdoor high 39 °C."
+    },
+    {
+      "id": "SHP-2607-035", "retailer": "pantry-lane", "carrier": "northwind", "route": "Portland to Reno, direct refrigerated",
+      "lines": [{"batch": "GH26-0706", "bars": 300}, {"batch": "EC26-0702", "bars": 300}],
+      "dispatched": "2026-07-15T13:00:00-07:00", "delivered": "2026-07-16T11:40:00-07:00", "depot_stops": []
+    },
+    {
+      "id": "SHP-2607-044", "retailer": "larkspur-market", "carrier": "northwind", "route": "Portland to Spokane, direct refrigerated (replacement)",
+      "lines": [{"batch": "GH26-0706", "bars": 480}],
+      "dispatched": "2026-07-22T06:00:00-07:00", "delivered": "2026-07-22T14:20:00-07:00", "depot_stops": [], "replaces": "SHP-2607-031"
+    },
+    {
+      "id": "SHP-2609-012", "retailer": "cacao-cabinet", "carrier": "northwind", "route": "Portland to San Francisco, direct refrigerated",
+      "lines": [{"batch": "EC26-0811", "bars": 240}, {"batch": "MG26-0610", "bars": 300}, {"batch": "PE26-0902", "bars": 120}],
+      "dispatched": "2026-09-05T12:00:00-07:00", "delivered": "2026-09-06T16:05:00-07:00", "depot_stops": []
+    },
+    {
+      "id": "SHP-2609-020", "retailer": "hoshizora-foods", "carrier": "bluefin", "route": "Portland to Osaka, refrigerated container via Tacoma",
+      "lines": [{"batch": "MG26-0610", "bars": 1200}, {"batch": "EC26-0811", "bars": 600}],
+      "dispatched": "2026-09-08T09:00:00-07:00", "delivered": "2026-09-30T10:00:00+09:00", "depot_stops": []
+    },
+    {
+      "id": "SHP-2609-031", "retailer": "pantry-lane", "carrier": "northwind", "route": "Portland to Reno, direct refrigerated",
+      "lines": [{"batch": "EC26-0811", "bars": 400}, {"batch": "EC26-0815", "bars": 150}, {"batch": "PE26-0902", "bars": 200}],
+      "dispatched": "2026-09-10T13:00:00-07:00", "delivered": "2026-09-11T10:50:00-07:00", "depot_stops": []
+    },
+    {
+      "id": "SHP-2609-040", "retailer": "cacao-cabinet", "carrier": "northwind", "route": "Portland to San Francisco, direct refrigerated",
+      "lines": [{"batch": "MG26-0826", "bars": 360}],
+      "dispatched": "2026-09-28T12:00:00-07:00", "delivered": "2026-09-29T15:30:00-07:00", "depot_stops": [], "notes": "Limited-edition stock held for the 1 October launch."
+    }
+  ],
+  "loggers": [
+    {
+      "id": "LOGGER-04", "owner": "northwind", "site": "riverbend-bay-4", "measures": "air temperature beside pallet, °C",
+      "interval_minutes": 30, "date": "2026-07-14", "timezone_offset": "-07:00",
+      "readings": [["06:00", 17.5], ["06:30", 17.5], ["07:00", 17.8], ["07:30", 17.7], ["08:00", 18.4], ["08:30", 19.3], ["09:00", 20.0], ["09:30", 21.3], ["10:00", 22.4], ["10:30", 23.7], ["11:00", 24.5], ["11:30", 25.8], ["12:00", 27.0], ["12:30", 28.7], ["13:00", 30.0], ["13:30", 31.0], ["14:00", 33.0], ["14:30", 34.1], ["15:00", 32.8], ["15:30", 31.3], ["16:00", 29.7], ["16:30", 28.3], ["17:00", 27.3], ["17:30", 25.7], ["18:00", 24.5], ["18:30", 23.4], ["19:00", 22.1], ["19:30", 21.2], ["20:00", 20.2]]
+    }
+  ],
+  "storage_guidance": {"recommended_c": [15, 20], "bloom_risk_above_c": 25, "source": "Cocoarynth storage and handling guide"},
+  "cases": [
+    {
+      "id": "CASE-2607-18", "kind": "retailer_complaint", "retailer": "larkspur-market", "reporter": "priya-raman", "opened": "2026-07-18",
+      "batch": "GH26-0706", "shipment": "SHP-2607-031", "bars_affected": 480,
+      "description": "Ghana bars look dusty and grey on the surface; customers returned bars saying they taste fine but look old.",
+      "photos": ["bloomed-bar", "wrapper-back-gh26-0706"],
+      "investigation": [
+        {"date": "2026-07-20", "by": "marcus-bell", "finding": "All 10 retained bars from GH26-0706 have a glossy surface with no bloom."},
+        {"date": "2026-07-20", "by": "sam-okafor", "finding": "Steeple & Saucer (600 bars) and Pantry Lane (300 bars) received the same batch on direct routes; neither reported bloom."},
+        {"date": "2026-07-21", "by": "sam-okafor", "finding": "Northwind's depot log shows pallet LM-P02 spent 12 hours in Overflow Bay 4 on 14 July. LOGGER-04 shows air above 25 °C from 11:30 to 17:30, peaking at 34.1 °C at 14:30."}
+      ],
+      "root_cause": "Heat (fat) bloom caused by six hours above 25 °C in an unrefrigerated depot bay during a heat wave. Not a production defect.",
+      "resolution": "Credited 480 bars; replacement shipment SHP-2607-044 sent direct on 22 July. Northwind agreed never to stage Cocoarynth pallets in overflow bays and to call ahead when the cold room is full.",
+      "credit_usd": 2208.00, "closed": "2026-08-05", "status": "closed"
+    },
+    {
+      "id": "CASE-2609-14", "kind": "customer_inquiry", "retailer": "pantry-lane", "reporter": "Pantry Lane customer (name withheld)", "opened": "2026-09-14",
+      "batch": "EC26-0811",
+      "description": "Customer bought an Ecuador bar on Pantry Lane and asks which farms grew the cacao. Attached a photo of the back of the wrapper.",
+      "photos": ["wrapper-back-ec26-0811"],
+      "status": "open", "assigned_to": "jo-park",
+      "note": "Data team to trace from the wrapper lot code. Farm names may be shared; farmer names and contact details may not (data-sharing policy)."
+    },
+    {
+      "id": "NCR-2607-03", "kind": "nonconformance", "supplier": "loma-verde", "opened": "2026-07-13", "lot": "DR26-T02",
+      "description": "Trial lot DR26-T02 rejected: smoky, hammy off-flavor detected by 4 of 5 tasters.",
+      "root_cause": "Beans dried on racks about 4 m from a newly installed wood-fired dryer; chimney smoke drifted over the racks (field inspection insp-lv-2026-05, finding f-lv-01).",
+      "corrective_action": "Racks moved 30 m upwind and chimney extended above the roofline (completed 2026-08-12). Follow-up sample DR26-T03 passed on 2026-09-16.",
+      "closed": "2026-09-18", "status": "closed"
+    }
+  ]
+}

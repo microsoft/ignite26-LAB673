@@ -8,7 +8,7 @@ try {
         if ($LASTEXITCODE -ne 0) { throw "Could not create the virtual environment." }
     }
     $venvPython = Join-Path $repoRoot ".venv\Scripts\python.exe"
-    & $venvPython -m pip install -r src/notebooks/requirements.txt
+    & $venvPython -m pip install --disable-pip-version-check -r src/notebooks/requirements.txt
     if ($LASTEXITCODE -ne 0) { throw "Dependency installation failed." }
     & $venvPython infra/setup-env.py
     if ($LASTEXITCODE -ne 0) { throw "Environment setup failed." }
