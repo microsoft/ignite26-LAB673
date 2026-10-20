@@ -35,6 +35,13 @@ var resourceNames = {
   indexingStorage: '${resourcePrefix}idx${uniqueSuffix}'
   microsoftFoundry: '${resourcePrefix}-foundry-${foundrySuffix}'
   microsoftFoundryProject: '${resourcePrefix}-project-${foundrySuffix}'
+  searchGraphIdentity: '${resourcePrefix}-search-graph-${uniqueSuffix}'
+}
+
+// Managed knowledge graph extraction requires a user-assigned identity on Search.
+resource searchGraphIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2023-01-31' = {
+  name: resourceNames.searchGraphIdentity
+  location: 'westcentralus'
 }
 
 resource searchService 'Microsoft.Search/searchServices@2026-09-01-preview' = {
@@ -57,7 +64,10 @@ resource searchService 'Microsoft.Search/searchServices@2026-09-01-preview' = {
     semanticSearch: 'standard'
   }
   identity: {
-    type: 'SystemAssigned'
+    type: 'SystemAssigned, UserAssigned'
+    userAssignedIdentities: {
+      '${searchGraphIdentity.id}': {}
+    }
   }
 }
 
@@ -105,6 +115,19 @@ resource searchStorageReader 'Microsoft.Authorization/roleAssignments@2022-04-01
   scope: indexingStorageAccount
   properties: {
     principalId: searchService.identity.principalId
+    principalType: 'ServicePrincipal'
+    roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '2a2b9908-6ea1-4ae2-8e65-a410df84e7d1')
+  }
+  dependsOn: [
+    indexingStorage
+  ]
+}
+
+resource searchGraphIdentityStorageReader 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid(indexingStorageAccount.id, searchGraphIdentity.id, 'Storage Blob Data Reader')
+  scope: indexingStorageAccount
+  properties: {
+    principalId: searchGraphIdentity.properties.principalId
     principalType: 'ServicePrincipal'
     roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '2a2b9908-6ea1-4ae2-8e65-a410df84e7d1')
   }
@@ -236,6 +259,16 @@ resource searchFoundryRoleAssignments 'Microsoft.Authorization/roleAssignments@2
   }
 }]
 
+resource searchGraphIdentityOpenAIUser 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid(microsoftFoundryAccount.id, searchGraphIdentity.id, '5e0bd9bd-7b93-4f28-af87-19fc36ad61bd')
+  scope: microsoftFoundryAccount
+  properties: {
+    principalId: searchGraphIdentity.properties.principalId
+    principalType: 'ServicePrincipal'
+    roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '5e0bd9bd-7b93-4f28-af87-19fc36ad61bd')
+  }
+}
+
 var foundryUserRoles = [
   '53ca6127-db72-4b80-b1b0-d745d6d5456d'
   'eadc314b-1a2d-4efa-be10-5d325db5065e'
@@ -265,6 +298,7 @@ output MICROSOFT_FOUNDRY_PROJECT_ENDPOINT string = 'https://${microsoftFoundryAc
 output MICROSOFT_FOUNDRY_PROJECT_ID string = microsoftFoundryProject.id
 output AZURE_SEARCH_SERVICE_ENDPOINT string = 'https://${searchService.name}.search.windows.net'
 output AZURE_SEARCH_SERVICE_NAME string = searchService.name
+output AZURE_SEARCH_GRAPH_IDENTITY_ID string = searchGraphIdentity.id
 output INDEXING_STORAGE_ACCOUNT_ID string = indexingStorage.outputs.resourceId
 output INDEXING_STORAGE_ACCOUNT_NAME string = indexingStorage.outputs.name
 output AZURE_OPENAI_ENDPOINT string = microsoftFoundryAccount.properties.endpoint
