@@ -203,7 +203,18 @@
     },
     {
       "code": "EKG_COMPATIBILITY_SEPARATE",
-      "handling": "Later EKG setup may require local re-ingestion or field/key mappings, navigation ontology mapping, graph registration and serving bindings. Snapshot restore and GRZ browsing do not establish GQL/KB readiness."
+      "handling": "Separate source-field/vector re-ingestion and native GQL passed on task-owned copies; see cocoarynth-ekg-restore-check.json. Existing-index Graph KS/NL2GQL is blocked by preview API availability. Navigation ontology mapping, grounding and managed-build bindings remain separate."
+    },
+    {
+      "code": "EXISTING_INDEX_GRAPH_KS_API_UNAVAILABLE",
+      "service": "magottei-s1m-os",
+      "required_api_version": "2026-11-01-preview",
+      "handling": "The service rejects this API version. No Graph KS or knowledge base was created, and server NL2GQL has not been verified. Successful native GQL or client planning is not a substitute."
+    },
+    {
+      "code": "SERVER_PROVENANCE_HYDRATION_UNAVAILABLE",
+      "service": "magottei-s1m-os",
+      "handling": "Native graph provenance IDs and explicit source-key lookups passed. The service independently rejects provenance document hydration; client lookups are not labeled server hydration."
     }
   ],
   "semantics": {
@@ -215,7 +226,7 @@
     "source_pointers": "World/manifest pointers are RFC 6901. JSONL provenance uses a 1-based line and field.",
     "snapshot_identity": "Existing PDF chunk IDs, parent IDs, page bounds and portable blob paths are preserved.",
     "scope": "Current source facts only. No future-question placeholders, fabricated farms, trucks, people, or production batches.",
-    "serving": "Importable snapshots and a GRZ snapshot descriptor, not a managed EKG serving descriptor or proof of GQL/KB readiness.",
+    "serving": "Importable snapshots and a GRZ snapshot descriptor, not a managed EKG serving descriptor. Native GQL is separately verified on compatible re-ingested copies; existing-index Graph KS/NL2GQL remains blocked. See cocoarynth-ekg-restore-check.json.",
     "ontology_index_scope": "The unmodified native helper projects class/object-relationship metadata. Full literal declarations and subclass hierarchy remain in JSON/OWL.",
     "topic_coverage": "Native sampled forest: 97 assigned source chunks, 9 explicitly unassigned. GRZ source_document_count=106 counts Search chunk documents, not PDF files.",
     "topic_vectors": "Six native terminal representatives normalized to float32 for wire storage; two separately labeled parent means derived from normalized member source vectors. Raw native .f32 bytes are retained.",
@@ -300,7 +311,24 @@
       "grz-cocoarynth-input-f7d06ba6-517dba815a29",
       "grz-cocoarynth-topics-bb1deb018565",
       "grz-cocoarynth-topic-vectors-bb1deb018565"
-    ]
+    ],
+    "verified_preparation_indexes_status": "Historical: removed with explicit approval after complete snapshot/live parity and dependency checks to free capacity for EKG verification. Offline artifacts and the original restore receipt remain unchanged."
+  },
+  "ekg_reingestion_verification": {
+    "record": "cocoarynth-ekg-restore-check.json",
+    "script": "../../scripts/verify-graph-ks.py",
+    "instructions": "../../docs/graph-ks-reingestion.md",
+    "service": "magottei-s1m-os",
+    "scope": "Separate compatible source, ontology and business assertion indexes; original bundle-generation provenance is unchanged.",
+    "reingestion_status": "passed",
+    "source_vector_float32_parity": true,
+    "native_gql_status": "passed",
+    "graph_ks_status": "blocked",
+    "server_nl2gql_verified": false,
+    "server_provenance_hydration_status": "blocked",
+    "required_graph_ks_api_version": "2026-11-01-preview",
+    "verification_skills_commit": "a78252c32312fa54ec9bf53da36dc66104f9316b",
+    "automatic_in_current_lab_setup": false
   },
   "inputs": [
     {
@@ -656,6 +684,26 @@
       "bytes": 181
     },
     {
+      "path": "checks/ekg-direct-gql-1.json",
+      "sha256": "f6f68f8236f5d2824f441d9fc71dd0caa664cc2639e6fe4c68efa4ecb49615f1",
+      "bytes": 996
+    },
+    {
+      "path": "checks/ekg-direct-gql-2.json",
+      "sha256": "b90d2b70053da4ad82989cce6cc8cdddbe6ceb17b19220d0ba29b50e22f33d7f",
+      "bytes": 1631
+    },
+    {
+      "path": "checks/ekg-direct-gql-3.json",
+      "sha256": "1b48871f6a94c0464f810eca8d181f4a2424b7d4e84534be940b4f32a3ff509e",
+      "bytes": 2714
+    },
+    {
+      "path": "cocoarynth-ekg-restore-check.json",
+      "sha256": "519d0c53a3066fa90caa281fe65cab692dff74e233ddd9c4f1ebd2ce0b1211f1",
+      "bytes": 15238
+    },
+    {
       "path": "cocoarynth-entities.jsonl",
       "sha256": "cbbdc3f1cf8f940b574983f52c8d1e2f15b67111adee6f2e81df9a0512b0bb3a",
       "bytes": 253559
@@ -837,8 +885,8 @@
     },
     {
       "path": "README.md",
-      "sha256": "d503d1c6eed86675a991216dd59a379d85ef4e7bdb1192a6ea36af72290781de",
-      "bytes": 13796
+      "sha256": "76033f176bd30ea987f24c6996d761c48053817afdace312e33aaeb88f4c9c06",
+      "bytes": 14485
     },
     {
       "path": "validation.json",

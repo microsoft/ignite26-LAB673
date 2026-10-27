@@ -47,7 +47,7 @@ GRZ's `visibility=public` marks this synthetic corpus's eligibility; it does not
 
 Communities are intentionally unnamed: display labels identify native community IDs, not generated topic names or summaries. The [build record](cocoarynth-topics-build.json) records parameters, coverage, vector methods, and provenance. The [native receipt](native/receipt.json) and its companion files preserve the genuine hierarchy and raw representative vectors, including [representatives.f32](native/representatives.f32). The receipt's `FullCorpusExported=false` describes the native probe output; the separate source snapshot contains all 106 original vectors.
 
-The [restore record](cocoarynth-topics-restore-check.json) records complete source/sidecar/vector readback and vector queries on `magottei-s1m-os`. It does not establish EKG, GQL, grounding, or knowledge-base compatibility.
+The [historical restore record](cocoarynth-topics-restore-check.json) records complete source/sidecar/vector readback and vector queries on `magottei-s1m-os`. Those three task-owned preparation indexes were subsequently removed with explicit approval to make room for the separate EKG check; the offline snapshots remain intact. The original record does not establish EKG, GQL, grounding, or knowledge-base compatibility.
 
 ## Sitemap
 
@@ -101,6 +101,8 @@ The existing [lab provisioning](../../infra/README.md) restores only the four or
 
 **Snapshot restoration is separate from preparing a managed EKG.** This bundle includes a GRZ snapshot descriptor, not an EKG serving descriptor, live graph registration, grounding index, or knowledge-base source bindings. Successful document/vector uploads do not establish GQL or managed EKG readiness.
 
-Later lab setup may require local re-ingestion or an explicit compatibility mapping for EKG's source-field and key requirements, document/chunk identity alignment, ontology and graph registration, and grounding/knowledge-source bindings. The sitemap's `Topic`/`TextChunk` vocabulary and relations also need an intentional mapping or ontology registration if the EKG path will consume them; they are not additions to the approved business OWL.
+**Compatibility re-ingestion and native GQL have now passed on `magottei-s1m-os`; server Graph KS/NL2GQL remains blocked.** The [repeatable check and instructions](../../docs/graph-ks-reingestion.md) preserve all 106 captured vectors and all original evidence IDs while mapping the source fields required by EKG. The [run record](cocoarynth-ekg-restore-check.json) distinguishes successful index/vector readback and three native graph paths from the rejected Graph KS API and unsupported server provenance hydration. It does not claim successful server-side NL2GQL.
+
+The Graph KS candidate uses a separate, validated relationship-only projection, not the full approved OWL. The sitemap's `Topic`/`TextChunk` vocabulary and relations still need an intentional mapping or ontology registration if the EKG path will consume them; they are not additions to the approved business OWL. Grounding and managed-build bindings remain separate.
 
 Keep the captured `chunk_id`/`parent_id` values and PDF URNs when possible. If re-ingestion changes chunk IDs or boundaries, rebuild the dependent topic generation, memberships, sitemap, and evidence joins rather than silently editing an existing generation. Do not run managed extraction into these restored snapshots. A separate managed build can consume the business OWL and will need its own graph identity and serving checks.
