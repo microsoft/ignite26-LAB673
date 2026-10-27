@@ -1,0 +1,12 @@
+{
+  "physical_index": "grz-cocoarynth-topics-bb1deb018565",
+  "generation_id": "bb1deb018565f895ba5615fa7b66a439eeb6d13c2e88c43adc8f86eaef992d71",
+  "source_service": "magottei-s1m-os",
+  "source_index": "grz-cocoarynth-input-f7d06ba6-517dba815a29",
+  "embedding_model_id": "text-embedding-3-large",
+  "dimension": 3072,
+  "visibility": "public",
+  "schema_version": "grz-sidecar-v2",
+  "version": "grz-descriptor-v1",
+  "visibility_basis": "per-document"
+}

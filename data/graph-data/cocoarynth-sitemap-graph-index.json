@@ -1,0 +1,221 @@
+{
+  "name": "cocoarynth-sitemap",
+  "fields": [
+    {
+      "name": "id",
+      "type": "Edm.String",
+      "retrievable": true,
+      "filterable": true,
+      "sortable": true,
+      "facetable": false,
+      "searchable": true,
+      "key": true
+    },
+    {
+      "name": "subject",
+      "type": "Edm.String",
+      "retrievable": true,
+      "filterable": true,
+      "sortable": true,
+      "facetable": true,
+      "searchable": true
+    },
+    {
+      "name": "predicate",
+      "type": "Edm.String",
+      "retrievable": true,
+      "filterable": true,
+      "sortable": true,
+      "facetable": true,
+      "searchable": true
+    },
+    {
+      "name": "object",
+      "type": "Edm.String",
+      "retrievable": true,
+      "filterable": true,
+      "sortable": true,
+      "facetable": true,
+      "searchable": true
+    },
+    {
+      "name": "object_string",
+      "type": "Edm.String",
+      "retrievable": true,
+      "filterable": true,
+      "sortable": true,
+      "facetable": true,
+      "searchable": false
+    },
+    {
+      "name": "subject_type",
+      "type": "Edm.String",
+      "retrievable": true,
+      "filterable": true,
+      "sortable": true,
+      "facetable": true,
+      "searchable": false
+    },
+    {
+      "name": "subject_id",
+      "type": "Edm.String",
+      "retrievable": true,
+      "filterable": true,
+      "sortable": true,
+      "facetable": true,
+      "searchable": false
+    },
+    {
+      "name": "object_type",
+      "type": "Edm.String",
+      "retrievable": true,
+      "filterable": true,
+      "sortable": true,
+      "facetable": true,
+      "searchable": false
+    },
+    {
+      "name": "object_id",
+      "type": "Edm.String",
+      "retrievable": true,
+      "filterable": true,
+      "sortable": true,
+      "facetable": true,
+      "searchable": false
+    },
+    {
+      "name": "graph_name",
+      "type": "Edm.String",
+      "retrievable": true,
+      "filterable": true,
+      "sortable": true,
+      "facetable": true,
+      "searchable": false
+    },
+    {
+      "name": "namespace",
+      "type": "Edm.String",
+      "retrievable": true,
+      "filterable": true,
+      "sortable": true,
+      "facetable": true,
+      "searchable": false
+    },
+    {
+      "name": "parent_id",
+      "type": "Edm.String",
+      "retrievable": true,
+      "filterable": true,
+      "sortable": true,
+      "facetable": true,
+      "searchable": false
+    },
+    {
+      "name": "chunk_id",
+      "type": "Edm.String",
+      "retrievable": true,
+      "filterable": true,
+      "sortable": true,
+      "facetable": true,
+      "searchable": false
+    },
+    {
+      "name": "subject_id_display_name",
+      "type": "Edm.String",
+      "retrievable": true,
+      "filterable": false,
+      "sortable": true,
+      "facetable": true,
+      "searchable": true
+    },
+    {
+      "name": "object_id_display_name",
+      "type": "Edm.String",
+      "retrievable": true,
+      "filterable": false,
+      "sortable": true,
+      "facetable": true,
+      "searchable": true
+    },
+    {
+      "name": "object_double",
+      "type": "Edm.Double",
+      "retrievable": true,
+      "filterable": true,
+      "sortable": true,
+      "facetable": true
+    },
+    {
+      "name": "object_bool",
+      "type": "Edm.Boolean",
+      "retrievable": true,
+      "filterable": true
+    },
+    {
+      "name": "object_datetime",
+      "type": "Edm.DateTimeOffset",
+      "retrievable": true,
+      "filterable": true,
+      "sortable": true
+    },
+    {
+      "name": "edge_confidence",
+      "type": "Edm.Double",
+      "retrievable": true,
+      "filterable": true,
+      "sortable": true,
+      "facetable": true
+    },
+    {
+      "name": "s_confidence",
+      "type": "Edm.Double",
+      "retrievable": true,
+      "filterable": true,
+      "sortable": true,
+      "facetable": true
+    },
+    {
+      "name": "p_confidence",
+      "type": "Edm.Double",
+      "retrievable": true,
+      "filterable": true,
+      "sortable": true,
+      "facetable": true
+    },
+    {
+      "name": "o_confidence",
+      "type": "Edm.Double",
+      "retrievable": true,
+      "filterable": true,
+      "sortable": true,
+      "facetable": true
+    }
+  ],
+  "graphProfile": {
+    "kind": "edgeList",
+    "fields": {
+      "assertionIdField": "id",
+      "factIdField": "id",
+      "subjectField": "subject",
+      "predicateField": "predicate",
+      "objectField": "object",
+      "objectStringField": "object_string",
+      "objectDoubleField": "object_double",
+      "objectBoolField": "object_bool",
+      "objectDateTimeField": "object_datetime",
+      "subjectTypeField": "subject_type",
+      "subjectIdField": "subject_id",
+      "objectTypeField": "object_type",
+      "objectIdField": "object_id",
+      "confidenceField": "edge_confidence",
+      "subjectConfidenceField": "s_confidence",
+      "predicateConfidenceField": "p_confidence",
+      "objectConfidenceField": "o_confidence",
+      "sourceChunkIdField": "chunk_id",
+      "sourceParentIdField": "parent_id",
+      "graphNameField": "graph_name",
+      "subjectIdDisplayNameField": "subject_id_display_name",
+      "objectIdDisplayNameField": "object_id_display_name"
+    }
+  }
+}

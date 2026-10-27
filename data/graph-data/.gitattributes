@@ -1,2 +1,4 @@
 # Checksummed payloads must retain identical bytes across platforms.
 * text=auto eol=lf
+# Keep the native receipt's CRLF JSON and binary artifact hashes byte-exact.
+native/** -text

@@ -1,17 +1,17 @@
 {
-  "format": "cocoarynth-offline-graph-v1",
+  "format": "cocoarynth-offline-graph-v2",
   "created_at": "2026-10-27T16:06:40.122348+00:00",
   "graph_name": "cocoarynth",
   "ontology_iri": "urn:ontology:cocoarynth#",
   "source_repository_commit": "7be66b6c70fec32a65cb6e5a0f69ac572facb9e0",
   "input_hash_basis": "SHA-256 of Git blob bytes at source_repository_commit. Normalize working-tree CRLF to LF for UTF-8 text before comparing; binary inputs are byte-exact.",
   "source_input_worktree_changes": [],
-  "source_of_truth": "Existing world JSON. Document edges assert lexical mentions only, not fact entailment.",
+  "source_of_truth": "Business assertions project existing world JSON. Source vectors and PDF chunks are unchanged committed captures. Topics derive from the verified native GRZ hierarchy; sitemap edges project native memberships and original document IDs.",
   "generation": {
-    "mode": "offline_structured_projection",
+    "mode": "offline_business_projection_and_native_grz_snapshot_preparation",
     "model_calls": 0,
-    "azure_writes": 0,
-    "azure_sign_ins": 0,
+    "azure_writes": 8,
+    "azure_sign_ins": 1,
     "allowed_search_service_if_needed": "magottei-s1m-os",
     "skills_commit": "7389ee18f277f24e9f6578975c3e5dfdd80e1a61",
     "verified_runtime_wheels": {
@@ -42,15 +42,60 @@
     },
     "prepared_runtimes": [
       "ontology",
-      "ekg"
+      "ekg",
+      "grz"
     ],
     "native_functions": [
       "ekg_build.managed_pipeline.ontology_index",
       "ekg_build.managed_pipeline.ontology_rows",
-      "ekg_core.ontology.load_ontology"
+      "ekg_core.ontology.load_ontology",
+      "grz_adapters.native_runner.NativeRunner",
+      "grz_adapters.native_adapter.load_native_artifacts",
+      "grz_adapters.native_adapter.native_artifacts_to_hierarchy",
+      "grz_build.sidecar_documents.community_documents",
+      "grz_build.sidecar_documents.manifest_payload",
+      "grz_adapters.sidecar_schema.generation_index_definition",
+      "grz_adapters.sidecar_schema.sdk_index_model",
+      "grz_build.readback.check_readback"
     ],
     "ontology_workflow": "ontology-build import, review, approve, export; ontology-consume check",
-    "upstream_release_status": "PR describes its current package as not release/demo-ready."
+    "upstream_release_status": "PR describes its current package as not release/demo-ready.",
+    "business_projection_original_execution": {
+      "mode": "offline_structured_projection",
+      "model_calls": 0,
+      "azure_writes": 0,
+      "azure_sign_ins": 0
+    },
+    "embedding_calls": 0,
+    "azure_writes_basis": "Successful REST mutations: source create/upload; initial empty sidecar create, user-approved empty-sidecar delete/recreate, sidecar upload; topic-vector create/upload. Rejected schema-update attempts are not counted as successful writes.",
+    "azure_scope": "Only task-owned source, GRZ sidecar and supplemental topic-vector indexes on magottei-s1m-os. No pre-existing index, alias, permission or infrastructure setting changed.",
+    "skills_pr_iteration": 47,
+    "native_grz": {
+      "version": "0.1.4-local",
+      "sha256": "6aa6ac85ed84436ce9676178c252eede85891b9d1717aca66cae095830354579",
+      "protocol": "grz-cli-v1",
+      "receipt": "native/receipt.json",
+      "generation_id": "bb1deb018565f895ba5615fa7b66a439eeb6d13c2e88c43adc8f86eaef992d71",
+      "build_record": "cocoarynth-topics-build.json",
+      "input_provenance": {
+        "basis": "Unchanged committed document/vector captures, independently verified against the task-owned Search copy before and after the native run.",
+        "managed_grz_capture_protocol_run": false,
+        "producer_freeze_claimed": false,
+        "atomic_azure_snapshot_claimed": false,
+        "native_consistency": "best-effort-live-index; schema/count checked, no server-side snapshot",
+        "visibility": "Synthetic-corpus eligibility metadata only; no Azure access policy was changed."
+      },
+      "effective_parameters": {
+        "sample_percent": 5,
+        "probe_seed": 1234,
+        "neighbor_count": 50,
+        "max_leaf_size": 25,
+        "concurrency": 4,
+        "requests_per_second": 10,
+        "read_only": true,
+        "output_index": null
+      }
+    }
   },
   "ontology_approval": {
     "version": 1,
@@ -109,7 +154,20 @@
     },
     "relationships": 1539,
     "ontology_rows": 288,
-    "rdf_instance_triples": 4227
+    "rdf_instance_triples": 4227,
+    "source_vectors": 106,
+    "vector_dimensions": 3072,
+    "grz_communities": 8,
+    "grz_membership_records": 158,
+    "native_topic_vectors": 6,
+    "derived_parent_topic_vectors": 2,
+    "topic_vectors": 8,
+    "topic_assigned_chunks": 97,
+    "topic_unassigned_chunks": 9,
+    "sitemap_nodes": 169,
+    "sitemap_edges": 379,
+    "sitemap_rdf_triples": 717,
+    "combined_business_and_navigation_rdf_triples": 4834
   },
   "warnings": [
     {
@@ -122,6 +180,30 @@
       },
       "value": "DR26-T03 bench batch",
       "handling": "Preserved as a literal. No production batch or input relationship was invented."
+    },
+    {
+      "code": "PARTIAL_NATIVE_TOPIC_COVERAGE",
+      "assigned_chunks": 97,
+      "source_chunks": 106,
+      "unassigned_chunks": 9,
+      "handling": "All 106 source rows/vectors and PDF links are retained. The nine unassigned IDs are listed in cocoarynth-topics-build.json; no memberships were invented. GRZ get-chunk reports CHUNK_UNASSIGNED for them."
+    },
+    {
+      "code": "NATIVE_NONLEAF_VECTORS_ABSENT",
+      "native_vectors": 6,
+      "handling": "The native sidecar retains two representatives without native vectors. The supplemental eight-row vector snapshot includes two explicitly derived parent centroids."
+    },
+    {
+      "code": "TOPIC_LABELS_UNNAMED",
+      "handling": "Community IDs are display labels only. No topic naming or summary model was called."
+    },
+    {
+      "code": "NO_ATOMIC_AZURE_CAPTURE",
+      "handling": "Immutable committed captures were checked against the task-owned Search copy before and after the native run. No producer freeze or managed three-pass GRZ capture protocol is claimed."
+    },
+    {
+      "code": "EKG_COMPATIBILITY_SEPARATE",
+      "handling": "Later EKG setup may require local re-ingestion or field/key mappings, navigation ontology mapping, graph registration and serving bindings. Snapshot restore and GRZ browsing do not establish GQL/KB readiness."
     }
   ],
   "semantics": {
@@ -133,8 +215,14 @@
     "source_pointers": "World/manifest pointers are RFC 6901. JSONL provenance uses a 1-based line and field.",
     "snapshot_identity": "Existing PDF chunk IDs, parent IDs, page bounds and portable blob paths are preserved.",
     "scope": "Current source facts only. No future-question placeholders, fabricated farms, trucks, people, or production batches.",
-    "serving": "Importable index payloads, not an EKG publication descriptor or proof of live GQL/KB readiness.",
-    "ontology_index_scope": "The unmodified native helper projects class/object-relationship metadata. Full literal declarations and subclass hierarchy remain in JSON/OWL."
+    "serving": "Importable snapshots and a GRZ snapshot descriptor, not a managed EKG serving descriptor or proof of GQL/KB readiness.",
+    "ontology_index_scope": "The unmodified native helper projects class/object-relationship metadata. Full literal declarations and subclass hierarchy remain in JSON/OWL.",
+    "topic_coverage": "Native sampled forest: 97 assigned source chunks, 9 explicitly unassigned. GRZ source_document_count=106 counts Search chunk documents, not PDF files.",
+    "topic_vectors": "Six native terminal representatives normalized to float32 for wire storage; two separately labeled parent means derived from normalized member source vectors. Raw native .f32 bytes are retained.",
+    "source_vectors": "All original captured 3072-dimensional text_vector values are preserved at float32 precision; no source embeddings were regenerated.",
+    "navigation": "Separate additive vocabulary urn:ontology:cocoarynth-navigation#. Native topic hierarchy and chunk membership, plus original PDF membership. Document URNs and label datatypes match the existing business graph.",
+    "business_ontology": "The approved 39-class/255-property business JSON/OWL is byte-unchanged. Navigation terms are defined separately in cocoarynth-sitemap.json, not silently added to approved OWL.",
+    "visibility": "GRZ public eligibility metadata refers to synthetic source content; no Azure access policy or anonymous access was enabled."
   },
   "restore": {
     "api_version": "2026-08-01-preview",
@@ -157,16 +245,61 @@
         "definition": "cocoarynth-graph-index.json",
         "records": "cocoarynth-graph-exported.jsonl",
         "key": "id"
+      },
+      {
+        "index": "grz-cocoarynth-input-f7d06ba6-517dba815a29",
+        "definition": "cocoarynth-topic-sources-index.json",
+        "records": "cocoarynth-topic-sources-exported.jsonl",
+        "key": "chunk_id"
+      },
+      {
+        "index": "grz-cocoarynth-topics-bb1deb018565",
+        "definition": "cocoarynth-topics-index.json",
+        "records": "cocoarynth-topics-exported.jsonl",
+        "key": "id"
+      },
+      {
+        "index": "grz-cocoarynth-topic-vectors-bb1deb018565",
+        "definition": "cocoarynth-topic-vectors-index.json",
+        "records": "cocoarynth-topic-vectors-exported.jsonl",
+        "key": "id"
+      },
+      {
+        "index": "cocoarynth-sitemap",
+        "definition": "cocoarynth-sitemap-graph-index.json",
+        "records": "cocoarynth-sitemap-graph-exported.jsonl",
+        "key": "id"
       }
     ],
     "instructions": [
       "Explicitly select the destination and verify edgeList support before writing.",
       "Create each index using its JSON definition; upload its JSONL rows as docs/index value batches with @search.action=upload.",
       "Respect the service's 1000-document and 16-MB request limits; verify every result and final document count.",
-      "Preserve graph_name=cocoarynth, all URNs and source chunk IDs across these three indexes.",
+      "Preserve graph_name=cocoarynth in business snapshots and graph_name=cocoarynth-sitemap in navigation, plus all index names, generation IDs, URNs and original chunk IDs.",
       "Do not run managed graph extraction into these restored snapshots; it would replace this deterministic projection.",
       "A later managed EKG build is a separate workflow. Use this OWL as its input, and obtain its exact graph name before preparing a grounding index.",
-      "Do not claim live graph retrieval until the destination's graph registration, source bindings and queries are checked."
+      "Do not claim live graph retrieval until the destination's graph registration, source bindings and queries are checked.",
+      "The source and supplemental topic-vector snapshots include stored 3072-dimensional vectors; restore does not need a source embedding call. New text queries still need a compatible query vector or embedding deployment.",
+      "Use cocoarynth-topics-exported.jsonl for Search upload. Use cocoarynth-topics-documents.json for offline grz-consume; its manifest payload remains an object.",
+      "For live GRZ reads after restoring elsewhere, pass the explicit destination --endpoint and suitable read credentials; the descriptor's source provenance records the preparation service. Preserve generation provenance and check status at the destination.",
+      "Never replace a foreign index under these names. Verify every uploaded row and source/topic vector readback."
+    ],
+    "ekg_compatibility": {
+      "snapshot_restore_is_managed_ekg_publication": false,
+      "may_require_local_reingestion": true,
+      "separate_work": [
+        "Source-field/key compatibility, including captured chunk_id, parent_id, chunk and text_vector",
+        "Original PDF Document URNs and chunk identity alignment",
+        "Intentional mapping or registration for the separate Topic/TextChunk navigation vocabulary",
+        "Managed graph identity/ontology registration, grounding and knowledge-source bindings",
+        "GQL and retrieval checks on the actual lab destination"
+      ],
+      "if_chunk_ids_or_boundaries_change": "Rebuild dependent topic generation, memberships, sitemap and evidence joins; do not silently mutate the existing generation."
+    },
+    "verified_preparation_indexes": [
+      "grz-cocoarynth-input-f7d06ba6-517dba815a29",
+      "grz-cocoarynth-topics-bb1deb018565",
+      "grz-cocoarynth-topic-vectors-bb1deb018565"
     ]
   },
   "inputs": [
@@ -519,8 +652,8 @@
   "artifacts": [
     {
       "path": ".gitattributes",
-      "sha256": "ba270982adc074da818d5c32bd7c89972d0348da007e9c86d626f063f6c23695",
-      "bytes": 88
+      "sha256": "d1b5c27379021cd0ed3c88167961c62284fe599650524ea43058502dea8d4a57",
+      "bytes": 181
     },
     {
       "path": "cocoarynth-entities.jsonl",
@@ -583,14 +716,136 @@
       "bytes": 11694
     },
     {
+      "path": "cocoarynth-sitemap-graph-exported.jsonl",
+      "sha256": "03f3674cb0e2c24334d748b19c684ea0f770a1e556e0f25ac7e4e64d98eb4b87",
+      "bytes": 460003
+    },
+    {
+      "path": "cocoarynth-sitemap-graph-index.json",
+      "sha256": "f4845372b8679d6bc0d370bbff60120f2447d9b4ec6a5bf7b34e9a7d987eae13",
+      "bytes": 5172
+    },
+    {
+      "path": "cocoarynth-sitemap-provenance.jsonl",
+      "sha256": "431b3eff381ff1eacb830f1440772fe0071677d567065c89bc47062eafdea2cd",
+      "bytes": 191461
+    },
+    {
+      "path": "cocoarynth-sitemap.json",
+      "sha256": "991bc9d2306b8661a5de628f8e27fa4b606ffc3f8b8bd7880d9f983b0cad76bb",
+      "bytes": 268542
+    },
+    {
+      "path": "cocoarynth-sitemap.jsonld",
+      "sha256": "a3877999ea79ccba649b3e5996355fbc2e69dc44d201fe93237338a66083124c",
+      "bytes": 151009
+    },
+    {
+      "path": "cocoarynth-topic-sources-exported.jsonl",
+      "sha256": "c50feab286203efc2bff2310ba5f6f6dc1b363a95283d611eaf09a4d06b901e1",
+      "bytes": 4351413
+    },
+    {
+      "path": "cocoarynth-topic-sources-index.json",
+      "sha256": "795d5927a02ec75771392ea10afabaa219453ceb7d7b648a9a22dcd13cd4b452",
+      "bytes": 1549
+    },
+    {
+      "path": "cocoarynth-topic-vectors-exported.jsonl",
+      "sha256": "7bd6779963c16d153290641e8c1e97310b70f202139e10822dd33d41d703297f",
+      "bytes": 531520
+    },
+    {
+      "path": "cocoarynth-topic-vectors-index.json",
+      "sha256": "f6a636e54668a9f8547a93536acaa2c3bbad7a85bcc2f330760cc70d2b764d10",
+      "bytes": 2981
+    },
+    {
+      "path": "cocoarynth-topics-build.json",
+      "sha256": "2ddcb4ea01c953bdd8c35f5d2399b00b96cae811d8b6600f00dc551cdcddd760",
+      "bytes": 6479
+    },
+    {
+      "path": "cocoarynth-topics-descriptor.json",
+      "sha256": "8e3f0ca3ed386f8411e80132b36a4cd3778949a362d76b3bc3c3cec4755bee82",
+      "bytes": 458
+    },
+    {
+      "path": "cocoarynth-topics-documents.json",
+      "sha256": "1dd3efc8d1a866aebad0a29fc593b4561287a22bafd445b336536f2ccff66f7e",
+      "bytes": 858379
+    },
+    {
+      "path": "cocoarynth-topics-exported.jsonl",
+      "sha256": "c8af447f8722c70db00f149f69165770241ab2c5c9d327bec1cd75c9baeabaac",
+      "bytes": 714051
+    },
+    {
+      "path": "cocoarynth-topics-index.json",
+      "sha256": "4ccb1fc52ef3b13a7e8e9c7bb0c600f52e6b0f0706eb9c5df0316be28885d633",
+      "bytes": 3863
+    },
+    {
+      "path": "cocoarynth-topics-restore-check.json",
+      "sha256": "a398e8bc97937a2148d9c941245276c53d2726119f156ef0ff830e6ebcbe2907",
+      "bytes": 2931
+    },
+    {
+      "path": "native/graph.csr",
+      "sha256": "f6f07cc9d81ca62033747401b47fc84880e107f92d5e8f7966e44ab3c2470022",
+      "bytes": 5063
+    },
+    {
+      "path": "native/hierarchy.json",
+      "sha256": "0fe154269dc59e5acd699fc59543af2c46f7833fa463c9c4f9c96048f50ce308",
+      "bytes": 19459
+    },
+    {
+      "path": "native/local-store.json",
+      "sha256": "175ead66531ae5a5b9f8881078267579854e2c590dd8b440b9b3c1c948b3c0cf",
+      "bytes": 462
+    },
+    {
+      "path": "native/node-keys.json",
+      "sha256": "c0aab9c94ddb0d1e44b868f876613fe8690631eaca9f84061996f7c49e823d44",
+      "bytes": 18395
+    },
+    {
+      "path": "native/pre-leiden-evaluation.json",
+      "sha256": "4b232e7940661ba69f8a20b6ad24df4cbf6afb3d6d2cabe63c1b80387bc6006c",
+      "bytes": 1175
+    },
+    {
+      "path": "native/probe-keys.json",
+      "sha256": "818b08b7d430a5788b443ac8f780b80d1726320bbd5d6af3ca4da4ff8051e4bc",
+      "bytes": 1117
+    },
+    {
+      "path": "native/receipt.json",
+      "sha256": "0b91e600d7a3034f54b8bbc214ff0c3a680b3a6ca05c70e6321bda6ce6a1d981",
+      "bytes": 2848
+    },
+    {
+      "path": "native/representatives.f32",
+      "sha256": "3e7404057e62f49b61602666c1f480b2805ba19a92e77ccb8b17b2a2d207d0f3",
+      "bytes": 73728
+    },
+    {
+      "path": "native/representatives.json",
+      "sha256": "4c0cb208ecee44b2584f9f45405b1bdc4258403c4313884c676c80ece73d8297",
+      "bytes": 777
+    },
+    {
       "path": "README.md",
-      "sha256": "967ccca2c537903f41ffba230ef1514c0a8c6c35035b035b75d1099b26395b1e",
-      "bytes": 6822
+      "sha256": "d503d1c6eed86675a991216dd59a379d85ef4e7bdb1192a6ea36af72290781de",
+      "bytes": 13796
     },
     {
       "path": "validation.json",
-      "sha256": "e51e6b73a6488f4ee8b81b6cc8572aba152b79048d1906aafa9fc433183047ef",
-      "bytes": 1060
+      "sha256": "ac3da13c1118d8de99c8da0053e4e0798c924d11af548b2ff9c348dede2c5435",
+      "bytes": 3801
     }
-  ]
+  ],
+  "updated_at": "2026-10-27T19:44:00.090821+00:00",
+  "artifact_hash_basis": "SHA-256 of Git payload bytes: LF for bundle text, except native/ artifacts, which retain exact producer bytes under the local .gitattributes -text rule."
 }

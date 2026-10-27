@@ -1,0 +1,133 @@
+{
+  "name": "grz-cocoarynth-topic-vectors-bb1deb018565",
+  "description": "Task-owned Cocoarynth topic vectors; generation=bb1deb018565f895ba5615fa7b66a439eeb6d13c2e88c43adc8f86eaef992d71",
+  "fields": [
+    {
+      "name": "id",
+      "type": "Edm.String",
+      "key": true,
+      "retrievable": true,
+      "filterable": true,
+      "sortable": true,
+      "searchable": false,
+      "facetable": false
+    },
+    {
+      "name": "community_id",
+      "type": "Edm.String",
+      "key": false,
+      "retrievable": true,
+      "filterable": true,
+      "sortable": true,
+      "searchable": false,
+      "facetable": false
+    },
+    {
+      "name": "generation_id",
+      "type": "Edm.String",
+      "key": false,
+      "retrievable": true,
+      "filterable": true,
+      "sortable": true,
+      "searchable": false,
+      "facetable": false
+    },
+    {
+      "name": "native_community_id",
+      "type": "Edm.String",
+      "key": false,
+      "retrievable": true,
+      "filterable": true,
+      "sortable": true,
+      "searchable": false,
+      "facetable": false
+    },
+    {
+      "name": "topic_uri",
+      "type": "Edm.String",
+      "key": false,
+      "retrievable": true,
+      "filterable": true,
+      "sortable": true,
+      "searchable": false,
+      "facetable": false
+    },
+    {
+      "name": "parent_id",
+      "type": "Edm.String",
+      "key": false,
+      "retrievable": true,
+      "filterable": true,
+      "sortable": true,
+      "searchable": false,
+      "facetable": false
+    },
+    {
+      "name": "centroid_method",
+      "type": "Edm.String",
+      "key": false,
+      "retrievable": true,
+      "filterable": true,
+      "sortable": true,
+      "searchable": false,
+      "facetable": false
+    },
+    {
+      "name": "embedding_model_id",
+      "type": "Edm.String",
+      "key": false,
+      "retrievable": true,
+      "filterable": true,
+      "sortable": true,
+      "searchable": false,
+      "facetable": false
+    },
+    {
+      "name": "level",
+      "type": "Edm.Int32",
+      "retrievable": true,
+      "filterable": true,
+      "searchable": false,
+      "sortable": false,
+      "facetable": false
+    },
+    {
+      "name": "member_count",
+      "type": "Edm.Int32",
+      "retrievable": true,
+      "filterable": true,
+      "searchable": false,
+      "sortable": false,
+      "facetable": false
+    },
+    {
+      "name": "centroid",
+      "type": "Collection(Edm.Single)",
+      "searchable": true,
+      "retrievable": true,
+      "stored": true,
+      "dimensions": 3072,
+      "vectorSearchProfile": "topic-cosine",
+      "filterable": false,
+      "sortable": false,
+      "facetable": false
+    }
+  ],
+  "vectorSearch": {
+    "algorithms": [
+      {
+        "name": "topic-cosine",
+        "kind": "exhaustiveKnn",
+        "exhaustiveKnnParameters": {
+          "metric": "cosine"
+        }
+      }
+    ],
+    "profiles": [
+      {
+        "name": "topic-cosine",
+        "algorithm": "topic-cosine"
+      }
+    ]
+  }
+}

@@ -1,0 +1,137 @@
+{
+  "format": "cocoarynth-native-topic-build-v1",
+  "skills_pr_iteration": 47,
+  "skills_commit": "7389ee18f277f24e9f6578975c3e5dfdd80e1a61",
+  "generation_id": "bb1deb018565f895ba5615fa7b66a439eeb6d13c2e88c43adc8f86eaef992d71",
+  "native_version": "0.1.4-local",
+  "native_executable_sha256": "6aa6ac85ed84436ce9676178c252eede85891b9d1717aca66cae095830354579",
+  "native_receipt": "native/receipt.json",
+  "source_input_digest": "517dba815a29a8e9831182c5e78654d52c6e2fb43a892711379ecc97b8cb1443",
+  "source_documents_sha256": "c50feab286203efc2bff2310ba5f6f6dc1b363a95283d611eaf09a4d06b901e1",
+  "source_model": "text-embedding-3-large",
+  "dimension": 3072,
+  "input_provenance": {
+    "basis": "Unchanged committed document/vector captures, independently verified against the task-owned Search copy before and after the native run.",
+    "managed_grz_capture_protocol_run": false,
+    "producer_freeze_claimed": false,
+    "atomic_azure_snapshot_claimed": false,
+    "native_consistency": "best-effort-live-index; schema/count checked, no server-side snapshot",
+    "visibility": "Synthetic-corpus eligibility metadata only; no Azure access policy was changed."
+  },
+  "effective_native_parameters": {
+    "sample_percent": 5,
+    "probe_seed": 1234,
+    "neighbor_count": 50,
+    "max_leaf_size": 25,
+    "concurrency": 4,
+    "requests_per_second": 10,
+    "read_only": true,
+    "output_index": null
+  },
+  "sidecar_identity_profile": {
+    "k": 50,
+    "candidate_probes": 50,
+    "similarity_cutoff": 0.0,
+    "cluster_size_limit": 25,
+    "memory_budget_bytes": 512000000,
+    "seed": 1234,
+    "strategy": "hnsw",
+    "version": "grz-build-v1"
+  },
+  "sidecar_identity_profile_note": "Used by the SDK's generation-ID helper. Native execution is governed by effective_native_parameters and the receipt; candidate_probes is not a claim that 50 source probes ran.",
+  "source_chunk_count": 106,
+  "source_document_count": 55,
+  "partial_coverage": {
+    "source_document_count": 106,
+    "observed_node_count": 97,
+    "assigned_node_count": 97,
+    "unassigned_source_document_count": 9,
+    "node_coverage": 0.9150943396226415,
+    "isolated_node_count": 0,
+    "hierarchy_depth": null,
+    "representative_count": null,
+    "graph_edge_count": 291
+  },
+  "unassigned_chunk_ids": [
+    "177ad5882148_aHR0cHM6Ly9sYWI2NzNpZHhlN3k3cW94NzY1Z2ZxLmJsb2IuY29yZS53aW5kb3dzLm5ldC9rbm93bGVkZ2UvY29jb2FyeW50aC1vcmlnaW5zL2luZm9ybWUtaW5zcGVjY2lvbi1vcmdhbmljYS1udWV2by1ob3Jpem9udGUtMjAyNi5wZGY1_text_sections_1",
+    "312693752f85_aHR0cHM6Ly9sYWI2NzNpZHhlN3k3cW94NzY1Z2ZxLmJsb2IuY29yZS53aW5kb3dzLm5ldC9rbm93bGVkZ2UvY29jb2FyeW50aC1sb2dpc3RpY3MtcmV0YWlsL2VtYWlsLXN0ZWVwbGUtc2F1Y2VyLXJlb3JkZXItMjAyNi0wNy5wZGY1_text_sections_0",
+    "8792aa9387f5_aHR0cHM6Ly9sYWI2NzNpZHhlN3k3cW94NzY1Z2ZxLmJsb2IuY29yZS53aW5kb3dzLm5ldC9rbm93bGVkZ2UvY29jb2FyeW50aC1vcmlnaW5zL2luZm9ybWUtdmlzaXRhLWNhbXBvLWxvbWEtdmVyZGUtMjAyNi0wNS5wZGY1_text_sections_0",
+    "8792aa9387f5_aHR0cHM6Ly9sYWI2NzNpZHhlN3k3cW94NzY1Z2ZxLmJsb2IuY29yZS53aW5kb3dzLm5ldC9rbm93bGVkZ2UvY29jb2FyeW50aC1vcmlnaW5zL2luZm9ybWUtdmlzaXRhLWNhbXBvLWxvbWEtdmVyZGUtMjAyNi0wNS5wZGY1_text_sections_1",
+    "8792aa9387f5_aHR0cHM6Ly9sYWI2NzNpZHhlN3k3cW94NzY1Z2ZxLmJsb2IuY29yZS53aW5kb3dzLm5ldC9rbm93bGVkZ2UvY29jb2FyeW50aC1vcmlnaW5zL2luZm9ybWUtdmlzaXRhLWNhbXBvLWxvbWEtdmVyZGUtMjAyNi0wNS5wZGY1_text_sections_2",
+    "88da6eba80ca_aHR0cHM6Ly9sYWI2NzNpZHhlN3k3cW94NzY1Z2ZxLmJsb2IuY29yZS53aW5kb3dzLm5ldC9rbm93bGVkZ2UvY29jb2FyeW50aC1vcmlnaW5zL29yaWdpbi10cmFuc3BhcmVuY3ktcmVwb3J0LTIwMjYucGRm0_text_sections_3",
+    "a70b48184176_aHR0cHM6Ly9sYWI2NzNpZHhlN3k3cW94NzY1Z2ZxLmJsb2IuY29yZS53aW5kb3dzLm5ldC9rbm93bGVkZ2UvY29jb2FyeW50aC1wb2xpY2llcy9zdG9yYWdlLWhhbmRsaW5nLWd1aWRlLnBkZg2_text_sections_1",
+    "ddd2e0f849ee_aHR0cHM6Ly9sYWI2NzNpZHhlN3k3cW94NzY1Z2ZxLmJsb2IuY29yZS53aW5kb3dzLm5ldC9rbm93bGVkZ2UvY29jb2FyeW50aC1vcmlnaW5zL2JvbGV0YXMtYWNvcGlvLXJpby1jbGFyby0yMDI2LnBkZg2_text_sections_2",
+    "de3d068f1972_aHR0cHM6Ly9sYWI2NzNpZHhlN3k3cW94NzY1Z2ZxLmJsb2IuY29yZS53aW5kb3dzLm5ldC9rbm93bGVkZ2UvY29jb2FyeW50aC1vcmlnaW5zL3NvdXJjaW5nLXByaWNlLXJldmlldy0yMDI2LnBkZg2_text_sections_1"
+  ],
+  "sidecar_counts": {
+    "representative": 8,
+    "membership": 158,
+    "evidence": 106
+  },
+  "native_vector_count": 6,
+  "derived_parent_vector_count": 2,
+  "topic_vector_count": 8,
+  "topic_vector_index": "grz-cocoarynth-topic-vectors-bb1deb018565",
+  "sitemap_counts": {
+    "nodes": 169,
+    "edges": 379,
+    "node_types": {
+      "Document": 55,
+      "TextChunk": 106,
+      "Topic": 8
+    },
+    "predicates": {
+      "hasTextChunk": 106,
+      "hasTopicMember": 158,
+      "hasMemberDocument": 111,
+      "hasNarrowerTopic": 4
+    }
+  },
+  "labels": "All communities are deliberately unnamed. Display labels are native identifiers, not model-generated topic names or summaries.",
+  "model_calls": 0,
+  "embedding_calls": 0,
+  "business_ontology_changed": false,
+  "navigation_vocabulary": {
+    "namespace": "urn:ontology:cocoarynth-navigation#",
+    "scope": "Additive RDF navigation vocabulary, defined in cocoarynth-sitemap.json; not an approved change to the business OWL or a registered managed EKG ontology."
+  },
+  "native_files": [
+    {
+      "path": "native/graph.csr",
+      "sha256": "f6f07cc9d81ca62033747401b47fc84880e107f92d5e8f7966e44ab3c2470022"
+    },
+    {
+      "path": "native/hierarchy.json",
+      "sha256": "0fe154269dc59e5acd699fc59543af2c46f7833fa463c9c4f9c96048f50ce308"
+    },
+    {
+      "path": "native/local-store.json",
+      "sha256": "175ead66531ae5a5b9f8881078267579854e2c590dd8b440b9b3c1c948b3c0cf"
+    },
+    {
+      "path": "native/node-keys.json",
+      "sha256": "c0aab9c94ddb0d1e44b868f876613fe8690631eaca9f84061996f7c49e823d44"
+    },
+    {
+      "path": "native/pre-leiden-evaluation.json",
+      "sha256": "4b232e7940661ba69f8a20b6ad24df4cbf6afb3d6d2cabe63c1b80387bc6006c"
+    },
+    {
+      "path": "native/probe-keys.json",
+      "sha256": "818b08b7d430a5788b443ac8f780b80d1726320bbd5d6af3ca4da4ff8051e4bc"
+    },
+    {
+      "path": "native/receipt.json",
+      "sha256": "0b91e600d7a3034f54b8bbc214ff0c3a680b3a6ca05c70e6321bda6ce6a1d981"
+    },
+    {
+      "path": "native/representatives.f32",
+      "sha256": "3e7404057e62f49b61602666c1f480b2805ba19a92e77ccb8b17b2a2d207d0f3"
+    },
+    {
+      "path": "native/representatives.json",
+      "sha256": "4c0cb208ecee44b2584f9f45405b1bdc4258403c4313884c676c80ece73d8297"
+    }
+  ],
+  "documents_digest": "45709a3948bd2199a815873e494cb4de1107c8c297f0c4ebfb6791486b3aca5f"
+}

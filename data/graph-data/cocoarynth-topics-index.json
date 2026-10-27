@@ -1,0 +1,178 @@
+{
+  "name": "grz-cocoarynth-topics-bb1deb018565",
+  "fields": [
+    {
+      "name": "id",
+      "type": "Edm.String",
+      "key": true,
+      "searchable": false,
+      "filterable": true,
+      "sortable": false,
+      "retrievable": true
+    },
+    {
+      "name": "sort_key",
+      "type": "Edm.String",
+      "key": false,
+      "searchable": false,
+      "filterable": true,
+      "sortable": true,
+      "retrievable": true
+    },
+    {
+      "name": "kind",
+      "type": "Edm.String",
+      "key": false,
+      "searchable": false,
+      "filterable": true,
+      "sortable": false,
+      "retrievable": true
+    },
+    {
+      "name": "generation_id",
+      "type": "Edm.String",
+      "key": false,
+      "searchable": false,
+      "filterable": true,
+      "sortable": false,
+      "retrievable": true
+    },
+    {
+      "name": "community_id",
+      "type": "Edm.String",
+      "key": false,
+      "searchable": false,
+      "filterable": true,
+      "sortable": false,
+      "retrievable": true
+    },
+    {
+      "name": "parent_id",
+      "type": "Edm.String",
+      "key": false,
+      "searchable": false,
+      "filterable": true,
+      "sortable": false,
+      "retrievable": true
+    },
+    {
+      "name": "level",
+      "type": "Edm.Int32",
+      "key": false,
+      "searchable": false,
+      "filterable": true,
+      "sortable": true,
+      "retrievable": true
+    },
+    {
+      "name": "chunk_id",
+      "type": "Edm.String",
+      "key": false,
+      "searchable": false,
+      "filterable": true,
+      "sortable": true,
+      "retrievable": true
+    },
+    {
+      "name": "source_id",
+      "type": "Edm.String",
+      "key": false,
+      "searchable": false,
+      "filterable": false,
+      "sortable": false,
+      "retrievable": true
+    },
+    {
+      "name": "text",
+      "type": "Edm.String",
+      "key": false,
+      "searchable": false,
+      "filterable": false,
+      "sortable": false,
+      "retrievable": true
+    },
+    {
+      "name": "visibility",
+      "type": "Edm.String",
+      "key": false,
+      "searchable": false,
+      "filterable": true,
+      "sortable": false,
+      "retrievable": true
+    },
+    {
+      "name": "member_count",
+      "type": "Edm.Int64",
+      "key": false,
+      "searchable": false,
+      "filterable": false,
+      "sortable": false,
+      "retrievable": true
+    },
+    {
+      "name": "label",
+      "type": "Edm.String",
+      "key": false,
+      "searchable": false,
+      "filterable": false,
+      "sortable": false,
+      "retrievable": true
+    },
+    {
+      "name": "label_status",
+      "type": "Edm.String",
+      "key": false,
+      "searchable": false,
+      "filterable": false,
+      "sortable": false,
+      "retrievable": true
+    },
+    {
+      "name": "centroid",
+      "type": "Collection(Edm.Single)",
+      "key": false,
+      "searchable": true,
+      "filterable": false,
+      "sortable": false,
+      "dimensions": 3072,
+      "vectorSearchProfile": "grz-exhaustive",
+      "retrievable": true
+    },
+    {
+      "name": "centroid_method",
+      "type": "Edm.String",
+      "key": false,
+      "searchable": false,
+      "filterable": false,
+      "sortable": false,
+      "retrievable": true
+    },
+    {
+      "name": "payload",
+      "type": "Edm.String",
+      "key": false,
+      "searchable": false,
+      "filterable": false,
+      "sortable": false,
+      "retrievable": true
+    }
+  ],
+  "vectorSearch": {
+    "algorithms": [
+      {
+        "name": "grz-exhaustive",
+        "exhaustiveKnnParameters": {
+          "metric": "cosine"
+        },
+        "kind": "exhaustiveKnn"
+      }
+    ],
+    "profiles": [
+      {
+        "name": "grz-exhaustive",
+        "algorithm": "grz-exhaustive"
+      }
+    ]
+  },
+  "description": "Task-owned Cocoarynth GRZ sidecar; generation=bb1deb018565f895ba5615fa7b66a439eeb6d13c2e88c43adc8f86eaef992d71"
+}

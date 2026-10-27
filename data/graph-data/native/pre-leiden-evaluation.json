@@ -1,0 +1,37 @@
+{
+  "FormatVersion": 1,
+  "InputFingerprint": "F78BF3F908A1F38D3EC611228F7AC451A3E78506134E2D6F2605310CC97EAEB6",
+  "EvaluatedUtc": "2026-10-27T19:00:51.7375681+00:00",
+  "LeidenStarted": false,
+  "SourceDocumentCount": 106,
+  "ObservedNodeCount": 97,
+  "ObservedSourceCoverage": 0.9150943396226415,
+  "UnobservedSourceDocumentCount": 9,
+  "ObservedUnprobedNodeCount": 91,
+  "NonisolatedNodeCount": 97,
+  "NonisolatedSourceCoverage": 0.9150943396226415,
+  "Graph": {
+    "NodeCount": 97,
+    "EdgeCount": 291,
+    "IsolateCount": 0,
+    "LargestConnectedComponentSize": 97,
+    "LargestConnectedComponentRatio": 1
+  },
+  "ConnectedComponentCount": 1,
+  "NontrivialComponentCount": 1,
+  "TopComponentSizes": [
+    97
+  ],
+  "ComponentSizeDistribution": [
+    {
+      "ComponentSize": 97,
+      "ComponentCount": 1
+    }
+  ],
+  "LargestComponentSourceCoverage": 0.9150943396226415,
+  "LargestComponentNonisolatedFraction": 1,
+  "MeanDegree": 6,
+  "MaximumDegree": 53,
+  "GraphSha256": "F6F07CC9D81CA62033747401B47FC84880E107F92D5E8F7966E44AB3C2470022",
+  "NodeKeysSha256": "C0AAB9C94DDB0D1E44B868F876613FE8690631EACA9F84061996F7C49E823D44"
+}

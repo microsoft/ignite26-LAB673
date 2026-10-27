@@ -16,9 +16,9 @@ Snapshots of the four indexes, captured from a live ingestion run, are in `index
 
 ## Offline ontology and graph
 
-The [offline graph bundle](graph-data/README.md) contains a JSON/OWL ontology, a JSON-LD instance graph, and portable Search `edgeList` index definitions and records derived from the existing world data. It includes source provenance and import guidance without uploading data or regenerating vectors.
+The [offline graph bundle](graph-data/README.md) contains the JSON/OWL business ontology and fact graph, native GRZ topic communities, all 106 captured 3,072-dimensional source vectors, eight topic vectors, and a 379-edge document/topic/chunk sitemap. Topic preparation used task-owned indexes on `magottei-s1m-os`; no source embeddings were regenerated. The bundle includes provenance, vector-bearing index definitions and records, and import guidance.
 
-This is a structured-fact snapshot, not a published managed EKG. Existing provisioning does not restore these additional indexes automatically. The hypothetical questions below remain future work; their placeholder entities and answers were not added to the graph.
+These are snapshots, not a published managed EKG. Native topics cover 97 chunks; nine remain explicitly unassigned, with their text and vectors preserved. Six topic vectors are native; two parent vectors are separately labeled derived centroids. Existing provisioning does not restore the additional indexes automatically. Possible [EKG compatibility work and local re-ingestion](graph-data/README.md#ekg-compatibility-and-possible-local-re-ingestion) are documented separately. The hypothetical questions below remain future work; their placeholder entities and answers were not added to the graph.
 
 ## What's in each index
 

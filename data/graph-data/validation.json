@@ -1,6 +1,6 @@
 {
   "status": "ok",
-  "scope": "Offline artifact checks only; no service import, GQL execution, or retrieval-quality evaluation.",
+  "scope": "Business graph checks remain offline. Topics, vectors and sitemap have offline checks plus bounded source/GRZ/vector restore checks on the authorized preparation service. No managed EKG registration, GQL, grounding or knowledge-base validation.",
   "native_owl_check": {
     "status": "ok",
     "owl_sha256": "5cf8fd671adfc554072cd7af1cde6b9814bb2ea608c1080c5c146f8998c04cfb",
@@ -28,5 +28,69 @@
     "rdf_instance_triples": 4227,
     "offline_route_checks": 15,
     "typed_attribute_checks": 32
-  }
+  },
+  "topics_and_navigation": {
+    "status": "ok",
+    "scope": "Native topic forest, complete vector snapshot, offline GRZ consumer, and original-ID sitemap; restore evidence is separately recorded.",
+    "checks": {
+      "all_106_original_chunk_rows_and_vectors_preserved": true,
+      "native_receipt_artifact_hashes": true,
+      "native_hierarchy_and_memberships_exact": true,
+      "all_chunks_accounted_for_without_fabricated_assignments": true,
+      "six_native_vectors_and_two_explicit_derived_parent_vectors": true,
+      "rest_schemas_use_actual_sdk_serialization_and_stored_float32_vectors": true,
+      "sitemap_matches_native_hierarchy_and_original_document_membership": true,
+      "sitemap_document_ids_reuse_existing_business_graph": true,
+      "no_dangling_sitemap_or_evidence_links": true,
+      "official_offline_consumer_full_generation_and_pagination": true,
+      "unassigned_evidence_retained_and_consumer_explicitly_reports_unassigned": true,
+      "private_runtime_and_azure_scope_values_not_exported": true,
+      "source_and_topic_vector_service_roundtrip": true
+    },
+    "counts": {
+      "source_chunks": 106,
+      "pdfs": 55,
+      "vector_dimensions": 3072,
+      "communities": 8,
+      "native_vectors": 6,
+      "derived_parent_vectors": 2,
+      "assigned_chunks": 97,
+      "unassigned_chunks": 9,
+      "sitemap_nodes": 169,
+      "sitemap_edges": 379
+    },
+    "official_offline_consumer_status": {
+      "physical_index": "grz-cocoarynth-topics-bb1deb018565",
+      "generation_id": "bb1deb018565f895ba5615fa7b66a439eeb6d13c2e88c43adc8f86eaef992d71",
+      "schema_version": "grz-sidecar-v2",
+      "visibility_basis": "per-document",
+      "build_health": "verified",
+      "active": "unknown",
+      "verified": true,
+      "verification_scope": "full_generation_readback",
+      "communities_per_level": {
+        "0": 4,
+        "1": 4
+      },
+      "browse_level": 1,
+      "assigned_node_count": 97,
+      "unassigned_source_document_count": 9,
+      "node_coverage": 0.9150943396226415,
+      "source_document_count": 106,
+      "isolated_node_count": 0,
+      "vector_coverage": {
+        "representative_count": 8,
+        "vector_count": 6,
+        "missing_vector_count": 2
+      }
+    }
+  },
+  "sitemap_rdf": {
+    "native_ekg_edgeList_definition": true,
+    "jsonld_and_node_edge_projection_equivalent": true,
+    "original_document_rdf_identities_and_label_datatypes_preserved": true,
+    "rdf_triples": 717,
+    "combined_business_and_navigation_rdf_triples": 4834
+  },
+  "restore_evidence": "cocoarynth-topics-restore-check.json"
 }
