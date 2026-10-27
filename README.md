@@ -56,6 +56,10 @@ If you're learning at your own pace:
 3. Run the notebook
    [`src/notebooks/part1-standard-foundry-iq-kb.ipynb`](src/notebooks/part1-standard-foundry-iq-kb.ipynb)
 
+For the incremental `microsoft-retriever-1` samples, see
+[Preview REST notebooks](src/README.md#preview-rest-notebooks). They require a
+separately prepared preview environment and do not yet include graph exercises.
+
 ### 🎯 Learning outcomes
 
 By the end of this session, you will be able to:
