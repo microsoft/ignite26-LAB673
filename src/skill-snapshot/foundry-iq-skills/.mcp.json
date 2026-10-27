@@ -1,0 +1,33 @@
+{
+  "mcpServers": {
+    "azure": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@azure/mcp@latest",
+        "server",
+        "start"
+      ]
+    },
+    "ekg-skills": {
+      "command": "python",
+      "args": [
+        "-I",
+        "${CLAUDE_PLUGIN_ROOT}/runtime/bootstrap.py",
+        "run",
+        "ekg",
+        "ekg-apps"
+      ]
+    },
+    "grz-skills": {
+      "command": "python",
+      "args": [
+        "-I",
+        "${CLAUDE_PLUGIN_ROOT}/runtime/bootstrap.py",
+        "run",
+        "grz",
+        "grz-mcp"
+      ]
+    }
+  }
+}

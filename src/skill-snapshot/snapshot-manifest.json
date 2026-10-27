@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "status": "testing-only",
+  "source": {
+    "repository": "https://msdata.visualstudio.com/Azure%20Search/_git/Foundry-IQ-Skills",
+    "pull_request": "https://msdata.visualstudio.com/Azure%20Search/_git/Foundry-IQ-Skills/pullrequest/2344752",
+    "commit": "7389ee18f277f24e9f6578975c3e5dfdd80e1a61",
+    "release_status_at_import": "blocked - not release-candidate or demo-ready"
+  },
+  "package": {
+    "name": "foundry-iq-skills",
+    "root": "foundry-iq-skills",
+    "inventory": "package-digest.json",
+    "digest": "sha256:c3c1c4cd56dafd1c1e07c021e20b37405907658462c52f7a04b445e31edc354f",
+    "file_count": 307,
+    "skill_count": 14,
+    "runtime_count": 4,
+    "modified_from_generated_package": false
+  }
+}

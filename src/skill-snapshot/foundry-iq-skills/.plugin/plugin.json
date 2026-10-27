@@ -1,0 +1,27 @@
+{
+  "name": "foundry-iq-skills",
+  "description": "Operate Foundry IQ and Azure AI Search through exact REST operation skills, enterprise knowledge graphs (EKG), grounding indexes, GRZ community sidecars, ontologies, and intelligent graph routing.",
+  "version": "0.0.0-placeholder",
+  "author": {
+    "name": "Microsoft",
+    "url": "https://www.microsoft.com"
+  },
+  "homepage": "https://github.com/microsoft/github-copilot-for-azure",
+  "repository": "https://github.com/microsoft/GitHub-Copilot-for-Azure",
+  "license": "MIT",
+  "keywords": [
+    "azure",
+    "azure-ai-search",
+    "foundry-iq",
+    "search",
+    "retrieval",
+    "rag",
+    "knowledge-graph",
+    "ekg",
+    "grounding",
+    "grz",
+    "ontology"
+  ],
+  "skills": "./skills/",
+  "mcpServers": "./.mcp.json"
+}

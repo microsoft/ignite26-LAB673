@@ -13,3 +13,9 @@ It creates a standalone file knowledge source and KB for the label and marketing
 Restart the kernel if you previously ran an earlier version, then run all cells in order.
 
 Running the notebook creates knowledge sources and knowledge bases and makes billable ingestion/retrieval/model calls. It uses answer synthesis. It does not configure Fabric, Work IQ, or an agent.
+
+## Optional skills snapshot
+
+The [testing-only Foundry IQ skills snapshot](skill-snapshot/README.md) contains the consolidated `foundry-iq-skills` plugin: 14 skills, four pinned Python wheels, platform-specific dependency locks, and the prebuilt MCP Apps host. It is separate from the notebook and is not required for Part 1.
+
+The upstream candidate is not release- or demo-ready. Read the snapshot's setup instructions and limitations before using it.
