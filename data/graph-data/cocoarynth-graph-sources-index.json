@@ -1,0 +1,87 @@
+{
+  "name": "cocoarynth-graph-sources",
+  "fields": [
+    {
+      "name": "chunk_id",
+      "type": "Edm.String",
+      "key": true,
+      "searchable": false,
+      "retrievable": true,
+      "filterable": true,
+      "sortable": true,
+      "facetable": false
+    },
+    {
+      "name": "parent_id",
+      "type": "Edm.String",
+      "key": false,
+      "searchable": false,
+      "retrievable": true,
+      "filterable": true,
+      "sortable": true,
+      "facetable": false
+    },
+    {
+      "name": "title",
+      "type": "Edm.String",
+      "key": false,
+      "searchable": true,
+      "retrievable": true,
+      "filterable": true,
+      "sortable": true,
+      "facetable": false
+    },
+    {
+      "name": "blob_path",
+      "type": "Edm.String",
+      "key": false,
+      "searchable": false,
+      "retrievable": true,
+      "filterable": true,
+      "sortable": true,
+      "facetable": false
+    },
+    {
+      "name": "chunk",
+      "type": "Edm.String",
+      "key": false,
+      "searchable": true,
+      "retrievable": true,
+      "filterable": false,
+      "sortable": false,
+      "facetable": false
+    },
+    {
+      "name": "source_pointer",
+      "type": "Edm.String",
+      "key": false,
+      "searchable": false,
+      "retrievable": true,
+      "filterable": true,
+      "sortable": true,
+      "facetable": false
+    },
+    {
+      "name": "source_index",
+      "type": "Edm.String",
+      "key": false,
+      "searchable": false,
+      "retrievable": true,
+      "filterable": true,
+      "sortable": true,
+      "facetable": false
+    },
+    {
+      "name": "page_number_from",
+      "type": "Edm.Int32",
+      "retrievable": true,
+      "filterable": true
+    },
+    {
+      "name": "page_number_to",
+      "type": "Edm.Int32",
+      "retrievable": true,
+      "filterable": true
+    }
+  ]
+}

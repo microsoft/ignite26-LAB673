@@ -1,0 +1,32 @@
+{
+  "status": "ok",
+  "scope": "Offline artifact checks only; no service import, GQL execution, or retrieval-quality evaluation.",
+  "native_owl_check": {
+    "status": "ok",
+    "owl_sha256": "5cf8fd671adfc554072cd7af1cde6b9814bb2ea608c1080c5c146f8998c04cfb",
+    "violations": []
+  },
+  "checks": {
+    "native_owl_consumer": true,
+    "native_edgeList_definitions": true,
+    "field_types_and_unique_search_keys": true,
+    "complete_fact_provenance": true,
+    "json_pointer_and_captured_chunk_fidelity": true,
+    "no_dangling_entity_or_source_links": true,
+    "ontology_domains_ranges_and_datatypes": true,
+    "deterministic_fact_keys": true,
+    "jsonld_and_edgeList_rdf_equivalence": true,
+    "no_external_owl_or_jsonld_imports": true,
+    "unlisted_bench_batch_not_invented": true,
+    "absent_certificate_not_invented": true
+  },
+  "counts": {
+    "entities": 503,
+    "facts": 3938,
+    "source_chunks": 609,
+    "original_pdf_chunks": 106,
+    "rdf_instance_triples": 4227,
+    "offline_route_checks": 15,
+    "typed_attribute_checks": 32
+  }
+}

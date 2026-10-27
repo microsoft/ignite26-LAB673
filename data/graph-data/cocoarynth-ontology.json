@@ -1,0 +1,1986 @@
+{
+  "classes": [
+    {
+      "name": "Batch",
+      "description": "One production run whose code is printed on the wrapper as its lot code; not a bean lot.",
+      "parent": "CocoarynthEntity"
+    },
+    {
+      "name": "BatchInput",
+      "description": "A measured quantity of one bean lot used in one batch.",
+      "parent": "CocoarynthEntity"
+    },
+    {
+      "name": "BeanLot",
+      "description": "A quantity of beans shipped and received together; may supply several production batches.",
+      "parent": "CocoarynthEntity"
+    },
+    {
+      "name": "Case",
+      "description": "A retailer complaint, customer inquiry, or nonconformance record.",
+      "parent": "CocoarynthEntity"
+    },
+    {
+      "name": "CaseInvestigation",
+      "description": "A dated investigation statement recorded within a case.",
+      "parent": "CocoarynthEntity"
+    },
+    {
+      "name": "CertificationRecord",
+      "description": "A supplier certification status record, including expired or explicitly absent certification.",
+      "parent": "CocoarynthEntity"
+    },
+    {
+      "name": "CocoarynthEntity",
+      "description": "An identified entity or recorded observation in the fictional Cocoarynth corpus.",
+      "parent": null
+    },
+    {
+      "name": "CollectionTicket",
+      "description": "A slip recording fresh beans delivered by a farm to a cooperative.",
+      "parent": "CocoarynthEntity"
+    },
+    {
+      "name": "Consignment",
+      "description": "An inbound shipment of bean lots, distinct from an outbound shipment of bars.",
+      "parent": "CocoarynthEntity"
+    },
+    {
+      "name": "Contract",
+      "description": "A recorded supplier buying agreement.",
+      "parent": "CocoarynthEntity"
+    },
+    {
+      "name": "Department",
+      "description": "A department within Cocoarynth.",
+      "parent": "CocoarynthEntity"
+    },
+    {
+      "name": "DepotStop",
+      "description": "One shipment's recorded custody and storage interval at a depot.",
+      "parent": "CocoarynthEntity"
+    },
+    {
+      "name": "Document",
+      "description": "One of the existing PDFs in the corpus manifest.",
+      "parent": "CocoarynthEntity"
+    },
+    {
+      "name": "Farm",
+      "description": "An identified cacao farm or estate parcel.",
+      "parent": "CocoarynthEntity"
+    },
+    {
+      "name": "FarmContribution",
+      "description": "One farm's contribution to a bean lot; wet and dried kilograms remain distinct.",
+      "parent": "CocoarynthEntity"
+    },
+    {
+      "name": "Finding",
+      "description": "An inspection finding with its recorded corrective action and status.",
+      "parent": "CocoarynthEntity"
+    },
+    {
+      "name": "Inspection",
+      "description": "A recorded farm inspection, certification inspection, or buyer visit.",
+      "parent": "CocoarynthEntity"
+    },
+    {
+      "name": "Logger",
+      "description": "A named device recording temperature at a site.",
+      "parent": "CocoarynthEntity"
+    },
+    {
+      "name": "LotHold",
+      "description": "A recorded restriction on using a bean lot pending resolution of a quality problem.",
+      "parent": "CocoarynthEntity"
+    },
+    {
+      "name": "MarketPriceObservation",
+      "description": "The fictional commodity-price comparison for one year.",
+      "parent": "CocoarynthEntity"
+    },
+    {
+      "name": "Organization",
+      "description": "Cocoarynth or an organization with which it works.",
+      "parent": "CocoarynthEntity"
+    },
+    {
+      "name": "Origin",
+      "description": "A sourcing region and supplier, potentially involving several farms.",
+      "parent": "CocoarynthEntity"
+    },
+    {
+      "name": "Pallet",
+      "description": "An explicitly identified pallet in a shipment record.",
+      "parent": "CocoarynthEntity"
+    },
+    {
+      "name": "PanelSample",
+      "description": "One assessed sample in a sensory panel; a bench sample need not be a production batch.",
+      "parent": "CocoarynthEntity"
+    },
+    {
+      "name": "Partner",
+      "description": "An importer, forwarder, carrier, laboratory, certifier, or other business partner.",
+      "parent": "Organization"
+    },
+    {
+      "name": "Person",
+      "description": "A named fictional person in the corpus; not a customer-facing disclosure permission.",
+      "parent": "CocoarynthEntity"
+    },
+    {
+      "name": "PolicyRecord",
+      "description": "Structured receiving limits, storage guidance, or production parameters from the world data.",
+      "parent": "CocoarynthEntity"
+    },
+    {
+      "name": "PriceObservation",
+      "description": "An origin's landed bean cost per kilogram for one year.",
+      "parent": "CocoarynthEntity"
+    },
+    {
+      "name": "Product",
+      "description": "A bar formulation or sellable product, distinct from one production run.",
+      "parent": "CocoarynthEntity"
+    },
+    {
+      "name": "PurchaseObservation",
+      "description": "Recorded purchases from one origin for one year.",
+      "parent": "CocoarynthEntity"
+    },
+    {
+      "name": "QualityTest",
+      "description": "A dated moisture, cut-test, or sensory check of a bean lot.",
+      "parent": "CocoarynthEntity"
+    },
+    {
+      "name": "Retailer",
+      "description": "An organization buying bars from Cocoarynth; includes its overseas distributor.",
+      "parent": "Organization"
+    },
+    {
+      "name": "SalesObservation",
+      "description": "Monthly product sell-in to one retailer, not consumer sell-through.",
+      "parent": "CocoarynthEntity"
+    },
+    {
+      "name": "SensoryPanel",
+      "description": "A recorded tasting panel with an assessment method and coordinator.",
+      "parent": "CocoarynthEntity"
+    },
+    {
+      "name": "Shipment",
+      "description": "An outbound shipment of finished bars to a retailer.",
+      "parent": "CocoarynthEntity"
+    },
+    {
+      "name": "ShipmentLine",
+      "description": "A quantity of bars from one batch in an outbound shipment.",
+      "parent": "CocoarynthEntity"
+    },
+    {
+      "name": "Site",
+      "description": "A named facility or sublocation, such as a factory, room, depot, or storage bay.",
+      "parent": "CocoarynthEntity"
+    },
+    {
+      "name": "Supplier",
+      "description": "A cooperative, producer association, or estate supplying cacao.",
+      "parent": "Organization"
+    },
+    {
+      "name": "TemperatureReading",
+      "description": "One temperature observation at the logger's explicitly recorded offset.",
+      "parent": "CocoarynthEntity"
+    }
+  ],
+  "properties": [
+    {
+      "name": "assignedTo",
+      "kind": "object",
+      "domain": "Case",
+      "range": "Person",
+      "description": "The explicitly recorded assignedTo relationship."
+    },
+    {
+      "name": "carriedBy",
+      "kind": "object",
+      "domain": "Shipment",
+      "range": "Partner",
+      "description": "The explicitly recorded carriedBy relationship."
+    },
+    {
+      "name": "caseRetailer",
+      "kind": "object",
+      "domain": "Case",
+      "range": "Retailer",
+      "description": "The explicitly recorded caseRetailer relationship."
+    },
+    {
+      "name": "caseSupplier",
+      "kind": "object",
+      "domain": "Case",
+      "range": "Supplier",
+      "description": "The explicitly recorded caseSupplier relationship."
+    },
+    {
+      "name": "certificationFor",
+      "kind": "object",
+      "domain": "CertificationRecord",
+      "range": "Supplier",
+      "description": "The explicitly recorded certificationFor relationship."
+    },
+    {
+      "name": "certifiedBy",
+      "kind": "object",
+      "domain": "CertificationRecord",
+      "range": "Partner",
+      "description": "The certification record names this certifier. CertificationRecord existence does not imply a valid certificate."
+    },
+    {
+      "name": "collectedFrom",
+      "kind": "object",
+      "domain": "CollectionTicket",
+      "range": "Farm",
+      "description": "The explicitly recorded collectedFrom relationship."
+    },
+    {
+      "name": "collectedInto",
+      "kind": "object",
+      "domain": "CollectionTicket",
+      "range": "BeanLot",
+      "description": "The explicitly recorded collectedInto relationship."
+    },
+    {
+      "name": "concernsBatch",
+      "kind": "object",
+      "domain": "Case",
+      "range": "Batch",
+      "description": "The explicitly recorded concernsBatch relationship."
+    },
+    {
+      "name": "concernsFarm",
+      "kind": "object",
+      "domain": "Finding",
+      "range": "Farm",
+      "description": "The explicitly recorded concernsFarm relationship."
+    },
+    {
+      "name": "concernsLot",
+      "kind": "object",
+      "domain": "Case",
+      "range": "BeanLot",
+      "description": "The explicitly recorded concernsLot relationship."
+    },
+    {
+      "name": "concernsShipment",
+      "kind": "object",
+      "domain": "Case",
+      "range": "Shipment",
+      "description": "The explicitly recorded concernsShipment relationship."
+    },
+    {
+      "name": "contactPerson",
+      "kind": "object",
+      "domain": "Organization",
+      "range": "Person",
+      "description": "The explicitly recorded contactPerson relationship."
+    },
+    {
+      "name": "containsLot",
+      "kind": "object",
+      "domain": "Consignment",
+      "range": "BeanLot",
+      "description": "The explicitly recorded containsLot relationship."
+    },
+    {
+      "name": "contractSupplier",
+      "kind": "object",
+      "domain": "Contract",
+      "range": "Supplier",
+      "description": "The explicitly recorded contractSupplier relationship."
+    },
+    {
+      "name": "contributedTo",
+      "kind": "object",
+      "domain": "Farm",
+      "range": "BeanLot",
+      "description": "The farm is an explicit contribution to this bean lot; quantities and wet/dried units live on FarmContribution."
+    },
+    {
+      "name": "contributionFrom",
+      "kind": "object",
+      "domain": "FarmContribution",
+      "range": "Farm",
+      "description": "The explicitly recorded contributionFrom relationship."
+    },
+    {
+      "name": "coordinatedBy",
+      "kind": "object",
+      "domain": "SensoryPanel",
+      "range": "Person",
+      "description": "The explicitly recorded coordinatedBy relationship."
+    },
+    {
+      "name": "delayedByHold",
+      "kind": "object",
+      "domain": "Product",
+      "range": "LotHold",
+      "description": "The product's launch_delay_reason explicitly identifies the held bean lot."
+    },
+    {
+      "name": "deliveredTo",
+      "kind": "object",
+      "domain": "Shipment",
+      "range": "Retailer",
+      "description": "The explicitly recorded deliveredTo relationship."
+    },
+    {
+      "name": "farmedBy",
+      "kind": "object",
+      "domain": "Farm",
+      "range": "Person",
+      "description": "The explicitly recorded farmedBy relationship."
+    },
+    {
+      "name": "forwardedBy",
+      "kind": "object",
+      "domain": "Consignment",
+      "range": "Partner",
+      "description": "The explicitly recorded forwardedBy relationship."
+    },
+    {
+      "name": "hasAction",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "String",
+      "description": "The source-record attribute Action; original date-only values remain strings."
+    },
+    {
+      "name": "hasArrived",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "String",
+      "description": "The source-record attribute Arrived; original date-only values remain strings."
+    },
+    {
+      "name": "hasAssignedTo",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "String",
+      "description": "The source-record attribute AssignedTo; original date-only values remain strings."
+    },
+    {
+      "name": "hasAttributes",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "String",
+      "description": "The source-record attribute Attributes; original date-only values remain strings."
+    },
+    {
+      "name": "hasBags",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "Double",
+      "description": "The source-record attribute Bags; original date-only values remain strings."
+    },
+    {
+      "name": "hasBarWeightG",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "Double",
+      "description": "The source-record attribute BarWeightG; original date-only values remain strings."
+    },
+    {
+      "name": "hasBars",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "Double",
+      "description": "The source-record attribute Bars; original date-only values remain strings."
+    },
+    {
+      "name": "hasBarsAffected",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "Double",
+      "description": "The source-record attribute BarsAffected; original date-only values remain strings."
+    },
+    {
+      "name": "hasBatch",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "String",
+      "description": "The source-record attribute Batch; original date-only values remain strings."
+    },
+    {
+      "name": "hasBeans",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "Double",
+      "description": "The source-record attribute Beans; original date-only values remain strings."
+    },
+    {
+      "name": "hasBillOfLading",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "String",
+      "description": "The source-record attribute BillOfLading; original date-only values remain strings."
+    },
+    {
+      "name": "hasBloomRiskAboveC",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "Double",
+      "description": "The source-record attribute BloomRiskAboveC; original date-only values remain strings."
+    },
+    {
+      "name": "hasBuyingSince",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "Double",
+      "description": "The source-record attribute BuyingSince; original date-only values remain strings."
+    },
+    {
+      "name": "hasBy",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "String",
+      "description": "The source-record attribute By; original date-only values remain strings."
+    },
+    {
+      "name": "hasCarrier",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "String",
+      "description": "The source-record attribute Carrier; original date-only values remain strings."
+    },
+    {
+      "name": "hasCertificateNo",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "String",
+      "description": "The source-record attribute CertificateNo; original date-only values remain strings."
+    },
+    {
+      "name": "hasCertifier",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "String",
+      "description": "The source-record attribute Certifier; original date-only values remain strings."
+    },
+    {
+      "name": "hasClosed",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "String",
+      "description": "The source-record attribute Closed; original date-only values remain strings."
+    },
+    {
+      "name": "hasCocoaPct",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "Double",
+      "description": "The source-record attribute CocoaPct; original date-only values remain strings."
+    },
+    {
+      "name": "hasCode",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "String",
+      "description": "The source-record attribute Code; original date-only values remain strings."
+    },
+    {
+      "name": "hasConsignment",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "String",
+      "description": "The source-record attribute Consignment; original date-only values remain strings."
+    },
+    {
+      "name": "hasContact",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "String",
+      "description": "The source-record attribute Contact; original date-only values remain strings."
+    },
+    {
+      "name": "hasContribution",
+      "kind": "object",
+      "domain": "BeanLot",
+      "range": "FarmContribution",
+      "description": "The explicitly recorded hasContribution relationship."
+    },
+    {
+      "name": "hasCoordinator",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "String",
+      "description": "The source-record attribute Coordinator; original date-only values remain strings."
+    },
+    {
+      "name": "hasCorrectiveAction",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "String",
+      "description": "The source-record attribute CorrectiveAction; original date-only values remain strings."
+    },
+    {
+      "name": "hasCountry",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "String",
+      "description": "The source-record attribute Country; original date-only values remain strings."
+    },
+    {
+      "name": "hasCreditUsd",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "Double",
+      "description": "The source-record attribute CreditUsd; original date-only values remain strings."
+    },
+    {
+      "name": "hasCutTestBeans",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "Double",
+      "description": "The source-record attribute CutTestBeans; original date-only values remain strings."
+    },
+    {
+      "name": "hasDate",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "String",
+      "description": "The source-record attribute Date; original date-only values remain strings."
+    },
+    {
+      "name": "hasDelivered",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "String",
+      "description": "The source-record attribute Delivered; original date-only values remain strings."
+    },
+    {
+      "name": "hasDeparted",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "String",
+      "description": "The source-record attribute Departed; original date-only values remain strings."
+    },
+    {
+      "name": "hasDepartment",
+      "kind": "object",
+      "domain": "Organization",
+      "range": "Department",
+      "description": "The explicitly recorded hasDepartment relationship."
+    },
+    {
+      "name": "hasDepartmentIdentifier",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "String",
+      "description": "The source-record attribute DepartmentIdentifier; original date-only values remain strings."
+    },
+    {
+      "name": "hasDepotStop",
+      "kind": "object",
+      "domain": "Shipment",
+      "range": "DepotStop",
+      "description": "The explicitly recorded hasDepotStop relationship."
+    },
+    {
+      "name": "hasDescription",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "String",
+      "description": "The source-record attribute Description; original date-only values remain strings."
+    },
+    {
+      "name": "hasDispatched",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "String",
+      "description": "The source-record attribute Dispatched; original date-only values remain strings."
+    },
+    {
+      "name": "hasDisposition",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "String",
+      "description": "The source-record attribute Disposition; original date-only values remain strings."
+    },
+    {
+      "name": "hasDocumentPath",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "String",
+      "description": "The source-record attribute DocumentPath; original date-only values remain strings."
+    },
+    {
+      "name": "hasDriedKg",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "Double",
+      "description": "The source-record attribute DriedKg; original date-only values remain strings."
+    },
+    {
+      "name": "hasDrying",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "String",
+      "description": "The source-record attribute Drying; original date-only values remain strings."
+    },
+    {
+      "name": "hasDryingEnd",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "String",
+      "description": "The source-record attribute DryingEnd; original date-only values remain strings."
+    },
+    {
+      "name": "hasDryingNote",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "String",
+      "description": "The source-record attribute DryingNote; original date-only values remain strings."
+    },
+    {
+      "name": "hasDryingStart",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "String",
+      "description": "The source-record attribute DryingStart; original date-only values remain strings."
+    },
+    {
+      "name": "hasDue",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "String",
+      "description": "The source-record attribute Due; original date-only values remain strings."
+    },
+    {
+      "name": "hasElevationM",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "String",
+      "description": "The source-record attribute ElevationM; original date-only values remain strings."
+    },
+    {
+      "name": "hasEmployees",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "Double",
+      "description": "The source-record attribute Employees; original date-only values remain strings."
+    },
+    {
+      "name": "hasEvidenceSubmitted",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "String",
+      "description": "The source-record attribute EvidenceSubmitted; original date-only values remain strings."
+    },
+    {
+      "name": "hasFactoryReceipt",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "String",
+      "description": "The source-record attribute FactoryReceipt; original date-only values remain strings."
+    },
+    {
+      "name": "hasFarm",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "String",
+      "description": "The source-record attribute Farm; original date-only values remain strings."
+    },
+    {
+      "name": "hasFarmer",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "String",
+      "description": "The source-record attribute Farmer; original date-only values remain strings."
+    },
+    {
+      "name": "hasFarms",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "String",
+      "description": "The source-record attribute Farms; original date-only values remain strings."
+    },
+    {
+      "name": "hasFermentation",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "String",
+      "description": "The source-record attribute Fermentation; original date-only values remain strings."
+    },
+    {
+      "name": "hasFermentationEnd",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "String",
+      "description": "The source-record attribute FermentationEnd; original date-only values remain strings."
+    },
+    {
+      "name": "hasFermentationStart",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "String",
+      "description": "The source-record attribute FermentationStart; original date-only values remain strings."
+    },
+    {
+      "name": "hasFinding",
+      "kind": "object",
+      "domain": "Inspection",
+      "range": "Finding",
+      "description": "The explicitly recorded hasFinding relationship."
+    },
+    {
+      "name": "hasFindingText",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "String",
+      "description": "The source-record attribute FindingText; original date-only values remain strings."
+    },
+    {
+      "name": "hasFlagshipShop",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "String",
+      "description": "The source-record attribute FlagshipShop; original date-only values remain strings."
+    },
+    {
+      "name": "hasFlat",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "Double",
+      "description": "The source-record attribute Flat; original date-only values remain strings."
+    },
+    {
+      "name": "hasFlavorNotes",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "String",
+      "description": "The source-record attribute FlavorNotes; original date-only values remain strings."
+    },
+    {
+      "name": "hasFollowUpVisit",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "String",
+      "description": "The source-record attribute FollowUpVisit; original date-only values remain strings."
+    },
+    {
+      "name": "hasForwarder",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "String",
+      "description": "The source-record attribute Forwarder; original date-only values remain strings."
+    },
+    {
+      "name": "hasFounded",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "Double",
+      "description": "The source-record attribute Founded; original date-only values remain strings."
+    },
+    {
+      "name": "hasGerminated",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "Double",
+      "description": "The source-record attribute Germinated; original date-only values remain strings."
+    },
+    {
+      "name": "hasHarvestYear",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "Double",
+      "description": "The source-record attribute HarvestYear; original date-only values remain strings."
+    },
+    {
+      "name": "hasHeadquarters",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "String",
+      "description": "The source-record attribute Headquarters; original date-only values remain strings."
+    },
+    {
+      "name": "hasHold",
+      "kind": "object",
+      "domain": "BeanLot",
+      "range": "LotHold",
+      "description": "The explicitly recorded hasHold relationship."
+    },
+    {
+      "name": "hasIdentifier",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "String",
+      "description": "The source-record attribute Identifier; original date-only values remain strings."
+    },
+    {
+      "name": "hasImporter",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "String",
+      "description": "The source-record attribute Importer; original date-only values remain strings."
+    },
+    {
+      "name": "hasInput",
+      "kind": "object",
+      "domain": "Batch",
+      "range": "BatchInput",
+      "description": "The explicitly recorded hasInput relationship."
+    },
+    {
+      "name": "hasInsectDamaged",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "Double",
+      "description": "The source-record attribute InsectDamaged; original date-only values remain strings."
+    },
+    {
+      "name": "hasInsectDamagedMaxPct",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "Double",
+      "description": "The source-record attribute InsectDamagedMaxPct; original date-only values remain strings."
+    },
+    {
+      "name": "hasInspector",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "String",
+      "description": "The source-record attribute Inspector; original date-only values remain strings."
+    },
+    {
+      "name": "hasIntervalMinutes",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "Double",
+      "description": "The source-record attribute IntervalMinutes; original date-only values remain strings."
+    },
+    {
+      "name": "hasInvestigation",
+      "kind": "object",
+      "domain": "Case",
+      "range": "CaseInvestigation",
+      "description": "The explicitly recorded hasInvestigation relationship."
+    },
+    {
+      "name": "hasKg",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "Double",
+      "description": "The source-record attribute Kg; original date-only values remain strings."
+    },
+    {
+      "name": "hasKind",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "String",
+      "description": "The source-record attribute Kind; original date-only values remain strings."
+    },
+    {
+      "name": "hasLanguage",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "String",
+      "description": "The source-record attribute Language; original date-only values remain strings."
+    },
+    {
+      "name": "hasLaunchDelayReason",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "String",
+      "description": "The source-record attribute LaunchDelayReason; original date-only values remain strings."
+    },
+    {
+      "name": "hasLaunched",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "String",
+      "description": "The source-record attribute Launched; original date-only values remain strings."
+    },
+    {
+      "name": "hasLocation",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "String",
+      "description": "The source-record attribute Location; original date-only values remain strings."
+    },
+    {
+      "name": "hasLogger",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "String",
+      "description": "The source-record attribute Logger; original date-only values remain strings."
+    },
+    {
+      "name": "hasLot",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "String",
+      "description": "The source-record attribute Lot; original date-only values remain strings."
+    },
+    {
+      "name": "hasLots",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "String",
+      "description": "The source-record attribute Lots; original date-only values remain strings."
+    },
+    {
+      "name": "hasMassAfterRedryKg",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "Double",
+      "description": "The source-record attribute MassAfterRedryKg; original date-only values remain strings."
+    },
+    {
+      "name": "hasMeasures",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "String",
+      "description": "The source-record attribute Measures; original date-only values remain strings."
+    },
+    {
+      "name": "hasMembers",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "Double",
+      "description": "The source-record attribute Members; original date-only values remain strings."
+    },
+    {
+      "name": "hasMethod",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "String",
+      "description": "The source-record attribute Method; original date-only values remain strings."
+    },
+    {
+      "name": "hasMode",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "String",
+      "description": "The source-record attribute Mode; original date-only values remain strings."
+    },
+    {
+      "name": "hasMoistureMaxPct",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "Double",
+      "description": "The source-record attribute MoistureMaxPct; original date-only values remain strings."
+    },
+    {
+      "name": "hasMonth",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "String",
+      "description": "Year-month of sell-in, derived from the explicit source month array and the 2026 series name."
+    },
+    {
+      "name": "hasMouldy",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "Double",
+      "description": "The source-record attribute Mouldy; original date-only values remain strings."
+    },
+    {
+      "name": "hasMouldyMaxPct",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "Double",
+      "description": "The source-record attribute MouldyMaxPct; original date-only values remain strings."
+    },
+    {
+      "name": "hasName",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "String",
+      "description": "The source-record attribute Name; original date-only values remain strings."
+    },
+    {
+      "name": "hasNibYield",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "Double",
+      "description": "The source-record attribute NibYield; original date-only values remain strings."
+    },
+    {
+      "name": "hasNote",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "String",
+      "description": "The source-record attribute Note; original date-only values remain strings."
+    },
+    {
+      "name": "hasNotes",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "String",
+      "description": "The source-record attribute Notes; original date-only values remain strings."
+    },
+    {
+      "name": "hasObservedAt",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "DateTime",
+      "description": "Logger reading time combined only with its source date and explicit UTC offset; measures air, not product temperature."
+    },
+    {
+      "name": "hasOffFlavor",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "String",
+      "description": "The source-record attribute OffFlavor; original date-only values remain strings."
+    },
+    {
+      "name": "hasOpened",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "String",
+      "description": "The source-record attribute Opened; original date-only values remain strings."
+    },
+    {
+      "name": "hasOrg",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "String",
+      "description": "The source-record attribute Org; original date-only values remain strings."
+    },
+    {
+      "name": "hasOrganicBasis",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "String",
+      "description": "The source-record attribute OrganicBasis; original date-only values remain strings."
+    },
+    {
+      "name": "hasOrganicClaim",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "Boolean",
+      "description": "The source-record attribute OrganicClaim; original date-only values remain strings."
+    },
+    {
+      "name": "hasOrganicTransactionCertificate",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "String",
+      "description": "The source-record attribute OrganicTransactionCertificate; original date-only values remain strings."
+    },
+    {
+      "name": "hasOrigin",
+      "kind": "object",
+      "domain": "CocoarynthEntity",
+      "range": "Origin",
+      "description": "The explicitly recorded hasOrigin relationship."
+    },
+    {
+      "name": "hasOriginIdentifier",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "String",
+      "description": "The source-record attribute OriginIdentifier; original date-only values remain strings."
+    },
+    {
+      "name": "hasOverall",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "Double",
+      "description": "The source-record attribute Overall; original date-only values remain strings."
+    },
+    {
+      "name": "hasOwner",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "String",
+      "description": "The source-record attribute Owner; original date-only values remain strings."
+    },
+    {
+      "name": "hasPacked",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "String",
+      "description": "The source-record attribute Packed; original date-only values remain strings."
+    },
+    {
+      "name": "hasPackingLoss",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "Double",
+      "description": "The source-record attribute PackingLoss; original date-only values remain strings."
+    },
+    {
+      "name": "hasPallet",
+      "kind": "object",
+      "domain": "Shipment",
+      "range": "Pallet",
+      "description": "The explicitly recorded hasPallet relationship."
+    },
+    {
+      "name": "hasPalletIdentifier",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "String",
+      "description": "The source-record attribute PalletIdentifier; original date-only values remain strings."
+    },
+    {
+      "name": "hasPanelSample",
+      "kind": "object",
+      "domain": "SensoryPanel",
+      "range": "PanelSample",
+      "description": "The explicitly recorded hasPanelSample relationship."
+    },
+    {
+      "name": "hasPanelists",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "Double",
+      "description": "The source-record attribute Panelists; original date-only values remain strings."
+    },
+    {
+      "name": "hasParent",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "String",
+      "description": "The source-record attribute Parent; original date-only values remain strings."
+    },
+    {
+      "name": "hasPartlyFermented",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "Double",
+      "description": "The source-record attribute PartlyFermented; original date-only values remain strings."
+    },
+    {
+      "name": "hasPhotos",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "String",
+      "description": "The source-record attribute Photos; original date-only values remain strings."
+    },
+    {
+      "name": "hasPlaced",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "String",
+      "description": "The source-record attribute Placed; original date-only values remain strings."
+    },
+    {
+      "name": "hasPlannedLaunch",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "String",
+      "description": "The source-record attribute PlannedLaunch; original date-only values remain strings."
+    },
+    {
+      "name": "hasPlannedProductionDate",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "String",
+      "description": "The source-record attribute PlannedProductionDate; original date-only values remain strings."
+    },
+    {
+      "name": "hasPlantedHa",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "Double",
+      "description": "The source-record attribute PlantedHa; original date-only values remain strings."
+    },
+    {
+      "name": "hasPortOfDischarge",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "String",
+      "description": "The source-record attribute PortOfDischarge; original date-only values remain strings."
+    },
+    {
+      "name": "hasPortOfLoading",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "String",
+      "description": "The source-record attribute PortOfLoading; original date-only values remain strings."
+    },
+    {
+      "name": "hasPosition",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "String",
+      "description": "The source-record attribute Position; original date-only values remain strings."
+    },
+    {
+      "name": "hasPriceLandedUsdKg",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "Double",
+      "description": "The source-record attribute PriceLandedUsdKg; original date-only values remain strings."
+    },
+    {
+      "name": "hasProduct",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "String",
+      "description": "The source-record attribute Product; original date-only values remain strings."
+    },
+    {
+      "name": "hasProductionDate",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "String",
+      "description": "The source-record attribute ProductionDate; original date-only values remain strings."
+    },
+    {
+      "name": "hasPurchasedKg",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "Double",
+      "description": "The source-record attribute PurchasedKg; original date-only values remain strings."
+    },
+    {
+      "name": "hasPurple",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "Double",
+      "description": "The source-record attribute Purple; original date-only values remain strings."
+    },
+    {
+      "name": "hasReading",
+      "kind": "object",
+      "domain": "Logger",
+      "range": "TemperatureReading",
+      "description": "The explicitly recorded hasReading relationship."
+    },
+    {
+      "name": "hasReason",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "String",
+      "description": "The source-record attribute Reason; original date-only values remain strings."
+    },
+    {
+      "name": "hasReceived",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "String",
+      "description": "The source-record attribute Received; original date-only values remain strings."
+    },
+    {
+      "name": "hasReceivedBy",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "String",
+      "description": "The source-record attribute ReceivedBy; original date-only values remain strings."
+    },
+    {
+      "name": "hasReceivedKg",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "Double",
+      "description": "The source-record attribute ReceivedKg; original date-only values remain strings."
+    },
+    {
+      "name": "hasRecipe",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "String",
+      "description": "The source-record attribute Recipe; original date-only values remain strings."
+    },
+    {
+      "name": "hasRecommendedMaxC",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "Double",
+      "description": "Upper endpoint of the source's recommended chocolate storage temperature range, degrees Celsius."
+    },
+    {
+      "name": "hasRecommendedMinC",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "Double",
+      "description": "Lower endpoint of the source's recommended chocolate storage temperature range, degrees Celsius."
+    },
+    {
+      "name": "hasRecordedBy",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "String",
+      "description": "The source-record attribute RecordedBy; original date-only values remain strings."
+    },
+    {
+      "name": "hasRegion",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "String",
+      "description": "The source-record attribute Region; original date-only values remain strings."
+    },
+    {
+      "name": "hasRejected",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "String",
+      "description": "The source-record attribute Rejected; original date-only values remain strings."
+    },
+    {
+      "name": "hasReleased",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "String",
+      "description": "The source-record attribute Released; original date-only values remain strings."
+    },
+    {
+      "name": "hasRenewalInspection",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "String",
+      "description": "The source-record attribute RenewalInspection; original date-only values remain strings."
+    },
+    {
+      "name": "hasReplaces",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "String",
+      "description": "The source-record attribute Replaces; original date-only values remain strings."
+    },
+    {
+      "name": "hasReporter",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "String",
+      "description": "The source-record attribute Reporter; original date-only values remain strings."
+    },
+    {
+      "name": "hasResolution",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "String",
+      "description": "The source-record attribute Resolution; original date-only values remain strings."
+    },
+    {
+      "name": "hasResult",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "String",
+      "description": "The source-record attribute Result; original date-only values remain strings."
+    },
+    {
+      "name": "hasRetailUsd",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "Double",
+      "description": "The source-record attribute RetailUsd; original date-only values remain strings."
+    },
+    {
+      "name": "hasRetailer",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "String",
+      "description": "The source-record attribute Retailer; original date-only values remain strings."
+    },
+    {
+      "name": "hasRetainedBars",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "Double",
+      "description": "The source-record attribute RetainedBars; original date-only values remain strings."
+    },
+    {
+      "name": "hasRetentionBarsPerBatch",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "Double",
+      "description": "The source-record attribute RetentionBarsPerBatch; original date-only values remain strings."
+    },
+    {
+      "name": "hasRole",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "String",
+      "description": "The source-record attribute Role; original date-only values remain strings."
+    },
+    {
+      "name": "hasRootCause",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "String",
+      "description": "The source-record attribute RootCause; original date-only values remain strings."
+    },
+    {
+      "name": "hasRoute",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "String",
+      "description": "The source-record attribute Route; original date-only values remain strings."
+    },
+    {
+      "name": "hasSampleKg",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "Double",
+      "description": "The source-record attribute SampleKg; original date-only values remain strings."
+    },
+    {
+      "name": "hasSampleMatch",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "Boolean",
+      "description": "The source-record attribute SampleMatch; original date-only values remain strings."
+    },
+    {
+      "name": "hasScale",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "String",
+      "description": "The source-record attribute Scale; original date-only values remain strings."
+    },
+    {
+      "name": "hasScheme",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "String",
+      "description": "The source-record attribute Scheme; original date-only values remain strings."
+    },
+    {
+      "name": "hasScoresAcidity",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "Double",
+      "description": "The source-record attribute ScoresAcidity; original date-only values remain strings."
+    },
+    {
+      "name": "hasScoresBitterness",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "Double",
+      "description": "The source-record attribute ScoresBitterness; original date-only values remain strings."
+    },
+    {
+      "name": "hasScoresCocoa",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "Double",
+      "description": "The source-record attribute ScoresCocoa; original date-only values remain strings."
+    },
+    {
+      "name": "hasScoresFloral",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "Double",
+      "description": "The source-record attribute ScoresFloral; original date-only values remain strings."
+    },
+    {
+      "name": "hasScoresFruit",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "Double",
+      "description": "The source-record attribute ScoresFruit; original date-only values remain strings."
+    },
+    {
+      "name": "hasScoresNutty",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "Double",
+      "description": "The source-record attribute ScoresNutty; original date-only values remain strings."
+    },
+    {
+      "name": "hasScoresOffFlavor",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "Double",
+      "description": "The source-record attribute ScoresOffFlavor; original date-only values remain strings."
+    },
+    {
+      "name": "hasScoresSweetness",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "Double",
+      "description": "The source-record attribute ScoresSweetness; original date-only values remain strings."
+    },
+    {
+      "name": "hasSellInBars",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "Double",
+      "description": "Finished bars sold into the retailer during the stated month; not consumer sales or net of replacements."
+    },
+    {
+      "name": "hasSeverity",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "String",
+      "description": "The source-record attribute Severity; original date-only values remain strings."
+    },
+    {
+      "name": "hasShade",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "String",
+      "description": "The source-record attribute Shade; original date-only values remain strings."
+    },
+    {
+      "name": "hasShipment",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "String",
+      "description": "The source-record attribute Shipment; original date-only values remain strings."
+    },
+    {
+      "name": "hasShipmentLine",
+      "kind": "object",
+      "domain": "Shipment",
+      "range": "ShipmentLine",
+      "description": "The explicitly recorded hasShipmentLine relationship."
+    },
+    {
+      "name": "hasShortName",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "String",
+      "description": "The source-record attribute ShortName; original date-only values remain strings."
+    },
+    {
+      "name": "hasSince",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "Double",
+      "description": "The source-record attribute Since; original date-only values remain strings."
+    },
+    {
+      "name": "hasSite",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "String",
+      "description": "The source-record attribute Site; original date-only values remain strings."
+    },
+    {
+      "name": "hasSlaty",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "Double",
+      "description": "The source-record attribute Slaty; original date-only values remain strings."
+    },
+    {
+      "name": "hasSlatyMaxPct",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "Double",
+      "description": "The source-record attribute SlatyMaxPct; original date-only values remain strings."
+    },
+    {
+      "name": "hasSource",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "String",
+      "description": "The source-record attribute Source; original date-only values remain strings."
+    },
+    {
+      "name": "hasStatus",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "String",
+      "description": "The source-record attribute Status; original date-only values remain strings."
+    },
+    {
+      "name": "hasStores",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "Double",
+      "description": "The source-record attribute Stores; original date-only values remain strings."
+    },
+    {
+      "name": "hasSupplier",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "String",
+      "description": "The source-record attribute Supplier; original date-only values remain strings."
+    },
+    {
+      "name": "hasTasters",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "Double",
+      "description": "The source-record attribute Tasters; original date-only values remain strings."
+    },
+    {
+      "name": "hasTastersDetectingOffFlavor",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "Double",
+      "description": "The source-record attribute TastersDetectingOffFlavor; original date-only values remain strings."
+    },
+    {
+      "name": "hasTemperatureC",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "Double",
+      "description": "The source-record attribute TemperatureC; original date-only values remain strings."
+    },
+    {
+      "name": "hasTerms",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "String",
+      "description": "The source-record attribute Terms; original date-only values remain strings."
+    },
+    {
+      "name": "hasText",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "String",
+      "description": "The source-record attribute Text; original date-only values remain strings."
+    },
+    {
+      "name": "hasTimezone",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "String",
+      "description": "The source-record attribute Timezone; original date-only values remain strings."
+    },
+    {
+      "name": "hasTimezoneOffset",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "String",
+      "description": "The source-record attribute TimezoneOffset; original date-only values remain strings."
+    },
+    {
+      "name": "hasType",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "String",
+      "description": "The source-record attribute Type; original date-only values remain strings."
+    },
+    {
+      "name": "hasUsdPerKg",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "Double",
+      "description": "The source-record attribute UsdPerKg; original date-only values remain strings."
+    },
+    {
+      "name": "hasValidFrom",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "String",
+      "description": "The source-record attribute ValidFrom; original date-only values remain strings."
+    },
+    {
+      "name": "hasValidUntil",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "String",
+      "description": "The source-record attribute ValidUntil; original date-only values remain strings."
+    },
+    {
+      "name": "hasValuePct",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "Double",
+      "description": "The source-record attribute ValuePct; original date-only values remain strings."
+    },
+    {
+      "name": "hasVarietyTradeName",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "String",
+      "description": "The source-record attribute VarietyTradeName; original date-only values remain strings."
+    },
+    {
+      "name": "hasVolumeKg",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "Double",
+      "description": "The source-record attribute VolumeKg; original date-only values remain strings."
+    },
+    {
+      "name": "hasWeather",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "String",
+      "description": "The source-record attribute Weather; original date-only values remain strings."
+    },
+    {
+      "name": "hasWellFermented",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "Double",
+      "description": "The source-record attribute WellFermented; original date-only values remain strings."
+    },
+    {
+      "name": "hasWetKg",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "Double",
+      "description": "The source-record attribute WetKg; original date-only values remain strings."
+    },
+    {
+      "name": "hasWholesaleUsd",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "Double",
+      "description": "The source-record attribute WholesaleUsd; original date-only values remain strings."
+    },
+    {
+      "name": "hasYear",
+      "kind": "datatype",
+      "domain": "CocoarynthEntity",
+      "range": "Double",
+      "description": "Calendar year explicitly recorded in a contract or encoded by an annual observation's source-object key."
+    },
+    {
+      "name": "importedBy",
+      "kind": "object",
+      "domain": "Consignment",
+      "range": "Partner",
+      "description": "The explicitly recorded importedBy relationship."
+    },
+    {
+      "name": "inDepartment",
+      "kind": "object",
+      "domain": "Person",
+      "range": "Department",
+      "description": "The explicitly recorded inDepartment relationship."
+    },
+    {
+      "name": "inputLot",
+      "kind": "object",
+      "domain": "BatchInput",
+      "range": "BeanLot",
+      "description": "The explicitly recorded inputLot relationship."
+    },
+    {
+      "name": "inspectedBy",
+      "kind": "object",
+      "domain": "Inspection",
+      "range": "Person",
+      "description": "The explicitly recorded inspectedBy relationship."
+    },
+    {
+      "name": "inspectedFarm",
+      "kind": "object",
+      "domain": "Inspection",
+      "range": "Farm",
+      "description": "The explicitly recorded inspectedFarm relationship."
+    },
+    {
+      "name": "inspectedSupplier",
+      "kind": "object",
+      "domain": "Inspection",
+      "range": "Supplier",
+      "description": "The explicitly recorded inspectedSupplier relationship."
+    },
+    {
+      "name": "installedAt",
+      "kind": "object",
+      "domain": "Logger",
+      "range": "Site",
+      "description": "The explicitly recorded installedAt relationship."
+    },
+    {
+      "name": "investigatedBy",
+      "kind": "object",
+      "domain": "CaseInvestigation",
+      "range": "Person",
+      "description": "The explicitly recorded investigatedBy relationship."
+    },
+    {
+      "name": "lineBatch",
+      "kind": "object",
+      "domain": "ShipmentLine",
+      "range": "Batch",
+      "description": "The explicitly recorded lineBatch relationship."
+    },
+    {
+      "name": "madeFrom",
+      "kind": "object",
+      "domain": "Batch",
+      "range": "BeanLot",
+      "description": "A production batch uses this bean lot; batch wrapper codes and bean-lot identifiers are distinct."
+    },
+    {
+      "name": "mentionsEntity",
+      "kind": "object",
+      "domain": "Document",
+      "range": "CocoarynthEntity",
+      "description": "An existing captured PDF chunk lexically mentions an explicit entity name or ID; not evidence for every fact about it."
+    },
+    {
+      "name": "monitoredBy",
+      "kind": "object",
+      "domain": "DepotStop",
+      "range": "Logger",
+      "description": "The explicitly recorded monitoredBy relationship."
+    },
+    {
+      "name": "operatedBy",
+      "kind": "object",
+      "domain": "Site",
+      "range": "Organization",
+      "description": "The explicitly recorded operatedBy relationship."
+    },
+    {
+      "name": "originPrice",
+      "kind": "object",
+      "domain": "Origin",
+      "range": "PriceObservation",
+      "description": "The explicitly recorded originPrice relationship."
+    },
+    {
+      "name": "originPurchases",
+      "kind": "object",
+      "domain": "Origin",
+      "range": "PurchaseObservation",
+      "description": "The explicitly recorded originPurchases relationship."
+    },
+    {
+      "name": "ownedBy",
+      "kind": "object",
+      "domain": "Logger",
+      "range": "Partner",
+      "description": "The explicitly recorded ownedBy relationship."
+    },
+    {
+      "name": "produces",
+      "kind": "object",
+      "domain": "Batch",
+      "range": "Product",
+      "description": "The explicitly recorded produces relationship."
+    },
+    {
+      "name": "receivedBy",
+      "kind": "object",
+      "domain": "CollectionTicket",
+      "range": "Person",
+      "description": "The explicitly recorded receivedBy relationship."
+    },
+    {
+      "name": "recordedBy",
+      "kind": "object",
+      "domain": "DepotStop",
+      "range": "Person",
+      "description": "The explicitly recorded recordedBy relationship."
+    },
+    {
+      "name": "redryCheckedBy",
+      "kind": "object",
+      "domain": "BeanLot",
+      "range": "QualityTest",
+      "description": "The explicitly recorded redryCheckedBy relationship."
+    },
+    {
+      "name": "renewalInspectedBy",
+      "kind": "object",
+      "domain": "CertificationRecord",
+      "range": "Inspection",
+      "description": "The explicitly recorded renewalInspectedBy relationship."
+    },
+    {
+      "name": "replacesShipment",
+      "kind": "object",
+      "domain": "Shipment",
+      "range": "Shipment",
+      "description": "The explicitly recorded replacesShipment relationship."
+    },
+    {
+      "name": "reportedBy",
+      "kind": "object",
+      "domain": "Case",
+      "range": "Person",
+      "description": "The explicitly recorded reportedBy relationship."
+    },
+    {
+      "name": "salesProduct",
+      "kind": "object",
+      "domain": "SalesObservation",
+      "range": "Product",
+      "description": "The explicitly recorded salesProduct relationship."
+    },
+    {
+      "name": "salesRetailer",
+      "kind": "object",
+      "domain": "SalesObservation",
+      "range": "Retailer",
+      "description": "The explicitly recorded salesRetailer relationship."
+    },
+    {
+      "name": "sampleBatch",
+      "kind": "object",
+      "domain": "PanelSample",
+      "range": "Batch",
+      "description": "This panel sample names an existing production batch; unlisted bench-batch strings remain literals."
+    },
+    {
+      "name": "sampleProduct",
+      "kind": "object",
+      "domain": "PanelSample",
+      "range": "Product",
+      "description": "The explicitly recorded sampleProduct relationship."
+    },
+    {
+      "name": "shippedIn",
+      "kind": "object",
+      "domain": "BeanLot",
+      "range": "Consignment",
+      "description": "The explicitly recorded shippedIn relationship."
+    },
+    {
+      "name": "shipsBatch",
+      "kind": "object",
+      "domain": "Shipment",
+      "range": "Batch",
+      "description": "The explicitly recorded shipsBatch relationship."
+    },
+    {
+      "name": "sourcedFromSupplier",
+      "kind": "object",
+      "domain": "Origin",
+      "range": "Supplier",
+      "description": "The explicitly recorded sourcedFromSupplier relationship."
+    },
+    {
+      "name": "stoppedAt",
+      "kind": "object",
+      "domain": "DepotStop",
+      "range": "Site",
+      "description": "The explicitly recorded stoppedAt relationship."
+    },
+    {
+      "name": "storedAt",
+      "kind": "object",
+      "domain": "DepotStop",
+      "range": "Site",
+      "description": "The explicitly recorded storedAt relationship."
+    },
+    {
+      "name": "testedBy",
+      "kind": "object",
+      "domain": "BeanLot",
+      "range": "QualityTest",
+      "description": "The explicitly recorded testedBy relationship."
+    },
+    {
+      "name": "ticketSupplier",
+      "kind": "object",
+      "domain": "CollectionTicket",
+      "range": "Supplier",
+      "description": "The explicitly recorded ticketSupplier relationship."
+    },
+    {
+      "name": "withinSite",
+      "kind": "object",
+      "domain": "Site",
+      "range": "Site",
+      "description": "The explicitly recorded withinSite relationship."
+    },
+    {
+      "name": "worksFor",
+      "kind": "object",
+      "domain": "Person",
+      "range": "Organization",
+      "description": "The explicitly recorded worksFor relationship."
+    }
+  ]
+}
