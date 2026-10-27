@@ -10,6 +10,7 @@ from urllib.request import HTTPRedirectHandler, Request, build_opener
 
 
 API_VERSION = "2026-11-01-preview"
+DEFAULT_PREVIEW_INDEX_PREFIX = "lab673-preview-cocoarynth"
 
 
 def load_environment(repo_root: Path) -> None:

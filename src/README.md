@@ -35,9 +35,20 @@ Each notebook runs independently in a fresh kernel.
 
 Use a prepared Search service that supports `microsoftRetriever1` with
 `2026-11-01-preview`. The normal self-paced deployment is not assumed to enable
-the feature or populate a separate preview service. The session owner must supply
-access and the populated Cocoarynth indexes before you start. These notebooks do
-not provision resources, generate embeddings, or change service billing settings.
+the feature or populate a separate preview service. The following sample indexes
+are retained on the ramero dev stamp so authorized users can run the notebooks
+end to end without restoring data first:
+
+| Index | Document chunks |
+|-------|-----------------|
+| `lab673-preview-cocoarynth-origins` | 32 |
+| `lab673-preview-cocoarynth-quality` | 32 |
+| `lab673-preview-cocoarynth-logistics-retail` | 32 |
+| `lab673-preview-cocoarynth-policies` | 10 |
+
+Obtain the approved preview endpoint and keys separately; credentials are not
+included in the sample. These notebooks do not provision resources, generate
+embeddings, or change service billing settings.
 If retrieval returns HTTP 402 requiring Standard Knowledge Retrieval, ask the
 service owner to resolve that prerequisite.
 
@@ -50,13 +61,17 @@ and credential separate from the normal Part 1 deployment variables.
 | `AZURE_SEARCH_PREVIEW_ENDPOINT` | The approved, feature-enabled Search service's HTTPS origin |
 | `AZURE_SEARCH_PREVIEW_ADMIN_KEY` | Its admin key, kept local |
 | `AZURE_SEARCH_PREVIEW_RESOURCE_PREFIX` | Your unique prefix starting with `lab673-`, for example `lab673-alex-preview` |
-| `AZURE_SEARCH_PREVIEW_INDEX_PREFIX` | Optional; defaults to `cocoarynth`, producing names such as `cocoarynth-policies` |
+| `AZURE_SEARCH_PREVIEW_INDEX_PREFIX` | Optional; defaults to `lab673-preview-cocoarynth`, matching the retained indexes above |
 
 Part 2 requires only the policies index. Part 3 requires all four indexes and the
 existing `AZURE_OPENAI_ENDPOINT`, `AZURE_OPENAI_KEY`,
 `AZURE_OPENAI_CHATGPT_DEPLOYMENT`, and `AZURE_OPENAI_CHATGPT_MODEL_NAME` settings
 for an answer-synthesis deployment the preview service can call. No model is
 provisioned by either notebook.
+
+Choose your own resource prefix for the knowledge sources and bases you create.
+The retained verification run uses `lab673-preview-e2e`; do not reuse that prefix
+for a personal run.
 
 Use the existing lab kernel and run cells in order. The shared
 [`rest_helpers.py`](notebooks/rest_helpers.py) loads `.env` when present, sends
@@ -72,3 +87,7 @@ cell, disabled by default, that removes its knowledge base before its sources.
 It leaves the prepared indexes and other notebooks' resources unchanged. Clear
 all cell outputs before saving changes for a pull request, and never commit
 `.env`, service keys, or live model configuration.
+
+The shared sample indexes and the verification resources under
+`lab673-preview-e2e` are intentionally retained. Leave them in place for subsequent
+end-to-end runs; the optional cleanup cells are for your own notebook resources.
