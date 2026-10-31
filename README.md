@@ -35,7 +35,7 @@ Fill in the sections below yourself, then:
 ## 🔥LAB673: Turning data into agent-ready knowledge with Foundry IQ
 ### Session description
 
-Add your session description here. Keep it concise — 2-3 sentences about what attendees will learn and why it matters.
+Use Foundry IQ to build a knowledge base for agentic retrieval over enterprise content. Connect your documents and configure retrieval to surface relevant context for complex questions. Create an agent that brings together information across sources to deliver answers grounded in your data.
 
 ### 🚀 Getting started
 
