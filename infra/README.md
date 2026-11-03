@@ -34,8 +34,6 @@ The background script reuses the foreground Azure CLI login, retrieves Search an
 
 Snapshots for the four Cocoarynth indexes are in `data/index-data/`. After changing the documents, [rebuild the snapshots](#rebuild-the-index-snapshots) and commit them before releasing a Skillable environment. Missing snapshots stop setup before restoration writes.
 
-The additional [offline ontology, topic/vector, and sitemap snapshots](../data/graph-data/README.md) are separate and are not restored by either deployment path. They include the captured source vectors; restoring them does not require re-embedding that text. The separate [EKG re-ingestion check](../docs/graph-ks-reingestion.md) verified compatible source/vector restoration and native GQL on `magottei-s1m-os`, but that service rejects the existing-index Graph KS preview API. It does not establish Graph KS/NL2GQL readiness for the lab deployment.
-
 Set `$env:RESTORE_INDEX_SNAPSHOTS = "false"` in the lifecycle action before launching the background script only for rebuilding snapshots or a deliberate live-ingestion exercise. Re-running restoration replaces records in the four Cocoarynth indexes with the captured snapshots. Disabling restoration does not delete existing indexes.
 
 ## Self-paced deployment

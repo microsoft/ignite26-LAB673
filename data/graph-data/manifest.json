@@ -316,10 +316,8 @@
   },
   "ekg_reingestion_verification": {
     "record": "cocoarynth-ekg-restore-check.json",
-    "script": "../../scripts/verify-graph-ks.py",
-    "instructions": "../../docs/graph-ks-reingestion.md",
     "service": "magottei-s1m-os",
-    "scope": "Separate compatible source, ontology and business assertion indexes; original bundle-generation provenance is unchanged.",
+    "scope": "Historical evidence for separate compatible source, ontology and business assertion indexes; original bundle-generation provenance is unchanged. Verification scripts and operational instructions are not included in this data-only bundle.",
     "reingestion_status": "passed",
     "source_vector_float32_parity": true,
     "native_gql_status": "passed",
@@ -885,8 +883,8 @@
     },
     {
       "path": "README.md",
-      "sha256": "76033f176bd30ea987f24c6996d761c48053817afdace312e33aaeb88f4c9c06",
-      "bytes": 14485
+      "sha256": "a391ffa0f2c5ca028a002ae63f5a02ef68e7f52e69929afc695f61ad9e06f807",
+      "bytes": 14539
     },
     {
       "path": "validation.json",
@@ -894,6 +892,6 @@
       "bytes": 3801
     }
   ],
-  "updated_at": "2026-10-27T19:44:00.090821+00:00",
+  "updated_at": "2026-11-03T18:11:32.7313016Z",
   "artifact_hash_basis": "SHA-256 of Git payload bytes: LF for bundle text, except native/ artifacts, which retain exact producer bytes under the local .gitattributes -text rule."
 }
