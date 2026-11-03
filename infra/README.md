@@ -76,7 +76,7 @@ How the documents themselves are generated is in [Cocoarynth data guidance](../d
 
 [restore-graph-indexes.py](restore-graph-indexes.py) restores the seven optional indexes in [the graph inventory](../data/graph-data/README.md). It is separate from the four-index lab setup. Use a separate environment with [requirements-graph.txt](requirements-graph.txt), which pins `azure-search-documents==12.1.0a20260811002`; the notebook requirements are unchanged.
 
-The destination must support the graph preview API `2026-08-01-preview`. `--graph-ks` additionally requires the private inline-ontology preview `2026-11-01-preview`. Set `AZURE_SEARCH_ADMIN_KEY` for the intended service and pass its HTTPS root explicitly; the command does not load `.env`.
+The command uses Search API `2026-11-01-preview` for every operation. The destination must support the graph preview and, with `--graph-ks`, the private inline-ontology feature. Set `AZURE_SEARCH_ADMIN_KEY` for the intended service and pass its HTTPS root explicitly; the command does not load `.env`.
 
 From the repository root:
 

@@ -30,7 +30,6 @@ from azure.search.documents.models import VectorizedQuery
 
 BUNDLE = Path(__file__).resolve().parents[1] / "data" / "graph-data"
 SDK_VERSION = "12.1.0a20260811002"
-GRAPH_KS_API = "2026-11-01-preview"
 CLIENT_OPTIONS = {
     "retry_total": 0,
     "permit_redirects": False,
@@ -398,7 +397,7 @@ def main() -> None:
     api = manifest["restore"]["api_version"]
     intents: list[tuple[str, str]] = []
     with SearchIndexClient(endpoint, credential, api_version=api, **CLIENT_OPTIONS) as indexes, \
-            SearchIndexClient(endpoint, credential, api_version=GRAPH_KS_API, **CLIENT_OPTIONS) as sources:
+            SearchIndexClient(endpoint, credential, api_version=api, **CLIENT_OPTIONS) as sources:
         if not args.verify_only:
             for snapshot in snapshots:
                 require_absent(indexes.get_index, snapshot.name)
@@ -427,7 +426,7 @@ def main() -> None:
             if definition:
                 if not args.verify_only:
                     intents.append(("source", definition["name"]))
-                    preview_json(sources, endpoint, "knowledgesources", GRAPH_KS_API, definition, 201)
+                    preview_json(sources, endpoint, "knowledgesources", api, definition, 201)
                 assert_subset(definition, sources.get_knowledge_source(definition["name"]).as_dict(),
                               definition["name"])
                 print(f"Verified inline-ontology Graph KS: {definition['name']}.", flush=True)
