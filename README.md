@@ -60,6 +60,12 @@ For the incremental `microsoft-retriever-1` samples, see
 [Preview REST notebooks](src/README.md#preview-rest-notebooks). They require a
 separately prepared preview environment and do not yet include graph exercises.
 
+For the new **three-notebook SDK lab draft**, follow
+[From passages to graphs and topics](instructions/lab-notebooks.md). It uses the
+existing loading scripts to prepare standard retrieval, entity graphs, and topics
+on one graph-enabled Search service. This path has its own prepared kernel and
+keeps the entity/GQL walkthrough as the main part of the lab.
+
 ### 🎯 Learning outcomes
 
 By the end of this session, you will be able to:
