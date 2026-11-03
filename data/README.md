@@ -14,11 +14,11 @@ The lab corpus is Cocoarynth Chocolate Works, a fictional bean-to-bar chocolate 
 
 Snapshots of the four indexes, captured from a live ingestion run, are in `index-data/`. Provisioning restores them by default, without running Content Understanding. After changing the documents, [rebuild the snapshots](../infra/README.md#rebuild-the-index-snapshots).
 
-## Offline ontology and graph
+## Graph index snapshots
 
-The [offline graph bundle](graph-data/README.md) contains the JSON/OWL business ontology and fact graph, native GRZ topic communities, all 106 captured 3,072-dimensional source vectors, eight topic vectors, and a 379-edge document/topic/chunk sitemap. Topic preparation used task-owned indexes on `magottei-s1m-os`; no source embeddings were regenerated. The bundle includes provenance, vector-bearing index definitions and records, and import guidance.
+The [graph index snapshots](graph-data/README.md) contain definitions and captured rows for the ontology, business graph, source evidence, topics, vectors, and sitemap. They include all 106 captured source vectors and eight topic vectors. Existing provisioning does not restore these additional indexes automatically.
 
-These are snapshots, not a published managed EKG. Native topics cover 97 chunks; nine remain explicitly unassigned, with their text and vectors preserved. Six topic vectors are native; two parent vectors are separately labeled derived centroids. Existing provisioning does not restore the additional indexes automatically. The historical [EKG re-ingestion record](graph-data/cocoarynth-ekg-restore-check.json) records preserved vectors and native GQL; server Graph KS/NL2GQL was blocked by the target service's preview API availability. The hypothetical questions below remain future work; their placeholder entities and answers were not added to the graph.
+The hypothetical questions below remain future work; their placeholder entities and answers were not added to the graph.
 
 ## What's in each index
 
