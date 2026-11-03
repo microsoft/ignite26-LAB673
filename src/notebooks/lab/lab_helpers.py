@@ -189,7 +189,8 @@ def create_owned(settings: LabSettings, indexes: SearchIndexClient, kind: str,
 def retrieve(settings: LabSettings, name: str, request) -> tuple[dict[str, Any], float]:
     try:
         with KnowledgeBaseRetrievalClient(
-            settings.endpoint, resource_name(name), settings.credential,
+            endpoint=settings.endpoint, credential=settings.credential,
+            knowledge_base_name=resource_name(name),
             api_version=API_VERSION, **CLIENT_OPTIONS,
         ) as client:
             start = perf_counter()
