@@ -72,6 +72,25 @@ Restoration replaces records in the four indexes with the snapshot text and vect
 
 How the documents themselves are generated is in [Cocoarynth data guidance](../data/README.md).
 
+## Restore graph snapshots (private preview)
+
+[restore-graph-indexes.py](restore-graph-indexes.py) restores the seven optional indexes in [the graph inventory](../data/graph-data/README.md). It is separate from the four-index lab setup. Use a separate environment with [requirements-graph.txt](requirements-graph.txt), which pins `azure-search-documents==12.1.0a20260811002`; the notebook requirements are unchanged.
+
+The destination must support the graph preview API `2026-08-01-preview`. `--graph-ks` additionally requires the private inline-ontology preview `2026-11-01-preview`. Set `AZURE_SEARCH_ADMIN_KEY` for the intended service and pass its HTTPS root explicitly; the command does not load `.env`.
+
+From the repository root:
+
+```powershell
+python .\infra\restore-graph-indexes.py --validate-only --graph-ks
+python .\infra\restore-graph-indexes.py --endpoint "https://<search-service>.search.windows.net" --graph-ks
+```
+
+The second command leaves the seven restored indexes and the Graph knowledge source available for use. All destination names must be absent; existing resources are never replaced. Add `--verify-only` to check an existing restoration without writes.
+
+For a temporary end-to-end check, add `--prefix <unique-prefix> --cleanup`. Cleanup removes only resources marked as owned by that run and uses conditional ETag checks. A prefix changes physical index bindings, not document IDs, logical graph names, or generation identities.
+
+The command verifies index schemas, every document field and stored float32 vector, vector lookup, and three known-answer native graph traversals with provenance. With `--graph-ks`, it builds the inline JSON-LD ontology from the committed ontology records and verifies the created knowledge source. Index restoration uses the Python SDK; REST is limited to native GQL and private Graph KS creation through the SDK's transport. No indexer, embedding generation, or model inference runs.
+
 ## Cleanup
 
 [lifecycle_teardown_cogservices.ps1](lifecycle_teardown_cogservices.ps1) accepts a required `ResourceGroupName` and an optional `ResourcePrefix` (default `lab673`), matching the Skillable deployment action. For resources from earlier `ill344`-prefixed deployments, pass `-ResourcePrefix ill344` instead. It only deletes and purges `<ResourcePrefix>-foundry-*` accounts in the specified group, including their projects and model deployments. It does not enumerate or purge unrelated subscription-wide accounts, and it does not delete Azure ML workspaces. Run it before Skillable removes the resource group if the lab requires immediate model-quota recovery. The Windows image needs the Az PowerShell modules used by this action.

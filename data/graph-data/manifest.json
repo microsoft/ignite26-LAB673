@@ -1,5 +1,6 @@
 {
   "format": "cocoarynth-offline-graph-v2",
+  "ontology_iri": "urn:ontology:cocoarynth#",
   "restore": {
     "api_version": "2026-08-01-preview",
     "automatic_in_current_lab_setup": false,
