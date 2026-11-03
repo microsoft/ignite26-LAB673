@@ -1,0 +1,125 @@
+{
+  "format": "cocoarynth-offline-graph-v2",
+  "ontology_iri": "urn:ontology:cocoarynth#",
+  "restore": {
+    "api_version": "2026-11-01-preview",
+    "automatic_in_current_lab_setup": false,
+    "order": [
+      {
+        "index": "cocoarynth-graph-sources",
+        "definition": "cocoarynth-graph-sources-index.json",
+        "records": "cocoarynth-graph-sources-exported.jsonl",
+        "key": "chunk_id"
+      },
+      {
+        "index": "cocoarynth-ontology",
+        "definition": "cocoarynth-ontology-index.json",
+        "records": "cocoarynth-ontology-exported.jsonl",
+        "key": "id"
+      },
+      {
+        "index": "cocoarynth-graph",
+        "definition": "cocoarynth-graph-index.json",
+        "records": "cocoarynth-graph-exported.jsonl",
+        "key": "id"
+      },
+      {
+        "index": "grz-cocoarynth-input-f7d06ba6-517dba815a29",
+        "definition": "cocoarynth-topic-sources-index.json",
+        "records": "cocoarynth-topic-sources-exported.jsonl",
+        "key": "chunk_id"
+      },
+      {
+        "index": "grz-cocoarynth-topics-bb1deb018565",
+        "definition": "cocoarynth-topics-index.json",
+        "records": "cocoarynth-topics-exported.jsonl",
+        "key": "id"
+      },
+      {
+        "index": "grz-cocoarynth-topic-vectors-bb1deb018565",
+        "definition": "cocoarynth-topic-vectors-index.json",
+        "records": "cocoarynth-topic-vectors-exported.jsonl",
+        "key": "id"
+      },
+      {
+        "index": "cocoarynth-sitemap",
+        "definition": "cocoarynth-sitemap-graph-index.json",
+        "records": "cocoarynth-sitemap-graph-exported.jsonl",
+        "key": "id"
+      }
+    ]
+  },
+  "artifacts": [
+    {
+      "path": "cocoarynth-graph-sources-index.json",
+      "sha256": "cae40452967dcc0fbdd42c7e96acaf19a7060e36cd3c5bbcdf3d7ba880b7c9d7",
+      "bytes": 1826
+    },
+    {
+      "path": "cocoarynth-graph-sources-exported.jsonl",
+      "sha256": "b38a345656f174ef7101b214e8f8b20726537aa88c457e439b8ce9f14eb76892",
+      "bytes": 496624
+    },
+    {
+      "path": "cocoarynth-ontology-index.json",
+      "sha256": "7ace55698ce5f36858a6c27bfb28962ac706159f47f683612ddd463381bd9bde",
+      "bytes": 5173
+    },
+    {
+      "path": "cocoarynth-ontology-exported.jsonl",
+      "sha256": "1c425709da12a472efcd7d90a1b831176b19178691e4cda0a7a372e9c016d878",
+      "bytes": 161538
+    },
+    {
+      "path": "cocoarynth-graph-index.json",
+      "sha256": "634414dc68c127386381eef8437fd796fef5dfc8b97b884f51d36ace091751aa",
+      "bytes": 5170
+    },
+    {
+      "path": "cocoarynth-graph-exported.jsonl",
+      "sha256": "51b548a9c0e5626ec7f80df2cf1c2f845b48841f37f415a02d88ef402a54d021",
+      "bytes": 3280480
+    },
+    {
+      "path": "cocoarynth-topic-sources-index.json",
+      "sha256": "795d5927a02ec75771392ea10afabaa219453ceb7d7b648a9a22dcd13cd4b452",
+      "bytes": 1549
+    },
+    {
+      "path": "cocoarynth-topic-sources-exported.jsonl",
+      "sha256": "c50feab286203efc2bff2310ba5f6f6dc1b363a95283d611eaf09a4d06b901e1",
+      "bytes": 4351413
+    },
+    {
+      "path": "cocoarynth-topics-index.json",
+      "sha256": "4ccb1fc52ef3b13a7e8e9c7bb0c600f52e6b0f0706eb9c5df0316be28885d633",
+      "bytes": 3863
+    },
+    {
+      "path": "cocoarynth-topics-exported.jsonl",
+      "sha256": "c8af447f8722c70db00f149f69165770241ab2c5c9d327bec1cd75c9baeabaac",
+      "bytes": 714051
+    },
+    {
+      "path": "cocoarynth-topic-vectors-index.json",
+      "sha256": "f6a636e54668a9f8547a93536acaa2c3bbad7a85bcc2f330760cc70d2b764d10",
+      "bytes": 2981
+    },
+    {
+      "path": "cocoarynth-topic-vectors-exported.jsonl",
+      "sha256": "7bd6779963c16d153290641e8c1e97310b70f202139e10822dd33d41d703297f",
+      "bytes": 531520
+    },
+    {
+      "path": "cocoarynth-sitemap-graph-index.json",
+      "sha256": "f4845372b8679d6bc0d370bbff60120f2447d9b4ec6a5bf7b34e9a7d987eae13",
+      "bytes": 5172
+    },
+    {
+      "path": "cocoarynth-sitemap-graph-exported.jsonl",
+      "sha256": "03f3674cb0e2c24334d748b19c684ea0f770a1e556e0f25ac7e4e64d98eb4b87",
+      "bytes": 460003
+    }
+  ],
+  "artifact_hash_basis": "SHA-256 of Git payload bytes: UTF-8 text with LF line endings."
+}

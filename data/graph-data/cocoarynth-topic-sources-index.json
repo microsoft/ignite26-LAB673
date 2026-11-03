@@ -1,0 +1,73 @@
+{
+  "name": "grz-cocoarynth-input-f7d06ba6-517dba815a29",
+  "description": "Task-owned Cocoarynth snapshot input; capture-sha256=517dba815a29a8e9831182c5e78654d52c6e2fb43a892711379ecc97b8cb1443",
+  "fields": [
+    {
+      "name": "chunk_id",
+      "type": "Edm.String",
+      "key": true,
+      "retrievable": true,
+      "filterable": true,
+      "sortable": true
+    },
+    {
+      "name": "parent_id",
+      "type": "Edm.String",
+      "filterable": true
+    },
+    {
+      "name": "title",
+      "type": "Edm.String",
+      "searchable": true
+    },
+    {
+      "name": "blob_path",
+      "type": "Edm.String",
+      "filterable": true
+    },
+    {
+      "name": "chunk",
+      "type": "Edm.String",
+      "searchable": true
+    },
+    {
+      "name": "page_number_from",
+      "type": "Edm.Int32",
+      "filterable": true
+    },
+    {
+      "name": "page_number_to",
+      "type": "Edm.Int32",
+      "filterable": true
+    },
+    {
+      "name": "text_vector",
+      "type": "Collection(Edm.Single)",
+      "searchable": true,
+      "retrievable": true,
+      "stored": true,
+      "dimensions": 3072,
+      "vectorSearchProfile": "captured-cosine"
+    }
+  ],
+  "vectorSearch": {
+    "algorithms": [
+      {
+        "name": "captured-hnsw",
+        "kind": "hnsw",
+        "hnswParameters": {
+          "metric": "cosine",
+          "m": 4,
+          "efConstruction": 400,
+          "efSearch": 500
+        }
+      }
+    ],
+    "profiles": [
+      {
+        "name": "captured-cosine",
+        "algorithm": "captured-hnsw"
+      }
+    ]
+  }
+}

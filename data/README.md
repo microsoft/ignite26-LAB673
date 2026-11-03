@@ -14,6 +14,12 @@ The lab corpus is Cocoarynth Chocolate Works, a fictional bean-to-bar chocolate 
 
 Snapshots of the four indexes, captured from a live ingestion run, are in `index-data/`. Provisioning restores them by default, without running Content Understanding. After changing the documents, [rebuild the snapshots](../infra/README.md#rebuild-the-index-snapshots).
 
+## Graph index snapshots
+
+The [graph index snapshots](graph-data/README.md) contain definitions and captured rows for the ontology, business graph, source evidence, topics, vectors, and sitemap. They include all 106 captured source vectors and eight topic vectors. Existing provisioning does not restore these additional indexes automatically.
+
+The hypothetical questions below remain future work; their placeholder entities and answers were not added to the graph.
+
 ## What's in each index
 
 Five documents are in Spanish, and 15 come from organizations other than Cocoarynth. Each organization's documents have their own look. The **Clues** column lists the [mysteries](cocoarynth/questions.yaml) (M1–M7) for which the document is a ground-truth citation. Documents without clues give the indexes realistic background and plausible wrong turns.

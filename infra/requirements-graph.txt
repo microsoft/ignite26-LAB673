@@ -1,0 +1,2 @@
+--index-url https://packagefeedproxy.microsoft.io/pypi/simple/
+azure-search-documents @ https://pkgs.dev.azure.com/azure-sdk/29ec6040-b234-4e31-b139-33dc4287b756/_packaging/3572dbf9-b5ef-433b-9137-fc4d7768e7cc/pypi/download/azure-search-documents/12.1a20260811002/azure_search_documents-12.1.0a20260811002-py3-none-any.whl#sha256=c9c4d12f9f2979ceb2487f191289c6cd1dd0fdca7a553c7e6319c881924b52f5

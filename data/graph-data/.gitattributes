@@ -1,0 +1,2 @@
+# Checksummed payloads must retain identical bytes across platforms.
+* text=auto eol=lf
