@@ -1,0 +1,3 @@
+-r ../../../infra/requirements-graph.txt
+python-dotenv==1.2.2
+ipykernel==7.2.0

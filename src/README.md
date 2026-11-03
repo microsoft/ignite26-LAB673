@@ -1,5 +1,29 @@
 # Source
 
+## Three-notebook SDK lab draft
+
+The new [attendee path](../instructions/lab-notebooks.md) progresses from a
+standard knowledge base and optional MR1 comparison to entity/GQL exploration,
+then a shorter topics exercise. All three notebooks use the same prepared Search
+service and the existing content and graph loaders. The entity section is the
+main part of this draft.
+
+| Notebook | Focus |
+| --- | --- |
+| [Knowledge base and MR1](notebooks/lab/01-knowledge-base-and-mr1.ipynb) | Original documents, grounded answers, activity, and a measured narrow-source speed comparison |
+| [Entities and graphs](notebooks/lab/02-entities-and-graphs.ipynb) | Ontology, assertions and evidence, native GQL, returned-path diagrams, and graph-backed retrieval |
+| [Topics](notebooks/lab/03-topics.ipynb) | Captured hierarchy, coverage, membership evidence, and passage-seeded topic versus passage retrieval |
+
+Use the prepared kernel described in
+[the SDK lab requirements](notebooks/lab/requirements.txt). Its SDK matches the
+graph loader; it is intentionally separate from the earlier notebook kernel.
+No package installation or infrastructure deployment runs inside the notebooks.
+
+The earlier notebooks below are retained as previous increments. Their comments
+about graphs being deferred describe those increments, not this new SDK path.
+
+## Earlier notebook increments
+
 [Part 1: Build knowledge bases with agentic retrieval](notebooks/part1-standard-foundry-iq-kb.ipynb) adapts the ILL344 teaching flow to Cocoarynth Chocolate Works, a fictional bean-to-bar chocolate maker.
 
 It creates a standalone file knowledge source and KB for the label and marketing claims policy. It then connects `cocoarynth-origins`, `cocoarynth-quality`, `cocoarynth-logistics-retail`, and `cocoarynth-policies` to the four-source `cocoarynth-kb-all`, and uses it to solve mysteries whose evidence is spread across farm, factory, shipping, retail, and policy records. The answers and evidence are in [the mysteries file](../data/cocoarynth/questions.yaml). Fabric and Work IQ are not required.
