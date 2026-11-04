@@ -11,13 +11,31 @@ main part of this draft.
 | Notebook | Focus |
 | --- | --- |
 | [Knowledge base and MR1](notebooks/lab/01-knowledge-base-and-mr1.ipynb) | Original documents, grounded answers, activity, and a measured narrow-source speed comparison |
-| [Entities and graphs](notebooks/lab/02-entities-and-graphs.ipynb) | Ontology, assertions and evidence, native GQL, returned-path diagrams, and graph-backed retrieval |
+| [Entities and graphs](notebooks/lab/02-entities-and-graphs.ipynb) | Ontology, assertions and evidence, native GQL, provenance, and graph-backed retrieval |
 | [Topics](notebooks/lab/03-topics.ipynb) | Captured hierarchy, coverage, membership evidence, and passage-seeded topic versus passage retrieval |
 
-Use the prepared kernel described in
-[the SDK lab requirements](notebooks/lab/requirements.txt). Its SDK matches the
-graph loader; it is intentionally separate from the earlier notebook kernel.
+Each notebook starts by loading settings from the root `.env` file, then uses
+the `azure-search-documents` Python SDK directly. Use a kernel with
+[the SDK lab requirements](notebooks/lab/requirements.txt) installed. Its SDK
+matches the graph loader and is separate from the earlier notebooks' SDK.
 No package installation or infrastructure deployment runs inside the notebooks.
+
+### Cocoarynth graph explorer
+
+The [graph explorer](explorer/app.py) is a small local web app for the visuals
+that the Azure portal doesn't show yet. It reads the same `.env` file and has
+three tabs:
+
+- **Ontology**: Entity types and the relationships between them.
+- **Graph**: Search for an entity, expand its neighbors, and select an assertion to see its evidence.
+- **Topics**: The topic hierarchy and each topic's member passages.
+
+Run it from the repository root with the same Python environment as the
+notebooks, then open <http://localhost:8765>:
+
+```shell
+python src/explorer/app.py
+```
 
 The earlier notebooks below are retained as previous increments. Their comments
 about graphs being deferred describe those increments, not this new SDK path.

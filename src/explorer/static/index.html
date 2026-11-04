@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Cocoarynth graph explorer</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>Cocoarynth graph explorer</h1>
+    <nav role="tablist">
+      <button role="tab" data-tab="ontology" aria-selected="true">Ontology</button>
+      <button role="tab" data-tab="graph" aria-selected="false">Graph</button>
+      <button role="tab" data-tab="topics" aria-selected="false">Topics</button>
+    </nav>
+  </header>
+  <main>
+    <section id="canvas-area">
+      <div id="toolbar"></div>
+      <svg id="canvas" role="img" aria-label="Diagram"></svg>
+      <p id="status" role="status"></p>
+    </section>
+    <aside id="panel" aria-live="polite"></aside>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>
