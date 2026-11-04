@@ -1,4 +1,6 @@
-"""Restore and verify the committed Cocoarynth graph snapshots without an indexer."""
+"""Restore the three Cocoarynth lab indexes and their inline-ontology knowledge sources."""
+
+from __future__ import annotations
 
 import argparse
 import hashlib
@@ -14,22 +16,18 @@ from collections.abc import Callable
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
 from urllib.parse import urlsplit
 from uuid import uuid4
+from xml.etree import ElementTree as ET
 
-from azure.core import MatchConditions
-from azure.core.credentials import AzureKeyCredential
-from azure.core.exceptions import AzureError, ResourceNotFoundError
-from azure.core.rest import HttpRequest
-from azure.search.documents import SearchClient
-from azure.search.documents.indexes import SearchIndexClient
-from azure.search.documents.indexes.models import SearchIndex
-from azure.search.documents.models import VectorizedQuery
+if TYPE_CHECKING:
+    from azure.search.documents import SearchClient
+    from azure.search.documents.indexes import SearchIndexClient
 
 
 BUNDLE = Path(__file__).resolve().parents[1] / "data" / "graph-data"
-SDK_VERSION = "12.1.0a20260811002"
+SDK_VERSION = "12.1.0a20261027002"
 CLIENT_OPTIONS = {
     "retry_total": 0,
     "permit_redirects": False,
@@ -40,21 +38,21 @@ GRAPH_CASES = (
     (
         "batch to bean lot",
         "MATCH (b:`Batch`)-[:`madeFrom`]->(l:`BeanLot`) "
-        "WHERE b.id = 'urn:cocoarynth:Batch:PE26-0902' RETURN l.id AS answer LIMIT 20",
-        {"urn:cocoarynth:BeanLot:PE25-L11"},
+        "WHERE b.id = 'urn:cocoarynth:Batch:EC26-0811' RETURN DISTINCT l.id AS answer LIMIT 20",
+        {"urn:cocoarynth:BeanLot:EC26-L07"},
     ),
     (
-        "complaint to overflow bay",
+        "complaint to depot storage",
         "MATCH (c:`Case`)-[:`concernsShipment`]->(:`Shipment`)"
         "-[:`hasDepotStop`]->(:`DepotStop`)-[:`storedAt`]->(s:`Site`) "
-        "WHERE c.id = 'urn:cocoarynth:Case:CASE-2607-18' RETURN s.id AS answer LIMIT 20",
-        {"urn:cocoarynth:Site:riverbend-bay-4"},
+        "WHERE c.id = 'urn:cocoarynth:Case:CASE-2607-18' RETURN DISTINCT s.id AS answer LIMIT 20",
+        {"urn:cocoarynth:Site:overflow-bay-4"},
     ),
     (
         "complaint to contributing farms",
         "MATCH (c:`Case`)-[:`concernsBatch`]->(:`Batch`)"
         "-[:`madeFrom`]->(:`BeanLot`)<-[:`contributedTo`]-(f:`Farm`) "
-        "WHERE c.id = 'urn:cocoarynth:Case:CASE-2609-14' RETURN f.id AS answer LIMIT 20",
+        "WHERE c.id = 'urn:cocoarynth:Case:CASE-2609-14' RETURN DISTINCT f.id AS answer LIMIT 20",
         {"urn:cocoarynth:Farm:el-cedro", "urn:cocoarynth:Farm:las-brisas"},
     ),
 )
@@ -91,6 +89,10 @@ def assert_subset(expected: Any, actual: Any, path: str) -> None:
 
 def normalized(field: dict[str, Any], value: Any) -> Any:
     kind = field["type"]
+    if kind == "Collection(Edm.String)":
+        require(value is None or isinstance(value, list) and all(isinstance(item, str) for item in value),
+                f"{field['name']}: expected a string collection.")
+        return tuple(value or [])
     if kind == "Collection(Edm.Single)":
         if value is None:
             return ()
@@ -126,11 +128,79 @@ def normalized(field: dict[str, Any], value: Any) -> Any:
     return value
 
 
+def read_ontology(path: Path) -> dict[str, Any]:
+    namespaces = {
+        "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+        "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+        "owl": "http://www.w3.org/2002/07/owl#",
+        "xsd": "http://www.w3.org/2001/XMLSchema#",
+        "evidence": "urn:cocoarynth:passage:",
+    }
+    rdf, rdfs, owl = (namespaces[name] for name in ("rdf", "rdfs", "owl"))
+    root = ET.parse(path).getroot()
+    require(root.tag == f"{{{rdf}}}RDF", f"{path.name}: expected RDF/XML OWL.")
+    headers = root.findall(f"{{{owl}}}Ontology")
+    require(len(headers) == 1, f"{path.name}: expected one ontology declaration.")
+    namespace = headers[0].get(f"{{{rdf}}}about", "")
+    require(namespace.endswith("#"), f"{path.name}: ontology IRI must end in #.")
+    namespaces["schema"] = namespace
+
+    def curie(iri: str) -> str:
+        for prefix, base in namespaces.items():
+            if iri.startswith(base):
+                return prefix + ":" + iri[len(base):]
+        require(iri.startswith(("https://", "http://")), f"{path.name}: unsupported IRI {iri}.")
+        return iri
+
+    allowed = {f"{{{owl}}}{name}" for name in ("Ontology", "Class", "ObjectProperty", "DatatypeProperty")}
+    terms = []
+    for node in root:
+        require(node.tag in allowed, f"{path.name}: only flat named OWL declarations are supported.")
+        iri = node.get(f"{{{rdf}}}about")
+        require(bool(iri), f"{path.name}: an OWL declaration has no rdf:about.")
+        term: dict[str, Any] = {"@id": curie(iri), "@type": "owl:" + node.tag.split("}", 1)[1]}
+        for child in node:
+            require(child.tag in {f"{{{rdfs}}}{name}" for name in
+                                  ("label", "comment", "domain", "range", "seeAlso")},
+                    f"{path.name}: unsupported OWL construct {child.tag}.")
+            key = "rdfs:" + child.tag.split("}", 1)[1]
+            resource = child.get(f"{{{rdf}}}resource")
+            value = {"@id": curie(resource)} if resource else child.text
+            require(value is not None, f"{path.name}: empty ontology annotation.")
+            if key == "rdfs:seeAlso":
+                term.setdefault(key, []).append(value)
+            else:
+                require(key not in term, f"{path.name}: multiple {key} values are unsupported.")
+                term[key] = value
+        terms.append(term)
+    classes = {term["@id"] for term in terms if term["@type"] == "owl:Class"}
+    require(bool(classes) and len({term["@id"] for term in terms}) == len(terms),
+            f"{path.name}: empty or duplicate ontology declarations.")
+    for term in terms:
+        if term["@type"] in ("owl:ObjectProperty", "owl:DatatypeProperty"):
+            domain = term.get("rdfs:domain", {}).get("@id")
+            range_ = term.get("rdfs:range", {}).get("@id")
+            require(domain in classes, f"{path.name}: undeclared property domain.")
+            require(range_ in classes if term["@type"] == "owl:ObjectProperty"
+                    else range_ in {f"xsd:{name}" for name in
+                                    ("string", "double", "decimal", "integer", "boolean", "date", "dateTime")},
+                    f"{path.name}: invalid property range.")
+    document = {"@context": namespaces, "@graph": terms}
+    require(len(terms) <= 512 and len(json.dumps(document)) <= 131072,
+            f"{path.name}: ontology exceeds the private-preview limits.")
+    return document
+
+
 def load_bundle(prefix: str, owner: str | None) -> tuple[dict[str, Any], list[Snapshot]]:
     manifest = json.loads((BUNDLE / "manifest.json").read_text(encoding="utf-8"))
-    require(manifest["format"] == "cocoarynth-offline-graph-v2", "Unsupported bundle format.")
+    require(manifest["format"] == "cocoarynth-three-index-v1", "Unsupported bundle format.")
+    require({entry["index"] for entry in manifest["restore"]["order"]}
+            == {"cocoarynth-chunks", "cocoarynth-topics", "cocoarynth-graph"}
+            and len(manifest["restore"]["order"]) == 3, "The lab requires exactly three indexes.")
     inputs = {entry[key] for entry in manifest["restore"]["order"]
               for key in ("definition", "records")}
+    inputs.update(manifest["ontologies"].values())
+    inputs.add(manifest["provenance"])
     artifacts = {entry["path"]: entry for entry in manifest["artifacts"]}
     require(len(artifacts) == len(manifest["artifacts"]) and inputs == set(artifacts),
             "The restore inputs and checksum inventory differ.")
@@ -155,6 +225,11 @@ def load_bundle(prefix: str, owner: str | None) -> tuple[dict[str, Any], list[Sn
         definition = json.loads(payloads[entry["definition"]])
         require(definition["name"] == original, f"{original}: definition name differs.")
         definition["name"] = name
+        profile = definition.get("graphProfile")
+        if profile:
+            require(profile.get("provenanceIndexName") in names,
+                    f"{name}: unknown provenance index.")
+            profile["provenanceIndexName"] = names[profile["provenanceIndexName"]]
         if owner:
             definition["description"] = (definition.get("description", "") + " " + owner).strip()
         fields = {field["name"]: field for field in definition["fields"]}
@@ -178,55 +253,94 @@ def load_bundle(prefix: str, owner: str | None) -> tuple[dict[str, Any], list[Sn
                 require(binding[key] in names, f"Unknown sidecar {key} binding.")
                 binding[key] = names[binding[key]]
             sidecars[0]["payload"] = json.dumps(binding, sort_keys=True, separators=(",", ":"))
-        # Positional REST dictionaries retain graphProfile, which this SDK does not model.
-        assert_subset(definition, SearchIndex(definition).as_dict(exclude_readonly=True), name)
         snapshots.append(Snapshot(original, name, entry["key"], definition, records))
+    for filename in manifest["ontologies"].values():
+        read_ontology(BUNDLE / filename)
+    chunks = {row["chunk_id"]: row for snapshot in snapshots
+              if snapshot.original_name == "cocoarynth-chunks" for row in snapshot.records}
+    require(len(chunks) == 106 and len({row["blob_path"] for row in chunks.values()}) == 55
+            and all(row["blob_path"].endswith(".pdf") for row in chunks.values()),
+            "The chunk index must contain the 106 passages from the 55 PDFs only.")
+    provenance = json.loads(payloads[manifest["provenance"]])
+    require(provenance["input"] == {"passages": 106, "pdfs": 55, "generator_json_used": False},
+            "The extraction ledger does not describe the PDF-only corpus.")
+    business_ontology = read_ontology(BUNDLE / manifest["ontologies"]["cocoarynth-graph"])
+    declarations = {term["@id"].split(":", 1)[1]: term for term in business_ontology["@graph"]
+                    if term["@type"] != "owl:Ontology"}
+    require(set(provenance["ontology_evidence"]) == set(declarations),
+            "Every business ontology declaration needs PDF evidence in the provenance ledger.")
+    for name, evidence in provenance["ontology_evidence"].items():
+        require(bool(evidence), "An ontology declaration has no source evidence.")
+        expected_links = {"evidence:" + entry["passage_iri"].removeprefix(
+            business_ontology["@context"]["evidence"]) for entry in evidence}
+        require({link["@id"] for link in declarations[name].get("rdfs:seeAlso", [])} == expected_links,
+                f"{name}: OWL evidence links differ from the provenance ledger.")
+        for entry in evidence:
+            source = chunks.get(entry["chunk_id"])
+            require(source is not None and entry["pdf"] == source["blob_path"]
+                    and bool(entry["quote"]) and entry["quote"] in source["chunk"],
+                    "Ontology evidence does not resolve to a verbatim PDF passage.")
+    for snapshot in snapshots:
+        if not snapshot.definition.get("graphProfile"):
+            continue
+        ontology = read_ontology(BUNDLE / manifest["ontologies"][snapshot.original_name])
+        properties = {}
+        for term in ontology["@graph"]:
+            if term["@type"] in ("owl:ObjectProperty", "owl:DatatypeProperty"):
+                name = term["@id"].split(":", 1)[1]
+                predicate = "prop:" + name if term["@type"] == "owl:DatatypeProperty" else name
+                properties[predicate] = (
+                    term["rdfs:domain"]["@id"].split(":", 1)[1],
+                    term["rdfs:range"]["@id"].replace("schema:", ""),
+                )
+        for record in snapshot.records:
+            if record.get("kind") == "manifest":
+                continue
+            require(properties.get(record["predicate"]) ==
+                    (record["subject_type"], record["object_type"]),
+                    f"{snapshot.name}/{record['id']}: triple violates the OWL domain/range.")
+            if snapshot.original_name == "cocoarynth-graph":
+                require(bool(record.get("chunk_id")), f"{snapshot.name}/{record['id']}: PDF provenance is missing.")
+            if record.get("chunk_id"):
+                source = chunks.get(record["chunk_id"])
+                parent_field = snapshot.definition["graphProfile"]["fields"]["sourceParentIdField"]
+                require(source is not None and record.get(parent_field) == source["parent_id"],
+                        f"{snapshot.name}/{record['id']}: provenance does not resolve to a PDF passage.")
+                if snapshot.original_name == "cocoarynth-graph":
+                    quotes = record.get("evidence_quotes")
+                    require(bool(quotes) and all(quote and quote in source["chunk"] for quote in quotes),
+                            f"{snapshot.name}/{record['id']}: evidence quotations are not verbatim.")
     return manifest, snapshots
 
 
-def graph_source(manifest: dict[str, Any], snapshots: list[Snapshot],
-                 owner: str | None) -> dict[str, Any]:
-    by_name = {snapshot.original_name: snapshot for snapshot in snapshots}
-    ontology = by_name["cocoarynth-ontology"]
-    nodes: dict[str, dict[str, str]] = {}
-    edges: dict[str, dict[str, str]] = {}
-    for record in ontology.records:
-        require(record["subject_type"] in ("NodeType", "EdgeType"),
-                "The ontology contains an unsupported subject type.")
-        group = nodes if record["subject_type"] == "NodeType" else edges
-        properties = group.setdefault(record["subject"], {})
-        require(record["predicate"] not in properties, "Duplicate ontology assertion.")
-        properties[record["predicate"]] = record["object"]
-    terms = []
-    for name, properties in sorted(nodes.items()):
-        require(set(properties) == {"rdf:type", "rdfs:comment"}
-                and properties["rdf:type"] == "rdfs:Class", f"Incomplete ontology class: {name}")
-        terms.append({"@id": f"coco:{name}", "@type": "owl:Class",
-                      "rdfs:label": name, "rdfs:comment": properties["rdfs:comment"]})
-    for name, properties in sorted(edges.items()):
-        require(set(properties) == {"rdfs:domain", "rdfs:range", "rdfs:comment"}
-                and properties["rdfs:domain"] in nodes and properties["rdfs:range"] in nodes,
-                f"Incomplete ontology relationship: {name}")
-        terms.append({"@id": f"coco:{name}", "@type": "owl:ObjectProperty",
-                      "rdfs:label": name, "rdfs:comment": properties["rdfs:comment"],
-                      "rdfs:domain": {"@id": "coco:" + properties["rdfs:domain"]},
-                      "rdfs:range": {"@id": "coco:" + properties["rdfs:range"]}})
-    inline = {"@context": {"coco": manifest["ontology_iri"],
-                          "owl": "http://www.w3.org/2002/07/owl#",
-                          "rdfs": "http://www.w3.org/2000/01/rdf-schema#"},
-              "@graph": terms}
-    return {
-        "name": by_name["cocoarynth-graph"].name + "-ks",
-        "kind": "searchIndex",
-        "description": ("Cocoarynth business relationships. " + (owner or "")).strip(),
-        "searchIndexParameters": {
-            "searchIndexName": by_name["cocoarynth-graph"].name,
-            "sourceDataFields": [{"name": name} for name in
-                                 ("id", "subject", "predicate", "object", "chunk_id", "parent_id")],
-            "graphOntology": {"kind": "inline", "name": ontology.name,
-                              "value": json.dumps(inline, sort_keys=True, separators=(",", ":"))},
-        },
-    }
+def graph_sources(manifest: dict[str, Any], snapshots: list[Snapshot],
+                  owner: str | None) -> list[dict[str, Any]]:
+    definitions = []
+    for snapshot in snapshots:
+        filename = manifest["ontologies"].get(snapshot.original_name)
+        if not filename:
+            continue
+        fields = ["id", "subject", "predicate", "object", "chunk_id"]
+        if snapshot.original_name == "cocoarynth-topics":
+            fields += ["kind", "label", "description", "community_id", "title", "blob_path"]
+        else:
+            fields += ["parent_id", "evidence_quotes"]
+        definitions.append({
+            "name": snapshot.name + "-ks",
+            "kind": "searchIndex",
+            "description": (snapshot.definition["description"] + " " + (owner or "")).strip(),
+            "searchIndexParameters": {
+                "searchIndexName": snapshot.name,
+                "sourceDataFields": [{"name": name} for name in fields],
+                **({"semanticConfigurationName": "topics-semantic"}
+                   if snapshot.original_name == "cocoarynth-topics" else {}),
+                "graphOntology": {"kind": "inline", "name": Path(filename).stem,
+                                  "value": json.dumps(read_ontology(BUNDLE / filename),
+                                                      ensure_ascii=False, separators=(",", ":"))},
+            },
+        })
+    require(len(definitions) == 2, "Both the business graph and sitemap need inline-ontology knowledge sources.")
+    return definitions
 
 
 def batches(records: list[dict[str, Any]]) -> list[list[dict[str, Any]]]:
@@ -247,6 +361,8 @@ def batches(records: list[dict[str, Any]]) -> list[list[dict[str, Any]]]:
 
 
 def verify_index(indexes: SearchIndexClient, client: SearchClient, snapshot: Snapshot) -> None:
+    from azure.search.documents.models import VectorizedQuery
+
     assert_subset(snapshot.definition, indexes.get_index(snapshot.name).as_dict(), snapshot.name)
     deadline = time.monotonic() + 60
     while True:
@@ -285,6 +401,8 @@ def verify_index(indexes: SearchIndexClient, client: SearchClient, snapshot: Sna
 
 def preview_json(client: SearchIndexClient, endpoint: str, path: str, api: str,
                  body: dict[str, Any], expected_status: int) -> dict[str, Any]:
+    from azure.core.rest import HttpRequest
+
     request = HttpRequest("POST", f"{endpoint}/{path}?api-version={api}", json=body)
     with client.send_request(request) as response:
         response.raise_for_status()
@@ -298,7 +416,7 @@ def verify_graph(indexes: SearchIndexClient, endpoint: str, api: str,
     by_name = {snapshot.original_name: snapshot for snapshot in snapshots}
     graph = by_name["cocoarynth-graph"]
     assertions = {record["id"]: record for record in graph.records}
-    sources = {record["chunk_id"] for record in by_name["cocoarynth-graph-sources"].records}
+    sources = {record["chunk_id"] for record in by_name["cocoarynth-chunks"].records}
     for name, gql, expected in GRAPH_CASES:
         result = preview_json(indexes, endpoint, f"indexes('{graph.name}')/docs/search.graph", api,
                               {"gql": gql, "includeDiagnostics": True, "includeStatistics": True,
@@ -320,9 +438,23 @@ def verify_graph(indexes: SearchIndexClient, endpoint: str, api: str,
                         and item.get("parentId") == original["parent_id"]
                         and item["chunkId"] in sources, f"{name}: provenance binding differs.")
         print(f"Verified native graph query: {name}.", flush=True)
+    topics = by_name["cocoarynth-topics"]
+    expected_links = {(row["subject_id"], row["object_id"])
+                      for row in topics.records if row.get("predicate") == "hasSubtopic"}
+    result = preview_json(indexes, endpoint, f"indexes('{topics.name}')/docs/search.graph", api,
+                          {"gql": "MATCH (p:`Topic`)-[:`hasSubtopic`]->(c:`Topic`) "
+                                  "RETURN p.id AS parent, c.id AS child LIMIT 100",
+                           "includeStatistics": True}, 200)
+    require(result.get("@search.graphStats", {}).get("executionMode") == "execute"
+            and {(row["parent"], row["child"]) for row in result.get("value", [])} == expected_links
+            and len(result.get("value", [])) == len(expected_links),
+            "The topic index did not execute the expected sitemap GQL traversal.")
+    print("Verified native sitemap GQL over the topic index.", flush=True)
 
 
 def require_absent(getter: Callable[[str], object], name: str) -> None:
+    from azure.core.exceptions import ResourceNotFoundError
+
     try:
         getter(name)
     except ResourceNotFoundError:
@@ -332,6 +464,9 @@ def require_absent(getter: Callable[[str], object], name: str) -> None:
 
 def cleanup(indexes: SearchIndexClient, sources: SearchIndexClient,
             intents: list[tuple[str, str]], owner: str) -> None:
+    from azure.core import MatchConditions
+    from azure.core.exceptions import AzureError, ResourceNotFoundError
+
     failures = []
     for kind, name in reversed(intents):
         getter = indexes.get_index if kind == "index" else sources.get_knowledge_source
@@ -357,38 +492,66 @@ def main() -> None:
     mode = parser.add_mutually_exclusive_group()
     mode.add_argument("--validate-only", action="store_true", help="Check the bundle without Azure calls.")
     mode.add_argument("--verify-only", action="store_true", help="Read and test existing destinations.")
+    mode.add_argument("--ensure", action="store_true",
+                      help="Create missing resources and verify, without replacing, existing ones.")
     parser.add_argument("--endpoint", help="Explicit HTTPS Search endpoint; no .env file is loaded.")
+    parser.add_argument("--embedding-endpoint",
+                        help="Foundry endpoint for query vectorizers; defaults to AZURE_OPENAI_ENDPOINT.")
+    parser.add_argument("--embedding-deployment",
+                        help="Existing text-embedding-3-large deployment; defaults to AZURE_OPENAI_EMBEDDING_DEPLOYMENT.")
     parser.add_argument("--prefix", default="", help="Optional destination prefix, without a trailing dash.")
     parser.add_argument("--graph-ks", action="store_true",
-                        help="Also create/verify the private-preview inline-ontology Graph KS.")
+                        help="Compatibility flag; both inline-ontology knowledge sources are always included.")
     parser.add_argument("--cleanup", action="store_true",
                         help="Remove only resources created by this run; requires a prefix.")
     args = parser.parse_args()
     if args.prefix and re.fullmatch(r"[a-z0-9]+(?:-[a-z0-9]+)*", args.prefix) is None:
         parser.error("--prefix must contain lowercase letters, digits and single internal dashes.")
-    if args.cleanup and (not args.prefix or args.validate_only or args.verify_only):
-        parser.error("--cleanup requires a prefixed restore, not a validation/read-only run.")
+    if args.cleanup and (not args.prefix or args.validate_only or args.verify_only or args.ensure):
+        parser.error("--cleanup requires a new prefixed restore, not validation, verification, or --ensure.")
     if not args.validate_only:
         url = urlsplit(args.endpoint or "")
         if (url.scheme != "https" or not url.hostname or url.username or url.password
                 or url.path not in ("", "/") or url.query or url.fragment):
             parser.error("--endpoint must be an explicit HTTPS Search service root.")
-    require(importlib.metadata.version("azure-search-documents") == SDK_VERSION,
-            f"Use azure-search-documents=={SDK_VERSION} from infra/requirements-graph.txt.")
     owner = f"[lab673-restore:{uuid4().hex}]" if args.cleanup else None
     manifest, snapshots = load_bundle(args.prefix, owner)
     uploads = {snapshot.name: batches(snapshot.records) for snapshot in snapshots}
-    definition = graph_source(manifest, snapshots, owner) if args.graph_ks else None
+    definitions = graph_sources(manifest, snapshots, owner)
     documents = sum(len(snapshot.records) for snapshot in snapshots)
     vectors = sum(bool(record.get(field["name"])) for snapshot in snapshots
                   for field in snapshot.definition["fields"] if field.get("dimensions")
                   for record in snapshot.records)
     summary = f"{len(snapshots)} indexes, {documents} documents, {vectors} stored vectors"
     if args.validate_only:
-        print(f"Validated {summary}; SDK {SDK_VERSION}.")
-        if definition:
-            print("Validated inline Graph KS ontology from the committed ontology records.")
+        print(f"Validated {summary}; no dependencies or Azure access required.")
+        print("Validated both inline-ontology knowledge sources from the checked-in OWL files.")
         return
+    embedding_url = urlsplit(args.embedding_endpoint or os.environ.get("AZURE_OPENAI_ENDPOINT", ""))
+    require(embedding_url.scheme == "https" and bool(embedding_url.hostname)
+            and not embedding_url.username and not embedding_url.password
+            and embedding_url.path.rstrip("/") in ("", "/openai/v1")
+            and not embedding_url.query and not embedding_url.fragment,
+            "Set --embedding-endpoint or AZURE_OPENAI_ENDPOINT to the intended Foundry HTTPS endpoint.")
+    embedding_endpoint = f"{embedding_url.scheme}://{embedding_url.netloc}"
+    deployment = args.embedding_deployment or os.environ.get("AZURE_OPENAI_EMBEDDING_DEPLOYMENT")
+    for snapshot in snapshots:
+        for vectorizer in snapshot.definition.get("vectorSearch", {}).get("vectorizers", []):
+            parameters = vectorizer["azureOpenAIParameters"]
+            parameters["resourceUri"] = embedding_endpoint
+            if deployment:
+                parameters["deploymentId"] = deployment
+    from azure.core.credentials import AzureKeyCredential
+    from azure.core.exceptions import AzureError, ResourceNotFoundError
+    from azure.search.documents import SearchClient
+    from azure.search.documents.indexes import SearchIndexClient
+    from azure.search.documents.indexes.models import SearchIndex
+
+    require(importlib.metadata.version("azure-search-documents") == SDK_VERSION,
+            f"Use azure-search-documents=={SDK_VERSION} from infra/requirements.txt.")
+    for snapshot in snapshots:
+        assert_subset(snapshot.definition,
+                      SearchIndex(snapshot.definition).as_dict(exclude_readonly=True), snapshot.name)
     key = os.environ.get("AZURE_SEARCH_ADMIN_KEY")
     if not key:
         raise RuntimeError("Set AZURE_SEARCH_ADMIN_KEY for the explicit destination; no writes were sent.")
@@ -396,21 +559,42 @@ def main() -> None:
     credential = AzureKeyCredential(key)
     api = manifest["restore"]["api_version"]
     intents: list[tuple[str, str]] = []
-    with SearchIndexClient(endpoint, credential, api_version=api, **CLIENT_OPTIONS) as indexes, \
-            SearchIndexClient(endpoint, credential, api_version=api, **CLIENT_OPTIONS) as sources:
-        if not args.verify_only:
+    try:
+        with SearchIndexClient(endpoint, credential, api_version=api, **CLIENT_OPTIONS) as indexes, \
+                SearchIndexClient(endpoint, credential, api_version=api, **CLIENT_OPTIONS) as sources:
+            existing_indexes: set[str] = set()
             for snapshot in snapshots:
-                require_absent(indexes.get_index, snapshot.name)
-            if definition:
-                require_absent(sources.get_knowledge_source, definition["name"])
-        try:
-            for snapshot in snapshots:
-                if not args.verify_only:
+                try:
+                    stored = indexes.get_index(snapshot.name)
+                except ResourceNotFoundError:
+                    require(not args.verify_only, f"Index is missing: {snapshot.name}")
+                    continue
+                require(args.ensure or args.verify_only,
+                        f"Destination already exists; use --ensure, --verify-only or a new prefix: {snapshot.name}")
+                assert_subset(snapshot.definition, stored.as_dict(), snapshot.name)
+                with SearchClient(endpoint, snapshot.name, credential, api_version=api,
+                                  **CLIENT_OPTIONS) as client:
+                    verify_index(indexes, client, snapshot)
+                existing_indexes.add(snapshot.name)
+            existing_sources: set[str] = set()
+            for definition in definitions:
+                try:
+                    stored_source = sources.get_knowledge_source(definition["name"])
+                except ResourceNotFoundError:
+                    require(not args.verify_only, f"Knowledge source is missing: {definition['name']}")
+                    continue
+                require(args.ensure or args.verify_only,
+                        f"Destination already exists; use --ensure, --verify-only or a new prefix: {definition['name']}")
+                assert_subset(definition, stored_source.as_dict(), definition["name"])
+                existing_sources.add(definition["name"])
+            try:
+                for snapshot in snapshots:
+                    if snapshot.name in existing_indexes:
+                        continue
                     intents.append(("index", snapshot.name))
                     indexes.create_index(SearchIndex(snapshot.definition))
-                with SearchClient(endpoint=endpoint, index_name=snapshot.name, credential=credential,
-                                  api_version=api, **CLIENT_OPTIONS) as client:
-                    if not args.verify_only:
+                    with SearchClient(endpoint, snapshot.name, credential, api_version=api,
+                                      **CLIENT_OPTIONS) as client:
                         for batch in uploads[snapshot.name]:
                             results = client.upload_documents(batch)
                             require(len(results) == len(batch)
@@ -421,25 +605,27 @@ def main() -> None:
                             require(not failures, f"{snapshot.name}: upload failed: " + "; ".join(
                                 f"{item.key}: {item.error_message}" for item in failures
                             ))
-                    verify_index(indexes, client, snapshot)
-            verify_graph(indexes, endpoint, api, snapshots)
-            if definition:
-                if not args.verify_only:
-                    intents.append(("source", definition["name"]))
-                    preview_json(sources, endpoint, "knowledgesources", api, definition, 201)
-                assert_subset(definition, sources.get_knowledge_source(definition["name"]).as_dict(),
-                              definition["name"])
-                print(f"Verified inline-ontology Graph KS: {definition['name']}.", flush=True)
-        finally:
-            if owner is not None:
-                cleanup(indexes, sources, intents, owner)
+                        verify_index(indexes, client, snapshot)
+                verify_graph(indexes, endpoint, api, snapshots)
+                for definition in definitions:
+                    if definition["name"] not in existing_sources:
+                        intents.append(("source", definition["name"]))
+                        preview_json(sources, endpoint, "knowledgesources", api, definition, 201)
+                    assert_subset(definition, sources.get_knowledge_source(definition["name"]).as_dict(),
+                                  definition["name"])
+                    print(f"Verified inline-ontology knowledge source: {definition['name']}.", flush=True)
+            finally:
+                if owner is not None:
+                    cleanup(indexes, sources, intents, owner)
+    except AzureError as error:
+        raise RuntimeError(str(error)) from None
     print(f"Verified {summary}; SDK {SDK_VERSION}; no indexer or model calls.")
 
 
 if __name__ == "__main__":
     try:
         main()
-    except (AzureError, OSError, RuntimeError, ValueError) as error:
+    except (ImportError, OSError, RuntimeError, ValueError) as error:
         secret = os.environ.get("AZURE_SEARCH_ADMIN_KEY")
         cause: BaseException | None = error
         while cause is not None:
