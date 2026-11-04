@@ -10,12 +10,8 @@ the earnings-call demo's separate graph endpoint or its private connection files
 
 ## Before you begin
 
-Use the prepared graph-lab Python kernel. Its
-[requirements](../src/notebooks/lab/requirements.txt) reuse the same November-capable
-preview SDK as all earlier notebooks. The notebooks check the installed and
-imported versions, use the SDK's default API version, and do not install packages.
-Keep the [graph loader](../infra/requirements-graph.txt) in its separate environment;
-its package is not the notebook kernel.
+Use the prepared lab Python kernel with the
+[notebook requirements](../src/notebooks/lab/requirements.txt).
 
 The session owner must prepare the existing service before attendees start:
 

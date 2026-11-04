@@ -74,7 +74,7 @@ How the documents themselves are generated is in [Cocoarynth data guidance](../d
 
 ## Restore graph snapshots (private preview)
 
-[restore-graph-indexes.py](restore-graph-indexes.py) restores the seven optional indexes in [the graph inventory](../data/graph-data/README.md). It is separate from the four-index lab setup. Use a separate environment with [requirements-graph.txt](requirements-graph.txt), which pins `azure-search-documents==12.1.0a20260811002`. All six notebooks instead share the November-capable preview SDK in [notebook requirements](../src/notebooks/requirements.txt); do not use the graph loader's environment as their kernel.
+[restore-graph-indexes.py](restore-graph-indexes.py) restores the seven optional indexes in [the graph inventory](../data/graph-data/README.md). It is separate from the four-index lab setup. Use [requirements-graph.txt](requirements-graph.txt) for this command.
 
 The command uses Search API `2026-11-01-preview` for every operation. The destination must support the graph preview and, with `--graph-ks`, the private inline-ontology feature. Set `AZURE_SEARCH_ADMIN_KEY` for the intended service and pass its HTTPS root explicitly; the command does not load `.env`.
 

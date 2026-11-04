@@ -14,12 +14,9 @@ main part of this draft.
 | [Entities and graphs](notebooks/lab/02-entities-and-graphs.ipynb) | Ontology, assertions and evidence, native GQL, provenance, and graph-backed retrieval |
 | [Topics](notebooks/lab/03-topics.ipynb) | Captured hierarchy, coverage, membership evidence, and passage-seeded topic versus passage retrieval |
 
-Each notebook starts by loading settings from the root `.env` file, then uses
-the `azure-search-documents` Python SDK directly. Use a kernel with
-[the SDK lab requirements](notebooks/lab/requirements.txt) installed. Its SDK
-is shared with all earlier notebooks and includes the November preview models.
-The graph loader keeps its own separate environment. No package installation or
-infrastructure deployment runs inside the notebooks.
+Each notebook loads settings from the root `.env` file and uses the
+`azure-search-documents` Python SDK directly. Follow the
+[lab setup](../instructions/lab-notebooks.md#before-you-begin) before starting.
 
 ### Cocoarynth graph explorer
 
@@ -116,21 +113,9 @@ Choose your own resource prefix for the knowledge sources and bases you create.
 The retained verification run uses `lab673-preview-e2e`; do not reuse that prefix
 for a personal run.
 
-Use a prepared kernel with the shared [notebook requirements](notebooks/requirements.txt)
-and run cells in order. The requirements select the November-capable preview SDK;
-an arbitrary newer nightly or an unpinned prerelease is not interchangeable.
-Restart the kernel after changing packages. All six notebooks check both the
-installed and imported SDK versions before creating clients and use its default
-API version rather than overriding it.
-
-The shared [`sdk_helpers.py`](notebooks/sdk_helpers.py) loads `.env` when present,
-sets finite SDK timeouts, disables redirects, rejects partial HTTP 206 results,
-and surfaces service errors without displaying configured keys. For these two
-preview notebooks, it uses native SDK conditional writes and ETags to change only
-knowledge sources and bases owned by your notebook prefix. It recognizes the
-earlier REST notebooks' ownership markers, so existing attendee-owned resources
-can be reused safely; it never replaces the prepared indexes. Knowledge-base
-semantic intents do not require an explicit Search semantic configuration.
+The resource cells use conditional writes and ETags and refuse to replace
+resources owned by another notebook prefix. Existing resources from the earlier
+REST notebooks can be reused. Prepared indexes are never replaced.
 
 ### Finish exploring
 
