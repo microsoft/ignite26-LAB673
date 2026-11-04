@@ -1,6 +1,6 @@
 # Deploy to your own Azure subscription
 
-This guide provisions the Cocoarynth LAB673 environment without Skillable, Fabric IQ, or Work IQ. The [first notebook](src/notebooks/part1-standard-foundry-iq-kb.ipynb) uses Cocoarynth's origin, quality, logistics and retail, and policy records.
+This guide provisions the Cocoarynth LAB673 environment without Skillable, Fabric IQ, or Work IQ. The [lab notebooks](src/notebooks/lab/) use Cocoarynth's origin, quality, logistics and retail, and policy records.
 
 ## Prerequisites
 
@@ -10,7 +10,7 @@ This guide provisions the Cocoarynth LAB673 environment without Skillable, Fabri
 
 ## Provision resources
 
-Provisioning restores the four Cocoarynth indexes from the snapshots in `data/index-data/`, so no document ingestion is needed. Knowledge sources and knowledge bases are left for the notebook to create. Maintainers who change the documents can [rebuild the snapshots](infra/README.md#rebuild-the-index-snapshots).
+Provisioning restores the four Cocoarynth indexes from the snapshots in `data/index-data/`, so no document ingestion is needed. Knowledge sources and knowledge bases are left for the notebooks to create. Maintainers who change the documents can [rebuild the snapshots](infra/README.md#rebuild-the-index-snapshots).
 
 ```sh
 git clone https://github.com/microsoft/ignite26-LAB673.git
@@ -38,9 +38,11 @@ azd env set EMBEDDING_MODEL_CAPACITY 30
 
 Use a model supported by your region, subscription, and Content Understanding analyzers. The Content Understanding setup and optional indexing tool use the selected LLM name and deployment.
 
-## Run the notebook
+## Run the notebooks
 
-Open [Part 1](src/notebooks/part1-standard-foundry-iq-kb.ipynb) in VS Code, select the root `.venv` as its kernel, and run cells in order. See [source guidance](src/README.md) for what the notebook creates.
+Notebooks 2 and 3 also need the graph and topic indexes. [Restore the graph snapshots](infra/README.md#restore-graph-snapshots-private-preview) on the same Foundry IQ service before running them.
+
+Open the [lab notebooks](src/notebooks/lab/) in VS Code, select the root `.venv` as the kernel, and run the cells in order. See the [source guide](src/README.md) for what the notebooks create.
 
 ## Cleanup
 
