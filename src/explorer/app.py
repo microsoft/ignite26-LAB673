@@ -25,7 +25,7 @@ STATIC_DIR = Path(__file__).parent / "static"
 API_VERSION = "2026-11-01-preview"
 GRAPH_INDEX = "cocoarynth-graph"
 ONTOLOGY_INDEX = "cocoarynth-ontology"
-EVIDENCE_INDEX = "cocoarynth-graph-sources"
+GRAPH_SOURCES_INDEX = "cocoarynth-graph-sources"
 TOPICS_INDEX = "grz-cocoarynth-topics-bb1deb018565"
 TOPIC_SOURCES_INDEX = "grz-cocoarynth-input-f7d06ba6-517dba815a29"
 
@@ -106,13 +106,13 @@ def get_evidence(assertion_id):
     assertion = dict(client(GRAPH_INDEX).get_document(assertion_id, selected_fields=ASSERTION_FIELDS))
     source = None
     if assertion.get("chunk_id"):
-        source = dict(client(EVIDENCE_INDEX).get_document(assertion["chunk_id"]))
+        source = dict(client(GRAPH_SOURCES_INDEX).get_document(assertion["chunk_id"]))
     return {"assertion": assertion, "source": source}
 
 
 def get_topics():
     topics = client(TOPICS_INDEX)
-    manifest_row = next(iter(topics.search(search_text="*", filter="kind eq 'manifest'", select=["payload"], top=1)))
+    manifest_row = list(topics.search(search_text="*", filter="kind eq 'manifest'", select=["payload"], top=1))[0]
     manifest = json.loads(manifest_row["payload"])
     generation = manifest["generation_id"]
     representatives = [

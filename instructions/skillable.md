@@ -236,8 +236,6 @@ You've completed the lab on exploring Foundry IQ knowledge bases. You:
 
 Here are some ways to apply what you've learned:
 
-**Query from more MCP clients** - Connect the knowledge base MCP endpoint to compatible clients such as GitHub Copilot CLI.
-
 **Customize retrieval behavior** - Adjust reasoning effort levels, and configure custom retrieval and answer instructions for specific sources.
 
 **Integrate with your data** - Replace the sample Cocoarynth indexes with your own enterprise content.

@@ -53,18 +53,9 @@ If you're learning at your own pace:
 1. Clone this repository
 2. Deploy the Azure resources to your own subscription by following
    [Deploy to your own Azure subscription](deploy_yourself.md)
-3. Run the notebook
-   [`src/notebooks/part1-standard-foundry-iq-kb.ipynb`](src/notebooks/part1-standard-foundry-iq-kb.ipynb)
-
-For the incremental `microsoft-retriever-1` samples, see
-[Preview SDK notebooks](src/README.md#preview-sdk-notebooks). They require a
-separately prepared preview environment and do not yet include graph exercises.
-
-For the new **three-notebook SDK lab draft**, follow
-[From passages to graphs and topics](instructions/lab-notebooks.md). It uses the
-existing loading scripts to prepare standard retrieval, entity graphs, and topics
-on one graph-enabled Search service. This path has its own prepared kernel and
-keeps the entity/GQL walkthrough as the main part of the lab.
+3. Follow the [lab instructions](instructions/skillable.md) and run the
+   notebooks in [`src/notebooks/lab/`](src/notebooks/lab/). See the
+   [source guide](src/README.md) for setup details.
 
 ### 🎯 Learning outcomes
 
