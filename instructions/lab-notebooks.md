@@ -2,7 +2,7 @@
 
 This is the initial three-notebook draft for the graph-enabled lab. Use it in a
 guided session with these instructions in the sidebar, or work through the same
-checkpoints at your own pace. The earlier notebooks remain available unchanged.
+checkpoints at your own pace. The earlier notebooks remain available.
 
 All three notebooks use **one Search service**, one connection, the Cocoarynth
 documents, and the existing content and graph loading scripts. They do not use
@@ -11,9 +11,11 @@ the earnings-call demo's separate graph endpoint or its private connection files
 ## Before you begin
 
 Use the prepared graph-lab Python kernel. Its
-[requirements](../src/notebooks/lab/requirements.txt) reuse the exact SDK pinned by
-the [graph loader](../infra/requirements-graph.txt), rather than the different SDK
-used by the earlier notebooks. The notebooks do not install packages.
+[requirements](../src/notebooks/lab/requirements.txt) reuse the same November-capable
+preview SDK as all earlier notebooks. The notebooks check the installed and
+imported versions, use the SDK's default API version, and do not install packages.
+Keep the [graph loader](../infra/requirements-graph.txt) in its separate environment;
+its package is not the notebook kernel.
 
 The session owner must prepare the existing service before attendees start:
 
@@ -39,7 +41,7 @@ The session owner must prepare the existing service before attendees start:
 | `AZURE_OPENAI_ENDPOINT`, `AZURE_OPENAI_KEY` | An existing model resource that this Search service can call |
 | `AZURE_OPENAI_CHATGPT_DEPLOYMENT`, `AZURE_OPENAI_CHATGPT_MODEL_NAME` | Its existing reasoning/answer model deployment and actual model name |
 
-These are not the older REST samples' separate `AZURE_SEARCH_PREVIEW_*`
+These are not the incremental SDK samples' separate `AZURE_SEARCH_PREVIEW_*`
 connection variables. Do not mix endpoints or keys between the two paths.
 No notebook provisions services, changes permissions or billing, generates
 embeddings, runs an indexer, or starts a new graph extraction.

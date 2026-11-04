@@ -57,7 +57,7 @@ If you're learning at your own pace:
    [`src/notebooks/part1-standard-foundry-iq-kb.ipynb`](src/notebooks/part1-standard-foundry-iq-kb.ipynb)
 
 For the incremental `microsoft-retriever-1` samples, see
-[Preview REST notebooks](src/README.md#preview-rest-notebooks). They require a
+[Preview SDK notebooks](src/README.md#preview-sdk-notebooks). They require a
 separately prepared preview environment and do not yet include graph exercises.
 
 For the new **three-notebook SDK lab draft**, follow

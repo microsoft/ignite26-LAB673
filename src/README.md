@@ -17,8 +17,9 @@ main part of this draft.
 Each notebook starts by loading settings from the root `.env` file, then uses
 the `azure-search-documents` Python SDK directly. Use a kernel with
 [the SDK lab requirements](notebooks/lab/requirements.txt) installed. Its SDK
-matches the graph loader and is separate from the earlier notebooks' SDK.
-No package installation or infrastructure deployment runs inside the notebooks.
+is shared with all earlier notebooks and includes the November preview models.
+The graph loader keeps its own separate environment. No package installation or
+infrastructure deployment runs inside the notebooks.
 
 ### Cocoarynth graph explorer
 
@@ -56,13 +57,13 @@ Restart the kernel if you previously ran an earlier version, then run all cells 
 
 Running the notebook creates knowledge sources and knowledge bases and makes billable ingestion/retrieval/model calls. It uses answer synthesis. It does not configure Fabric, Work IQ, or an agent.
 
-## Preview REST notebooks
+## Preview SDK notebooks
 
 These small follow-on exercises keep the
 [earlier lab's](https://github.com/microsoft/Build26-LAB532-from-data-to-context-agent-ready-knowledge-with-foundry-iq/tree/main)
 mission, numbered steps, activity inspection, and source hunt format. They use
-Cocoarynth's existing records and raw REST calls, without using the Azure Search
-Python SDK.
+Cocoarynth's existing records and the Azure Search Python SDK's native models,
+index clients, and knowledge-base retrieval client.
 
 | Notebook | Exercise |
 |----------|----------|
@@ -115,12 +116,21 @@ Choose your own resource prefix for the knowledge sources and bases you create.
 The retained verification run uses `lab673-preview-e2e`; do not reuse that prefix
 for a personal run.
 
-Use the existing lab kernel and run cells in order. The shared
-[`rest_helpers.py`](notebooks/rest_helpers.py) loads `.env` when present, sends
-non-streaming JSON requests with a finite timeout, rejects redirects and partial
-HTTP 206 results, and surfaces service errors without displaying configured keys.
-It conditionally creates or updates only knowledge sources and bases owned by
-your notebook prefix; it never replaces the prepared indexes.
+Use a prepared kernel with the shared [notebook requirements](notebooks/requirements.txt)
+and run cells in order. The requirements select the November-capable preview SDK;
+an arbitrary newer nightly or an unpinned prerelease is not interchangeable.
+Restart the kernel after changing packages. All six notebooks check both the
+installed and imported SDK versions before creating clients and use its default
+API version rather than overriding it.
+
+The shared [`sdk_helpers.py`](notebooks/sdk_helpers.py) loads `.env` when present,
+sets finite SDK timeouts, disables redirects, rejects partial HTTP 206 results,
+and surfaces service errors without displaying configured keys. For these two
+preview notebooks, it uses native SDK conditional writes and ETags to change only
+knowledge sources and bases owned by your notebook prefix. It recognizes the
+earlier REST notebooks' ownership markers, so existing attendee-owned resources
+can be reused safely; it never replaces the prepared indexes. Knowledge-base
+semantic intents do not require an explicit Search semantic configuration.
 
 ### Finish exploring
 

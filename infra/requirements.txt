@@ -1,6 +1,7 @@
+--index-url https://packagefeedproxy.microsoft.io/pypi/simple/
 aiohttp>=3.13.5
 azure-identity==1.25.3
-azure-search-documents==12.1.0b2
+azure-search-documents @ https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/download/azure-search-documents/12.1a20261027002/azure_search_documents-12.1.0a20261027002-py3-none-any.whl#sha256=95d6cbb39f0eeee8990a41cf149baac6c0e97f792c2c600d4db382a5c4d348c6
 azure-storage-blob==12.30.0
 python-dotenv==1.2.2
 requests==2.33.0
