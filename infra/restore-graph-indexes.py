@@ -1,4 +1,9 @@
-"""Restore the three Cocoarynth lab indexes and their inline-ontology knowledge sources."""
+"""Restore the Cocoarynth lab indexes and their inline-ontology knowledge sources.
+
+The bundle holds three index snapshots. The four document-group indexes used in Part 1
+(origins, quality, logistics-retail, policies) are split from the chunk snapshot by domain,
+so they share its passages, chunk IDs and embeddings.
+"""
 
 from __future__ import annotations
 
@@ -27,6 +32,7 @@ if TYPE_CHECKING:
 
 
 BUNDLE = Path(__file__).resolve().parents[1] / "data" / "graph-data"
+DOMAINS = ("origins", "quality", "logistics-retail", "policies")
 SDK_VERSION = "12.1.0a20261027002"
 CLIENT_OPTIONS = {
     "retry_total": 0,
@@ -310,7 +316,25 @@ def load_bundle(prefix: str, owner: str | None) -> tuple[dict[str, Any], list[Sn
                     quotes = record.get("evidence_quotes")
                     require(bool(quotes) and all(quote and quote in source["chunk"] for quote in quotes),
                             f"{snapshot.name}/{record['id']}: evidence quotations are not verbatim.")
-    return manifest, snapshots
+    return manifest, snapshots + domain_snapshots(snapshots, prefix)
+
+
+def domain_snapshots(snapshots: list[Snapshot], prefix: str) -> list[Snapshot]:
+    """Split the chunk snapshot into one index per document group, for Part 1's knowledge sources."""
+    chunks = next(snapshot for snapshot in snapshots if snapshot.original_name == "cocoarynth-chunks")
+    require({record["domain"] for record in chunks.records} == set(DOMAINS),
+            "The chunk snapshot's domains differ from the four document groups.")
+    result = []
+    for domain in DOMAINS:
+        original = f"cocoarynth-{domain}"
+        name = f"{prefix}-{original}" if prefix else original
+        records = [record for record in chunks.records if record["domain"] == domain]
+        definition = json.loads(json.dumps(chunks.definition))
+        definition["name"] = name
+        definition["description"] = definition["description"].replace(
+            "106 PDF passages", f"The {len(records)} {domain} PDF passages from cocoarynth-chunks", 1)
+        result.append(Snapshot(original, name, chunks.key, definition, records))
+    return result
 
 
 def graph_sources(manifest: dict[str, Any], snapshots: list[Snapshot],
@@ -326,7 +350,7 @@ def graph_sources(manifest: dict[str, Any], snapshots: list[Snapshot],
         else:
             fields += ["parent_id", "evidence_quotes"]
         definitions.append({
-            "name": snapshot.name + "-ks",
+            "name": snapshot.name + "-knowledge-source",
             "kind": "searchIndex",
             "description": (snapshot.definition["description"] + " " + (owner or "")).strip(),
             "searchIndexParameters": {

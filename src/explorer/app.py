@@ -12,7 +12,7 @@ from collections import Counter
 from functools import lru_cache
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
-from urllib.parse import parse_qs, urlparse
+from urllib.parse import parse_qs, unquote, urlparse
 from xml.etree import ElementTree as ET
 
 from azure.core.credentials import AzureKeyCredential
@@ -26,6 +26,7 @@ STATIC_DIR = Path(__file__).parent / "static"
 API_VERSION = "2026-11-01-preview"
 GRAPH_INDEX = "cocoarynth-graph"
 ONTOLOGY_FILE = Path(__file__).resolve().parents[2] / "data" / "graph-data" / "cocoarynth.owl"
+DOCUMENTS_DIR = Path(__file__).resolve().parents[2] / "data" / "cocoarynth" / "documents"
 CHUNKS_INDEX = "cocoarynth-chunks"
 TOPICS_INDEX = "cocoarynth-topics"
 
@@ -83,42 +84,79 @@ def find_entities(query):
     return list(entities.values())[:15]
 
 
+def graph_view(rows):
+    """Turn assertion rows into nodes, one edge per distinct fact, and deduplicated literal properties."""
+    nodes, edges, properties = {}, {}, {}
+    for row in rows:
+        nodes.setdefault(row["subject_id"], {"id": row["subject_id"], "name": row["subject"], "type": row["subject_type"]})
+        if row.get("object_id"):
+            nodes.setdefault(row["object_id"], {"id": row["object_id"], "name": row["object"], "type": row["object_type"]})
+            # One fact can be asserted by several passages; show it as one edge
+            edge = edges.setdefault(row["fact_id"], {
+                "id": row["fact_id"], "source": row["subject_id"], "target": row["object_id"],
+                "predicate": row["predicate"], "evidence_count": 0,
+            })
+            edge["evidence_count"] += 1
+        else:
+            prop = properties.setdefault(row["fact_id"], {
+                "entity": row["subject_id"], "predicate": row["predicate"].removeprefix("prop:"),
+                "value": row["object"], "fact": row["fact_id"],
+            })
+    return nodes, list(edges.values()), list(properties.values())
+
+
 def get_neighbors(entity_id):
     """Return the entity's literal properties and its relationships to other entities."""
     rows = client(GRAPH_INDEX).search(
         search_text="*",
         filter=f"subject_id eq {odata(entity_id)} or object_id eq {odata(entity_id)}",
         select=ASSERTION_FIELDS,
-        top=300,
+        top=1000,
     )
-    properties, edges, nodes = [], [], {}
-    for row in rows:
-        if row["subject_id"] == entity_id:
-            nodes[entity_id] = {"id": entity_id, "name": row["subject"], "type": row["subject_type"]}
-        if not row.get("object_id"):
-            if row["subject_id"] == entity_id:
-                properties.append({"predicate": row["predicate"], "value": row["object"], "assertion": row["id"]})
-            continue
-        nodes.setdefault(row["subject_id"], {"id": row["subject_id"], "name": row["subject"], "type": row["subject_type"]})
-        nodes.setdefault(row["object_id"], {"id": row["object_id"], "name": row["object"], "type": row["object_type"]})
-        edges.append({
-            "id": row["id"],
-            "source": row["subject_id"],
-            "target": row["object_id"],
-            "predicate": row["predicate"],
-        })
-    return {"id": entity_id, "nodes": list(nodes.values()), "edges": edges, "properties": properties}
+    nodes, edges, properties = graph_view(rows)
+    return {
+        "id": entity_id,
+        "nodes": list(nodes.values()),
+        "edges": edges,
+        "properties": [p for p in properties if p["entity"] == entity_id],
+    }
 
 
-def get_evidence(assertion_id):
-    assertion = dict(client(GRAPH_INDEX).get_document(assertion_id, selected_fields=ASSERTION_FIELDS))
-    source = None
-    if assertion.get("chunk_id"):
-        source = dict(client(CHUNKS_INDEX).get_document(
-            assertion["chunk_id"],
-            selected_fields=["chunk_id", "title", "blob_path", "chunk", "page_number_from", "page_number_to"],
-        ))
-    return {"assertion": assertion, "source": source}
+def get_catalog():
+    """Return every entity grouped by type, plus all relationship facts, for browsing without IDs."""
+    rows = list(client(GRAPH_INDEX).search(search_text="*", select=ASSERTION_FIELDS, top=1000))
+    nodes, edges, _ = graph_view(rows)
+    types = {}
+    for node in nodes.values():
+        types.setdefault(node["type"], []).append(node)
+    return {
+        "types": [
+            {"name": name, "entities": sorted(entities, key=lambda e: e["name"])}
+            for name, entities in sorted(types.items())
+        ],
+        "edges": edges,
+    }
+
+
+def get_evidence(fact_id):
+    """Return a fact and every passage that supports it."""
+    assertions = [
+        dict(row) for row in client(GRAPH_INDEX).search(
+            search_text="*", filter=f"fact_id eq {odata(fact_id)}", select=ASSERTION_FIELDS, top=100,
+        )
+    ]
+    supports = []
+    for assertion in assertions:
+        source = None
+        if assertion.get("chunk_id"):
+            source = dict(client(CHUNKS_INDEX).get_document(
+                assertion["chunk_id"],
+                selected_fields=["chunk_id", "title", "blob_path", "chunk", "page_number_from", "page_number_to"],
+            ))
+        supports.append({"evidence_quotes": assertion.get("evidence_quotes") or [], "source": source})
+    fact = assertions[0]
+    fact["predicate"] = fact["predicate"].removeprefix("prop:")
+    return {"fact": fact, "supports": supports}
 
 
 def get_topics():
@@ -171,11 +209,23 @@ def get_topic_members(community_id, generation):
     ]
 
 
+def get_sources():
+    """Name where each tab's data comes from, so the page can point attendees at the same resources."""
+    return {
+        "ontology_file": str(ONTOLOGY_FILE.relative_to(ONTOLOGY_FILE.parents[2])),
+        "graph_index": GRAPH_INDEX,
+        "chunks_index": CHUNKS_INDEX,
+        "topics_index": TOPICS_INDEX,
+    }
+
+
 ROUTES = {
+    "/api/sources": lambda params: get_sources(),
     "/api/ontology": lambda params: get_ontology(),
     "/api/entities": lambda params: find_entities(params["q"]),
     "/api/neighbors": lambda params: get_neighbors(params["id"]),
     "/api/evidence": lambda params: get_evidence(params["id"]),
+    "/api/catalog": lambda params: get_catalog(),
     "/api/topics": lambda params: get_topics(),
     "/api/topic-members": lambda params: get_topic_members(params["id"], params["generation"]),
 }
@@ -187,6 +237,8 @@ class Handler(SimpleHTTPRequestHandler):
 
     def do_GET(self):
         url = urlparse(self.path)
+        if url.path.startswith("/documents/"):
+            return self.send_document(unquote(url.path.removeprefix("/documents/")))
         route = ROUTES.get(url.path)
         if route is None:
             return super().do_GET()
@@ -199,6 +251,18 @@ class Handler(SimpleHTTPRequestHandler):
         self.send_header("Content-Type", "application/json")
         self.end_headers()
         self.wfile.write(body.encode())
+
+    def send_document(self, relative_path):
+        """Serve an original PDF from data/cocoarynth/documents, refusing paths outside that folder."""
+        path = (DOCUMENTS_DIR / relative_path).resolve()
+        if path.suffix != ".pdf" or not path.is_relative_to(DOCUMENTS_DIR) or not path.is_file():
+            return self.send_error(404)
+        body = path.read_bytes()
+        self.send_response(200)
+        self.send_header("Content-Type", "application/pdf")
+        self.send_header("Content-Length", str(len(body)))
+        self.end_headers()
+        self.wfile.write(body)
 
     def end_headers(self):
         self.send_header("Cache-Control", "no-store")

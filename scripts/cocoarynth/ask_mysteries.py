@@ -47,7 +47,7 @@ INDEX_DESCRIPTIONS = {
     "cocoarynth-logistics-retail": "Cocoarynth shipping and sales records: bills of lading, carrier and depot logs, retailer emails and complaints, agreements, launch plans, price lists, and sales",
     "cocoarynth-policies": "Cocoarynth company-wide policies, guides, and reference material, including storage, labeling, and data-sharing rules",
 }
-KNOWLEDGE_BASE_NAME = "cocoarynth-kb-all"
+KNOWLEDGE_BASE_NAME = "cocoarynth-all-knowledge-base"
 EFFORTS = {"auto": KnowledgeRetrievalAutoReasoningEffort, "low": KnowledgeRetrievalLowReasoningEffort, "medium": KnowledgeRetrievalMediumReasoningEffort}
 
 
@@ -56,7 +56,7 @@ def setup(endpoint: str, credential: AzureKeyCredential, effort: str) -> list[st
     names = []
     for index_name, description in INDEX_DESCRIPTIONS.items():
         source = SearchIndexKnowledgeSource(
-            name=f"{index_name}-source",
+            name=f"{index_name}-knowledge-source",
             description=description,
             search_index_parameters=SearchIndexKnowledgeSourceParameters(
                 search_index_name=index_name,

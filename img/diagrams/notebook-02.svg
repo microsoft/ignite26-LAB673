@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 590" width="880" height="590" font-family="Segoe UI, Helvetica, Arial, sans-serif" role="img">
+<title>Notebook 02: the graph knowledge source and its ontology</title>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#495057"/></marker></defs>
+<rect width="880" height="590" fill="#ffffff"/>
+<rect x="40" y="30" width="400" height="121.7" rx="10" fill="#d0ebff" stroke="#1864ab" stroke-width="2"/>
+<text x="240.0" y="66.0" font-size="19" font-weight="600" fill="#212529" text-anchor="middle" dominant-baseline="hanging"><tspan x="240.0" dy="0">cocoarynth-graph-knowledge-base</tspan></text>
+<text x="240.0" y="94.7" font-size="15" font-weight="normal" fill="#495057" text-anchor="middle" dominant-baseline="hanging"><tspan x="240.0" dy="0">MR1 + gpt-6-luna</tspan><tspan x="240.0" dy="19.5">answer synthesis</tspan></text>
+<rect x="180" y="20.0" width="120" height="20" rx="10.0" fill="#1864ab"/>
+<text x="240" y="30" font-size="12" font-weight="600" fill="#ffffff" text-anchor="middle" dominant-baseline="central">Knowledge base</text>
+<rect x="40" y="240" width="400" height="108" rx="10" fill="#fff4e6" stroke="#d9480f" stroke-width="2"/>
+<text x="240.0" y="278.9" font-size="19" font-weight="600" fill="#212529" text-anchor="middle" dominant-baseline="hanging"><tspan x="240.0" dy="0">cocoarynth-graph-knowledge-source</tspan></text>
+<text x="240.0" y="307.59999999999997" font-size="15" font-weight="normal" fill="#495057" text-anchor="middle" dominant-baseline="hanging"><tspan x="240.0" dy="0">graphOntology: inline</tspan></text>
+<rect x="172" y="230.0" width="135" height="20" rx="10.0" fill="#d9480f"/>
+<text x="240" y="240" font-size="12" font-weight="600" fill="#ffffff" text-anchor="middle" dominant-baseline="central">Knowledge source</text>
+<rect x="580" y="245" width="260" height="121.7" rx="10" fill="#f8f0fc" stroke="#862e9c" stroke-width="2"/>
+<text x="710.0" y="281.0" font-size="19" font-weight="600" fill="#212529" text-anchor="middle" dominant-baseline="hanging"><tspan x="710.0" dy="0">cocoarynth.owl</tspan></text>
+<text x="710.0" y="309.7" font-size="15" font-weight="normal" fill="#495057" text-anchor="middle" dominant-baseline="hanging"><tspan x="710.0" dy="0">13 classes</tspan><tspan x="710.0" dy="19.5">13 relationships</tspan></text>
+<rect x="654" y="235.0" width="113" height="20" rx="10.0" fill="#862e9c"/>
+<text x="710" y="245" font-size="12" font-weight="600" fill="#ffffff" text-anchor="middle" dominant-baseline="central">Ontology file</text>
+<rect x="40" y="430" width="400" height="141.2" rx="10" fill="#ebfbee" stroke="#2b8a3e" stroke-width="2"/>
+<text x="240.0" y="466.0" font-size="19" font-weight="600" fill="#212529" text-anchor="middle" dominant-baseline="hanging"><tspan x="240.0" dy="0">cocoarynth-graph</tspan></text>
+<text x="240.0" y="494.7" font-size="15" font-weight="normal" fill="#495057" text-anchor="middle" dominant-baseline="hanging"><tspan x="240.0" dy="0">120 assertions: subject,</tspan><tspan x="240.0" dy="19.5">predicate, object</tspan><tspan x="240.0" dy="19.5">64 entities, 91 facts</tspan></text>
+<rect x="187" y="420.0" width="105" height="20" rx="10.0" fill="#2b8a3e"/>
+<text x="240" y="430" font-size="12" font-weight="600" fill="#ffffff" text-anchor="middle" dominant-baseline="central">Search index</text>
+<rect x="580" y="450" width="260" height="121.7" rx="10" fill="#ebfbee" stroke="#2b8a3e" stroke-width="2"/>
+<text x="710.0" y="486.0" font-size="19" font-weight="600" fill="#212529" text-anchor="middle" dominant-baseline="hanging"><tspan x="710.0" dy="0">cocoarynth-chunks</tspan></text>
+<text x="710.0" y="514.7" font-size="15" font-weight="normal" fill="#495057" text-anchor="middle" dominant-baseline="hanging"><tspan x="710.0" dy="0">106 PDF passages</tspan><tspan x="710.0" dy="19.5">with text vectors</tspan></text>
+<rect x="657" y="440.0" width="105" height="20" rx="10.0" fill="#2b8a3e"/>
+<text x="710" y="450" font-size="12" font-weight="600" fill="#ffffff" text-anchor="middle" dominant-baseline="central">Search index</text>
+<path d="M 240.0 151.7 L 240.0 228.0" fill="none" stroke="#495057" stroke-width="2" marker-end="url(#arrow)"/>
+<path d="M 580 294.0 L 442 294.0" fill="none" stroke="#495057" stroke-width="2" marker-end="url(#arrow)"/>
+<text x="511.0" y="247.0" font-size="15" font-weight="normal" fill="#495057" text-anchor="middle" dominant-baseline="hanging"><tspan x="511.0" dy="0">converted to</tspan><tspan x="511.0" dy="19.5">JSON-LD</tspan></text>
+<path d="M 240.0 348 L 240.0 418.0" fill="none" stroke="#495057" stroke-width="2" marker-end="url(#arrow)"/>
+<path d="M 440 510.85 L 578 510.85" fill="none" stroke="#495057" stroke-width="2" stroke-dasharray="6 5" marker-end="url(#arrow)"/>
+<text x="509.0" y="463.85" font-size="15" font-weight="normal" fill="#495057" text-anchor="middle" dominant-baseline="hanging"><tspan x="509.0" dy="0">chunk_id</tspan><tspan x="509.0" dy="19.5">(provenance)</tspan></text>
+</svg>

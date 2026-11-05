@@ -20,7 +20,7 @@ Neither ontology is restored as an index.
 
 [The loader](../../infra/restore-graph-indexes.py) converts these flat RDF/XML
 declarations to the constrained JSON-LD accepted by API `2026-11-01-preview`.
-It creates `cocoarynth-graph-ks` and `cocoarynth-topics-ks`, each an ordinary
+It creates `cocoarynth-graph-knowledge-source` and `cocoarynth-topics-knowledge-source`, each an ordinary
 `searchIndex` knowledge source with `searchIndexParameters.graphOntology`
 set to `kind: inline`. Both target indexes have an edge-list graph profile
 whose provenance index is `cocoarynth-chunks`. The topic source supports
@@ -52,7 +52,8 @@ field for PDF provenance.
 
 ## Restoration and retained captures
 
-[Lab provisioning](../../infra/README.md) restores all three indexes and both
+[Lab provisioning](../../infra/README.md) restores all three indexes, splits the
+chunk snapshot into four document-group indexes for Part 1, and creates both
 graph-enabled knowledge sources by default. Offline validation needs only Python:
 
 ```powershell

@@ -28,7 +28,7 @@ In this hands-on lab, you'll explore Foundry IQ knowledge bases for Cocoarynth C
 
 You'll work through three notebooks:
 
-1. **Knowledge bases and Microsoft Retriever 1 (MR1)**: Ask a grounded question over four filtered document sources in one chunk index, follow the citations, and compare standard agentic retrieval with the faster MR1 retriever.
+1. **Knowledge bases and Microsoft Retriever 1 (MR1)**: Ask a grounded question over four document indexes, follow the citations, and compare standard agentic retrieval with the faster MR1 retriever.
 2. **Entities and graphs**: Follow a chocolate batch back to the farms that grew its cacao, using an ontology, graph queries, and provenance.
 3. **Topics**: Browse labeled groups of passages, compare topic routing with direct vector search, and query the sitemap with GQL and a graph-enabled knowledge source.
 
@@ -58,13 +58,14 @@ All required Azure services have already been provisioned for you.
 <details>
 <summary><strong>📋 What's pre-configured (click to expand for details)</strong></summary>
 
-- **Foundry IQ** with three pre-created indexes:
-  - **cocoarynth-topics**: Topic vectors, labels, descriptions, memberships, and sitemap relationships
-  - **cocoarynth-chunks**: 106 passages from the 55 original PDFs, with embeddings and a `domain` field for origins, quality, logistics-retail, and policies
+- **Foundry IQ** with seven pre-created indexes:
+  - **cocoarynth-origins**, **cocoarynth-quality**, **cocoarynth-logistics-retail**, and **cocoarynth-policies**: The PDF passages for each document group, with embeddings
+  - **cocoarynth-chunks**: All 106 passages from the 55 original PDFs in one index, which the graph and topics link to as evidence
   - **cocoarynth-graph**: PDF-supported business triples constrained by the checked-in OWL ontology
+  - **cocoarynth-topics**: Topic vectors, labels, descriptions, memberships, and sitemap relationships
 - **Graph-enabled knowledge sources** for the business graph and topic sitemap, using the November inline-ontology private preview
 - **Checked-in OWL files**: Ontologies are files, not additional indexes
-- **Azure OpenAI** with **gpt-5.4** for query planning and answer synthesis, and **text-embedding-3-large** for vector embeddings
+- **Azure OpenAI** with **gpt-6-luna** for query planning and answer synthesis, and **text-embedding-3-large** for vector embeddings
 - **Pre-computed vectors**: All Cocoarynth document chunks are already vectorized and indexed
 
 </details>
@@ -100,13 +101,16 @@ In this part, you'll look at the search indexes in the Azure portal, then use a 
 ## Explore the indexes in the Azure portal
 
 1. In your Foundry IQ service, select **Search management** > **Indexes** from the left pane.
-2. Confirm that you see these three indexes, each with a nonzero document count:
-   - **cocoarynth-topics**
-   - **cocoarynth-chunks**
-   - **cocoarynth-graph**
-3. Select **cocoarynth-chunks** to open it in **Search explorer**.
-4. Enter +++organic seal+++ in the search box and select **Search**. Each result is a PDF passage with *title*, *blob_path*, and *domain* fields. Policy passages have *domain* set to *policies*.
-5. In the same index, search for +++EC26-0811+++. This is a chocolate batch code that you'll trace back to its farms in Part 2.
+2. You should see four indexes, each with a nonzero document count. Each one holds the PDF passages for one group of documents:
+   - **cocoarynth-origins**
+   - **cocoarynth-quality**
+   - **cocoarynth-logistics-retail**
+   - **cocoarynth-policies**
+
+   You'll also see **cocoarynth-chunks**, **cocoarynth-graph**, and **cocoarynth-topics**. You'll use those in Parts 2 and 3.
+3. Select **cocoarynth-policies** to open it in **Search explorer**.
+4. Enter +++organic seal+++ in the search box and select **Search**. Each result is a PDF passage with *title*, *blob_path*, and *chunk* fields. The top result is the label and marketing claims policy.
+5. Open **cocoarynth-quality** and search for +++EC26-0811+++. This is a chocolate batch code that you'll trace back to its farms in Part 2.
 6. Select the **Fields** tab to see how the index is structured. Notice the *chunk* text field and the vector field that holds its embedding.
 
 ## Run the Python notebook
@@ -118,10 +122,10 @@ In this part, you'll look at the search indexes in the Azure portal, then use a 
 ## See your knowledge base in the Azure portal
 
 1. Return to your Foundry IQ service in the Azure portal.
-2. From the left pane, select **Agentic retrieval** > **Knowledge sources**. Find the four document knowledge sources that the notebook created, such as **cocoarynth-origins-source**. They all target **cocoarynth-chunks**, with different *domain* filters. The two graph-enabled sources were created during setup.
-3. Select **Agentic retrieval** > **Knowledge bases**. Open the **cocoarynth-kb-standard** knowledge base.
+2. From the left pane, select **Agentic retrieval** > **Knowledge sources**. Find the four document knowledge sources that the notebook created, such as **cocoarynth-origins-knowledge-source**. Each one targets the index with the same name, such as **cocoarynth-origins**. The two graph-enabled sources were created during setup.
+3. Select **Agentic retrieval** > **Knowledge bases**. Open **cocoarynth-standard-knowledge-base**.
 4. Look at which knowledge sources it uses, which chat completion model it uses for query planning and answer synthesis, and its retrieval reasoning effort.
-5. Open the **cocoarynth-kb-mr1** knowledge base too. Notice that it uses only the policies source.
+5. Open **cocoarynth-mr1-knowledge-base** too. Notice that it uses the same four sources, but no chat completion model.
 
 Select **Next** to continue to entities and graphs.
 
@@ -144,7 +148,7 @@ The Azure portal doesn't show graphs yet, so this lab includes a small web app, 
 
 ## Explore the ontology
 
-The **Ontology** tab shows the graph's schema. Each circle is an entity type, and each arrow is a relationship from its domain (subject type) to its range (object type).
+The **Graph ontology** tab shows the graph's schema. Each circle is an entity type, and each arrow is a relationship from its domain (subject type) to its range (object type).
 
 1. In Visual Studio Code, open **data/graph-data/cocoarynth.owl**. This checked-in file defines the entity types and properties; there is no ontology index. The explorer reads this file, and setup attaches its declarations inline to the graph knowledge source.
 2. Return to the explorer and select the **BeanLot** circle. The panel lists the relationships to and from a bean lot.
@@ -152,7 +156,7 @@ The **Ontology** tab shows the graph's schema. Each circle is an entity type, an
 
 ## Explore the graph
 
-1. Select the **Graph** tab. It opens with batch **EC26-0811** and the entities directly connected to it.
+1. Select the **Graph entities** tab. It opens with batch **EC26-0811** and the entities directly connected to it.
 2. Look at the batch-code property and the **madeFrom** relationship. The compact graph contains selected facts, not every detail in the documents.
 3. Select the **EC26-L07** bean lot circle to add its neighbors to the diagram. Find the two farms that contributed to it.
 4. Select a **contributedTo** arrow, or select it in the panel's list of relationships. The panel shows the assertion, exact evidence excerpts, and the original PDF passage it came from.
@@ -190,7 +194,8 @@ An entity graph shows how specific things are connected. Topics group related pa
 1. In the graph explorer, select the **Topics** tab. If you closed the app, start it again as described in Part 2.
 2. Look at the coverage in the panel. Not every passage was assigned to a topic.
 3. Broad topics are on the left, and narrower child topics are on the right. Each box has a label added from its member passages; select it to read the description. There are four roots and four children, and two roots have no children.
-4. Select a topic to read its member passages. Do they have something in common? Labels describe the fixed groups; they do not change which passages belong to a topic.
+4. Select a topic to see its member passages, grouped by document. Expand a passage to read it, or select a document name to open the original PDF. Do the passages have something in common? Labels describe the fixed groups; they do not change which passages belong to a topic.
+5. The same topics are also stored as a navigation graph, called the sitemap: Topic → **hasSubtopic** → Topic, Topic → **hasMember** → passage, and Document → **hasTextChunk** → passage. You'll query this sitemap with GQL in the notebook.
 
 ## Run the notebook
 
@@ -201,7 +206,7 @@ An entity graph shows how specific things are connected. Topics group related pa
    - Browse the topic hierarchy and its member passages.
    - Pick a passage about Madagascar bean lot MG26-L02 and find its nearest neighbors in two ways: directly, and through its nearest topic.
    - Query **Topic → subtopic → member passage ← PDF document** with GQL on **cocoarynth-topics**.
-   - Use **cocoarynth-topics-ks** from a knowledge base, then look for a successful, nonempty *graphSearch* activity. A text-only answer does not demonstrate sitemap GQL.
+   - Use **cocoarynth-topics-knowledge-source** from a knowledge base, then look for a successful, nonempty *graphSearch* activity. A text-only answer does not demonstrate sitemap GQL.
 
 ## Check your understanding
 
@@ -215,7 +220,7 @@ Select **Next** to review key takeaways and next steps.
 
 You've completed the lab on exploring Foundry IQ knowledge bases. You:
 
-- Built a knowledge base over four filtered sources in one PDF chunk index, followed its citations back to the original documents, and compared it with the faster Microsoft Retriever 1.
+- Built a knowledge base over four document indexes, followed its citations back to the original documents, and compared it with the faster Microsoft Retriever 1.
 - Followed a chocolate batch to its farms with an ontology, GQL queries, and graph provenance, and compared a graph-backed knowledge base with standard retrieval.
 - Explored labeled topic groups, compared topic-based search with direct vector search, and queried the sitemap through GQL and its inline-ontology knowledge source.
 

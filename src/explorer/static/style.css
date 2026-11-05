@@ -27,6 +27,7 @@ main { flex: 1; display: flex; min-height: 0; }
 #canvas-area { flex: 1; position: relative; display: flex; flex-direction: column; min-width: 0; }
 #toolbar { display: flex; gap: 0.75rem; align-items: center; padding: 0.6rem 1rem; border-bottom: 1px solid var(--border); flex-wrap: wrap; min-height: 2.8rem; }
 #toolbar form { display: flex; gap: 0.5rem; align-items: center; }
+#toolbar:empty { display: none; }
 #toolbar input[type="search"] { padding: 0.35rem 0.5rem; font-size: 0.95rem; width: 11rem; }
 #toolbar button { padding: 0.35rem 0.8rem; font-size: 0.9rem; cursor: pointer; }
 #toolbar .hint { color: #6b5a4e; font-size: 0.85rem; }
@@ -42,6 +43,17 @@ main { flex: 1; display: flex; min-height: 0; }
 #panel h3 { font-size: 0.95rem; margin: 1.25rem 0 0.4rem; }
 #panel .type { display: inline-block; padding: 0.1rem 0.5rem; border-radius: 999px; color: white; font-size: 0.8rem; }
 #panel .muted { color: #6b5a4e; }
+#panel .sources { margin: 0.5rem 0 0.8rem; display: grid; gap: 0.3rem; font-size: 0.8rem; }
+#panel .source-row { display: grid; grid-template-columns: 4rem minmax(0, auto) 1fr; align-items: center; column-gap: 0.4rem; }
+#panel .source-row button.link { justify-self: start; font-size: 0.78rem; white-space: nowrap; }
+#panel .source-label { color: #6b5a4e; }
+#panel .source-pill { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 0.1rem 0.35rem; border: 1.5px solid; border-radius: 6px; padding: 0.1rem 0.45rem 0.1rem 0.15rem; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 0.76rem; overflow-wrap: anywhere; }
+#panel .source-kind { font-family: system-ui, sans-serif; font-size: 0.68rem; font-weight: 600; color: white; border-radius: 4px; padding: 0 0.3rem; white-space: nowrap; }
+/* Same colors as the architecture diagrams in img/diagrams */
+#panel .source-pill.index { border-color: #2b8a3e; background: #ebfbee; }
+#panel .source-pill.index .source-kind { background: #2b8a3e; }
+#panel .source-pill.file { border-color: #862e9c; background: #f8f0fc; }
+#panel .source-pill.file .source-kind { background: #862e9c; }
 #panel code { font-size: 0.8rem; word-break: break-all; }
 #panel ul { padding-left: 1.1rem; margin: 0.25rem 0; }
 #panel li { margin: 0.2rem 0; }
@@ -65,3 +77,12 @@ svg .edge .hit { stroke: transparent; stroke-width: 10; cursor: pointer; }
 svg .edge.selected line, svg .edge.highlight line { stroke: var(--accent); stroke-width: 2.5; }
 svg .edge text { font-size: 11px; fill: #6b5a4e; }
 svg .edge.hidden-label text { display: none; }
+
+
+#cy, #graph-cy { flex: 1; min-height: 0; }
+#panel details.type-group summary { cursor: pointer; padding: 0.15rem 0; }
+#panel details.type-group ul { margin: 0.2rem 0 0.4rem; }
+#panel p.document { margin: 0.9rem 0 0.2rem; }
+#panel p.document a { font-weight: 600; color: var(--accent); }
+#panel details.member { margin-left: 0.75rem; }
+#panel details.member summary { cursor: pointer; color: #6b5a4e; font-size: 0.85rem; }
