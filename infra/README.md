@@ -30,11 +30,31 @@ Use the existing Windows lab image with Azure CLI and Python available. The opti
 2. Run that deployment action after the download action. Like the original ILL344 action, it writes its embedded background script to `C:\Users\LabUser\Desktop\deploy-background.ps1`, signs in with the lab service principal, resolves the attendee object ID, and launches that generated script. The foreground action exits while provisioning continues; the repository's separate `infra/deploy-background.ps1` is not used by this action.
 3. Monitor `C:\Users\LabUser\Desktop\lifecycle-log.txt`. Wait for `=== Background deploy script completed ===` before releasing the environment to the attendee. A background launch alone does not mean setup succeeded.
 
-The background script reuses the foreground Azure CLI login, retrieves Search and Foundry API keys directly with `az rest` and `az cognitiveservices account keys list`, and passes the keys to [setup-knowledge.ps1](setup-knowledge.ps1). That script writes `.env` from the keys and inherited Bicep outputs using PowerShell, prepares the local virtual environment, configures Content Understanding, and restores the four Cocoarynth indexes (`cocoarynth-origins`, `cocoarynth-quality`, `cocoarynth-logistics-retail`, and `cocoarynth-policies`) by default. Skillable setup does not use Python's `AzureCliCredential`; self-paced deployment retains its `azd` credential flow. Knowledge sources and knowledge bases are left for [the lab notebooks](../src/notebooks/lab/).
+The background script reuses the foreground Azure CLI login, retrieves Search and Foundry API keys directly with `az rest` and `az cognitiveservices account keys list`, and passes the keys to [setup-knowledge.ps1](setup-knowledge.ps1). That script writes `.env` from the keys and inherited Bicep outputs using PowerShell, prepares the local virtual environment, configures Content Understanding, and restores three indexes by default:
 
-Snapshots for the four Cocoarynth indexes are in `data/index-data/`. After changing the documents, [rebuild the snapshots](#rebuild-the-index-snapshots) and commit them before releasing a Skillable environment. Missing snapshots stop setup before restoration writes.
+| Index | Role |
+| --- | --- |
+| `cocoarynth-topics` | Eight topic vectors, labels, descriptions, memberships, and sitemap triples |
+| `cocoarynth-chunks` | 106 passages from 55 PDFs, with embeddings and a four-group `domain` filter |
+| `cocoarynth-graph` | Business triples extracted from those PDF passages under the checked-in OWL schema |
 
-Set `$env:RESTORE_INDEX_SNAPSHOTS = "false"` in the lifecycle action before launching the background script only for rebuilding snapshots or a deliberate live-ingestion exercise. Re-running restoration replaces records in the four Cocoarynth indexes with the captured snapshots. Disabling restoration does not delete existing indexes.
+Setup creates `cocoarynth-graph-ks` and `cocoarynth-topics-ks` with inline
+ontologies from the OWL files. The Search service must have the November
+ontology private preview, including native GQL and inline-ontology knowledge
+sources. The Bicep template does not grant that access. Skillable setup does
+not use Python's `AzureCliCredential`; self-paced deployment retains its `azd`
+credential flow. The [lab notebooks](../src/notebooks/lab/) create the four
+domain-filtered document knowledge sources and the knowledge bases.
+
+The active snapshots are in `data/graph-data/`. Missing artifacts, invalid
+checksums, or PDF evidence mismatches stop setup before restoration writes.
+Re-running setup creates missing resources and verifies existing ones; it does
+not replace an earlier dataset. Use a fresh approved lab service or an explicit
+prefix for a separate restoration when existing names contain different data.
+
+Set `$env:RESTORE_INDEX_SNAPSHOTS = "false"` in the lifecycle action before
+launching the background script only for a deliberate maintainer capture
+exercise. Disabling restoration does not delete existing indexes.
 
 ## Self-paced deployment
 
@@ -44,14 +64,20 @@ Both deployment paths install [notebook requirements](../src/notebooks/requireme
 
 ## Rebuild the index snapshots
 
-Provisioning restores the four Cocoarynth indexes from the snapshots in `data/index-data/`, without uploading PDFs or running Content Understanding. Rebuild the snapshots only after changing the documents in `data/cocoarynth/`. These tools are for maintainers and are not run automatically:
+Provisioning restores the three-index bundle without uploading PDFs, running
+Content Understanding, or making extraction/naming model calls. Rebuild the
+bundle only after changing the PDFs in `data/cocoarynth/`. The original
+four-domain capture tools remain available for maintainers in a separate,
+disposable capture environment; they do not produce the complete three-index
+bundle automatically:
 
 | Tool | Purpose |
 | --- | --- |
 | [create-index-snapshots.py](create-index-snapshots.py) | Upload the 55 Cocoarynth PDFs and build Blob data sources, Content Understanding skillsets, embedding skills, indexes, and indexers |
 | [export-search-index.py](../scripts/export-search-index.py) | Export portable index definitions and document/vector snapshots |
 | [validate-index-snapshots.py](../scripts/validate-index-snapshots.py) | Validate committed snapshots without Azure access |
-| [create-knowledge.py](create-knowledge.py) | Restore the four index snapshots (what provisioning runs) |
+| [create-knowledge.py](create-knowledge.py) | Load `.env` and ensure the three-index bundle and both graph-enabled knowledge sources (what provisioning runs) |
+| [restore-graph-indexes.py](restore-graph-indexes.py) | Validate, restore, or read back the active three-index bundle and OWL bindings |
 
 1. Provision an environment with restoration turned off (`azd env set RESTORE_INDEX_SNAPSHOTS false`, then `azd provision`), or reuse an existing one.
 2. Sign in as the attendee identity that has Blob Data Contributor access; the upload tool uses `DefaultAzureCredential` rather than a service principal's management-plane access. From the repository root, run:
@@ -63,33 +89,68 @@ Provisioning restores the four Cocoarynth indexes from the snapshots in `data/in
    ```
 
    On Windows, use `.venv\Scripts\python.exe`. The live-indexing tool requires Python 3.11 or newer.
-3. Commit the eight files in `data/index-data/`. Chunk counts come from ingestion; don't edit them by hand.
-4. To check restoration, run `.venv/bin/python infra/create-knowledge.py`, or `azd env set RESTORE_INDEX_SNAPSHOTS true` and `azd provision`.
+3. Retain the eight capture files in `data/index-data/`. Chunk counts come from ingestion; don't edit them by hand.
+4. Rebuild `cocoarynth-chunks` from the PDF passage captures, preserving provenance and adding the document-group `domain`. Propose the business OWL from PDF text, then extract ontology-constrained triples with exact passage evidence. Do not feed `world/*.json` to either step.
+5. Recompute the topic hierarchy when the corpus changes. Consolidate its vectors, member-derived labels/descriptions, memberships, and sitemap triples into `cocoarynth-topics`; do not reuse an old native generation identity for changed inputs.
+6. Capture the three definitions and record sets, both OWL files, and extraction provenance in `data/graph-data/`. Update `manifest.json` to match their LF-normalized byte counts and SHA-256 checksums. Run `python .\infra\restore-graph-indexes.py --validate-only` before committing a replacement bundle.
+7. Against the intended preview-enabled lab service, run `.venv\Scripts\python.exe infra\create-knowledge.py`. Existing destinations with different data are rejected rather than overwritten.
 
 Ingestion uploads the PDFs listed in [the corpus manifest](../data/cocoarynth/corpora.json) under one prefix per index in the `knowledge` container, creates `cocoarynth-origins`, `cocoarynth-quality`, `cocoarynth-logistics-retail`, and `cocoarynth-policies`, and runs Content Understanding with 700-token semantic chunking and 3072-dimensional embeddings. It clears and replaces only those four corpora's blobs and index records, and incurs model charges, so run it only against disposable lab resources. The current snapshots were captured on 13 October 2026. Content Understanding can return transient errors; rerunning the affected indexer resolves them.
 
-Restoration replaces records in the four indexes with the snapshot text and vectors. Setting `RESTORE_INDEX_SNAPSHOTS=false` skips restoration and does not clear existing indexes.
+Those four ingestion indexes are capture inputs, not the attendee layout.
+The active restore manifest contains only the chunk, topic, and business graph
+indexes. The current model-generated ontology, extraction, and naming receipts
+are summarized in [the provenance ledger](../data/graph-data/pdf-extraction-provenance.json);
+they are not represented as a managed extraction run or a native ontology approval.
+Setting `RESTORE_INDEX_SNAPSHOTS=false` skips restoration and does not clear
+existing indexes.
 
 How the documents themselves are generated is in [Cocoarynth data guidance](../data/README.md).
 
 ## Restore graph snapshots (private preview)
 
-[restore-graph-indexes.py](restore-graph-indexes.py) restores the seven optional indexes in [the graph inventory](../data/graph-data/README.md). It is separate from the four-index lab setup. Use [requirements-graph.txt](requirements-graph.txt) for this command.
+[restore-graph-indexes.py](restore-graph-indexes.py) restores the three active
+indexes in [the inventory](../data/graph-data/README.md), plus both
+graph-enabled knowledge sources. This is the same loader used by default lab
+setup, not an optional seven-index add-on.
+[requirements-graph.txt](requirements-graph.txt) includes the same November
+SDK pin as the infrastructure and notebooks.
 
-The command uses Search API `2026-11-01-preview` for every operation. The destination must support the graph preview and, with `--graph-ks`, the private inline-ontology feature. Set `AZURE_SEARCH_ADMIN_KEY` for the intended service and pass its HTTPS root explicitly; the command does not load `.env`.
+The command uses Search API `2026-11-01-preview` for every operation. The
+destination must support native graph queries and the private inline-ontology
+feature. Set `AZURE_SEARCH_ADMIN_KEY` for that service and
+`AZURE_OPENAI_ENDPOINT` for its existing Foundry embedding resource, then pass
+the Search HTTPS root explicitly. The command does not load `.env`.
+`--embedding-endpoint` and `--embedding-deployment` can supply the query
+vectorizer binding explicitly; the recorded model remains
+`text-embedding-3-large`. Vectorizers use the Search service's existing managed
+identity permissions, not a key stored in the snapshots.
 
 From the repository root:
 
 ```powershell
-python .\infra\restore-graph-indexes.py --validate-only --graph-ks
-python .\infra\restore-graph-indexes.py --endpoint "https://<search-service>.search.windows.net" --graph-ks
+python .\infra\restore-graph-indexes.py --validate-only
+python .\infra\restore-graph-indexes.py --endpoint "https://<search-service>.search.windows.net"
 ```
 
-The second command leaves the seven restored indexes and the Graph knowledge source available for use. All destination names must be absent; existing resources are never replaced. Add `--verify-only` to check an existing restoration without writes.
+Offline validation requires only Python, with no SDK installation or Azure
+access. The second command leaves the three indexes and two graph-enabled
+knowledge sources available for use. By default, all destination names must be
+absent. Add `--ensure` to create missing resources and verify matching existing
+ones, or `--verify-only` to check a complete restoration without writes.
+Existing resources are never overwritten.
 
 For a temporary end-to-end check, add `--prefix <unique-prefix> --cleanup`. Cleanup removes only resources marked as owned by that run and uses conditional ETag checks. A prefix changes physical index bindings, not document IDs, logical graph names, or generation identities.
 
-The command verifies index schemas, every document field and stored float32 vector, vector lookup, and three known-answer native graph traversals with provenance. With `--graph-ks`, it builds the inline JSON-LD ontology from the committed ontology records and verifies the created knowledge source. Index restoration uses the Python SDK; REST is limited to native GQL and private Graph KS creation through the SDK's transport. No indexer, embedding generation, or model inference runs.
+The command verifies index schemas, every document field and stored float32
+vector, vector lookup, and three known-answer business traversals with
+provenance. It also executes sitemap GQL over the topic index. Both knowledge
+sources are always created or verified with inline JSON-LD converted from the
+checked-in OWL files; `--graph-ks` remains a compatibility flag.
+Index restoration uses the Python SDK; REST is limited to native GQL and
+private knowledge-source creation through the SDK's transport. No indexer,
+embedding generation, or model inference runs during restoration. Knowledge-base
+graph-search activity is exercised separately in notebooks 2 and 3.
 
 ## Cleanup
 
@@ -109,6 +170,10 @@ Imported from [ILL344](https://github.com/microsoft/aitour27-ILL344-turning-data
 - Enabled index restoration by default and imported the first notebook with Foundry-only prerequisites and repository-relative asset lookup.
 - Excluded Fabric/Work IQ provisioning, email seeding, Fabric JSON, legacy datasets, and the later notebooks.
 
-The corpus is a generated set of Cocoarynth documents split across four indexes. Adaptations retain the existing single-container Blob layout, portable citation fields without image projections, and notebook answer synthesis. See [Cocoarynth data guidance](../data/README.md).
+The generated Cocoarynth documents retain four source groups, now served from
+one chunk index alongside the topic and business graph indexes. Adaptations
+retain the existing single-container Blob layout, portable citation fields
+without image projections, and notebook answer synthesis. See
+[Cocoarynth data guidance](../data/README.md).
 
 No cloud resources have been provisioned or deployment credentials stored in this repository as part of this import.

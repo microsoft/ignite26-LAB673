@@ -13,6 +13,7 @@ from functools import lru_cache
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import parse_qs, urlparse
+from xml.etree import ElementTree as ET
 
 from azure.core.credentials import AzureKeyCredential
 from azure.search.documents import SearchClient
@@ -24,12 +25,11 @@ PORT = int(os.getenv("EXPLORER_PORT", "8765"))
 STATIC_DIR = Path(__file__).parent / "static"
 API_VERSION = "2026-11-01-preview"
 GRAPH_INDEX = "cocoarynth-graph"
-ONTOLOGY_INDEX = "cocoarynth-ontology"
-GRAPH_SOURCES_INDEX = "cocoarynth-graph-sources"
-TOPICS_INDEX = "grz-cocoarynth-topics-bb1deb018565"
-TOPIC_SOURCES_INDEX = "grz-cocoarynth-input-f7d06ba6-517dba815a29"
+ONTOLOGY_FILE = Path(__file__).resolve().parents[2] / "data" / "graph-data" / "cocoarynth.owl"
+CHUNKS_INDEX = "cocoarynth-chunks"
+TOPICS_INDEX = "cocoarynth-topics"
 
-ASSERTION_FIELDS = ["id", "subject", "subject_type", "subject_id", "predicate", "object", "object_type", "object_id", "chunk_id"]
+ASSERTION_FIELDS = ["id", "fact_id", "subject", "subject_type", "subject_id", "predicate", "object", "object_type", "object_id", "chunk_id", "evidence_quotes"]
 
 
 @lru_cache
@@ -47,18 +47,27 @@ def odata(value):
 
 
 def get_ontology():
-    types, relationships = {}, {}
-    for row in client(ONTOLOGY_INDEX).search(
-        search_text="*", select=["subject", "subject_type", "predicate", "object"], top=1000
-    ):
-        if row["subject_type"] == "NodeType" and row["predicate"] == "rdfs:comment":
-            types[row["subject"]] = row["object"]
-        elif row["subject_type"] == "EdgeType":
-            key = {"rdfs:domain": "domain", "rdfs:range": "range", "rdfs:comment": "comment"}[row["predicate"]]
-            relationships.setdefault(row["subject"], {"name": row["subject"]})[key] = row["object"]
+    ns = {
+        "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+        "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+        "owl": "http://www.w3.org/2002/07/owl#",
+    }
+    ontology = ET.parse(ONTOLOGY_FILE).getroot()
+    types = [
+        {"name": node.attrib[f"{{{ns['rdf']}}}about"].rsplit("#", 1)[1],
+         "comment": node.findtext("rdfs:comment", namespaces=ns)}
+        for node in ontology.findall("owl:Class", ns)
+    ]
+    relationships = [
+        {"name": node.attrib[f"{{{ns['rdf']}}}about"].rsplit("#", 1)[1],
+         "domain": node.find("rdfs:domain", ns).attrib[f"{{{ns['rdf']}}}resource"].rsplit("#", 1)[1],
+         "range": node.find("rdfs:range", ns).attrib[f"{{{ns['rdf']}}}resource"].rsplit("#", 1)[1],
+         "comment": node.findtext("rdfs:comment", namespaces=ns)}
+        for node in ontology.findall("owl:ObjectProperty", ns)
+    ]
     return {
-        "types": [{"name": name, "comment": comment} for name, comment in sorted(types.items())],
-        "relationships": sorted(relationships.values(), key=lambda r: r["name"]),
+        "types": sorted(types, key=lambda row: row["name"]),
+        "relationships": sorted(relationships, key=lambda row: row["name"]),
     }
 
 
@@ -68,7 +77,6 @@ def find_entities(query):
         search_text=query,
         search_fields=["subject"],
         select=["subject", "subject_type", "subject_id"],
-        filter="subject_type ne 'Document'",
         top=50,
     ):
         entities.setdefault(row["subject_id"], {"id": row["subject_id"], "name": row["subject"], "type": row["subject_type"]})
@@ -106,7 +114,10 @@ def get_evidence(assertion_id):
     assertion = dict(client(GRAPH_INDEX).get_document(assertion_id, selected_fields=ASSERTION_FIELDS))
     source = None
     if assertion.get("chunk_id"):
-        source = dict(client(GRAPH_SOURCES_INDEX).get_document(assertion["chunk_id"]))
+        source = dict(client(CHUNKS_INDEX).get_document(
+            assertion["chunk_id"],
+            selected_fields=["chunk_id", "title", "blob_path", "chunk", "page_number_from", "page_number_to"],
+        ))
     return {"assertion": assertion, "source": source}
 
 
@@ -120,7 +131,7 @@ def get_topics():
         for row in topics.search(
             search_text="*",
             filter=f"kind eq 'representative' and generation_id eq {odata(generation)}",
-            select=["community_id", "parent_id", "level", "member_count", "label"],
+            select=["community_id", "parent_id", "level", "member_count", "label", "description", "is_terminal"],
             top=1000,
         )
     ]
@@ -151,7 +162,7 @@ def get_topic_members(community_id, generation):
         return []
     return [
         dict(row)
-        for row in client(TOPIC_SOURCES_INDEX).search(
+        for row in client(CHUNKS_INDEX).search(
             search_text="*",
             filter=f"search.in(chunk_id, {odata(','.join(chunk_ids))}, ',')",
             select=["chunk_id", "title", "blob_path", "chunk"],

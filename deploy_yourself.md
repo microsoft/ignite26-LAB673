@@ -5,12 +5,13 @@ This guide provisions the Cocoarynth LAB673 environment without Skillable, Fabri
 ## Prerequisites
 
 - An Azure subscription with sufficient model quota and serverless Search capacity in West Central US.
+- Access to the November ontology private preview on the target Search service, including inline-ontology knowledge sources and native GQL.
 - Permissions to deploy resources, assign Azure RBAC roles, and list Search/Foundry API keys.
 - Azure Developer CLI (`azd`), Git, and Python available locally.
 
 ## Provision resources
 
-Provisioning restores the four Cocoarynth indexes from the snapshots in `data/index-data/`, so no document ingestion is needed. Knowledge sources and knowledge bases are left for the notebooks to create. Maintainers who change the documents can [rebuild the snapshots](infra/README.md#rebuild-the-index-snapshots).
+Provisioning restores exactly three indexes from `data/graph-data/`: `cocoarynth-topics`, `cocoarynth-chunks`, and `cocoarynth-graph`. It also creates graph-enabled knowledge sources for the business graph and topic sitemap from the checked-in OWL files. No document ingestion is needed. The notebooks create the four domain-filtered document knowledge sources and knowledge bases. Maintainers who change the documents can [rebuild the snapshots](infra/README.md#rebuild-the-index-snapshots).
 
 ```sh
 git clone https://github.com/microsoft/ignite26-LAB673.git
@@ -25,7 +26,9 @@ If already working in this repository, start with `azd auth login`. During `azd 
 
 `AZURE_LOCATION` controls Foundry and Blob Storage. `westus3` matches the source lab and supports Content Understanding; Search always deploys **serverless in West Central US** regardless of that setting. For other Foundry locations, consult [Content Understanding region support](https://learn.microsoft.com/azure/ai-services/content-understanding/language-region-support) and check model availability. Search capacity and model quota are not guaranteed by these templates.
 
-The post-provision hook prepares `.venv`, installs infrastructure and notebook dependencies, writes a local `.env` with deployment outputs and API keys, and configures Content Understanding. With restoration enabled, it also restores the four Cocoarynth indexes from their captured snapshots. Missing snapshots stop setup before restoration writes. `.env`, `.azure`, and `.venv` are ignored by Git. Do not share `.env` or logs containing credentials.
+The post-provision hook prepares `.venv`, installs infrastructure and notebook dependencies, writes a local `.env` with deployment outputs and API keys, and configures Content Understanding. With restoration enabled, it restores the three-index bundle and both inline-ontology knowledge sources. Missing or inconsistent artifacts stop setup before restoration writes. Existing resources are verified and reused only if they match; setup does not overwrite or delete an earlier dataset. `.env`, `.azure`, and `.venv` are ignored by Git. Do not share `.env` or logs containing credentials.
+
+The template does not grant private-preview access. A deployment without that access cannot complete the graph and sitemap setup; it does not silently substitute text-only retrieval.
 
 The default LLM is `gpt-5.4` (`2026-03-05`, capacity 200, enough for the knowledge base's multi-step retrieval), and embeddings use `text-embedding-3-large` (`1`, capacity 30). To override the LLM or capacities before provisioning:
 
@@ -40,7 +43,7 @@ Use a model supported by your region, subscription, and Content Understanding an
 
 ## Run the notebooks
 
-Notebooks 2 and 3 also need the graph and topic indexes. [Restore the graph snapshots](infra/README.md#restore-graph-snapshots-private-preview) on the same Foundry IQ service before running them.
+All three indexes and both graph-enabled knowledge sources are included in setup; no separate seven-index graph restoration is needed.
 
 Open the [lab notebooks](src/notebooks/lab/) in VS Code, select the root `.venv` as the kernel, and run the cells in order. See the [source guide](src/README.md) for what the notebooks create.
 

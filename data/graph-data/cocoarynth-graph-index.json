@@ -189,13 +189,24 @@
       "filterable": true,
       "sortable": true,
       "facetable": true
+    },
+    {
+      "name": "fact_id",
+      "type": "Edm.String",
+      "retrievable": true,
+      "filterable": true
+    },
+    {
+      "name": "evidence_quotes",
+      "type": "Collection(Edm.String)",
+      "retrievable": true
     }
   ],
   "graphProfile": {
     "kind": "edgeList",
     "fields": {
       "assertionIdField": "id",
-      "factIdField": "id",
+      "factIdField": "fact_id",
       "subjectField": "subject",
       "predicateField": "predicate",
       "objectField": "object",
@@ -216,6 +227,8 @@
       "graphNameField": "graph_name",
       "subjectIdDisplayNameField": "subject_id_display_name",
       "objectIdDisplayNameField": "object_id_display_name"
-    }
-  }
+    },
+    "provenanceIndexName": "cocoarynth-chunks"
+  },
+  "description": "Ontology-constrained business triples extracted from PDF passages only."
 }

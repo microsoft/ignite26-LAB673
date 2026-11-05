@@ -1,0 +1,118 @@
+{
+  "name": "cocoarynth-chunks",
+  "description": "106 PDF passages and their frozen 3072-dimensional embeddings; no generator JSON.",
+  "fields": [
+    {
+      "name": "chunk_id",
+      "type": "Edm.String",
+      "key": true,
+      "retrievable": true,
+      "filterable": true,
+      "sortable": true
+    },
+    {
+      "name": "parent_id",
+      "type": "Edm.String",
+      "filterable": true
+    },
+    {
+      "name": "title",
+      "type": "Edm.String",
+      "searchable": true
+    },
+    {
+      "name": "blob_path",
+      "type": "Edm.String",
+      "filterable": true
+    },
+    {
+      "name": "chunk",
+      "type": "Edm.String",
+      "searchable": true
+    },
+    {
+      "name": "page_number_from",
+      "type": "Edm.Int32",
+      "filterable": true
+    },
+    {
+      "name": "page_number_to",
+      "type": "Edm.Int32",
+      "filterable": true
+    },
+    {
+      "name": "text_vector",
+      "type": "Collection(Edm.Single)",
+      "searchable": true,
+      "retrievable": true,
+      "stored": true,
+      "dimensions": 3072,
+      "vectorSearchProfile": "captured-cosine"
+    },
+    {
+      "name": "domain",
+      "type": "Edm.String",
+      "retrievable": true,
+      "filterable": true,
+      "facetable": true
+    }
+  ],
+  "vectorSearch": {
+    "algorithms": [
+      {
+        "name": "captured-hnsw",
+        "kind": "hnsw",
+        "hnswParameters": {
+          "metric": "cosine",
+          "m": 4,
+          "efConstruction": 400,
+          "efSearch": 500
+        }
+      }
+    ],
+    "profiles": [
+      {
+        "name": "captured-cosine",
+        "algorithm": "captured-hnsw",
+        "vectorizer": "azure-openai-vectorizer"
+      }
+    ],
+    "vectorizers": [
+      {
+        "name": "azure-openai-vectorizer",
+        "kind": "azureOpenAI",
+        "azureOpenAIParameters": {
+          "resourceUri": null,
+          "deploymentId": "text-embedding-3-large",
+          "apiKey": null,
+          "modelName": "text-embedding-3-large",
+          "authIdentity": null
+        },
+        "customWebApiParameters": null,
+        "aiServicesVisionParameters": null,
+        "amlParameters": null
+      }
+    ]
+  },
+  "semantic": {
+    "defaultConfiguration": "semantic-configuration",
+    "configurations": [
+      {
+        "name": "semantic-configuration",
+        "flightingOptIn": false,
+        "rankingOrder": "BoostedRerankerScore",
+        "prioritizedFields": {
+          "titleField": {
+            "fieldName": "title"
+          },
+          "prioritizedContentFields": [
+            {
+              "fieldName": "chunk"
+            }
+          ],
+          "prioritizedKeywordsFields": []
+        }
+      }
+    ]
+  }
+}

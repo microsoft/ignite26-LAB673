@@ -415,7 +415,7 @@ function showOntologyRelationship(name) {
 // Graph tab
 // ---------------------------------------------------------------------------
 
-const graphState = { nodes: new Map(), edges: new Map(), properties: new Map(), expanded: new Set(), hideDocuments: true, graph: null };
+const graphState = { nodes: new Map(), edges: new Map(), properties: new Map(), expanded: new Set(), graph: null };
 
 async function showGraph() {
   toolbar.innerHTML = `
@@ -424,15 +424,10 @@ async function showGraph() {
       <input type="search" id="entity-query" value="EC26-0811" placeholder="For example, EC26-0811">
       <button type="submit">Search</button>
     </form>
-    <label><input type="checkbox" id="hide-documents" ${graphState.hideDocuments ? "checked" : ""}> Hide document mentions</label>
     <button id="clear-graph">Clear</button>`;
   document.getElementById("entity-search").addEventListener("submit", (event) => {
     event.preventDefault();
     searchEntities(document.getElementById("entity-query").value);
-  });
-  document.getElementById("hide-documents").addEventListener("change", (event) => {
-    graphState.hideDocuments = event.target.checked;
-    renderGraph();
   });
   document.getElementById("clear-graph").addEventListener("click", () => {
     graphState.nodes.clear();
@@ -508,8 +503,7 @@ async function selectEntity(id) {
 }
 
 function visibleGraph() {
-  const hidden = (node) => graphState.hideDocuments && node.type === "Document";
-  const nodes = [...graphState.nodes.values()].filter((node) => !hidden(node));
+  const nodes = [...graphState.nodes.values()];
   const ids = new Set(nodes.map((node) => node.id));
   const edges = [...graphState.edges.values()].filter((edge) => ids.has(edge.source) && ids.has(edge.target));
   return { nodes, edges };
@@ -562,11 +556,14 @@ async function showAssertion(assertionId) {
       <tr><td>Object</td><td>${escapeHtml(assertion.object)} ${assertion.object_id ? typeBadge(assertion.object_type) + `<br><code>${escapeHtml(assertion.object_id)}</code>` : `<span class="muted">(literal value)</span>`}</td></tr>
     </table>
     <h3>Evidence</h3>
+    ${assertion.evidence_quotes?.length
+      ? `<p class="muted">Exact excerpts from the PDF-extracted passage:</p><div class="passage">${assertion.evidence_quotes.map(escapeHtml).join("\n\n")}</div>`
+      : ""}
     ${source
       ? `<table>
           <tr><td>Source</td><td>${escapeHtml(source.title)}</td></tr>
           <tr><td>Path</td><td><code>${escapeHtml(source.blob_path)}</code></td></tr>
-          ${source.source_pointer ? `<tr><td>Pointer</td><td><code>${escapeHtml(source.source_pointer)}</code></td></tr>` : ""}
+          <tr><td>Pages</td><td>${escapeHtml(source.page_number_from)}–${escapeHtml(source.page_number_to)}</td></tr>
         </table>
         <div class="passage">${escapeHtml(source.chunk)}</div>`
       : `<p class="muted">This assertion has no linked source.</p>`}`;
@@ -592,7 +589,7 @@ async function showTopics() {
   const { topics, coverage } = topicState.data;
   setStatus(`${topics.length} topics`);
   panel.innerHTML = `<h2>Topics</h2>
-    <p class="muted">Topics group passages with similar embeddings. They were generated ahead of time and don't have names, so each box shows a few member document titles.</p>
+    <p class="muted">Topics group passages with similar embeddings. Labels and descriptions were added from each topic's unchanged member passages. Some broad topics have no narrower children.</p>
     <table>
       <tr><td>Source passages</td><td>${escapeHtml(coverage.source_document_count)}</td></tr>
       <tr><td>Assigned to a topic</td><td>${escapeHtml(coverage.assigned_node_count)}</td></tr>
@@ -629,11 +626,12 @@ function drawTopicTree(topics) {
     svgEl("rect", { width, height, rx: 8, stroke: topic.parent_id ? "#146c94" : "#805124" }, group);
     const name = topic.label || `Topic ${topic.community_id.slice(0, 8)}`;
     const title = svgEl("text", { x: 12, y: 22, style: "font-size: 15px; font-weight: 600" }, group);
-    title.textContent = `${name} · ${topic.member_count} passages`;
-    topic.sample_titles.slice(0, 2).forEach((sample, i) => {
-      const line = svgEl("text", { x: 12, y: 44 + i * 18, style: "font-size: 13px" }, group);
-      line.textContent = shorten(sample.replace(/\.pdf$/, ""), 40);
-    });
+    title.textContent = shorten(name, 34);
+    const count = svgEl("text", { x: 12, y: 44, style: "font-size: 13px" }, group);
+    count.textContent = `${topic.member_count} passages · ${topic.is_terminal ? "terminal topic" : "parent topic"}`;
+    const sample = svgEl("text", { x: 12, y: 62, style: "font-size: 13px" }, group);
+    sample.textContent = shorten((topic.sample_titles[0] || "").replace(/\.pdf$/, ""), 40);
+    svgEl("title", {}, group).textContent = `${name}\n${topic.description}`;
     group.setAttribute("aria-label", `${name}, level ${topic.level}, ${topic.member_count} passages`);
     topic.group = group;
     group.addEventListener("click", () => showTopic(topic));
@@ -658,6 +656,7 @@ async function showTopic(topic) {
   }
   members.sort((a, b) => a.title.localeCompare(b.title));
   panel.innerHTML = `<h2>${escapeHtml(name)}</h2>${typeBadge(topic.parent_id ? "Child topic" : "Parent topic")}
+    <p>${escapeHtml(topic.description)}</p>
     <p><code>${escapeHtml(topic.community_id)}</code></p>
     <h3>${members.length} member passages</h3>
     ${members.map((m) => `<p><strong>${escapeHtml(m.title)}</strong><br><code>${escapeHtml(m.blob_path)}</code></p><div class="passage">${escapeHtml(shorten(m.chunk, 600))}</div>`).join("")}`;

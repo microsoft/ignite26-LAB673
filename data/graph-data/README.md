@@ -1,17 +1,68 @@
-# Graph index snapshots
+# Three-index lab snapshots
 
-Index definitions and captured records for rehydrating the Cocoarynth graph-related indexes.
+The active restore manifest contains exactly three indexes. All use the same
+55 original Cocoarynth PDFs; generator JSON is not extraction evidence.
 
-| Snapshot | Definition | Records |
+| Index | Definition | Records |
 | --- | --- | --- |
-| Business sources | [Definition](cocoarynth-graph-sources-index.json) | [609 source chunks](cocoarynth-graph-sources-exported.jsonl) |
-| Ontology | [Definition](cocoarynth-ontology-index.json) | [288 ontology rows](cocoarynth-ontology-exported.jsonl) |
-| Business graph | [Definition](cocoarynth-graph-index.json) | [3,938 assertion rows](cocoarynth-graph-exported.jsonl) |
-| Source vectors | [Definition](cocoarynth-topic-sources-index.json) | [106 captured chunk/vector rows](cocoarynth-topic-sources-exported.jsonl) |
-| Native GRZ topics | [Definition](cocoarynth-topics-index.json) | [273 topic, membership, evidence, and manifest rows](cocoarynth-topics-exported.jsonl) |
-| Topic vectors | [Definition](cocoarynth-topic-vectors-index.json) | [8 vectors: 6 native and 2 derived parent centroids](cocoarynth-topic-vectors-exported.jsonl) |
-| Sitemap graph | [Definition](cocoarynth-sitemap-graph-index.json) | [379 assertion rows](cocoarynth-sitemap-graph-exported.jsonl) |
+| `cocoarynth-topics` | [Definition](cocoarynth-topics-index.json) | [438 rows](cocoarynth-topics-exported.jsonl): eight labeled/vectorized representatives, 158 memberships, sitemap edges, and a manifest |
+| `cocoarynth-chunks` | [Definition](cocoarynth-chunks-index.json) | [106 PDF passage/vector rows](cocoarynth-chunks-exported.jsonl) |
+| `cocoarynth-graph` | [Definition](cocoarynth-graph-index.json) | [120 PDF-supported assertions](cocoarynth-graph-exported.jsonl), representing 91 distinct facts |
 
 All source and topic vectors have **3,072 dimensions**. The [manifest](manifest.json) lists index names, document keys, the API version, and payload checksums.
 
-These additional snapshots are not restored automatically by [lab provisioning](../../infra/README.md).
+## Ontology private preview
+
+[cocoarynth.owl](cocoarynth.owl) contains 13 classes and 19 properties proposed
+from PDF excerpts. [cocoarynth-sitemap.owl](cocoarynth-sitemap.owl) describes
+`Topic`, `Document`, `TextChunk`, and their navigation properties.
+Neither ontology is restored as an index.
+
+[The loader](../../infra/restore-graph-indexes.py) converts these flat RDF/XML
+declarations to the constrained JSON-LD accepted by API `2026-11-01-preview`.
+It creates `cocoarynth-graph-ks` and `cocoarynth-topics-ks`, each an ordinary
+`searchIndex` knowledge source with `searchIndexParameters.graphOntology`
+set to `kind: inline`. Both target indexes have an edge-list graph profile
+whose provenance index is `cocoarynth-chunks`. The topic source supports
+sitemap GQL as well as ordinary topic retrieval.
+
+## Evidence and coverage
+
+Business assertions contain `chunk_id`, the PDF's `parent_id`, and verbatim
+`evidence_quotes`. `fact_id` identifies a distinct triple; `id` identifies
+one assertion of that fact from a particular passage. Confidence fields are
+unset rather than invented. The [provenance ledger](pdf-extraction-provenance.json)
+records declaration evidence, model identity, curation, and limitations.
+The compact ontology and graph are not exhaustive, and the extraction was not
+a managed indexer run or native ontology approval.
+
+The eight communities and 158 memberships preserve the captured native GRZ
+generation. The topic index retains six native terminal representative vectors
+and two existing derived parent centroids. Labels and descriptions are separate
+model enrichment from the unchanged member passages, not native GRZ naming.
+There are four roots and four children; two roots have no children.
+Overall, 97 of 106 passages are assigned and nine are unassigned.
+Only 61 passages belong to level-0 children. Topic routing includes all six
+terminal communities, including the two terminal roots at level 1.
+
+The topic index stores `hasSubtopic`, `hasMember`, and `hasTextChunk` triples
+alongside the representatives. `parent_id` on a representative means its
+parent community; the graph profile uses the separate `source_parent_id`
+field for PDF provenance.
+
+## Restoration and retained captures
+
+[Lab provisioning](../../infra/README.md) restores all three indexes and both
+graph-enabled knowledge sources by default. Offline validation needs only Python:
+
+```powershell
+python .\infra\restore-graph-indexes.py --validate-only
+```
+
+Run the command from the repository root. See [restore guidance](../../infra/README.md#restore-graph-snapshots-private-preview)
+for service requirements and destination handling.
+
+Older ontology-index, graph-source, topic-source, separate-vector, and sitemap
+capture files remain in this folder for provenance. They are **not in the active
+manifest and are never restored by the lab loader**. In particular, the old
+generator-backed graph-source capture must not be used as PDF extraction evidence.

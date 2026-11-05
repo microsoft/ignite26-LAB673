@@ -1,178 +1,403 @@
 {
-  "name": "grz-cocoarynth-topics-bb1deb018565",
+  "name": "cocoarynth-topics",
   "fields": [
     {
       "name": "id",
       "type": "Edm.String",
-      "key": true,
-      "searchable": false,
-      "filterable": true,
-      "sortable": false,
-      "retrievable": true
-    },
-    {
-      "name": "sort_key",
-      "type": "Edm.String",
-      "key": false,
-      "searchable": false,
+      "retrievable": true,
       "filterable": true,
       "sortable": true,
-      "retrievable": true
+      "facetable": false,
+      "searchable": true,
+      "key": true
     },
     {
-      "name": "kind",
+      "name": "subject",
       "type": "Edm.String",
-      "key": false,
-      "searchable": false,
-      "filterable": true,
-      "sortable": false,
-      "retrievable": true
-    },
-    {
-      "name": "generation_id",
-      "type": "Edm.String",
-      "key": false,
-      "searchable": false,
-      "filterable": true,
-      "sortable": false,
-      "retrievable": true
-    },
-    {
-      "name": "community_id",
-      "type": "Edm.String",
-      "key": false,
-      "searchable": false,
-      "filterable": true,
-      "sortable": false,
-      "retrievable": true
-    },
-    {
-      "name": "parent_id",
-      "type": "Edm.String",
-      "key": false,
-      "searchable": false,
-      "filterable": true,
-      "sortable": false,
-      "retrievable": true
-    },
-    {
-      "name": "level",
-      "type": "Edm.Int32",
-      "key": false,
-      "searchable": false,
+      "retrievable": true,
       "filterable": true,
       "sortable": true,
-      "retrievable": true
+      "facetable": true,
+      "searchable": true
+    },
+    {
+      "name": "predicate",
+      "type": "Edm.String",
+      "retrievable": true,
+      "filterable": true,
+      "sortable": true,
+      "facetable": true,
+      "searchable": true
+    },
+    {
+      "name": "object",
+      "type": "Edm.String",
+      "retrievable": true,
+      "filterable": true,
+      "sortable": true,
+      "facetable": true,
+      "searchable": true
+    },
+    {
+      "name": "object_string",
+      "type": "Edm.String",
+      "retrievable": true,
+      "filterable": true,
+      "sortable": true,
+      "facetable": true,
+      "searchable": false
+    },
+    {
+      "name": "subject_type",
+      "type": "Edm.String",
+      "retrievable": true,
+      "filterable": true,
+      "sortable": true,
+      "facetable": true,
+      "searchable": false
+    },
+    {
+      "name": "subject_id",
+      "type": "Edm.String",
+      "retrievable": true,
+      "filterable": true,
+      "sortable": true,
+      "facetable": true,
+      "searchable": false
+    },
+    {
+      "name": "object_type",
+      "type": "Edm.String",
+      "retrievable": true,
+      "filterable": true,
+      "sortable": true,
+      "facetable": true,
+      "searchable": false
+    },
+    {
+      "name": "object_id",
+      "type": "Edm.String",
+      "retrievable": true,
+      "filterable": true,
+      "sortable": true,
+      "facetable": true,
+      "searchable": false
+    },
+    {
+      "name": "graph_name",
+      "type": "Edm.String",
+      "retrievable": true,
+      "filterable": true,
+      "sortable": true,
+      "facetable": true,
+      "searchable": false
+    },
+    {
+      "name": "namespace",
+      "type": "Edm.String",
+      "retrievable": true,
+      "filterable": true,
+      "sortable": true,
+      "facetable": true,
+      "searchable": false
+    },
+    {
+      "name": "source_parent_id",
+      "type": "Edm.String",
+      "retrievable": true,
+      "filterable": true,
+      "sortable": true,
+      "facetable": true,
+      "searchable": false
     },
     {
       "name": "chunk_id",
       "type": "Edm.String",
-      "key": false,
-      "searchable": false,
+      "retrievable": true,
       "filterable": true,
       "sortable": true,
-      "retrievable": true
+      "facetable": true,
+      "searchable": false
     },
     {
-      "name": "source_id",
+      "name": "subject_id_display_name",
       "type": "Edm.String",
-      "key": false,
-      "searchable": false,
+      "retrievable": true,
       "filterable": false,
-      "sortable": false,
-      "retrievable": true
+      "sortable": true,
+      "facetable": true,
+      "searchable": true
     },
     {
-      "name": "text",
+      "name": "object_id_display_name",
       "type": "Edm.String",
-      "key": false,
-      "searchable": false,
+      "retrievable": true,
       "filterable": false,
-      "sortable": false,
-      "retrievable": true
+      "sortable": true,
+      "facetable": true,
+      "searchable": true
     },
     {
-      "name": "visibility",
-      "type": "Edm.String",
-      "key": false,
-      "searchable": false,
+      "name": "object_double",
+      "type": "Edm.Double",
+      "retrievable": true,
       "filterable": true,
-      "sortable": false,
-      "retrievable": true
+      "sortable": true,
+      "facetable": true
+    },
+    {
+      "name": "object_bool",
+      "type": "Edm.Boolean",
+      "retrievable": true,
+      "filterable": true
+    },
+    {
+      "name": "object_datetime",
+      "type": "Edm.DateTimeOffset",
+      "retrievable": true,
+      "filterable": true,
+      "sortable": true
+    },
+    {
+      "name": "edge_confidence",
+      "type": "Edm.Double",
+      "retrievable": true,
+      "filterable": true,
+      "sortable": true,
+      "facetable": true
+    },
+    {
+      "name": "s_confidence",
+      "type": "Edm.Double",
+      "retrievable": true,
+      "filterable": true,
+      "sortable": true,
+      "facetable": true
+    },
+    {
+      "name": "p_confidence",
+      "type": "Edm.Double",
+      "retrievable": true,
+      "filterable": true,
+      "sortable": true,
+      "facetable": true
+    },
+    {
+      "name": "o_confidence",
+      "type": "Edm.Double",
+      "retrievable": true,
+      "filterable": true,
+      "sortable": true,
+      "facetable": true
+    },
+    {
+      "name": "fact_id",
+      "type": "Edm.String",
+      "retrievable": true,
+      "filterable": true
+    },
+    {
+      "name": "kind",
+      "type": "Edm.String",
+      "retrievable": true,
+      "filterable": true,
+      "searchable": false
+    },
+    {
+      "name": "generation_id",
+      "type": "Edm.String",
+      "retrievable": true,
+      "filterable": true,
+      "searchable": false
+    },
+    {
+      "name": "community_id",
+      "type": "Edm.String",
+      "retrievable": true,
+      "filterable": true,
+      "searchable": false
+    },
+    {
+      "name": "parent_id",
+      "type": "Edm.String",
+      "retrievable": true,
+      "filterable": true,
+      "searchable": false
+    },
+    {
+      "name": "level",
+      "type": "Edm.Int32",
+      "retrievable": true,
+      "filterable": true,
+      "searchable": false
     },
     {
       "name": "member_count",
-      "type": "Edm.Int64",
-      "key": false,
-      "searchable": false,
-      "filterable": false,
-      "sortable": false,
-      "retrievable": true
+      "type": "Edm.Int32",
+      "retrievable": true,
+      "filterable": true,
+      "searchable": false
     },
     {
       "name": "label",
       "type": "Edm.String",
-      "key": false,
-      "searchable": false,
-      "filterable": false,
-      "sortable": false,
-      "retrievable": true
+      "retrievable": true,
+      "filterable": true,
+      "searchable": true
+    },
+    {
+      "name": "description",
+      "type": "Edm.String",
+      "retrievable": true,
+      "filterable": true,
+      "searchable": true
     },
     {
       "name": "label_status",
       "type": "Edm.String",
-      "key": false,
-      "searchable": false,
-      "filterable": false,
-      "sortable": false,
-      "retrievable": true
+      "retrievable": true,
+      "filterable": true,
+      "searchable": false
     },
     {
-      "name": "centroid",
-      "type": "Collection(Edm.Single)",
-      "key": false,
-      "searchable": true,
-      "filterable": false,
-      "sortable": false,
-      "dimensions": 3072,
-      "vectorSearchProfile": "grz-exhaustive",
-      "retrievable": true
+      "name": "label_method",
+      "type": "Edm.String",
+      "retrievable": true,
+      "filterable": true,
+      "searchable": false
     },
     {
       "name": "centroid_method",
       "type": "Edm.String",
-      "key": false,
-      "searchable": false,
-      "filterable": false,
-      "sortable": false,
-      "retrievable": true
+      "retrievable": true,
+      "filterable": true,
+      "searchable": false
+    },
+    {
+      "name": "is_terminal",
+      "type": "Edm.Boolean",
+      "retrievable": true,
+      "filterable": true,
+      "searchable": false
+    },
+    {
+      "name": "title",
+      "type": "Edm.String",
+      "retrievable": true,
+      "filterable": true,
+      "searchable": true
+    },
+    {
+      "name": "blob_path",
+      "type": "Edm.String",
+      "retrievable": true,
+      "filterable": true,
+      "searchable": false
     },
     {
       "name": "payload",
       "type": "Edm.String",
-      "key": false,
-      "searchable": false,
+      "retrievable": true,
       "filterable": false,
-      "sortable": false,
-      "retrievable": true
+      "searchable": false
+    },
+    {
+      "name": "centroid",
+      "type": "Collection(Edm.Single)",
+      "searchable": true,
+      "retrievable": true,
+      "stored": true,
+      "dimensions": 3072,
+      "vectorSearchProfile": "captured-cosine"
     }
   ],
+  "graphProfile": {
+    "kind": "edgeList",
+    "fields": {
+      "assertionIdField": "id",
+      "factIdField": "fact_id",
+      "subjectField": "subject",
+      "predicateField": "predicate",
+      "objectField": "object",
+      "objectStringField": "object_string",
+      "objectDoubleField": "object_double",
+      "objectBoolField": "object_bool",
+      "objectDateTimeField": "object_datetime",
+      "subjectTypeField": "subject_type",
+      "subjectIdField": "subject_id",
+      "objectTypeField": "object_type",
+      "objectIdField": "object_id",
+      "confidenceField": "edge_confidence",
+      "subjectConfidenceField": "s_confidence",
+      "predicateConfidenceField": "p_confidence",
+      "objectConfidenceField": "o_confidence",
+      "sourceChunkIdField": "chunk_id",
+      "sourceParentIdField": "source_parent_id",
+      "graphNameField": "graph_name",
+      "subjectIdDisplayNameField": "subject_id_display_name",
+      "objectIdDisplayNameField": "object_id_display_name"
+    },
+    "provenanceIndexName": "cocoarynth-chunks"
+  },
+  "description": "Named topic vectors and the computed PDF sitemap, with private-preview GQL.",
   "vectorSearch": {
     "algorithms": [
       {
-        "name": "grz-exhaustive",
-        "exhaustiveKnnParameters": {
-          "metric": "cosine"
-        },
-        "kind": "exhaustiveKnn"
+        "name": "captured-hnsw",
+        "kind": "hnsw",
+        "hnswParameters": {
+          "metric": "cosine",
+          "m": 4,
+          "efConstruction": 400,
+          "efSearch": 500
+        }
       }
     ],
     "profiles": [
       {
-        "name": "grz-exhaustive",
-        "algorithm": "grz-exhaustive"
+        "name": "captured-cosine",
+        "algorithm": "captured-hnsw",
+        "vectorizer": "azure-openai-vectorizer"
+      }
+    ],
+    "vectorizers": [
+      {
+        "name": "azure-openai-vectorizer",
+        "kind": "azureOpenAI",
+        "azureOpenAIParameters": {
+          "resourceUri": null,
+          "deploymentId": "text-embedding-3-large",
+          "apiKey": null,
+          "modelName": "text-embedding-3-large",
+          "authIdentity": null
+        },
+        "customWebApiParameters": null,
+        "aiServicesVisionParameters": null,
+        "amlParameters": null
       }
     ]
   },
-  "description": "Task-owned Cocoarynth GRZ sidecar; generation=bb1deb018565f895ba5615fa7b66a439eeb6d13c2e88c43adc8f86eaef992d71"
+  "semantic": {
+    "defaultConfiguration": "topics-semantic",
+    "configurations": [
+      {
+        "name": "topics-semantic",
+        "prioritizedFields": {
+          "titleField": {
+            "fieldName": "label"
+          },
+          "prioritizedContentFields": [
+            {
+              "fieldName": "description"
+            }
+          ],
+          "prioritizedKeywordsFields": [
+            {
+              "fieldName": "title"
+            }
+          ]
+        }
+      }
+    ]
+  }
 }

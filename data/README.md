@@ -2,7 +2,7 @@
 
 The lab corpus is Cocoarynth Chocolate Works, a fictional bean-to-bar chocolate maker that buys cacao from farms in five countries and sells through several retailers. All documents are generated: no real company, person, or record is described.
 
-- [Corpus manifest](cocoarynth/corpora.json): the PDFs in each of the four indexes, plus the label claims policy used for the file-source exercise.
+- [Corpus manifest](cocoarynth/corpora.json): the PDFs in each of the four document groups, plus the label claims policy used for the file-source exercise.
 - `cocoarynth/documents/<index>/`: 55 PDFs, the indexed inputs.
   - `cocoarynth-origins`: farm and supplier records, partly in Spanish.
   - `cocoarynth-quality`: factory receiving, testing, tasting, and batch records.
@@ -10,17 +10,22 @@ The lab corpus is Cocoarynth Chocolate Works, a fictional bean-to-bar chocolate 
   - `cocoarynth-policies`: company policies, guides, and reference material.
 - [Mysteries](cocoarynth/questions.yaml): the lab questions with ground truth for measuring retrieval: the expected answer, and for each fact it needs, the documents that are valid citations.
 - [Provenance](cocoarynth/provenance.json): how the corpus was generated, and the image, font, and logo sources.
-- `index-data/`: the destination for portable index definitions and document/vector snapshots after the maintainer capture step.
+- `index-data/`: the original four-domain ingestion captures, retained as maintainer source artifacts.
+- `graph-data/`: the active three-index restore bundle, OWL files, and extraction provenance.
 
-Snapshots of the four indexes, captured from a live ingestion run, are in `index-data/`. Provisioning restores them by default, without running Content Understanding. After changing the documents, [rebuild the snapshots](../infra/README.md#rebuild-the-index-snapshots).
+Provisioning restores `cocoarynth-chunks`, `cocoarynth-topics`, and `cocoarynth-graph` from the [active bundle](graph-data/README.md), without running Content Understanding or inference. The chunk index combines the 106 captured passages from all 55 PDFs and adds a `domain` filter. Their text, IDs, citation fields, and embeddings are preserved. After changing the documents, [rebuild the snapshots](../infra/README.md#rebuild-the-index-snapshots).
 
 ## Graph index snapshots
 
-The [graph index snapshots](graph-data/README.md) contain definitions and captured rows for the ontology, business graph, source evidence, topics, vectors, and sitemap. They include all 106 captured source vectors and eight topic vectors. Existing provisioning does not restore these additional indexes automatically.
+The [graph index snapshots](graph-data/README.md) contain exactly three active indexes. The topic index combines eight representative vectors, labels, descriptions, memberships, and sitemap triples. The business graph contains 120 assertions for 91 distinct facts, with verbatim evidence excerpts resolving to the PDF-only chunk index.
+
+[cocoarynth.owl](graph-data/cocoarynth.owl) records the compact PDF-derived business ontology; [cocoarynth-sitemap.owl](graph-data/cocoarynth-sitemap.owl) describes topic navigation. They are files, not indexes. Setup serializes their flat declarations as inline JSON-LD for the November ontology private preview.
+
+`world/*.json` remains source material for generating the PDFs. It is **not** indexed as evidence and was not used to propose this ontology or extract the active business graph. The proposal and extraction are bounded model-generated artifacts, not a managed extraction run or a native ontology approval. Their evidence and limits are in [the provenance ledger](graph-data/pdf-extraction-provenance.json).
 
 The hypothetical questions below remain future work; their placeholder entities and answers were not added to the graph.
 
-## What's in each index
+## What's in each document group
 
 Five documents are in Spanish, and 15 come from organizations other than Cocoarynth. Each organization's documents have their own look. The **Clues** column lists the [mysteries](cocoarynth/questions.yaml) (M1–M7) for which the document is a ground-truth citation. Documents without clues give the indexes realistic background and plausible wrong turns.
 
@@ -120,11 +125,11 @@ uv pip install --python .venv-cocoarynth -r scripts/cocoarynth/requirements.txt
 
 `validate.py` checks that the facts are consistent, that each mystery's answer follows from them, that every cited document exists, and that `corpora.json` lists every document. `render.py` builds the PDFs and rewrites `corpora.json`. New photos need MAI image credentials in `.env` and `images.py photos`.
 
-To measure retrieval quality against a provisioned environment, run `.venv/bin/python scripts/cocoarynth/ask_mysteries.py` from the lab's `.venv`. It builds the notebook's knowledge base, asks each mystery, and reports evidence recall: how many of the mystery's facts have at least one valid document among the answer's references.
+The existing `scripts/cocoarynth/ask_mysteries.py` measures evidence recall against the original four-index ingestion captures, not the consolidated lab setup. Keep that maintainer evaluation in a separate capture environment. The lab notebooks use four filtered knowledge sources over `cocoarynth-chunks` instead.
 
 ### Authoring conventions
 
-- `world/` is the single source of truth. Charts and tables are generated from it, so they never disagree. Prose in `drafts/` is ordinary Markdown, free to vary in tone, layout, and length.
+- `world/` is the source of truth for **document generation**, not graph extraction evidence. Charts and tables are generated from it, so they never disagree. Prose in `drafts/` is ordinary Markdown, free to vary in tone, layout, and length.
 - Every mystery answer must come only from the corpus and cite at least one document that participants can open.
 - Records from Ecuador, Peru, and the Dominican Republic farms are in Spanish; Madagascar and Ghana records are in English.
 - Avoid heavy metals and other toxic contaminants, and mock recalls.

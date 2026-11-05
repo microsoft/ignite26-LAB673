@@ -1,0 +1,204 @@
+<?xml version='1.0' encoding='utf-8'?>
+<rdf:RDF xmlns:owl="http://www.w3.org/2002/07/owl#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
+  <owl:Ontology rdf:about="urn:ontology:cocoarynth#">
+    <rdfs:comment>Compact business ontology proposed from PDF passage excerpts. No generator JSON was used. The declaration evidence is recorded in pdf-extraction-provenance.json.</rdfs:comment>
+  </owl:Ontology>
+  <owl:Class rdf:about="urn:ontology:cocoarynth#Batch">
+    <rdfs:label>Batch</rdfs:label>
+    <rdfs:comment>A production run of a chocolate bar.</rdfs:comment>
+    <rdfs:seeAlso rdf:resource="urn:cocoarynth:passage:93900c76ecebc817b5d6841e865c0d9508d2edbd7c81b1d65a39e5406ade0325" />
+  </owl:Class>
+  <owl:Class rdf:about="urn:ontology:cocoarynth#BeanLot">
+    <rdfs:label>BeanLot</rdfs:label>
+    <rdfs:comment>A lot of dried cocoa beans.</rdfs:comment>
+    <rdfs:seeAlso rdf:resource="urn:cocoarynth:passage:93900c76ecebc817b5d6841e865c0d9508d2edbd7c81b1d65a39e5406ade0325" />
+  </owl:Class>
+  <owl:Class rdf:about="urn:ontology:cocoarynth#Farm">
+    <rdfs:label>Farm</rdfs:label>
+    <rdfs:comment>A farm that grows or supplies cocoa beans.</rdfs:comment>
+    <rdfs:seeAlso rdf:resource="urn:cocoarynth:passage:4069b89d7f21112edd1652cd58945739f039cc3ba1bc5c5b97738553cfc663e8" />
+  </owl:Class>
+  <owl:Class rdf:about="urn:ontology:cocoarynth#Case">
+    <rdfs:label>Case</rdfs:label>
+    <rdfs:comment>A recorded customer or quality case.</rdfs:comment>
+    <rdfs:seeAlso rdf:resource="urn:cocoarynth:passage:77c74fbcfc77458b0d0be83660fe4c277fd5c58386e73638c4f2de27da04b040" />
+  </owl:Class>
+  <owl:Class rdf:about="urn:ontology:cocoarynth#Shipment">
+    <rdfs:label>Shipment</rdfs:label>
+    <rdfs:comment>A shipment of goods to a recipient.</rdfs:comment>
+    <rdfs:seeAlso rdf:resource="urn:cocoarynth:passage:ac437da5f2dc9e72606f6733400b37179e106c8e9eb8aa0628054e16f5824b62" />
+  </owl:Class>
+  <owl:Class rdf:about="urn:ontology:cocoarynth#DepotStop">
+    <rdfs:label>DepotStop</rdfs:label>
+    <rdfs:comment>A shipment stop at a depot.</rdfs:comment>
+    <rdfs:seeAlso rdf:resource="urn:cocoarynth:passage:ac437da5f2dc9e72606f6733400b37179e106c8e9eb8aa0628054e16f5824b62" />
+  </owl:Class>
+  <owl:Class rdf:about="urn:ontology:cocoarynth#Site">
+    <rdfs:label>Site</rdfs:label>
+    <rdfs:comment>A physical location used for storage or handling.</rdfs:comment>
+    <rdfs:seeAlso rdf:resource="urn:cocoarynth:passage:d0c042c65573a5539d208081bd9007ccd66bc38fde8132848fae929100b592d5" />
+  </owl:Class>
+  <owl:Class rdf:about="urn:ontology:cocoarynth#Product">
+    <rdfs:label>Product</rdfs:label>
+    <rdfs:comment>A chocolate bar product.</rdfs:comment>
+    <rdfs:seeAlso rdf:resource="urn:cocoarynth:passage:e304108579fe9efca3df659cd801bd7b291fb2b990b350b999e4e500e0ed748d" />
+  </owl:Class>
+  <owl:Class rdf:about="urn:ontology:cocoarynth#Supplier">
+    <rdfs:label>Supplier</rdfs:label>
+    <rdfs:comment>An organization or estate supplying cocoa beans.</rdfs:comment>
+    <rdfs:seeAlso rdf:resource="urn:cocoarynth:passage:6e31fda8b2a962ac1a9a3e5e350f2412167fb1624452f45c7373b7c2a58e9efa" />
+  </owl:Class>
+  <owl:Class rdf:about="urn:ontology:cocoarynth#CollectionTicket">
+    <rdfs:label>CollectionTicket</rdfs:label>
+    <rdfs:comment>A record of a farm's bean delivery to a cooperative.</rdfs:comment>
+    <rdfs:seeAlso rdf:resource="urn:cocoarynth:passage:93900c76ecebc817b5d6841e865c0d9508d2edbd7c81b1d65a39e5406ade0325" />
+  </owl:Class>
+  <owl:Class rdf:about="urn:ontology:cocoarynth#Inspection">
+    <rdfs:label>Inspection</rdfs:label>
+    <rdfs:comment>An inspection of farms or their practices.</rdfs:comment>
+    <rdfs:seeAlso rdf:resource="urn:cocoarynth:passage:41f8a5f35f543403f4c829ec98ff1f2d96b25e41d04ed89dbfca458cf376a102" />
+  </owl:Class>
+  <owl:Class rdf:about="urn:ontology:cocoarynth#Finding">
+    <rdfs:label>Finding</rdfs:label>
+    <rdfs:comment>An issue recorded during an inspection.</rdfs:comment>
+    <rdfs:seeAlso rdf:resource="urn:cocoarynth:passage:41f8a5f35f543403f4c829ec98ff1f2d96b25e41d04ed89dbfca458cf376a102" />
+  </owl:Class>
+  <owl:Class rdf:about="urn:ontology:cocoarynth#Sample">
+    <rdfs:label>Sample</rdfs:label>
+    <rdfs:comment>A physical sample of beans or chocolate used for evaluation.</rdfs:comment>
+    <rdfs:seeAlso rdf:resource="urn:cocoarynth:passage:2a570102edd0fc4f6c607c1d2b75b6d0a700d1fd4eeefda3b39d2161a64d9c0b" />
+  </owl:Class>
+  <owl:ObjectProperty rdf:about="urn:ontology:cocoarynth#madeFrom">
+    <rdfs:label>madeFrom</rdfs:label>
+    <rdfs:comment>Links a production batch to a bean lot used in it.</rdfs:comment>
+    <rdfs:domain rdf:resource="urn:ontology:cocoarynth#Batch" />
+    <rdfs:range rdf:resource="urn:ontology:cocoarynth#BeanLot" />
+    <rdfs:seeAlso rdf:resource="urn:cocoarynth:passage:c9aede48dffcb42cdc60bb20584205a6449bd589e2a5db150ef3ac6161022c81" />
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:about="urn:ontology:cocoarynth#contributedTo">
+    <rdfs:label>contributedTo</rdfs:label>
+    <rdfs:comment>Links a farm to a bean lot it contributed beans to.</rdfs:comment>
+    <rdfs:domain rdf:resource="urn:ontology:cocoarynth#Farm" />
+    <rdfs:range rdf:resource="urn:ontology:cocoarynth#BeanLot" />
+    <rdfs:seeAlso rdf:resource="urn:cocoarynth:passage:4069b89d7f21112edd1652cd58945739f039cc3ba1bc5c5b97738553cfc663e8" />
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:about="urn:ontology:cocoarynth#concernsBatch">
+    <rdfs:label>concernsBatch</rdfs:label>
+    <rdfs:comment>Links a case to the batch it concerns.</rdfs:comment>
+    <rdfs:domain rdf:resource="urn:ontology:cocoarynth#Case" />
+    <rdfs:range rdf:resource="urn:ontology:cocoarynth#Batch" />
+    <rdfs:seeAlso rdf:resource="urn:cocoarynth:passage:77c74fbcfc77458b0d0be83660fe4c277fd5c58386e73638c4f2de27da04b040" />
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:about="urn:ontology:cocoarynth#concernsShipment">
+    <rdfs:label>concernsShipment</rdfs:label>
+    <rdfs:comment>Links a case to the shipment it concerns.</rdfs:comment>
+    <rdfs:domain rdf:resource="urn:ontology:cocoarynth#Case" />
+    <rdfs:range rdf:resource="urn:ontology:cocoarynth#Shipment" />
+    <rdfs:seeAlso rdf:resource="urn:cocoarynth:passage:84cc2aaf0d16a5ec019523e4f236569c02771964de155c22c54ae3faaacd9954" />
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:about="urn:ontology:cocoarynth#hasDepotStop">
+    <rdfs:label>hasDepotStop</rdfs:label>
+    <rdfs:comment>Links a shipment to a depot stop on its route.</rdfs:comment>
+    <rdfs:domain rdf:resource="urn:ontology:cocoarynth#Shipment" />
+    <rdfs:range rdf:resource="urn:ontology:cocoarynth#DepotStop" />
+    <rdfs:seeAlso rdf:resource="urn:cocoarynth:passage:ac437da5f2dc9e72606f6733400b37179e106c8e9eb8aa0628054e16f5824b62" />
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:about="urn:ontology:cocoarynth#storedAt">
+    <rdfs:label>storedAt</rdfs:label>
+    <rdfs:comment>Identifies the site where goods were staged during a depot stop.</rdfs:comment>
+    <rdfs:domain rdf:resource="urn:ontology:cocoarynth#DepotStop" />
+    <rdfs:range rdf:resource="urn:ontology:cocoarynth#Site" />
+    <rdfs:seeAlso rdf:resource="urn:cocoarynth:passage:d0c042c65573a5539d208081bd9007ccd66bc38fde8132848fae929100b592d5" />
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:about="urn:ontology:cocoarynth#usesProduct">
+    <rdfs:label>usesProduct</rdfs:label>
+    <rdfs:comment>Links a batch to the bar product made in that run.</rdfs:comment>
+    <rdfs:domain rdf:resource="urn:ontology:cocoarynth#Batch" />
+    <rdfs:range rdf:resource="urn:ontology:cocoarynth#Product" />
+    <rdfs:seeAlso rdf:resource="urn:cocoarynth:passage:c9aede48dffcb42cdc60bb20584205a6449bd589e2a5db150ef3ac6161022c81" />
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:about="urn:ontology:cocoarynth#suppliedBy">
+    <rdfs:label>suppliedBy</rdfs:label>
+    <rdfs:comment>Links a bean lot to its supplier.</rdfs:comment>
+    <rdfs:domain rdf:resource="urn:ontology:cocoarynth#BeanLot" />
+    <rdfs:range rdf:resource="urn:ontology:cocoarynth#Supplier" />
+    <rdfs:seeAlso rdf:resource="urn:cocoarynth:passage:3907ee88b0d35514b609ad0a5bb2ed3a640cc3847e05e6082c05aae4e89d1edc" />
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:about="urn:ontology:cocoarynth#recordsFarm">
+    <rdfs:label>recordsFarm</rdfs:label>
+    <rdfs:comment>Links a collection ticket to the farm recorded on it.</rdfs:comment>
+    <rdfs:domain rdf:resource="urn:ontology:cocoarynth#CollectionTicket" />
+    <rdfs:range rdf:resource="urn:ontology:cocoarynth#Farm" />
+    <rdfs:seeAlso rdf:resource="urn:cocoarynth:passage:60a2d86de8bf3d07697c1b8c56bf7fb4f4e99595518e683da5e87d1cea049769" />
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:about="urn:ontology:cocoarynth#allocatedTo">
+    <rdfs:label>allocatedTo</rdfs:label>
+    <rdfs:comment>Links a collection ticket to the bean lot receiving the delivery.</rdfs:comment>
+    <rdfs:domain rdf:resource="urn:ontology:cocoarynth#CollectionTicket" />
+    <rdfs:range rdf:resource="urn:ontology:cocoarynth#BeanLot" />
+    <rdfs:seeAlso rdf:resource="urn:cocoarynth:passage:60a2d86de8bf3d07697c1b8c56bf7fb4f4e99595518e683da5e87d1cea049769" />
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:about="urn:ontology:cocoarynth#hasFinding">
+    <rdfs:label>hasFinding</rdfs:label>
+    <rdfs:comment>Links an inspection to a recorded finding.</rdfs:comment>
+    <rdfs:domain rdf:resource="urn:ontology:cocoarynth#Inspection" />
+    <rdfs:range rdf:resource="urn:ontology:cocoarynth#Finding" />
+    <rdfs:seeAlso rdf:resource="urn:cocoarynth:passage:41f8a5f35f543403f4c829ec98ff1f2d96b25e41d04ed89dbfca458cf376a102" />
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:about="urn:ontology:cocoarynth#concernsFarm">
+    <rdfs:label>concernsFarm</rdfs:label>
+    <rdfs:comment>Links an inspection finding to the farm it concerns.</rdfs:comment>
+    <rdfs:domain rdf:resource="urn:ontology:cocoarynth#Finding" />
+    <rdfs:range rdf:resource="urn:ontology:cocoarynth#Farm" />
+    <rdfs:seeAlso rdf:resource="urn:cocoarynth:passage:41f8a5f35f543403f4c829ec98ff1f2d96b25e41d04ed89dbfca458cf376a102" />
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:about="urn:ontology:cocoarynth#evaluatesSample">
+    <rdfs:label>evaluatesSample</rdfs:label>
+    <rdfs:comment>Links an inspection or evaluation to the sample assessed.</rdfs:comment>
+    <rdfs:domain rdf:resource="urn:ontology:cocoarynth#Inspection" />
+    <rdfs:range rdf:resource="urn:ontology:cocoarynth#Sample" />
+    <rdfs:seeAlso rdf:resource="urn:cocoarynth:passage:41516a38a5821e2e69d7b0b903e9629966f82dd6851b50189e4d5b3961cea7ce" />
+  </owl:ObjectProperty>
+  <owl:DatatypeProperty rdf:about="urn:ontology:cocoarynth#batchCode">
+    <rdfs:label>batchCode</rdfs:label>
+    <rdfs:comment>The batch or wrapper lot code.</rdfs:comment>
+    <rdfs:domain rdf:resource="urn:ontology:cocoarynth#Batch" />
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string" />
+    <rdfs:seeAlso rdf:resource="urn:cocoarynth:passage:c9aede48dffcb42cdc60bb20584205a6449bd589e2a5db150ef3ac6161022c81" />
+  </owl:DatatypeProperty>
+  <owl:DatatypeProperty rdf:about="urn:ontology:cocoarynth#beanLotCode">
+    <rdfs:label>beanLotCode</rdfs:label>
+    <rdfs:comment>The code identifying a bean lot.</rdfs:comment>
+    <rdfs:domain rdf:resource="urn:ontology:cocoarynth#BeanLot" />
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string" />
+    <rdfs:seeAlso rdf:resource="urn:cocoarynth:passage:c3c47966371d5a5d2d7e1ac240f921469de2f1f37fe8a1b876fe2f912eae2468" />
+  </owl:DatatypeProperty>
+  <owl:DatatypeProperty rdf:about="urn:ontology:cocoarynth#productName">
+    <rdfs:label>productName</rdfs:label>
+    <rdfs:comment>The name or description of a chocolate bar product.</rdfs:comment>
+    <rdfs:domain rdf:resource="urn:ontology:cocoarynth#Product" />
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string" />
+    <rdfs:seeAlso rdf:resource="urn:cocoarynth:passage:ead86bbec5ad7452278c3d207c3757ce32d29ec2a5fc46c72815588efaea77e3" />
+  </owl:DatatypeProperty>
+  <owl:DatatypeProperty rdf:about="urn:ontology:cocoarynth#supplierName">
+    <rdfs:label>supplierName</rdfs:label>
+    <rdfs:comment>The recorded name of a supplier.</rdfs:comment>
+    <rdfs:domain rdf:resource="urn:ontology:cocoarynth#Supplier" />
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string" />
+    <rdfs:seeAlso rdf:resource="urn:cocoarynth:passage:3907ee88b0d35514b609ad0a5bb2ed3a640cc3847e05e6082c05aae4e89d1edc" />
+  </owl:DatatypeProperty>
+  <owl:DatatypeProperty rdf:about="urn:ontology:cocoarynth#ticketCode">
+    <rdfs:label>ticketCode</rdfs:label>
+    <rdfs:comment>The identifying code of a collection ticket.</rdfs:comment>
+    <rdfs:domain rdf:resource="urn:ontology:cocoarynth#CollectionTicket" />
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string" />
+    <rdfs:seeAlso rdf:resource="urn:cocoarynth:passage:4069b89d7f21112edd1652cd58945739f039cc3ba1bc5c5b97738553cfc663e8" />
+  </owl:DatatypeProperty>
+  <owl:DatatypeProperty rdf:about="urn:ontology:cocoarynth#findingDescription">
+    <rdfs:label>findingDescription</rdfs:label>
+    <rdfs:comment>A description of an inspection finding.</rdfs:comment>
+    <rdfs:domain rdf:resource="urn:ontology:cocoarynth#Finding" />
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string" />
+    <rdfs:seeAlso rdf:resource="urn:cocoarynth:passage:41f8a5f35f543403f4c829ec98ff1f2d96b25e41d04ed89dbfca458cf376a102" />
+  </owl:DatatypeProperty>
+</rdf:RDF>
