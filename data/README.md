@@ -17,7 +17,7 @@ Provisioning restores `cocoarynth-chunks`, `cocoarynth-topics`, and `cocoarynth-
 
 ## Graph index snapshots
 
-The [graph index snapshots](graph-data/README.md) contain exactly three active indexes. The topic index combines eight representative vectors, labels, descriptions, memberships, and sitemap triples. The business graph contains 120 assertions for 91 distinct facts, with verbatim evidence excerpts resolving to the PDF-only chunk index.
+The [graph index snapshots](graph-data/README.md) contain exactly three active indexes; setup also splits the chunk snapshot into three document-group indexes. The topic index combines eight representative vectors, labels, descriptions, memberships, and sitemap triples. The business graph contains 120 assertions for 91 distinct facts, with verbatim evidence excerpts resolving to the PDF-only chunk index.
 
 [cocoarynth.owl](graph-data/cocoarynth.owl) records the compact PDF-derived business ontology; [cocoarynth-sitemap.owl](graph-data/cocoarynth-sitemap.owl) describes topic navigation. They are files, not indexes. Setup serializes their flat declarations as inline JSON-LD for the November ontology private preview.
 

@@ -10,7 +10,7 @@ This folder provisions the Foundry IQ portion of LAB673 for Skillable and self-p
 | Search graph identity | User-assigned identity attached to Search for managed knowledge graph builds, with Storage Blob Data Reader and Cognitive Services OpenAI User |
 | Blob Storage | Standard LRS account with a private `knowledge` container |
 | Foundry | An `AIServices` account and project with managed identities |
-| Chat/reasoning | `gpt-5.4`, version `2026-03-05`, Global Standard, capacity 200 |
+| Chat/reasoning | `gpt-6-luna`, version `2026-09-22`, Global Standard, capacity 200 |
 | Embeddings | `text-embedding-3-large`, version `1`, Global Standard, capacity 30 |
 | Content Understanding | Resource defaults mapped to the existing completion and embedding deployments |
 
@@ -30,21 +30,26 @@ Use the existing Windows lab image with Azure CLI and Python available. The opti
 2. Run that deployment action after the download action. Like the original ILL344 action, it writes its embedded background script to `C:\Users\LabUser\Desktop\deploy-background.ps1`, signs in with the lab service principal, resolves the attendee object ID, and launches that generated script. The foreground action exits while provisioning continues; the repository's separate `infra/deploy-background.ps1` is not used by this action.
 3. Monitor `C:\Users\LabUser\Desktop\lifecycle-log.txt`. Wait for `=== Background deploy script completed ===` before releasing the environment to the attendee. A background launch alone does not mean setup succeeded.
 
-The background script reuses the foreground Azure CLI login, retrieves Search and Foundry API keys directly with `az rest` and `az cognitiveservices account keys list`, and passes the keys to [setup-knowledge.ps1](setup-knowledge.ps1). That script writes `.env` from the keys and inherited Bicep outputs using PowerShell, prepares the local virtual environment, configures Content Understanding, and restores three indexes by default:
+The background script reuses the foreground Azure CLI login, retrieves Search and Foundry API keys directly with `az rest` and `az cognitiveservices account keys list`, and passes the keys to [setup-knowledge.ps1](setup-knowledge.ps1). That script writes `.env` from the keys and inherited Bicep outputs using PowerShell, prepares the local virtual environment, configures Content Understanding, and restores six indexes by default:
 
 | Index | Role |
 | --- | --- |
 | `cocoarynth-topics` | Eight topic vectors, labels, descriptions, memberships, and sitemap triples |
-| `cocoarynth-chunks` | 106 passages from 55 PDFs, with embeddings and a four-group `domain` filter |
+| `cocoarynth-chunks` | 106 passages from 55 PDFs, with embeddings and a `domain` field for the four original document folders; the provenance index for the graph and topics |
 | `cocoarynth-graph` | Business triples extracted from those PDF passages under the checked-in OWL schema |
+| `cocoarynth-production`, `cocoarynth-sales`, `cocoarynth-policies` | The same passages grouped by `domain` for Part 1's document knowledge sources: production is origins plus quality (64), sales is logistics-retail (32), and policies (10) |
 
-Setup creates `cocoarynth-graph-ks` and `cocoarynth-topics-ks` with inline
+The bundle holds snapshots for the first three indexes. The restore script
+builds the three document-group indexes from the `cocoarynth-chunks` snapshot, so
+they share its chunk IDs and embeddings.
+
+Setup creates `cocoarynth-graph-knowledge-source` and `cocoarynth-topics-knowledge-source` with inline
 ontologies from the OWL files. The Search service must have the November
 ontology private preview, including native GQL and inline-ontology knowledge
 sources. The Bicep template does not grant that access. Skillable setup does
 not use Python's `AzureCliCredential`; self-paced deployment retains its `azd`
-credential flow. The [lab notebooks](../src/notebooks/lab/) create the four
-domain-filtered document knowledge sources and the knowledge bases.
+credential flow. The [lab notebooks](../src/notebooks/lab/) create the three
+document knowledge sources and the knowledge bases.
 
 The active snapshots are in `data/graph-data/`. Missing artifacts, invalid
 checksums, or PDF evidence mismatches stop setup before restoration writes.
@@ -134,7 +139,7 @@ python .\infra\restore-graph-indexes.py --endpoint "https://<search-service>.sea
 ```
 
 Offline validation requires only Python, with no SDK installation or Azure
-access. The second command leaves the three indexes and two graph-enabled
+access. The second command leaves the six indexes and two graph-enabled
 knowledge sources available for use. By default, all destination names must be
 absent. Add `--ensure` to create missing resources and verify matching existing
 ones, or `--verify-only` to check a complete restoration without writes.

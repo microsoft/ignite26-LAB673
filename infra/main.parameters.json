@@ -5,8 +5,8 @@
     "principalId": { "value": "${AZURE_PRINCIPAL_ID}" },
     "location": { "value": "${AZURE_LOCATION}" },
     "embeddingModelCapacity": { "value": "${EMBEDDING_MODEL_CAPACITY=30}" },
-    "llmModelName": { "value": "${LLM_MODEL_NAME=gpt-5.4}" },
-    "llmModelVersion": { "value": "${LLM_MODEL_VERSION=2026-03-05}" },
+    "llmModelName": { "value": "${LLM_MODEL_NAME=gpt-6-luna}" },
+    "llmModelVersion": { "value": "${LLM_MODEL_VERSION=2026-09-22}" },
     "llmModelCapacity": { "value": "${LLM_MODEL_CAPACITY=200}" }
   }
 }

@@ -10,8 +10,8 @@
   <header>
     <h1>Cocoarynth graph explorer</h1>
     <nav role="tablist">
-      <button role="tab" data-tab="ontology" aria-selected="true">Ontology</button>
-      <button role="tab" data-tab="graph" aria-selected="false">Graph</button>
+      <button role="tab" data-tab="ontology" aria-selected="true">Graph ontology</button>
+      <button role="tab" data-tab="graph" aria-selected="false">Graph entities</button>
       <button role="tab" data-tab="topics" aria-selected="false">Topics</button>
     </nav>
   </header>
@@ -19,10 +19,16 @@
     <section id="canvas-area">
       <div id="toolbar"></div>
       <svg id="canvas" role="img" aria-label="Diagram"></svg>
+      <div id="cy" hidden></div>
+      <div id="graph-cy" hidden></div>
       <p id="status" role="status"></p>
     </section>
     <aside id="panel" aria-live="polite"></aside>
   </main>
+  <script src="https://cdn.jsdelivr.net/npm/cytoscape@3.34.4/dist/cytoscape.min.js"
+    integrity="sha384-lyd1lDWZ623YSUJ/wMQH50y+T81dWKJk7ZoFdYWXQS83b0+QpW0pgdfXEnQnXL/X" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/cytoscape-dagre@4.0.1/dist/cytoscape-dagre.min.js"
+    integrity="sha384-CIu9EFddQ0GplFvevqHZ1sIPo1IRXFvxHd0A6jaJ3m052fy+mDfer/ItnvIS5uY3" crossorigin="anonymous"></script>
   <script src="app.js"></script>
 </body>
 </html>

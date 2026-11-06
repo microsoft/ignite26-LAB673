@@ -224,7 +224,7 @@ def build_pipeline(
                         "@odata.type": "#Microsoft.Skills.Util.ContentUnderstandingSkill",
                         "name": "content-understanding",
                         "context": "/document",
-                        "modelName": os.environ.get("AZURE_OPENAI_CHATGPT_MODEL_NAME", "gpt-5.4"),
+                        "modelName": os.environ.get("AZURE_OPENAI_CHATGPT_MODEL_NAME", "gpt-6-luna"),
                         "modelDeployment": chat_deployment,
                         "chunkingProperties": {
                             "method": "semantic",
@@ -430,7 +430,7 @@ async def main() -> None:
             "Indexing storage outputs are missing. Provision the lab environment first."
         )
     openai_endpoint = os.environ["AZURE_OPENAI_ENDPOINT"]
-    chat_deployment = os.environ.get("AZURE_OPENAI_CHATGPT_DEPLOYMENT", "gpt-5.4")
+    chat_deployment = os.environ.get("AZURE_OPENAI_CHATGPT_DEPLOYMENT", "gpt-6-luna")
     embedding_deployment = os.environ.get(
         "AZURE_OPENAI_EMBEDDING_DEPLOYMENT", "text-embedding-3-large"
     )

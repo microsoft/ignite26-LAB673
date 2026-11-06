@@ -18,10 +18,10 @@ param foundryDeploymentSuffix string = ''
 param embeddingModelCapacity int = 30
 
 @description('Chat/reasoning model')
-param llmModelName string = 'gpt-5.4'
+param llmModelName string = 'gpt-6-luna'
 
 @description('Chat/reasoning model version')
-param llmModelVersion string = '2026-03-05'
+param llmModelVersion string = '2026-09-22'
 
 @description('Chat/reasoning deployment capacity')
 @minValue(1)

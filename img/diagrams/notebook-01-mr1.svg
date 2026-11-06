@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1380 640" width="1380" height="640" font-family="Segoe UI, Helvetica, Arial, sans-serif" role="img">
+<title>Notebook 01: the MR1 knowledge base searches every source</title>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#495057"/></marker></defs>
+<rect width="1380" height="640" fill="#ffffff"/>
+<rect x="330" y="30" width="720" height="121.7" rx="10" fill="#d0ebff" stroke="#1864ab" stroke-width="2"/>
+<text x="690.0" y="66.0" font-size="19" font-weight="600" fill="#212529" text-anchor="middle" dominant-baseline="hanging"><tspan x="690.0" dy="0">cocoarynth-mr1-knowledge-base</tspan></text>
+<text x="690.0" y="94.7" font-size="15" font-weight="normal" fill="#495057" text-anchor="middle" dominant-baseline="hanging"><tspan x="690.0" dy="0">MR1 only</tspan><tspan x="690.0" dy="19.5">returns passages, not an answer</tspan></text>
+<rect x="630" y="20.0" width="120" height="20" rx="10.0" fill="#1864ab"/>
+<text x="690" y="30" font-size="12" font-weight="600" fill="#ffffff" text-anchor="middle" dominant-baseline="central">Knowledge base</text>
+<rect x="20" y="255" width="1340" height="165" rx="14" fill="none" stroke="#868e96" stroke-width="2" stroke-dasharray="8 6"/>
+<rect x="40" y="290" width="420" height="98" rx="10" fill="#fff4e6" stroke="#d9480f" stroke-width="2"/>
+<text x="250.0" y="335.65" font-size="19" font-weight="600" fill="#212529" text-anchor="middle" dominant-baseline="hanging"><tspan x="250.0" dy="0">cocoarynth-production-knowledge-source</tspan></text>
+<rect x="182" y="280.0" width="135" height="20" rx="10.0" fill="#d9480f"/>
+<text x="250" y="290" font-size="12" font-weight="600" fill="#ffffff" text-anchor="middle" dominant-baseline="central">Knowledge source</text>
+<rect x="40" y="490" width="420" height="121.7" rx="10" fill="#ebfbee" stroke="#2b8a3e" stroke-width="2"/>
+<text x="250.0" y="526.0" font-size="19" font-weight="600" fill="#212529" text-anchor="middle" dominant-baseline="hanging"><tspan x="250.0" dy="0">cocoarynth-production</tspan></text>
+<text x="250.0" y="554.7" font-size="15" font-weight="normal" fill="#495057" text-anchor="middle" dominant-baseline="hanging"><tspan x="250.0" dy="0">64 PDF passages</tspan><tspan x="250.0" dy="19.5">with text vectors</tspan></text>
+<rect x="197" y="480.0" width="105" height="20" rx="10.0" fill="#2b8a3e"/>
+<text x="250" y="490" font-size="12" font-weight="600" fill="#ffffff" text-anchor="middle" dominant-baseline="central">Search index</text>
+<path d="M 250.0 388 L 250.0 478.0" fill="none" stroke="#495057" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="480" y="290" width="420" height="98" rx="10" fill="#fff4e6" stroke="#d9480f" stroke-width="2"/>
+<text x="690.0" y="335.65" font-size="19" font-weight="600" fill="#212529" text-anchor="middle" dominant-baseline="hanging"><tspan x="690.0" dy="0">cocoarynth-sales-knowledge-source</tspan></text>
+<rect x="622" y="280.0" width="135" height="20" rx="10.0" fill="#d9480f"/>
+<text x="690" y="290" font-size="12" font-weight="600" fill="#ffffff" text-anchor="middle" dominant-baseline="central">Knowledge source</text>
+<rect x="480" y="490" width="420" height="121.7" rx="10" fill="#ebfbee" stroke="#2b8a3e" stroke-width="2"/>
+<text x="690.0" y="526.0" font-size="19" font-weight="600" fill="#212529" text-anchor="middle" dominant-baseline="hanging"><tspan x="690.0" dy="0">cocoarynth-sales</tspan></text>
+<text x="690.0" y="554.7" font-size="15" font-weight="normal" fill="#495057" text-anchor="middle" dominant-baseline="hanging"><tspan x="690.0" dy="0">32 PDF passages</tspan><tspan x="690.0" dy="19.5">with text vectors</tspan></text>
+<rect x="637" y="480.0" width="105" height="20" rx="10.0" fill="#2b8a3e"/>
+<text x="690" y="490" font-size="12" font-weight="600" fill="#ffffff" text-anchor="middle" dominant-baseline="central">Search index</text>
+<path d="M 690.0 388 L 690.0 478.0" fill="none" stroke="#495057" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="920" y="290" width="420" height="98" rx="10" fill="#fff4e6" stroke="#d9480f" stroke-width="2"/>
+<text x="1130.0" y="335.65" font-size="19" font-weight="600" fill="#212529" text-anchor="middle" dominant-baseline="hanging"><tspan x="1130.0" dy="0">cocoarynth-policies-knowledge-source</tspan></text>
+<rect x="1062" y="280.0" width="135" height="20" rx="10.0" fill="#d9480f"/>
+<text x="1130" y="290" font-size="12" font-weight="600" fill="#ffffff" text-anchor="middle" dominant-baseline="central">Knowledge source</text>
+<rect x="920" y="490" width="420" height="121.7" rx="10" fill="#ebfbee" stroke="#2b8a3e" stroke-width="2"/>
+<text x="1130.0" y="526.0" font-size="19" font-weight="600" fill="#212529" text-anchor="middle" dominant-baseline="hanging"><tspan x="1130.0" dy="0">cocoarynth-policies</tspan></text>
+<text x="1130.0" y="554.7" font-size="15" font-weight="normal" fill="#495057" text-anchor="middle" dominant-baseline="hanging"><tspan x="1130.0" dy="0">10 PDF passages</tspan><tspan x="1130.0" dy="19.5">with text vectors</tspan></text>
+<rect x="1077" y="480.0" width="105" height="20" rx="10.0" fill="#2b8a3e"/>
+<text x="1130" y="490" font-size="12" font-weight="600" fill="#ffffff" text-anchor="middle" dominant-baseline="central">Search index</text>
+<path d="M 1130.0 388 L 1130.0 478.0" fill="none" stroke="#495057" stroke-width="2" marker-end="url(#arrow)"/>
+<path d="M 690.0 151.7 L 690.0 253" fill="none" stroke="#495057" stroke-width="2" marker-end="url(#arrow)"/>
+<text x="704.0" y="192.6" font-size="15" font-weight="normal" fill="#495057" text-anchor="start" dominant-baseline="hanging"><tspan x="704.0" dy="0">searches all three sources</tspan></text>
+</svg>

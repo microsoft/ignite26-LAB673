@@ -11,7 +11,7 @@ This guide provisions the Cocoarynth LAB673 environment without Skillable, Fabri
 
 ## Provision resources
 
-Provisioning restores exactly three indexes from `data/graph-data/`: `cocoarynth-topics`, `cocoarynth-chunks`, and `cocoarynth-graph`. It also creates graph-enabled knowledge sources for the business graph and topic sitemap from the checked-in OWL files. No document ingestion is needed. The notebooks create the four domain-filtered document knowledge sources and knowledge bases. Maintainers who change the documents can [rebuild the snapshots](infra/README.md#rebuild-the-index-snapshots).
+Provisioning restores six indexes from `data/graph-data/`: `cocoarynth-topics`, `cocoarynth-chunks`, `cocoarynth-graph`, and three document-group indexes (`cocoarynth-production`, `cocoarynth-sales`, and `cocoarynth-policies`) split from the chunk snapshot. It also creates graph-enabled knowledge sources for the business graph and topic sitemap from the checked-in OWL files. No document ingestion is needed. The notebooks create the three document knowledge sources and knowledge bases. Maintainers who change the documents can [rebuild the snapshots](infra/README.md#rebuild-the-index-snapshots).
 
 ```sh
 git clone https://github.com/microsoft/ignite26-LAB673.git
@@ -30,11 +30,11 @@ The post-provision hook prepares `.venv`, installs infrastructure and notebook d
 
 The template does not grant private-preview access. A deployment without that access cannot complete the graph and sitemap setup; it does not silently substitute text-only retrieval.
 
-The default LLM is `gpt-5.4` (`2026-03-05`, capacity 200, enough for the knowledge base's multi-step retrieval), and embeddings use `text-embedding-3-large` (`1`, capacity 30). To override the LLM or capacities before provisioning:
+The default LLM is `gpt-6-luna` (`2026-09-22`, capacity 200, enough for the knowledge base's multi-step retrieval), and embeddings use `text-embedding-3-large` (`1`, capacity 30). To override the LLM or capacities before provisioning:
 
 ```sh
-azd env set LLM_MODEL_NAME gpt-5.4
-azd env set LLM_MODEL_VERSION 2026-03-05
+azd env set LLM_MODEL_NAME gpt-6-luna
+azd env set LLM_MODEL_VERSION 2026-09-22
 azd env set LLM_MODEL_CAPACITY 200
 azd env set EMBEDDING_MODEL_CAPACITY 30
 ```
@@ -43,7 +43,7 @@ Use a model supported by your region, subscription, and Content Understanding an
 
 ## Run the notebooks
 
-All three indexes and both graph-enabled knowledge sources are included in setup; no separate seven-index graph restoration is needed.
+All six indexes and both graph-enabled knowledge sources are included in setup; no separate graph restoration is needed.
 
 Open the [lab notebooks](src/notebooks/lab/) in VS Code, select the root `.venv` as the kernel, and run the cells in order. See the [source guide](src/README.md) for what the notebooks create.
 

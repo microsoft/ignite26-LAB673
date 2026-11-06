@@ -5,7 +5,6 @@ const toolbar = document.getElementById("toolbar");
 const statusText = document.getElementById("status");
 
 const PALETTE = ["#805124", "#146c94", "#166454", "#8a3a6b", "#b0522c", "#4b5d9b", "#6b7a1f", "#9b4040", "#2f7a7a", "#7a4fa3", "#a07a10", "#3d6b3d"];
-const NODE_RADIUS = 16;
 
 const escapeHtml = (value) =>
   String(value ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
@@ -19,6 +18,40 @@ function typeColor(type) {
 function typeBadge(type) {
   return `<span class="type" style="background:${typeColor(type)}">${escapeHtml(type)}</span>`;
 }
+
+// Where each tab's data comes from, loaded from the server before the first tab opens
+let sources = {};
+
+const SOURCE_KINDS = { index: "Index", file: "File" };
+
+// One row per resource: "From" or "Passages", a pill colored by resource kind, and optional extras
+function sourceRow(label, kind, name, extra = "") {
+  return `<div class="source-row"><span class="source-label">${escapeHtml(label)}</span>
+    <span class="source-pill ${kind}"><span class="source-kind">${SOURCE_KINDS[kind]}</span>${escapeHtml(name)}</span>${extra}</div>`;
+}
+
+function sourceBlock(...rows) {
+  return `<div class="sources">${rows.join("")}</div>`;
+}
+
+// Long IDs are hashes, so offer a copy button (for pasting into the portal's search explorer) instead of showing them
+function copyButton(label, value) {
+  return `<button class="link" data-copy="${escapeHtml(value)}" title="${escapeHtml(value)}">${escapeHtml(label)}</button>`;
+}
+
+function passageSource(chunkId) {
+  return sourceBlock(sourceRow("From", "index", sources.chunks_index, copyButton("Copy ID", chunkId)));
+}
+
+panel.addEventListener("click", async (event) => {
+  const button = event.target.closest("[data-copy]");
+  if (!button) return;
+  event.preventDefault();
+  await navigator.clipboard.writeText(button.dataset.copy);
+  const label = button.textContent;
+  button.textContent = "Copied";
+  setTimeout(() => { button.textContent = label; }, 1500);
+});
 
 function shorten(text, length) {
   text = String(text ?? "");
@@ -83,11 +116,6 @@ function fitToView(points, padding = 60) {
   applyView();
 }
 
-function toGraphCoords(event) {
-  const rect = svg.getBoundingClientRect();
-  return { x: (event.clientX - rect.left - view.x) / view.k, y: (event.clientY - rect.top - view.y) / view.k };
-}
-
 svg.addEventListener("wheel", (event) => {
   event.preventDefault();
   const rect = svg.getBoundingClientRect();
@@ -119,263 +147,89 @@ window.addEventListener("pointerup", () => {
 });
 
 // ---------------------------------------------------------------------------
-// Force-directed graph
+// Graph ontology tab
 // ---------------------------------------------------------------------------
 
-class ForceGraph {
-  constructor({ onNodeClick, onEdgeClick, alwaysShowEdgeLabels, repulsion = 4000 }) {
-    this.repulsion = repulsion;
-    this.onNodeClick = onNodeClick;
-    this.onEdgeClick = onEdgeClick;
-    this.alwaysShowEdgeLabels = alwaysShowEdgeLabels;
-    this.nodes = new Map();
-    this.edges = [];
-    this.selected = null;
-    this.frame = null;
-  }
+const ontology = { data: null, cy: null };
+const cyContainer = document.getElementById("cy");
+cytoscape.use(cytoscapeDagre);
 
-  setData(nodes, edges) {
-    const rect = svg.getBoundingClientRect();
-    const center = { x: (rect.width / 2 - view.x) / view.k, y: (rect.height / 2 - view.y) / view.k };
-    const previous = this.nodes;
-    this.nodes = new Map();
-    for (const node of nodes) {
-      const old = previous.get(node.id);
-      const anchor = node.near && this.nodes.get(node.near) || previous.get(node.near) || center;
-      this.nodes.set(node.id, old ? Object.assign(old, node) : {
-        ...node,
-        x: anchor.x + (Math.random() - 0.5) * 120,
-        y: anchor.y + (Math.random() - 0.5) * 120,
-        vx: 0,
-        vy: 0,
-      });
-    }
-    this.edges = edges.filter((edge) => this.nodes.has(edge.source) && this.nodes.has(edge.target));
-    const pairCounts = new Map();
-    for (const edge of this.edges) {
-      const key = [edge.source, edge.target].sort().join("|");
-      edge.pairIndex = pairCounts.get(key) || 0;
-      pairCounts.set(key, edge.pairIndex + 1);
-    }
-    for (const edge of this.edges) {
-      const key = [edge.source, edge.target].sort().join("|");
-      edge.pairCount = pairCounts.get(key);
-    }
-    this.center = center;
-    this.render();
-    if (previous.size) {
-      this.fitPending = true;
-      this.start(0.6);
-    } else {
-      // Lay out a brand new diagram before showing it
-      for (this.alpha = 1; this.alpha > 0.01; this.alpha *= 0.98) this.tick();
-      this.draw();
-      fitToView([...this.nodes.values()]);
-    }
-  }
-
-  render() {
-    resetViewportContents();
-    this.edgeLayer = svgEl("g", {}, viewport);
-    this.nodeLayer = svgEl("g", {}, viewport);
-    for (const edge of this.edges) {
-      const group = svgEl("g", { class: "edge" + (this.alwaysShowEdgeLabels ? "" : " hidden-label") }, this.edgeLayer);
-      edge.path = svgEl("path", { "marker-end": "url(#arrow)" }, group);
-      edge.hit = svgEl("path", { class: "hit" }, group);
-      edge.label = svgEl("text", { "text-anchor": "middle" }, group);
-      edge.label.textContent = edge.predicate;
-      edge.group = group;
-      const title = svgEl("title", {}, group);
-      title.textContent = edge.predicate;
-      group.addEventListener("click", () => this.onEdgeClick?.(edge));
-    }
-    for (const node of this.nodes.values()) {
-      const group = svgEl("g", { class: "node", tabindex: 0, role: "button", "aria-label": `${node.type} ${node.name}` }, this.nodeLayer);
-      svgEl("circle", { r: NODE_RADIUS, fill: typeColor(node.type) }, group);
-      const label = svgEl("text", { y: NODE_RADIUS + 14, "text-anchor": "middle" }, group);
-      label.textContent = shorten(node.name, 28);
-      const title = svgEl("title", {}, group);
-      title.textContent = `${node.type}: ${node.name}`;
-      node.group = group;
-      this.attachDrag(node);
-      group.addEventListener("keydown", (event) => {
-        if (event.key === "Enter" || event.key === " ") this.onNodeClick?.(node);
-      });
-    }
-    this.highlight(this.selected);
-    this.draw();
-  }
-
-  attachDrag(node) {
-    node.group.addEventListener("pointerdown", (event) => {
-      event.stopPropagation();
-      const start = { x: event.clientX, y: event.clientY };
-      let moved = false;
-      const move = (moveEvent) => {
-        if (Math.hypot(moveEvent.clientX - start.x, moveEvent.clientY - start.y) > 4) moved = true;
-        if (!moved) return;
-        const point = toGraphCoords(moveEvent);
-        node.fixed = true;
-        node.x = point.x;
-        node.y = point.y;
-        this.start(0.2);
-      };
-      const up = () => {
-        window.removeEventListener("pointermove", move);
-        window.removeEventListener("pointerup", up);
-        if (!moved) this.onNodeClick?.(node);
-      };
-      window.addEventListener("pointermove", move);
-      window.addEventListener("pointerup", up);
-    });
-  }
-
-  start(alpha) {
-    this.alpha = Math.max(this.alpha || 0, alpha);
-    if (this.frame) return;
-    const step = () => {
-      for (let i = 0; i < 3; i++) this.tick();
-      this.draw();
-      this.alpha *= 0.97;
-      this.frame = this.alpha > 0.01 ? requestAnimationFrame(step) : null;
-      if (!this.frame && this.fitPending) {
-        this.fitPending = false;
-        fitToView([...this.nodes.values()]);
-      }
-    };
-    this.frame = requestAnimationFrame(step);
-  }
-
-  stop() {
-    if (this.frame) cancelAnimationFrame(this.frame);
-    this.frame = null;
-  }
-
-  tick() {
-    const nodes = [...this.nodes.values()];
-    const alpha = this.alpha;
-    for (let i = 0; i < nodes.length; i++) {
-      for (let j = i + 1; j < nodes.length; j++) {
-        const a = nodes[i], b = nodes[j];
-        let dx = b.x - a.x, dy = b.y - a.y;
-        const distanceSquared = Math.max(dx * dx + dy * dy, 100);
-        const force = (this.repulsion * alpha) / distanceSquared;
-        const distance = Math.sqrt(distanceSquared);
-        dx /= distance;
-        dy /= distance;
-        a.vx -= dx * force; a.vy -= dy * force;
-        b.vx += dx * force; b.vy += dy * force;
-      }
-    }
-    for (const edge of this.edges) {
-      const a = this.nodes.get(edge.source), b = this.nodes.get(edge.target);
-      if (a === b) continue;
-      const dx = b.x - a.x, dy = b.y - a.y;
-      const distance = Math.max(Math.hypot(dx, dy), 1);
-      const force = (distance - 130) * 0.04 * alpha;
-      a.vx += (dx / distance) * force; a.vy += (dy / distance) * force;
-      b.vx -= (dx / distance) * force; b.vy -= (dy / distance) * force;
-    }
-    for (const node of nodes) {
-      node.vx += (this.center.x - node.x) * 0.005 * alpha;
-      node.vy += (this.center.y - node.y) * 0.005 * alpha;
-      node.vx *= 0.6;
-      node.vy *= 0.6;
-      if (!node.fixed) {
-        node.x += node.vx;
-        node.y += node.vy;
-      }
-    }
-  }
-
-  draw() {
-    for (const node of this.nodes.values()) {
-      node.group.setAttribute("transform", `translate(${node.x},${node.y})`);
-    }
-    for (const edge of this.edges) {
-      const a = this.nodes.get(edge.source), b = this.nodes.get(edge.target);
-      let d, labelX, labelY;
-      if (a === b) {
-        const r = NODE_RADIUS;
-        d = `M${a.x - r * 0.6},${a.y - r * 0.8} C${a.x - 40},${a.y - 70} ${a.x + 40},${a.y - 70} ${a.x + r * 0.6},${a.y - r * 0.8}`;
-        labelX = a.x;
-        labelY = a.y - 62;
-      } else {
-        const dx = b.x - a.x, dy = b.y - a.y;
-        const distance = Math.max(Math.hypot(dx, dy), 1);
-        const bend = (edge.pairIndex - (edge.pairCount - 1) / 2) * 36 * (edge.source < edge.target ? 1 : -1);
-        const controlX = (a.x + b.x) / 2 - (dy / distance) * bend;
-        const controlY = (a.y + b.y) / 2 + (dx / distance) * bend;
-        const endDx = b.x - controlX, endDy = b.y - controlY;
-        const endDistance = Math.max(Math.hypot(endDx, endDy), 1);
-        const endX = b.x - (endDx / endDistance) * (NODE_RADIUS + 3);
-        const endY = b.y - (endDy / endDistance) * (NODE_RADIUS + 3);
-        d = `M${a.x},${a.y} Q${controlX},${controlY} ${endX},${endY}`;
-        labelX = (a.x + 2 * controlX + b.x) / 4;
-        labelY = (a.y + 2 * controlY + b.y) / 4 - 4;
-      }
-      edge.path.setAttribute("d", d);
-      edge.hit.setAttribute("d", d);
-      edge.label.setAttribute("x", labelX);
-      edge.label.setAttribute("y", labelY);
-    }
-  }
-
-  highlight(selection) {
-    this.selected = selection;
-    const connected = new Set();
-    for (const edge of this.edges) {
-      const touches = selection?.kind === "node" && (edge.source === selection.id || edge.target === selection.id);
-      const isSelected = selection?.kind === "edge" && edge.id === selection.id;
-      edge.group.classList.toggle("highlight", touches);
-      edge.group.classList.toggle("selected", isSelected);
-      edge.group.classList.toggle("hidden-label", !this.alwaysShowEdgeLabels && !touches && !isSelected);
-      if (touches || isSelected) {
-        connected.add(edge.source);
-        connected.add(edge.target);
-      }
-      edge.group.classList.toggle("faded", Boolean(selection) && !this.alwaysShowEdgeLabels && !touches && !isSelected);
-    }
-    for (const node of this.nodes.values()) {
-      const isSelected = selection?.kind === "node" && node.id === selection.id;
-      node.group.classList.toggle("selected", isSelected);
-      node.group.classList.toggle("faded", Boolean(selection) && !this.alwaysShowEdgeLabels && !isSelected && !connected.has(node.id));
-    }
-  }
-}
-
-function resetViewportContents() {
-  viewport.innerHTML = "";
-}
-
-// ---------------------------------------------------------------------------
-// Ontology tab
-// ---------------------------------------------------------------------------
-
-const ontology = { data: null, graph: null };
+// Node and edge styles follow the Microsoft Ontology Playground (https://microsoft.github.io/Ontology-Playground/)
+const ONTOLOGY_STYLE = [
+  {
+    selector: "node",
+    style: {
+      label: "data(label)", "text-valign": "bottom", "text-halign": "center", "text-margin-y": 8,
+      "font-size": "16px", "font-family": "Segoe UI, sans-serif", "font-weight": 600, color: "#2b1d15",
+      width: 46, height: 46, "background-color": "data(color)",
+      "border-width": 3, "border-color": "data(color)", "border-opacity": 0.5,
+    },
+  },
+  { selector: "node.selected", style: { "border-width": 5, "border-color": "#0078D4", "border-opacity": 1, width: 58, height: 58 } },
+  { selector: "node.highlighted", style: { "border-width": 4, "border-color": "#FFB900", "border-opacity": 1 } },
+  { selector: ".dimmed", style: { opacity: 0.2 } },
+  {
+    selector: "edge",
+    style: {
+      label: "data(label)", "font-size": "13px", "font-family": "Segoe UI, sans-serif", color: "#6b5a4e",
+      "text-background-color": "#fbf8f2", "text-background-opacity": 1, "text-background-padding": "2px",
+      "text-background-shape": "roundrectangle",
+      width: 2.5, "line-color": "#b8a593", "target-arrow-color": "#b8a593", "target-arrow-shape": "triangle",
+      "curve-style": "bezier", "control-point-step-size": 40, "loop-direction": "-45deg", "loop-sweep": "-60deg",
+    },
+  },
+  { selector: "edge.highlighted", style: { width: 4, "line-color": "#FFB900", "target-arrow-color": "#FFB900", color: "#8a6500" } },
+  { selector: "edge.selected", style: { width: 5, "line-color": "#0078D4", "target-arrow-color": "#0078D4", color: "#0078D4" } },
+  { selector: "edge.hovered", style: { width: 4, "line-color": "#0078D4", "target-arrow-color": "#0078D4", color: "#0078D4" } },
+];
 
 async function showOntology() {
-  toolbar.innerHTML = `<span class="hint">Each circle is an entity type. Each arrow is a relationship from its domain (subject type) to its range (object type). Select a type or arrow to see details. Scroll to zoom, and drag to move.</span>`;
-  panel.innerHTML = `<h2>Ontology</h2><p class="muted">The ontology is the schema of the graph: the kinds of entities it can contain and how they can relate. Select a type or relationship to learn more.</p>`;
-  resetCanvas();
+  svg.style.display = "none";
+  cyContainer.hidden = false;
+  toolbar.innerHTML = "";
+  showOntologyIntro();
   setStatus("Loading ontology…");
   try {
     ontology.data ??= await api("/api/ontology");
   } catch (error) {
     return showError(error);
   }
+  if (activeTab !== "ontology") return;  // The user switched tabs while this loaded
   const { types, relationships } = ontology.data;
   setStatus(`${types.length} entity types, ${relationships.length} relationships`);
-  ontology.graph = new ForceGraph({
-    alwaysShowEdgeLabels: false,
-    repulsion: 9000,
-    onNodeClick: (node) => showOntologyType(node.id),
-    onEdgeClick: (edge) => showOntologyRelationship(edge.id),
+  ontology.cy?.destroy();
+  ontology.cy = cytoscape({
+    container: cyContainer,
+    elements: [
+      ...types.map((type) => ({ data: { id: type.name, label: type.name, color: typeColor(type.name) } })),
+      ...relationships.map((r) => ({ data: { id: `rel:${r.name}`, name: r.name, label: r.name, source: r.domain, target: r.range } })),
+    ],
+    style: ONTOLOGY_STYLE,
   });
-  ontology.graph.setData(
-    types.map((type) => ({ id: type.name, name: type.name, type: type.name })),
-    relationships.map((relationship) => ({ id: relationship.name, source: relationship.domain, target: relationship.range, predicate: relationship.name })),
-  );
+  // A layered layout gives the same left-to-right picture on every load
+  ontology.cy.layout({ name: "dagre", rankDir: "LR", nodeSep: 45, rankSep: 150, edgeSep: 10, padding: 30 }).run();
+  ontology.cy.on("tap", "node", (event) => showOntologyType(event.target.id()));
+  ontology.cy.on("tap", "edge", (event) => showOntologyRelationship(event.target.data("name")));
+  ontology.cy.on("mouseover", "edge", (event) => event.target.addClass("hovered"));
+  ontology.cy.on("mouseout", "edge", (event) => event.target.removeClass("hovered"));
+  ontology.cy.on("tap", (event) => {
+    if (event.target === ontology.cy) {
+      highlightOntology(null);
+      showOntologyIntro();
+    }
+  });
+}
+
+function showOntologyIntro() {
+  panel.innerHTML = `<h2>Graph ontology</h2>
+    ${sourceBlock(sourceRow("From", "file", sources.ontology_file))}
+    <p class="muted">The ontology is the schema of the graph: the kinds of entities it can contain and how they can relate.</p>
+    <p class="muted">Each circle is an entity type. Each arrow is a relationship from its domain (subject type) to its range (object type).</p>
+    <p class="muted">Select a type or arrow to see details. Scroll to zoom, and drag to move.</p>`;
+}
+
+function highlightOntology(selected) {
+  highlightElement(ontology.cy, selected);
 }
 
 function showOntologyType(name) {
@@ -389,11 +243,16 @@ function showOntologyType(name) {
   panel.innerHTML = `
     <h2>${escapeHtml(name)}</h2>${typeBadge("Entity type")}
     <p>${escapeHtml(type?.comment)}</p>
+    <p><button class="link" id="show-type-in-graph">Show ${escapeHtml(name)} in Graph entities →</button></p>
     <h3>Relationships from ${escapeHtml(name)}</h3>${list(outgoing, "out")}
     <h3>Relationships to ${escapeHtml(name)}</h3>${list(incoming, "in")}`;
   panel.querySelectorAll("[data-relationship]").forEach((button) =>
     button.addEventListener("click", () => showOntologyRelationship(button.dataset.relationship)));
-  ontology.graph.highlight({ kind: "node", id: name });
+  document.getElementById("show-type-in-graph").addEventListener("click", () => {
+    graphState.pendingType = name;
+    document.querySelector('nav button[data-tab="graph"]').click();
+  });
+  highlightOntology(ontology.cy.getElementById(name));
 }
 
 function showOntologyRelationship(name) {
@@ -408,61 +267,155 @@ function showOntologyRelationship(name) {
     </table>`;
   panel.querySelectorAll("[data-type]").forEach((button) =>
     button.addEventListener("click", () => showOntologyType(button.dataset.type)));
-  ontology.graph.highlight({ kind: "edge", id: name });
+  highlightOntology(ontology.cy.getElementById(`rel:${name}`));
 }
 
 // ---------------------------------------------------------------------------
-// Graph tab
+// Graph entities tab
 // ---------------------------------------------------------------------------
 
-const graphState = { nodes: new Map(), edges: new Map(), properties: new Map(), expanded: new Set(), graph: null };
+const graphState = {
+  nodes: new Map(), edges: new Map(), properties: new Map(), expanded: new Set(),
+  selected: null, pendingType: null, restored: false, catalog: null, cy: null,
+};
+const graphContainer = document.getElementById("graph-cy");
+const GRAPH_STORAGE_KEY = "cocoarynth-explorer-graph";
+
+// Positions aren't saved: the layered layout always draws the same graph the same way
+function saveGraphState() {
+  try {
+    localStorage.setItem(GRAPH_STORAGE_KEY, JSON.stringify({
+      nodes: [...graphState.nodes.values()],
+      edges: [...graphState.edges.values()],
+      properties: [...graphState.properties.entries()],
+      expanded: [...graphState.expanded],
+      selected: graphState.selected,
+    }));
+  } catch {
+    // Storage can be full or unavailable (for example, in private browsing); the explorer still works without it
+  }
+}
+
+// Returns true when a saved graph was found, even an empty one
+function restoreGraphState() {
+  let saved;
+  try {
+    saved = JSON.parse(localStorage.getItem(GRAPH_STORAGE_KEY));
+  } catch {
+    return false;
+  }
+  if (!saved) return false;
+  graphState.nodes = new Map(saved.nodes.map((node) => [node.id, node]));
+  graphState.edges = new Map(saved.edges.map((edge) => [edge.id, edge]));
+  graphState.properties = new Map(saved.properties);
+  graphState.expanded = new Set(saved.expanded);
+  graphState.selected = saved.selected;
+  return true;
+}
 
 async function showGraph() {
+  svg.style.display = "none";
+  graphContainer.hidden = false;
   toolbar.innerHTML = `
     <form id="entity-search">
       <label for="entity-query">Find an entity</label>
-      <input type="search" id="entity-query" value="EC26-0811" placeholder="For example, EC26-0811">
+      <input type="search" id="entity-query" placeholder="Name, for example Las Brisas">
       <button type="submit">Search</button>
     </form>
+    <button id="show-all">Show everything</button>
     <button id="clear-graph">Clear</button>`;
   document.getElementById("entity-search").addEventListener("submit", (event) => {
     event.preventDefault();
     searchEntities(document.getElementById("entity-query").value);
   });
+  document.getElementById("show-all").addEventListener("click", showAllEntities);
   document.getElementById("clear-graph").addEventListener("click", () => {
     graphState.nodes.clear();
     graphState.edges.clear();
+    graphState.properties.clear();
     graphState.expanded.clear();
+    graphState.selected = null;
     renderGraph();
     showGraphIntro();
   });
-  resetCanvas();
-  graphState.graph = new ForceGraph({
-    alwaysShowEdgeLabels: true,
-    repulsion: 7000,
-    onNodeClick: (node) => selectEntity(node.id),
-    onEdgeClick: (edge) => showAssertion(edge.id),
+  graphState.cy?.destroy();
+  graphState.cy = cytoscape({ container: graphContainer, style: ONTOLOGY_STYLE });
+  graphState.cy.on("tap", "node", (event) => selectEntity(event.target.id()));
+  graphState.cy.on("tap", "edge", (event) => showFact(event.target.id()));
+  graphState.cy.on("mouseover", "edge", (event) => event.target.addClass("hovered"));
+  graphState.cy.on("mouseout", "edge", (event) => event.target.removeClass("hovered"));
+  graphState.cy.on("tap", (event) => {
+    if (event.target === graphState.cy) {
+      highlightElement(graphState.cy, null);
+      graphState.selected = null;
+      saveGraphState();
+      showGraphIntro();
+    }
   });
-  if (graphState.nodes.size) {
+  const hasSavedGraph = graphState.restored || restoreGraphState();
+  graphState.restored = true;
+  if (graphState.pendingType) {
+    const type = graphState.pendingType;
+    graphState.pendingType = null;
     renderGraph();
-    showGraphIntro();
+    showTypeInGraph(type);
+  } else if (hasSavedGraph) {
+    renderGraph();
+    if (graphState.selected && graphState.nodes.has(graphState.selected)) showEntity(graphState.selected);
+    else showGraphIntro();
   } else {
     showGraphIntro();
-    searchEntities("EC26-0811", true);
+    selectEntity("urn:cocoarynth:Batch:EC26-0811");
   }
 }
 
-function showGraphIntro() {
-  panel.innerHTML = `<h2>Graph</h2>
-    <p class="muted">Each circle is an entity, colored by its type. Each arrow is an assertion: subject → predicate → object.</p>
-    <ul>
-      <li>Select an entity to see its properties and add its neighbors to the diagram.</li>
-      <li>Select an arrow to see the evidence behind that assertion.</li>
-    </ul>
-    <div id="search-results"></div>`;
+async function showTypeInGraph(typeName) {
+  setStatus(`Loading ${typeName} entities…`);
+  let catalog;
+  try {
+    catalog = graphState.catalog ??= await api("/api/catalog");
+  } catch (error) {
+    return showError(error);
+  }
+  if (activeTab !== "graph") return;  // The user switched tabs while this loaded
+  const type = catalog.types.find((t) => t.name === typeName);
+  for (const entity of type?.entities || []) if (!graphState.nodes.has(entity.id)) graphState.nodes.set(entity.id, entity);
+  // Connect the new entities to anything already shown
+  for (const edge of catalog.edges) {
+    if (graphState.nodes.has(edge.source) && graphState.nodes.has(edge.target)) graphState.edges.set(edge.id, edge);
+  }
+  renderGraph();
+  await showGraphIntro();
+  document.querySelectorAll("#type-list details").forEach((details) => {
+    details.open = details.dataset.type === typeName;
+  });
 }
 
-async function searchEntities(query, selectFirst = false) {
+async function showGraphIntro() {
+  panel.innerHTML = `<h2>Graph entities</h2>
+    ${sourceBlock(sourceRow("From", "index", sources.graph_index), sourceRow("Passages", "index", sources.chunks_index))}
+    <p class="muted">Each circle is an entity, colored by its type. Each arrow is a fact: subject → predicate → object.</p>
+    <p class="muted">Select an entity to see its properties and add its neighbors. Select an arrow to see the passages that support it. Scroll to zoom, and drag to move.</p>
+    <div id="search-results"></div>
+    <h3>Browse by type</h3>
+    <div id="type-list"><p class="muted">Loading…</p></div>`;
+  let catalog;
+  try {
+    catalog = graphState.catalog ??= await api("/api/catalog");
+  } catch (error) {
+    return showError(error);
+  }
+  const list = document.getElementById("type-list");
+  if (activeTab !== "graph" || !list) return;  // The user moved on while the catalog loaded
+  list.innerHTML = catalog.types.map((type) => `
+    <details class="type-group" data-type="${escapeHtml(type.name)}"><summary>${typeBadge(type.name)} <span class="muted">${type.entities.length}</span></summary>
+      <ul>${type.entities.map((e) => `<li><button class="link" data-id="${escapeHtml(e.id)}">${escapeHtml(e.name)}</button></li>`).join("")}</ul>
+    </details>`).join("");
+  list.querySelectorAll("[data-id]").forEach((button) =>
+    button.addEventListener("click", () => selectEntity(button.dataset.id)));
+}
+
+async function searchEntities(query) {
   setStatus("Searching…");
   let results;
   try {
@@ -470,15 +423,37 @@ async function searchEntities(query, selectFirst = false) {
   } catch (error) {
     return showError(error);
   }
+  if (activeTab !== "graph") return;  // The user switched tabs while this loaded
   setStatus("");
-  if (selectFirst && results.length) return selectEntity(results[0].id);
-  showGraphIntro();
+  await showGraphIntro();
   const container = document.getElementById("search-results");
   container.innerHTML = results.length
     ? `<h3>Matching entities</h3><ul>${results.map((r) => `<li><button class="link" data-id="${escapeHtml(r.id)}">${escapeHtml(r.name)}</button> ${typeBadge(r.type)}</li>`).join("")}</ul>`
     : `<p>No entities match “${escapeHtml(query)}”.</p>`;
   container.querySelectorAll("[data-id]").forEach((button) =>
     button.addEventListener("click", () => selectEntity(button.dataset.id)));
+}
+
+async function showAllEntities() {
+  setStatus("Loading all entities…");
+  let catalog;
+  try {
+    catalog = graphState.catalog ??= await api("/api/catalog");
+  } catch (error) {
+    return showError(error);
+  }
+  if (activeTab !== "graph") return;  // The user switched tabs while this loaded
+  // Entities with only literal properties would appear as loose dots, so show just the connected ones
+  const connected = new Set(catalog.edges.flatMap((edge) => [edge.source, edge.target]));
+  for (const type of catalog.types) {
+    for (const entity of type.entities) {
+      if (connected.has(entity.id) && !graphState.nodes.has(entity.id)) graphState.nodes.set(entity.id, entity);
+    }
+  }
+  for (const edge of catalog.edges) graphState.edges.set(edge.id, edge);
+  renderGraph();
+  const hidden = catalog.types.reduce((count, type) => count + type.entities.length, 0) - connected.size;
+  setStatus(`${statusText.textContent}. ${hidden} entities with no relationships are listed under Browse by type.`);
 }
 
 async function selectEntity(id) {
@@ -490,84 +465,121 @@ async function selectEntity(id) {
     } catch (error) {
       return showError(error);
     }
-    for (const node of data.nodes) {
-      if (!graphState.nodes.has(node.id)) graphState.nodes.set(node.id, { ...node, near: id });
-    }
+    if (activeTab !== "graph") return;  // The user switched tabs while this loaded
+    for (const node of data.nodes) if (!graphState.nodes.has(node.id)) graphState.nodes.set(node.id, node);
     for (const edge of data.edges) graphState.edges.set(edge.id, edge);
     graphState.properties.set(id, data.properties);
     graphState.expanded.add(id);
-    setStatus("");
     renderGraph();
   }
   showEntity(id);
 }
 
-function visibleGraph() {
+function renderGraph() {
+  const cy = graphState.cy;
   const nodes = [...graphState.nodes.values()];
-  const ids = new Set(nodes.map((node) => node.id));
-  const edges = [...graphState.edges.values()].filter((edge) => ids.has(edge.source) && ids.has(edge.target));
-  return { nodes, edges };
+  const edges = [...graphState.edges.values()].filter((e) => graphState.nodes.has(e.source) && graphState.nodes.has(e.target));
+  const added = cy.add([
+    ...nodes.filter((n) => cy.getElementById(n.id).empty())
+      .map((n) => ({ data: { id: n.id, label: n.name, color: typeColor(n.type) } })),
+    ...edges.filter((e) => cy.getElementById(e.id).empty())
+      .map((e) => ({ data: { id: e.id, label: e.predicate, source: e.source, target: e.target } })),
+  ]);
+  cy.elements().not(cy.collection(nodes.map((n) => cy.getElementById(n.id))).union(cy.collection(edges.map((e) => cy.getElementById(e.id))))).remove();
+  if (added.nonempty() || !nodes.length) {
+    const previous = new Map(cy.nodes().not(added).map((node) => [node.id(), { ...node.position() }]));
+    cy.layout({ name: "dagre", rankDir: "LR", nodeSep: 45, rankSep: 150, edgeSep: 10, fit: false }).run();
+    packComponents(cy);
+    // Animate the nodes that were already shown to their new places, so the change is easy to follow
+    const targets = new Map(cy.nodes().map((node) => [node.id(), { ...node.position() }]));
+    for (const [id, position] of previous) cy.getElementById(id).position(position);
+    for (const [id] of previous) cy.getElementById(id).animate({ position: targets.get(id) }, { duration: 400 });
+    cy.animate({ fit: { eles: cy.elements(), padding: 30 } }, { duration: previous.size ? 400 : 0 });
+  }
+  setStatus(nodes.length ? `${nodes.length} entities, ${edges.length} facts shown` : "");
+  saveGraphState();
 }
 
-function renderGraph() {
-  const { nodes, edges } = visibleGraph();
-  graphState.graph.setData(nodes, edges);
-  setStatus(nodes.length ? `${nodes.length} entities, ${edges.length} assertions shown` : "");
+// dagre stacks unconnected groups of entities in one tall column; arrange them in rows that suit the canvas instead
+function packComponents(cy, gap = 60) {
+  const components = cy.elements().components().sort((a, b) => b.nodes().length - a.nodes().length);
+  if (components.length < 2) return;
+  const boxes = components.map((component) => component.boundingBox({ includeLabels: true }));
+  const area = boxes.reduce((sum, box) => sum + (box.w + gap) * (box.h + gap), 0);
+  const rowWidth = Math.max(...boxes.map((box) => box.w), Math.sqrt(area * (cy.width() / cy.height())));
+  let x = 0, y = 0, rowHeight = 0;
+  components.forEach((component, i) => {
+    const box = boxes[i];
+    if (x > 0 && x + box.w > rowWidth) {
+      x = 0;
+      y += rowHeight + gap;
+      rowHeight = 0;
+    }
+    const dx = x - box.x1, dy = y - box.y1;
+    component.nodes().positions((node) => ({ x: node.position("x") + dx, y: node.position("y") + dy }));
+    x += box.w + gap;
+    rowHeight = Math.max(rowHeight, box.h);
+  });
+}
+
+function highlightElement(cy, selected) {
+  cy.elements().removeClass("selected highlighted dimmed");
+  if (!selected || selected.empty()) return;
+  const focus = selected.isNode() ? selected.closedNeighborhood() : selected.union(selected.connectedNodes());
+  selected.addClass("selected");
+  focus.not(selected).addClass("highlighted");
+  cy.elements().not(focus).addClass("dimmed");
 }
 
 function showEntity(id) {
+  graphState.selected = id;
+  saveGraphState();
   const node = graphState.nodes.get(id);
   const properties = graphState.properties.get(id) || [];
-  const { edges } = visibleGraph();
-  const related = edges.filter((edge) => edge.source === id || edge.target === id);
+  const related = [...graphState.edges.values()].filter((e) => (e.source === id || e.target === id) && graphState.nodes.has(e.source) && graphState.nodes.has(e.target));
   const name = (nodeId) => graphState.nodes.get(nodeId)?.name ?? nodeId;
   panel.innerHTML = `
     <h2>${escapeHtml(node.name)}</h2>${typeBadge(node.type)}
-    <p><code>${escapeHtml(id)}</code></p>
+    ${sourceBlock(sourceRow("From", "index", sources.graph_index, copyButton("Copy ID", id)))}
     <h3>Properties</h3>
     ${properties.length
-      ? `<table>${properties.map((p) => `<tr><td>${escapeHtml(p.predicate)}</td><td><button class="link" data-assertion="${escapeHtml(p.assertion)}">${escapeHtml(shorten(p.value, 120))}</button></td></tr>`).join("")}</table>`
+      ? `<table>${properties.map((p) => `<tr><td>${escapeHtml(p.predicate)}</td><td><button class="link" data-fact="${escapeHtml(p.fact)}">${escapeHtml(shorten(p.value, 120))}</button></td></tr>`).join("")}</table>`
       : `<p class="muted">No literal properties.</p>`}
-    <h3>Relationships shown</h3>
+    <h3>Relationships</h3>
     ${related.length
-      ? `<ul>${related.map((e) => `<li><button class="link" data-assertion="${escapeHtml(e.id)}">${escapeHtml(name(e.source))} → ${escapeHtml(e.predicate)} → ${escapeHtml(name(e.target))}</button></li>`).join("")}</ul>`
+      ? `<ul>${related.map((e) => `<li><button class="link" data-fact="${escapeHtml(e.id)}">${escapeHtml(name(e.source))} → ${escapeHtml(e.predicate)} → ${escapeHtml(name(e.target))}</button></li>`).join("")}</ul>`
       : `<p class="muted">None</p>`}`;
-  panel.querySelectorAll("[data-assertion]").forEach((button) =>
-    button.addEventListener("click", () => showAssertion(button.dataset.assertion)));
-  graphState.graph.highlight({ kind: "node", id });
+  panel.querySelectorAll("[data-fact]").forEach((button) =>
+    button.addEventListener("click", () => showFact(button.dataset.fact)));
+  highlightElement(graphState.cy, graphState.cy.getElementById(id));
 }
 
-async function showAssertion(assertionId) {
+async function showFact(factId) {
   setStatus("Loading evidence…");
   let data;
   try {
-    data = await api(`/api/evidence?id=${encodeURIComponent(assertionId)}`);
+    data = await api(`/api/evidence?id=${encodeURIComponent(factId)}`);
   } catch (error) {
     return showError(error);
   }
+  if (activeTab !== "graph") return;  // The user switched tabs while this loaded
   setStatus("");
-  const { assertion, source } = data;
+  const { fact, supports } = data;
   panel.innerHTML = `
-    <h2>Assertion</h2>
-    <p class="triple">${escapeHtml(assertion.subject)} → ${escapeHtml(assertion.predicate)} → ${escapeHtml(assertion.object)}</p>
+    <h2>Fact</h2>
+    ${sourceBlock(sourceRow("From", "index", sources.graph_index, copyButton("Copy ID", fact.fact_id)))}
+    <p class="triple">${escapeHtml(fact.subject)} → ${escapeHtml(fact.predicate)} → ${escapeHtml(fact.object)}</p>
     <table>
-      <tr><td>Subject</td><td>${escapeHtml(assertion.subject)} ${typeBadge(assertion.subject_type)}<br><code>${escapeHtml(assertion.subject_id)}</code></td></tr>
-      <tr><td>Predicate</td><td>${escapeHtml(assertion.predicate)}</td></tr>
-      <tr><td>Object</td><td>${escapeHtml(assertion.object)} ${assertion.object_id ? typeBadge(assertion.object_type) + `<br><code>${escapeHtml(assertion.object_id)}</code>` : `<span class="muted">(literal value)</span>`}</td></tr>
+      <tr><td>Subject</td><td>${escapeHtml(fact.subject)} ${typeBadge(fact.subject_type)}<br><code>${escapeHtml(fact.subject_id)}</code></td></tr>
+      <tr><td>Predicate</td><td>${escapeHtml(fact.predicate)}</td></tr>
+      <tr><td>Object</td><td>${escapeHtml(fact.object)} ${fact.object_id ? typeBadge(fact.object_type) + `<br><code>${escapeHtml(fact.object_id)}</code>` : `<span class="muted">(literal value)</span>`}</td></tr>
     </table>
-    <h3>Evidence</h3>
-    ${assertion.evidence_quotes?.length
-      ? `<p class="muted">Exact excerpts from the PDF-extracted passage:</p><div class="passage">${assertion.evidence_quotes.map(escapeHtml).join("\n\n")}</div>`
-      : ""}
-    ${source
-      ? `<table>
-          <tr><td>Source</td><td>${escapeHtml(source.title)}</td></tr>
-          <tr><td>Path</td><td><code>${escapeHtml(source.blob_path)}</code></td></tr>
-          <tr><td>Pages</td><td>${escapeHtml(source.page_number_from)}–${escapeHtml(source.page_number_to)}</td></tr>
-        </table>
-        <div class="passage">${escapeHtml(source.chunk)}</div>`
-      : `<p class="muted">This assertion has no linked source.</p>`}`;
-  graphState.graph.highlight({ kind: "edge", id: assertionId });
+    <h3>Evidence from ${supports.length} passage${supports.length === 1 ? "" : "s"}</h3>
+    ${supports.map(({ evidence_quotes, source }) => `
+      <p><strong>${escapeHtml(source?.title ?? "Unknown source")}</strong>${source ? `, pages ${escapeHtml(source.page_number_from)}–${escapeHtml(source.page_number_to)}` : ""}</p>
+      ${evidence_quotes.length ? `<p class="muted">Exact excerpts:</p><div class="passage">${evidence_quotes.map(escapeHtml).join("\n\n")}</div>` : ""}
+      ${source ? `<details><summary>Full passage</summary>${passageSource(source.chunk_id)}<div class="passage">${escapeHtml(source.chunk)}</div></details>` : ""}`).join("")}`;
+  highlightElement(graphState.cy, graphState.cy.getElementById(factId));
 }
 
 // ---------------------------------------------------------------------------
@@ -579,22 +591,31 @@ const topicState = { data: null, selected: null };
 async function showTopics() {
   toolbar.innerHTML = `<span class="hint">Broad topics are on the left and their narrower child topics are on the right. Select a topic to read its member passages.</span>`;
   resetCanvas();
-  stopActiveGraph();
   setStatus("Loading topics…");
   try {
     topicState.data ??= await api("/api/topics");
   } catch (error) {
     return showError(error);
   }
+  if (activeTab !== "topics") return;  // The user switched tabs while this loaded
   const { topics, coverage } = topicState.data;
   setStatus(`${topics.length} topics`);
   panel.innerHTML = `<h2>Topics</h2>
+    ${sourceBlock(sourceRow("From", "index", sources.topics_index), sourceRow("Passages", "index", sources.chunks_index))}
     <p class="muted">Topics group passages with similar embeddings. Labels and descriptions were added from each topic's unchanged member passages. Some broad topics have no narrower children.</p>
     <table>
       <tr><td>Source passages</td><td>${escapeHtml(coverage.source_document_count)}</td></tr>
       <tr><td>Assigned to a topic</td><td>${escapeHtml(coverage.assigned_node_count)}</td></tr>
       <tr><td>Not assigned</td><td>${escapeHtml(coverage.unassigned_source_document_count)}</td></tr>
-    </table>`;
+    </table>
+    <h3>Sitemap</h3>
+    <p class="muted">The topic hierarchy is also stored as a navigation graph, called the sitemap, so a knowledge base can traverse it with graph search. Its schema has three relationships:</p>
+    <table>
+      <tr><td>${typeBadge("Topic")} → <strong>hasSubtopic</strong> → ${typeBadge("Topic")}</td></tr>
+      <tr><td>${typeBadge("Topic")} → <strong>hasMember</strong> → ${typeBadge("Passage")}</td></tr>
+      <tr><td>${typeBadge("Document")} → <strong>hasTextChunk</strong> → ${typeBadge("Passage")}</td></tr>
+    </table>
+    <p class="muted">The arrows in the diagram are <strong>hasSubtopic</strong>. Select a topic to see its <strong>hasMember</strong> passages, grouped by their document.</p>`;
   drawTopicTree(topics);
 }
 
@@ -646,40 +667,57 @@ function drawTopicTree(topics) {
 async function showTopic(topic) {
   for (const t of topicState.data.topics) t.group?.classList.toggle("selected", t === topic);
   const name = topic.label || `Topic ${topic.community_id.slice(0, 8)}`;
-  panel.innerHTML = `<h2>${escapeHtml(name)}</h2>${typeBadge(topic.parent_id ? "Child topic" : "Parent topic")}
-    <p><code>${escapeHtml(topic.community_id)}</code></p><p class="muted">Loading member passages…</p>`;
+  const header = `<h2>${escapeHtml(name)}</h2>${typeBadge(topic.parent_id ? "Child topic" : "Parent topic")}
+    ${sourceBlock(sourceRow("From", "index", sources.topics_index), sourceRow("Passages", "index", sources.chunks_index))}
+    <p>${escapeHtml(topic.description)}</p>`;
+  panel.innerHTML = `${header}<p class="muted">Loading member passages…</p>`;
   let members;
   try {
     members = await api(`/api/topic-members?id=${encodeURIComponent(topic.community_id)}&generation=${encodeURIComponent(topicState.data.generation_id)}`);
   } catch (error) {
     return showError(error);
   }
-  members.sort((a, b) => a.title.localeCompare(b.title));
-  panel.innerHTML = `<h2>${escapeHtml(name)}</h2>${typeBadge(topic.parent_id ? "Child topic" : "Parent topic")}
-    <p>${escapeHtml(topic.description)}</p>
-    <p><code>${escapeHtml(topic.community_id)}</code></p>
-    <h3>${members.length} member passages</h3>
-    ${members.map((m) => `<p><strong>${escapeHtml(m.title)}</strong><br><code>${escapeHtml(m.blob_path)}</code></p><div class="passage">${escapeHtml(shorten(m.chunk, 600))}</div>`).join("")}`;
+  if (activeTab !== "topics") return;  // The user switched tabs while this loaded
+  const documents = new Map();
+  for (const member of members) documents.set(member.blob_path, [...(documents.get(member.blob_path) || []), member]);
+  const sorted = [...documents.entries()].sort(([, a], [, b]) => a[0].title.localeCompare(b[0].title));
+  panel.innerHTML = `${header}
+    <h3>${members.length} member passages, from ${documents.size} documents</h3>
+    <p><button class="link" id="toggle-passages">Expand all passages</button></p>
+    ${sorted.map(([path, passages]) => `
+      <p class="document"><a href="/documents${escapeHtml(path)}" target="_blank" rel="noopener">${escapeHtml(passages[0].title)}</a>
+        <span class="muted">${passages.length} passage${passages.length === 1 ? "" : "s"}</span></p>
+      ${passages.map((passage, i) => `<details class="member"><summary>Passage ${i + 1}</summary>${passageSource(passage.chunk_id)}<div class="passage">${escapeHtml(passage.chunk)}</div></details>`).join("")}`).join("")}`;
+  const toggle = document.getElementById("toggle-passages");
+  toggle.addEventListener("click", () => {
+    const passages = panel.querySelectorAll("details.member");
+    const expand = [...passages].some((details) => !details.open);
+    passages.forEach((details) => { details.open = expand; });
+    toggle.textContent = expand ? "Collapse all passages" : "Expand all passages";
+  });
 }
 
 // ---------------------------------------------------------------------------
 // Tabs
 // ---------------------------------------------------------------------------
 
-function stopActiveGraph() {
-  ontology.graph?.stop();
-  graphState.graph?.stop();
-}
-
+let activeTab = null;
 const tabs = { ontology: showOntology, graph: showGraph, topics: showTopics };
 document.querySelectorAll("nav button").forEach((button) => {
   button.addEventListener("click", () => {
     document.querySelectorAll("nav button").forEach((b) => b.setAttribute("aria-selected", String(b === button)));
-    stopActiveGraph();
+    svg.style.display = "";
+    cyContainer.hidden = true;
+    graphContainer.hidden = true;
+    panel.innerHTML = "";
+    activeTab = button.dataset.tab;
     history.replaceState(null, "", `#${button.dataset.tab}`);
     tabs[button.dataset.tab]();
   });
 });
 
 const initialTab = location.hash.slice(1) in tabs ? location.hash.slice(1) : "ontology";
-document.querySelector(`nav button[data-tab="${initialTab}"]`).click();
+api("/api/sources").then((data) => {
+  sources = data;
+  document.querySelector(`nav button[data-tab="${initialTab}"]`).click();
+}, showError);
