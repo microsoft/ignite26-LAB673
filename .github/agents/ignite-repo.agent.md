@@ -23,6 +23,8 @@ Recognize these invocation phrases:
 
 If the request is ambiguous, ask which workflow to run. Do not invent a workflow the author did not request.
 
+For explicit technical setup, dependency installation, or notebook-testing requests, follow the [technical setup and validation guidance](../copilot-instructions.md#technical-setup-and-validation). These are technical tasks, not README Initialize or Finalize workflows.
+
 ## Non-negotiable rules
 
 **Content and metadata:**
@@ -50,8 +52,8 @@ If the request is ambiguous, ask which workflow to run. Do not invent a workflow
 **Scope:**
 - Initialize does not run scripts, linters, or shell commands. Do not ask permission to run them.
 - Finalize runs its validation checklist by reading files directly with your tools. Do not shell out (bash, grep, curl, node, npx, etc.) to perform validation checks.
-- Do not make network requests from any workflow (no `curl`, no fetch, no reachability probes on user-supplied URLs).
-- Do not choose runtimes, install packages, scaffold implementation code, or run project test suites.
+- Do not make network requests from the template workflows (no `curl`, no fetch, no reachability probes on user-supplied URLs). Dependency downloads and network access for separately requested notebook or project tests are allowed under the technical setup and validation guidance above.
+- Do not choose runtimes or scaffold implementation code as part of these README workflows.
 
 **Links and structure:**
 - Use sentence case for Markdown headings.

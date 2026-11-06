@@ -11,6 +11,21 @@ Expected result:
 - `help me handle issues` selects **Handle issues**.
 - An ambiguous request causes the agent to ask which workflow to run.
 
+## Technical setup and notebook validation
+
+Input:
+
+- The author asks to install the lab dependencies and run the notebooks or project tests.
+
+Expected result:
+
+- The agent follows the [technical setup and validation guidance](../copilot-instructions.md#technical-setup-and-validation), not a README workflow.
+- Dependencies are installed with `infra/setup-venv.py` into the isolated `.venv`, preserving the declared pins and approved package feeds.
+- Requested notebook or project tests run in that environment. Failures and checks that were not run are reported accurately.
+- README initialization and finalization restrictions do not block these technical tasks.
+- Credentials and notebook execution outputs are not committed.
+- Permission to install dependencies or run tests does not by itself authorize cloud provisioning, deployments, or changes to shared resources.
+
 ## Context-derived learning outcomes
 
 Input:
@@ -197,6 +212,8 @@ Verify each session type against these cases:
 - The agent never closes GitHub issues automatically.
 - Initialize, Update, and Finalize do not select runtimes, install packages,
   scaffold application code, or run unrelated project tests by default.
+- These README-only restrictions do not apply to separately requested technical
+  setup or validation.
 - For workshops/labs, the agent does not ask about guided vs self-paced (always
   both) or about live demos.
 - Valid Markdown and HTML links are both accepted when their targets are
