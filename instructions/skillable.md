@@ -171,7 +171,7 @@ The **Graph ontology** tab shows the graph's schema. Each circle is an entity ty
 
 ## Read the ontology file
 
-When the Foundry IQ agent plugin processed the documents, it came up with the ontology schema. That schema is saved in an OWL file, written as XML. During setup, the file is attached to the graph knowledge source, so a knowledge base that uses that source can plan graph queries with it. The **Graph ontology** tab draws its diagram from the same file.
+When the Foundry IQ agent plugin processed the documents, it came up with the ontology schema. That schema is saved in an OWL file, written as XML. The **Graph ontology** tab draws its diagram from the same file.
 
 1. In Visual Studio Code, open **data/graph-data/cocoarynth.owl**.
 2. Look through its elements:
@@ -212,7 +212,7 @@ The Foundry IQ agent plugin generated these topics ahead of time. It clustered t
 
 ## Read the sitemap ontology file
 
-The Foundry IQ agent plugin also saved the topic hierarchy as a navigation graph, called the sitemap, in the **cocoarynth-topics** index. The sitemap's schema is in a second, smaller OWL file. During setup, it's attached to the topics knowledge source, so a knowledge base can plan graph queries over the sitemap.
+The Foundry IQ agent plugin also saved the topic hierarchy as a navigation graph, called the sitemap, in the **cocoarynth-topics** index. The sitemap's schema is in a second, smaller OWL file.
 
 1. In Visual Studio Code, open **data/graph-data/cocoarynth-sitemap.owl**. Like **cocoarynth.owl**, it's an OWL file written as XML, so it uses the same kinds of elements.
 2. Look through its elements:
