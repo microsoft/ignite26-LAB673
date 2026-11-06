@@ -6,19 +6,19 @@ This folder provisions the Foundry IQ portion of LAB673 for Skillable and self-p
 
 | Resource | Configuration |
 | --- | --- |
-| Foundry IQ (Azure AI Search) | Serverless in **West Central US**, using `2026-09-01-preview` |
-| Search graph identity | User-assigned identity attached to Search for managed knowledge graph builds, with Storage Blob Data Reader and Cognitive Services OpenAI User |
+| Foundry IQ (Azure AI Search) | **West Central US**, serverless by default (`searchSkuName`), using `2026-09-01-preview` |
+| Search graph identity | Optional (`createSearchGraphIdentity`, off by default; set `CREATE_SEARCH_GRAPH_IDENTITY=true` with azd). A user-assigned identity attached to Search for managed knowledge graph builds, with Storage Blob Data Reader and Cognitive Services OpenAI User. The lab restores graphs from snapshots and doesn't need it. |
 | Blob Storage | Standard LRS account with a private `knowledge` container |
 | Foundry | An `AIServices` account and project with managed identities |
 | Chat/reasoning | `gpt-6-luna`, version `2026-09-22`, Global Standard, capacity 200 |
 | Embeddings | `text-embedding-3-large`, version `1`, Global Standard, capacity 30 |
 | Content Understanding | Resource defaults mapped to the existing completion and embedding deployments |
 
-Search's region and serverless SKU are fixed in [main.bicep](main.bicep). The `location` parameter controls Foundry and Storage independently. The Skillable flow uses `westus3`, preserving the source lab's Foundry location; Content Understanding is supported there, not in West Central US. Self-paced deployment should also select a Content Understanding-supported region.
+Search's region is fixed in [main.bicep](main.bicep); its SKU comes from the `searchSkuName` parameter. The `location` parameter controls Foundry and Storage independently. The Skillable flow uses `westus3`, preserving the source lab's Foundry location; Content Understanding is supported there, not in West Central US. Self-paced deployment should also select a Content Understanding-supported region.
 
 The Skillable lifecycle action passes `resourcePrefix="lab673"`, matching the Bicep default used by self-paced deployments. The repository and Desktop folder remain `ignite26-LAB673`. The target Azure policies must allow these resource names; other policy constraints still apply.
 
-The upstream repo recorded insufficient serverless capacity in West Central US on October 5, 2026. Availability and model quota must be checked in the target subscription before delivery. These files deliberately do not fall back to another Search region or a dedicated SKU.
+`searchSkuName` defaults to `serverless`, but the serverless SKU doesn't support the preview graph features yet: native GQL, graph search, and inline-ontology knowledge sources. Until it does, deploy with a dedicated SKU, for example `azd env set AZURE_SEARCH_SKU standard` or `searchSkuName="standard"` in the Skillable deployment parameters. Search capacity and model quota must be checked in the target subscription before delivery. These files deliberately do not fall back to another Search region.
 
 Content Understanding is a capability of the Foundry account, not an additional Azure resource or standalone model deployment. [setup-content-understanding.py](setup-content-understanding.py) configures model-name mappings and the prebuilt completion, mini-completion, and embedding aliases. Both completion aliases reuse the lab LLM, avoiding extra deployments. Individual analyzers must support the selected model; see [model deployment options](https://learn.microsoft.com/azure/ai-services/content-understanding/concepts/models-deployments).
 

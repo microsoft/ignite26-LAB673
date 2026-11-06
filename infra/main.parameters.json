@@ -4,6 +4,8 @@
   "parameters": {
     "principalId": { "value": "${AZURE_PRINCIPAL_ID}" },
     "location": { "value": "${AZURE_LOCATION}" },
+    "searchSkuName": { "value": "${AZURE_SEARCH_SKU=serverless}" },
+    "createSearchGraphIdentity": { "value": "${CREATE_SEARCH_GRAPH_IDENTITY=false}" },
     "embeddingModelCapacity": { "value": "${EMBEDDING_MODEL_CAPACITY=30}" },
     "llmModelName": { "value": "${LLM_MODEL_NAME=gpt-6-luna}" },
     "llmModelVersion": { "value": "${LLM_MODEL_VERSION=2026-09-22}" },

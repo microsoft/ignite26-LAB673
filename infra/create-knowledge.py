@@ -1,4 +1,4 @@
-"""Set up the three lab indexes without replacing existing resources."""
+"""Set up the lab indexes without replacing existing resources."""
 
 import os
 import subprocess
