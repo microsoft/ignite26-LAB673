@@ -58,7 +58,7 @@ All required Azure services have already been provisioned for you.
 <details>
 <summary><strong>📋 What's pre-configured (click to expand for details)</strong></summary>
 
-- **Pre-processed data**: The Foundry IQ agent plugin processed the 55 Cocoarynth PDFs ahead of time. It split them into chunks (pieces of text such as a section, a table, or a short page) with embeddings, extracted an entity graph and its ontology, and grouped the chunks into topics. Setup restored its output into the indexes below.
+- **Pre-processed data**: The Foundry IQ plugin processed the 55 Cocoarynth PDFs ahead of time. It split them into chunks (pieces of text such as a section, a table, or a short page) with embeddings, extracted an entity graph and its ontology, and grouped the chunks into topics. Setup restored its output into the indexes below.
 - **Foundry IQ** with six pre-created indexes:
   - **cocoarynth-production**, **cocoarynth-sales**, and **cocoarynth-policies**: The PDF chunks for each document group, with embeddings
   - **cocoarynth-chunks**: All 106 chunks from the 55 original PDFs in one index, which the graph and topics link to as evidence
@@ -141,7 +141,7 @@ Select **Next** to continue to entities and graphs.
 
 A Pantry Lane customer has a chocolate wrapper with batch code **EC26-0811** and wants to know which farms grew its cacao. A single chunk can mention a batch or a farm, but a graph makes the connection explicit: **Batch → BeanLot ← Farm**.
 
-The Foundry IQ agent plugin built this graph from the PDFs ahead of time. It proposed an ontology, then extracted the entities and relationships that fit it, each linked to the chunk it came from.
+The Foundry IQ plugin built this graph from the PDFs ahead of time. It proposed an ontology, then extracted the entities and relationships that fit it, each linked to the chunk it came from.
 
 The Azure portal doesn't show graphs yet, so this lab includes a small web app, the **Cocoarynth graph explorer**, for looking at the graph visually.
 
@@ -171,7 +171,7 @@ The **Graph ontology** tab shows the graph's schema. Each circle is an entity ty
 
 ## Read the ontology file
 
-When the Foundry IQ agent plugin processed the documents, it came up with the ontology schema. That schema is saved in an OWL file, written as XML. The **Graph ontology** tab draws its diagram from the same file.
+When the Foundry IQ plugin processed the documents, it came up with the ontology schema. That schema is saved in an OWL file, written as XML. The **Graph ontology** tab draws its diagram from the same file.
 
 1. In Visual Studio Code, open **data/graph-data/cocoarynth.owl**.
 2. Look through its elements:
@@ -201,7 +201,7 @@ Select **Next** to continue to **Topics**.
 
 An entity graph shows how specific things are connected. Topics group related chunks so you can explore a broader area of the documents.
 
-The Foundry IQ agent plugin generated these topics ahead of time. It clustered the chunk embeddings into a two-level hierarchy, then labeled and described each topic from its member chunks.
+The Foundry IQ plugin generated these topics ahead of time. It clustered the chunk embeddings into a two-level hierarchy, then labeled and described each topic from its member chunks.
 
 ## Explore topics in the graph explorer
 
@@ -212,7 +212,7 @@ The Foundry IQ agent plugin generated these topics ahead of time. It clustered t
 
 ## Read the sitemap ontology file
 
-The Foundry IQ agent plugin also saved the topic hierarchy as a navigation graph, called the sitemap, in the **cocoarynth-topics** index. The sitemap's schema is in a second, smaller OWL file.
+The Foundry IQ plugin also saved the topic hierarchy as a navigation graph, called the sitemap, in the **cocoarynth-topics** index. The sitemap's schema is in a second, smaller OWL file.
 
 1. In Visual Studio Code, open **data/graph-data/cocoarynth-sitemap.owl**. Like **cocoarynth.owl**, it's an OWL file written as XML, so it uses the same kinds of elements.
 2. Look through its elements:
