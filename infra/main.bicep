@@ -4,6 +4,19 @@ param principalId string
 @description('Foundry and Storage location; Search is always in West Central US')
 param location string
 
+@description('Search SKU. The preview graph features (native GQL, graph search, inline-ontology knowledge sources) currently need a dedicated SKU such as standard.')
+@allowed([
+  'serverless'
+  'basic'
+  'standard'
+  'standard2'
+  'standard3'
+])
+param searchSkuName string = 'serverless'
+
+@description('Create a user-assigned identity on Search for managed knowledge graph builds. The lab restores graphs from snapshots, so this is off by default.')
+param createSearchGraphIdentity bool = false
+
 @description('Lowercase alphanumeric resource name prefix')
 @minLength(3)
 @maxLength(8)
@@ -39,7 +52,7 @@ var resourceNames = {
 }
 
 // Managed knowledge graph extraction requires a user-assigned identity on Search.
-resource searchGraphIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2023-01-31' = {
+resource searchGraphIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2023-01-31' = if (createSearchGraphIdentity) {
   name: resourceNames.searchGraphIdentity
   location: 'westcentralus'
 }
@@ -48,9 +61,9 @@ resource searchService 'Microsoft.Search/searchServices@2026-09-01-preview' = {
   name: resourceNames.searchService
   location: 'westcentralus'
   sku: {
-    name: 'serverless'
+    name: searchSkuName
   }
-  properties: {
+  properties: union({
     publicNetworkAccess: 'enabled'
     networkRuleSet: {
       ipRules: []
@@ -62,12 +75,17 @@ resource searchService 'Microsoft.Search/searchServices@2026-09-01-preview' = {
       }
     }
     semanticSearch: 'standard'
-  }
-  identity: {
+  }, searchSkuName == 'serverless' ? {} : {
+    // Microsoft Retriever 1 requires the paid knowledge retrieval plan, which needs Basic or higher.
+    knowledgeRetrieval: 'standard'
+  })
+  identity: createSearchGraphIdentity ? {
     type: 'SystemAssigned, UserAssigned'
     userAssignedIdentities: {
       '${searchGraphIdentity.id}': {}
     }
+  } : {
+    type: 'SystemAssigned'
   }
 }
 
@@ -123,11 +141,11 @@ resource searchStorageReader 'Microsoft.Authorization/roleAssignments@2022-04-01
   ]
 }
 
-resource searchGraphIdentityStorageReader 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+resource searchGraphIdentityStorageReader 'Microsoft.Authorization/roleAssignments@2022-04-01' = if (createSearchGraphIdentity) {
   name: guid(indexingStorageAccount.id, searchGraphIdentity.id, 'Storage Blob Data Reader')
   scope: indexingStorageAccount
   properties: {
-    principalId: searchGraphIdentity.properties.principalId
+    principalId: searchGraphIdentity!.properties.principalId
     principalType: 'ServicePrincipal'
     roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '2a2b9908-6ea1-4ae2-8e65-a410df84e7d1')
   }
@@ -259,11 +277,11 @@ resource searchFoundryRoleAssignments 'Microsoft.Authorization/roleAssignments@2
   }
 }]
 
-resource searchGraphIdentityOpenAIUser 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+resource searchGraphIdentityOpenAIUser 'Microsoft.Authorization/roleAssignments@2022-04-01' = if (createSearchGraphIdentity) {
   name: guid(microsoftFoundryAccount.id, searchGraphIdentity.id, '5e0bd9bd-7b93-4f28-af87-19fc36ad61bd')
   scope: microsoftFoundryAccount
   properties: {
-    principalId: searchGraphIdentity.properties.principalId
+    principalId: searchGraphIdentity!.properties.principalId
     principalType: 'ServicePrincipal'
     roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '5e0bd9bd-7b93-4f28-af87-19fc36ad61bd')
   }
@@ -298,7 +316,7 @@ output MICROSOFT_FOUNDRY_PROJECT_ENDPOINT string = 'https://${microsoftFoundryAc
 output MICROSOFT_FOUNDRY_PROJECT_ID string = microsoftFoundryProject.id
 output AZURE_SEARCH_SERVICE_ENDPOINT string = 'https://${searchService.name}.search.windows.net'
 output AZURE_SEARCH_SERVICE_NAME string = searchService.name
-output AZURE_SEARCH_GRAPH_IDENTITY_ID string = searchGraphIdentity.id
+output AZURE_SEARCH_GRAPH_IDENTITY_ID string = createSearchGraphIdentity ? searchGraphIdentity.id : ''
 output INDEXING_STORAGE_ACCOUNT_ID string = indexingStorage.outputs.resourceId
 output INDEXING_STORAGE_ACCOUNT_NAME string = indexingStorage.outputs.name
 output AZURE_OPENAI_ENDPOINT string = microsoftFoundryAccount.properties.endpoint

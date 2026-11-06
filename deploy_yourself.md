@@ -4,7 +4,7 @@ This guide provisions the Cocoarynth LAB673 environment without Skillable, Fabri
 
 ## Prerequisites
 
-- An Azure subscription with sufficient model quota and serverless Search capacity in West Central US.
+- An Azure subscription with sufficient model quota and Standard (S1) Search capacity in West Central US.
 - Access to the November ontology private preview on the target Search service, including inline-ontology knowledge sources and native GQL.
 - Permissions to deploy resources, assign Azure RBAC roles, and list Search/Foundry API keys.
 - Azure Developer CLI (`azd`), Git, and Python available locally.
@@ -19,12 +19,13 @@ cd ignite26-LAB673
 azd auth login
 azd init
 azd env set AZURE_LOCATION westus3
+azd env set AZURE_SEARCH_SKU standard
 azd provision
 ```
 
 If already working in this repository, start with `azd auth login`. During `azd init`, choose a new environment name and use the existing project files; do not select a new template. Select your subscription when prompted.
 
-`AZURE_LOCATION` controls Foundry and Blob Storage. `westus3` matches the source lab and supports Content Understanding; Search always deploys **serverless in West Central US** regardless of that setting. For other Foundry locations, consult [Content Understanding region support](https://learn.microsoft.com/azure/ai-services/content-understanding/language-region-support) and check model availability. Search capacity and model quota are not guaranteed by these templates.
+`AZURE_LOCATION` controls Foundry and Blob Storage. `westus3` matches the source lab and supports Content Understanding; Search always deploys in **West Central US** regardless of that setting. Set `AZURE_SEARCH_SKU` to `standard`: the template defaults to serverless, but the preview graph features aren't available on serverless yet. For other Foundry locations, consult [Content Understanding region support](https://learn.microsoft.com/azure/ai-services/content-understanding/language-region-support) and check model availability. Search capacity and model quota are not guaranteed by these templates.
 
 The post-provision hook prepares `.venv`, installs infrastructure and notebook dependencies, writes a local `.env` with deployment outputs and API keys, and configures Content Understanding. With restoration enabled, it restores the three-index bundle and both inline-ontology knowledge sources. Missing or inconsistent artifacts stop setup before restoration writes. Existing resources are verified and reused only if they match; setup does not overwrite or delete an earlier dataset. `.env`, `.azure`, and `.venv` are ignored by Git. Do not share `.env` or logs containing credentials.
 
