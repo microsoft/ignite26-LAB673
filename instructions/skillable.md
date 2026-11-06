@@ -175,10 +175,10 @@ When the Foundry IQ plugin processed the documents, it came up with the ontology
 
 1. In Visual Studio Code, open **data/graph-data/cocoarynth.owl**.
 2. Look through its elements:
-   - Each `owl:Class` element is an entity type, with an `rdfs:label` and an `rdfs:comment` that describes it. You'll see entity types like *Batch*, *BeanLot*, and *Farm*.
-   - Each `owl:ObjectProperty` element is a relationship. Its `rdfs:domain` is the subject type and its `rdfs:range` is the object type. You'll see relationships like *madeFrom*, from *Batch* to *BeanLot*, and *contributedTo*, from *Farm* to *BeanLot*.
-   - Each `owl:DatatypeProperty` element is a property with a plain value, like the *batchCode* of a *Batch*.
-   - Each `rdfs:seeAlso` links to the PDF chunk that the declaration is based on.
+   - Each **owl:Class** element is an entity type, with an **rdfs:label** and an **rdfs:comment** that describes it. You'll see entity types like *Batch*, *BeanLot*, and *Farm*.
+   - Each **owl:ObjectProperty** element is a relationship. Its **rdfs:domain** is the subject type and its **rdfs:range** is the object type. You'll see relationships like *madeFrom*, from *Batch* to *BeanLot*, and *contributedTo*, from *Farm* to *BeanLot*.
+   - Each **owl:DatatypeProperty** element is a property with a plain value, like the *batchCode* of a *Batch*.
+   - Each **rdfs:seeAlso** links to the PDF chunk that the declaration is based on.
 
 ## Run the notebook
 
@@ -216,9 +216,9 @@ The Foundry IQ plugin also saved the topic hierarchy as a navigation graph, call
 
 1. In Visual Studio Code, open **data/graph-data/cocoarynth-sitemap.owl**. Like **cocoarynth.owl**, it's an OWL file written as XML, so it uses the same kinds of elements.
 2. Look through its elements:
-   - The `owl:Class` elements are its three entity types: *Topic*, *Document*, and *TextChunk*, a chunk of a PDF.
-   - The `owl:ObjectProperty` elements are its three relationships: *hasSubtopic*, from *Topic* to *Topic*; *hasMember*, from *Topic* to *TextChunk*; and *hasTextChunk*, from *Document* to *TextChunk*.
-   - The `owl:DatatypeProperty` elements are plain-value properties, like a topic's *description* and a chunk's *chunkId*, which matches its key in **cocoarynth-chunks**.
+   - The **owl:Class** elements are its three entity types: *Topic*, *Document*, and *TextChunk*, a chunk of a PDF.
+   - The **owl:ObjectProperty** elements are its three relationships: *hasSubtopic*, from *Topic* to *Topic*; *hasMember*, from *Topic* to *TextChunk*; and *hasTextChunk*, from *Document* to *TextChunk*.
+   - The **owl:DatatypeProperty** elements are plain-value properties, like a topic's *description* and a chunk's *chunkId*, which matches its key in **cocoarynth-chunks**.
 
 ## Run the notebook
 
