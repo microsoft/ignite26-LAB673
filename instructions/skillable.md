@@ -167,8 +167,7 @@ The **Graph ontology** tab shows the graph's schema. Each circle is an entity ty
 1. Select the **Graph entities** tab. It opens with batch **EC26-0811** and the entities directly connected to it.
 2. In the panel, look at the **batchCode** property and the **madeFrom** relationship. **madeFrom** shows that batch EC26-0811 was made from bean lot **EC26-L07**. That's the first step from the batch to its farms.
 3. Select the **EC26-L07** bean lot circle to add its neighbors to the diagram. Find the two farms that contributed to it.
-4. Select a **contributedTo** arrow, or select it in the panel's list of relationships. The panel shows the assertion, exact evidence excerpts, and the original PDF chunk it came from.
-5. Compare the farm names with [the cooperative's collection tickets](../data/cocoarynth/documents/cocoarynth-origins/boletas-acopio-rio-claro-2026.pdf). The structured JSON used to generate the PDFs is not graph evidence.
+4. Select a **contributedTo** arrow, or select it in the panel's list of relationships. The panel shows the assertion, exact evidence excerpts, and the original PDF chunk it came from. Select the PDF name to open the original document.
 
 ## Read the ontology file
 

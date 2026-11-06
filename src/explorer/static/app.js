@@ -53,6 +53,11 @@ panel.addEventListener("click", async (event) => {
   setTimeout(() => { button.textContent = label; }, 1500);
 });
 
+// Link to an original PDF, served by the explorer from data/cocoarynth/documents
+function documentLink(blobPath, title) {
+  return `<a href="/documents${escapeHtml(blobPath)}" target="_blank" rel="noopener">${escapeHtml(title)}</a>`;
+}
+
 function shorten(text, length) {
   text = String(text ?? "");
   return text.length > length ? text.slice(0, length - 1) + "…" : text;
@@ -576,7 +581,7 @@ async function showFact(factId) {
     </table>
     <h3>Evidence from ${supports.length} chunk${supports.length === 1 ? "" : "s"}</h3>
     ${supports.map(({ evidence_quotes, source }) => `
-      <p><strong>${escapeHtml(source?.title ?? "Unknown source")}</strong>${source ? `, pages ${escapeHtml(source.page_number_from)}–${escapeHtml(source.page_number_to)}` : ""}</p>
+      <p><strong>${source ? documentLink(source.blob_path, source.title) : "Unknown source"}</strong>${source ? `, pages ${escapeHtml(source.page_number_from)}–${escapeHtml(source.page_number_to)}` : ""}</p>
       ${evidence_quotes.length ? `<p class="muted">Exact excerpts:</p><div class="chunk-text">${evidence_quotes.map(escapeHtml).join("\n\n")}</div>` : ""}
       ${source ? `<details><summary>Full chunk text</summary>${chunkSource(source.chunk_id)}<div class="chunk-text">${escapeHtml(source.chunk)}</div></details>` : ""}`).join("")}`;
   highlightElement(graphState.cy, graphState.cy.getElementById(factId));
@@ -685,7 +690,7 @@ async function showTopic(topic) {
     <h3>${members.length} member chunks, from ${documents.size} documents</h3>
     <p><button class="link" id="toggle-chunks">Expand all chunks</button></p>
     ${sorted.map(([path, chunks]) => `
-      <p class="document"><a href="/documents${escapeHtml(path)}" target="_blank" rel="noopener">${escapeHtml(chunks[0].title)}</a>
+      <p class="document">${documentLink(path, chunks[0].title)}
         <span class="muted">${chunks.length} chunk${chunks.length === 1 ? "" : "s"}</span></p>
       ${chunks.map((member, i) => `<details class="member"><summary>Chunk ${i + 1}</summary>${chunkSource(member.chunk_id)}<div class="chunk-text">${escapeHtml(member.chunk)}</div></details>`).join("")}`).join("")}`;
   const toggle = document.getElementById("toggle-chunks");
