@@ -6,7 +6,7 @@ The active restore manifest contains exactly three indexes. All use the same
 | Index | Definition | Records |
 | --- | --- | --- |
 | `cocoarynth-topics` | [Definition](cocoarynth-topics-index.json) | [438 rows](cocoarynth-topics-exported.jsonl): eight labeled/vectorized representatives, 158 memberships, sitemap edges, and a manifest |
-| `cocoarynth-chunks` | [Definition](cocoarynth-chunks-index.json) | [106 PDF passage/vector rows](cocoarynth-chunks-exported.jsonl) |
+| `cocoarynth-chunks` | [Definition](cocoarynth-chunks-index.json) | [106 PDF chunk and vector rows](cocoarynth-chunks-exported.jsonl) |
 | `cocoarynth-graph` | [Definition](cocoarynth-graph-index.json) | [120 PDF-supported assertions](cocoarynth-graph-exported.jsonl), representing 91 distinct facts |
 
 All source and topic vectors have **3,072 dimensions**. The [manifest](manifest.json) lists index names, document keys, the API version, and payload checksums.
@@ -30,7 +30,7 @@ sitemap GQL as well as ordinary topic retrieval.
 
 Business assertions contain `chunk_id`, the PDF's `parent_id`, and verbatim
 `evidence_quotes`. `fact_id` identifies a distinct triple; `id` identifies
-one assertion of that fact from a particular passage. Confidence fields are
+one assertion of that fact from a particular chunk. Confidence fields are
 unset rather than invented. The [provenance ledger](pdf-extraction-provenance.json)
 records declaration evidence, model identity, curation, and limitations.
 The compact ontology and graph are not exhaustive, and the extraction was not
@@ -39,10 +39,10 @@ a managed indexer run or native ontology approval.
 The eight communities and 158 memberships preserve the captured native GRZ
 generation. The topic index retains six native terminal representative vectors
 and two existing derived parent centroids. Labels and descriptions are separate
-model enrichment from the unchanged member passages, not native GRZ naming.
+model enrichment from the unchanged member chunks, not native GRZ naming.
 There are four roots and four children; two roots have no children.
-Overall, 97 of 106 passages are assigned and nine are unassigned.
-Only 61 passages belong to level-0 children. Topic routing includes all six
+Overall, 97 of 106 chunks are assigned and nine are unassigned.
+Only 61 chunks belong to level-0 children. Topic routing includes all six
 terminal communities, including the two terminal roots at level 1.
 
 The topic index stores `hasSubtopic`, `hasMember`, and `hasTextChunk` triples

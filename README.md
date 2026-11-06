@@ -54,11 +54,11 @@ If you're learning at your own pace:
 2. Deploy the Azure resources to your own subscription by following
    [Deploy to your own Azure subscription](deploy_yourself.md)
 3. Follow the [lab instructions](instructions/skillable.md) and run the
-   notebooks in [`src/notebooks/lab/`](src/notebooks/lab/). See the
+   notebooks in [`src/notebooks/`](src/notebooks/). See the
    [source guide](src/README.md) for setup details.
 
 The lab uses three search indexes: `cocoarynth-topics` for named topic vectors
-and sitemap GQL, `cocoarynth-chunks` for PDF passages and embeddings, and
+and sitemap GQL, `cocoarynth-chunks` for PDF chunks and embeddings, and
 `cocoarynth-graph` for ontology-constrained business triples. The
 [business ontology](data/graph-data/cocoarynth.owl) is a checked-in OWL file,
 not an index. Both the business graph and the topic sitemap use the November

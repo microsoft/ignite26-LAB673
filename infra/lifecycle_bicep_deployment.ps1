@@ -93,7 +93,7 @@ if (-not (Test-Path $setupLocal)) {
 Log "Running setup-knowledge.ps1..."
 powershell -ExecutionPolicy Bypass -File $setupLocal `
     -SearchAdminKey $searchAdminKey `
-    -OpenAIKey $openaiKey *>> $logFile
+    -OpenAIKey $openaiKey *>&1 | Out-File -FilePath $logFile -Append -Encoding utf8
 if ($LASTEXITCODE -ne 0) {
     Log "ERROR: setup-knowledge.ps1 failed (exit $LASTEXITCODE)."
     exit 1

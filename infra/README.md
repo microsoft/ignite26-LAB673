@@ -35,9 +35,9 @@ The background script reuses the foreground Azure CLI login, retrieves Search an
 | Index | Role |
 | --- | --- |
 | `cocoarynth-topics` | Eight topic vectors, labels, descriptions, memberships, and sitemap triples |
-| `cocoarynth-chunks` | 106 passages from 55 PDFs, with embeddings and a `domain` field for the four original document folders; the provenance index for the graph and topics |
-| `cocoarynth-graph` | Business triples extracted from those PDF passages under the checked-in OWL schema |
-| `cocoarynth-production`, `cocoarynth-sales`, `cocoarynth-policies` | The same passages grouped by `domain` for Part 1's document knowledge sources: production is origins plus quality (64), sales is logistics-retail (32), and policies (10) |
+| `cocoarynth-chunks` | 106 chunks from 55 PDFs, with embeddings and a `domain` field for the four original document folders; the provenance index for the graph and topics |
+| `cocoarynth-graph` | Business triples extracted from those PDF chunks under the checked-in OWL schema |
+| `cocoarynth-production`, `cocoarynth-sales`, `cocoarynth-policies` | The same chunks grouped by `domain` for Part 1's document knowledge sources: production is origins plus quality (64), sales is logistics-retail (32), and policies (10) |
 
 The bundle holds snapshots for the first three indexes. The restore script
 builds the three document-group indexes from the `cocoarynth-chunks` snapshot, so
@@ -48,7 +48,7 @@ ontologies from the OWL files. The Search service must have the November
 ontology private preview, including native GQL and inline-ontology knowledge
 sources. The Bicep template does not grant that access. Skillable setup does
 not use Python's `AzureCliCredential`; self-paced deployment retains its `azd`
-credential flow. The [lab notebooks](../src/notebooks/lab/) create the three
+credential flow. The [lab notebooks](../src/notebooks/) create the three
 document knowledge sources and the knowledge bases.
 
 The active snapshots are in `data/graph-data/`. Missing artifacts, invalid
@@ -101,7 +101,7 @@ bundle automatically:
 
    On Windows, use `.venv\Scripts\python.exe`. The live-indexing tool requires Python 3.11 or newer.
 3. Retain the eight capture files in `data/index-data/`. Chunk counts come from ingestion; don't edit them by hand.
-4. Rebuild `cocoarynth-chunks` from the PDF passage captures, preserving provenance and adding the document-group `domain`. Propose the business OWL from PDF text, then extract ontology-constrained triples with exact passage evidence. Do not feed `world/*.json` to either step.
+4. Rebuild `cocoarynth-chunks` from the PDF chunk captures, preserving provenance and adding the document-group `domain`. Propose the business OWL from PDF text, then extract ontology-constrained triples with exact chunk evidence. Do not feed `world/*.json` to either step.
 5. Recompute the topic hierarchy when the corpus changes. Consolidate its vectors, member-derived labels/descriptions, memberships, and sitemap triples into `cocoarynth-topics`; do not reuse an old native generation identity for changed inputs.
 6. Capture the three definitions and record sets, both OWL files, and extraction provenance in `data/graph-data/`. Update `manifest.json` to match their LF-normalized byte counts and SHA-256 checksums. Run `python .\infra\restore-graph-indexes.py --validate-only` before committing a replacement bundle.
 7. Against the intended preview-enabled lab service, run `.venv\Scripts\python.exe infra\create-knowledge.py`. Existing destinations with different data are rejected rather than overwritten.

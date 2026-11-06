@@ -10,9 +10,9 @@ main part of the lab.
 
 | Notebook | Focus |
 | --- | --- |
-| [Knowledge base and MR1](notebooks/lab/01-knowledge-base-and-mr1.ipynb) | Original documents, grounded answers, activity, and a measured speed comparison with MR1 |
-| [Entities and graphs](notebooks/lab/02-entities-and-graphs.ipynb) | Assertions and evidence, native GQL, provenance, and graph-backed retrieval |
-| [Topics](notebooks/lab/03-topics.ipynb) | Named hierarchy, coverage, topic-routed vectors, sitemap GQL, and graph-enabled topic retrieval |
+| [Knowledge base and MR1](notebooks/01-knowledge-base-and-mr1.ipynb) | Original documents, grounded answers, activity, and a measured speed comparison with MR1 |
+| [Entities and graphs](notebooks/02-entities-and-graphs.ipynb) | Assertions and evidence, native GQL, provenance, and graph-backed retrieval |
+| [Topics](notebooks/03-topics.ipynb) | Named hierarchy, coverage, topic-routed vectors, sitemap GQL, and graph-enabled topic retrieval |
 
 Each notebook loads settings from the root `.env` file and uses the
 `azure-search-documents` Python SDK directly. Setup restores six indexes:
@@ -31,10 +31,10 @@ three tabs:
 
 - **Graph ontology**: Entity types and relationships read from [the OWL file](../data/graph-data/cocoarynth.owl).
 - **Graph entities**: Search for an entity, expand its neighbors, and select an assertion to see its evidence.
-- **Topics**: Topic labels, descriptions, the preserved hierarchy, and member PDF passages grouped by document, with links to the original PDFs.
+- **Topics**: Topic labels, descriptions, the preserved hierarchy, and member PDF chunks grouped by document, with links to the original PDFs.
 
 Each panel starts with a "From" row that names the index or file its data comes
-from. Entity, fact, and passage rows also have a **Copy ID**
+from. Entity, fact, and chunk rows also have a **Copy ID**
 button, for looking up the same document in the portal's search explorer.
 
 Run it from the repository root with the same Python environment as the
