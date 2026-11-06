@@ -206,7 +206,7 @@ The Foundry IQ plugin generated these topics ahead of time. It clustered the chu
 ## Explore topics in the graph explorer
 
 1. In the graph explorer, select the **Topics** tab. If you closed the app, start it again as described in Part 2.
-2. Look at the coverage in the panel. Not every chunk was assigned to a topic.
+2. In the **Topics** panel on the right, compare **Assigned to a topic** with **Not assigned**. 97 of the 106 chunks belong to a topic, but 9 don't, so browsing by topic would never reach those 9.
 3. Broad topics are on the left, and narrower child topics are on the right. Each box has a label added from its member chunks; select it to read the description. There are four roots and four children, and two roots have no children.
 4. Select a topic to see its member chunks, grouped by document. Expand a chunk to read it, or select a document name to open the original PDF. Do the chunks have something in common? Labels describe the fixed groups; they do not change which chunks belong to a topic.
 
