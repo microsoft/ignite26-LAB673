@@ -43,6 +43,10 @@ Say `help me handle issues`.
 
 The agent groups open issues by risk, applies safe fixes with your permission, and leaves issue closure to you.
 
+## Technical setup and validation
+
+User-requested dependency installation and notebook or project tests are allowed separately from the README workflows. Follow the [technical setup and validation guidance](copilot-instructions.md#technical-setup-and-validation) for the shared `.venv` setup, declared dependency pins, and approved package feeds.
+
 ## Supported session types
 
 - Breakout (BRK)

@@ -3,8 +3,7 @@ set -eu
 
 repo_root=$(CDPATH= cd -- "$(dirname -- "$0")/../.." && pwd)
 cd "$repo_root"
-python3 -m venv .venv
-.venv/bin/python -m pip install --disable-pip-version-check -r src/notebooks/requirements.txt
+python3 infra/setup-venv.py
 .venv/bin/python infra/setup-env.py
 .venv/bin/python infra/setup-content-understanding.py
 

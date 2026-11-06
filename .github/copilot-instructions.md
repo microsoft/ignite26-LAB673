@@ -1,6 +1,6 @@
 # Microsoft Ignite 2026 repository instructions
 
-This repository is a Microsoft Ignite 2026 session template. Use the **Ignite 2026 repository agent** for setup.
+This repository is a Microsoft Ignite 2026 session template. Use the **Ignite 2026 repository agent** for the README initialization and finalization workflows.
 
 ## Workflows
 
@@ -20,7 +20,13 @@ Plus:
 - Use sentence case for Markdown headings.
 - Use session-owner language. Announce the section being worked on. Do not narrate patches, diagnostics, or editor internals.
 - Track answers within a workflow phase. Do not re-ask questions.
-- Do not choose runtimes, install packages, scaffold implementation code, or run project test suites.
+
+## Technical setup and validation
+
+- Package installation and execution of notebooks, project tests, linters, and setup scripts are allowed for user-requested technical setup or validation.
+- Use the existing project runtime and [`infra/setup-venv.py`](../infra/setup-venv.py) to prepare the isolated `.venv` from the [notebook requirements](../src/notebooks/requirements.txt). Preserve the declared dependency pins and approved package feeds.
+- Report failures and checks that were not run accurately. Keep credentials and notebook execution outputs out of commits.
+- Installing packages or running tests does not by itself authorize cloud provisioning, deployments, or changes to shared resources.
 
 ## Initialize scope
 
