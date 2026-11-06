@@ -11,14 +11,14 @@ main part of the lab.
 | Notebook | Focus |
 | --- | --- |
 | [Knowledge base and MR1](notebooks/lab/01-knowledge-base-and-mr1.ipynb) | Original documents, grounded answers, activity, and a measured speed comparison with MR1 |
-| [Entities and graphs](notebooks/lab/02-entities-and-graphs.ipynb) | Ontology, assertions and evidence, native GQL, provenance, and graph-backed retrieval |
+| [Entities and graphs](notebooks/lab/02-entities-and-graphs.ipynb) | Assertions and evidence, native GQL, provenance, and graph-backed retrieval |
 | [Topics](notebooks/lab/03-topics.ipynb) | Named hierarchy, coverage, topic-routed vectors, sitemap GQL, and graph-enabled topic retrieval |
 
 Each notebook loads settings from the root `.env` file and uses the
-`azure-search-documents` Python SDK directly. Setup restores seven indexes:
+`azure-search-documents` Python SDK directly. Setup restores six indexes:
 `cocoarynth-chunks`, `cocoarynth-topics`, `cocoarynth-graph`, and one index per
-document group (`cocoarynth-origins`, `cocoarynth-quality`,
-`cocoarynth-logistics-retail`, and `cocoarynth-policies`). Part 1 creates a
+document group (`cocoarynth-production`, `cocoarynth-sales`, and
+`cocoarynth-policies`). Part 1 creates a
 knowledge source for each document-group index. Setup also creates `cocoarynth-graph-knowledge-source` and `cocoarynth-topics-knowledge-source`
 with inline ontologies from the checked-in OWL files. The Search service must
 support the November ontology private preview.

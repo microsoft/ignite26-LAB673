@@ -80,14 +80,14 @@ class Diagram:
         )
         return x, x + width
 
-    def arrow(self, points, label=None, label_at=None, dashed=False):
+    def arrow(self, points, label=None, label_at=None, dashed=False, label_anchor="middle"):
         path = " ".join(f"{'M' if i == 0 else 'L'} {px} {py}" for i, (px, py) in enumerate(points))
         dash = ' stroke-dasharray="6 5"' if dashed else ""
         self.parts.append(
             f'<path d="{path}" fill="none" stroke="#495057" stroke-width="2"{dash} marker-end="url(#arrow)"/>'
         )
         if label:
-            self.text(*label_at, label, anchor="middle", color="#495057")
+            self.text(*label_at, label, anchor=label_anchor, color="#495057")
 
     def down(self, from_box, to_box, from_x=None, to_x=None, label=None, dashed=False):
         """Arrow from the bottom edge of one box to the type tag on top of another (centered by default)."""
@@ -97,7 +97,9 @@ class Diagram:
         x1 = to_x if to_x is not None else bx + bw / 2
         tag_left, tag_right = self.tags[to_box]
         y0, y1 = ay + ah, by - (TAG_HEIGHT / 2 if tag_left <= x1 <= tag_right else 0) - 2
-        self.arrow([(x0, y0), (x1, y1)], label=label, label_at=(max(x0, x1) + 60, (y0 + y1) / 2 - 8), dashed=dashed)
+        label_lines = label.count("\n") + 1 if label else 0
+        self.arrow([(x0, y0), (x1, y1)], label=label, dashed=dashed, label_anchor="start",
+                   label_at=(max(x0, x1) + 14, (y0 + y1) / 2 - label_lines * BODY_SIZE * LINE / 2))
 
     def left(self, from_box, to_box, label=None):
         """Arrow from the left edge of one box to the right edge of another, at the second box's middle."""
@@ -135,20 +137,19 @@ class Diagram:
         print(f"Wrote {path}")
 
 
-def notebook_01():
-    d = Diagram(1900, 600, "Notebook 01: two knowledge bases over four document indexes")
-    d.box("kb-standard", 40, 30, 900, 90, "cocoarynth-standard-knowledge-base", MODELS, kind="kb")
-    d.box("kb-mr1", 960, 30, 900, 90, "cocoarynth-mr1-knowledge-base", "MR1 only\nextractive data", kind="kb")
-    d.group("sources", 20, 215, 1860, 165)
-    counts = {"origins": 32, "quality": 32, "logistics-retail": 32, "policies": 10}
+def knowledge_base_diagram(name, title, kb, kb_body, arrow_label):
+    """One Part 1 knowledge base over the four document knowledge sources and their indexes."""
+    d = Diagram(1380, 640, title)
+    d.box("kb", 330, 30, 720, 90, kb, kb_body, kind="kb")
+    d.group("sources", 20, 255, 1340, 165)
+    counts = {"production": 64, "sales": 32, "policies": 10}
     for i, (domain, count) in enumerate(counts.items()):
-        x = 40 + i * 460
-        d.box(f"ks-{domain}", x, 250, 440, 80, f"cocoarynth-{domain}-knowledge-source", kind="ks")
-        d.box(f"index-{domain}", x, 450, 440, 80, f"cocoarynth-{domain}", f"{count} PDF passages\nwith text vectors", kind="index")
+        x = 40 + i * 440
+        d.box(f"ks-{domain}", x, 290, 420, 80, f"cocoarynth-{domain}-knowledge-source", kind="ks")
+        d.box(f"index-{domain}", x, 490, 420, 80, f"cocoarynth-{domain}", f"{count} PDF passages\nwith text vectors", kind="index")
         d.down(f"ks-{domain}", f"index-{domain}")
-    d.down("kb-standard", "sources", to_x=490)
-    d.down("kb-mr1", "sources", to_x=1410)
-    d.save("notebook-01")
+    d.down("kb", "sources", label=arrow_label)
+    d.save(name)
 
 
 def graph_notebook(name, title, kb, ks, owl, owl_body, index, index_body, link_label):
@@ -166,7 +167,16 @@ def graph_notebook(name, title, kb, ks, owl, owl_body, index, index_body, link_l
 
 
 if __name__ == "__main__":
-    notebook_01()
+    knowledge_base_diagram(
+        "notebook-01-standard", "Notebook 01: the standard knowledge base chooses which sources to search",
+        "cocoarynth-standard-knowledge-base", "MR1 + gpt-6-luna\nplans queries and writes a cited answer",
+        "chooses which sources to search",
+    )
+    knowledge_base_diagram(
+        "notebook-01-mr1", "Notebook 01: the MR1 knowledge base searches every source",
+        "cocoarynth-mr1-knowledge-base", "MR1 only\nreturns passages, not an answer",
+        "searches all three sources",
+    )
     graph_notebook(
         "notebook-02", "Notebook 02: the graph knowledge source and its ontology",
         "cocoarynth-graph-knowledge-base", "cocoarynth-graph-knowledge-source", "cocoarynth.owl", "13 classes\n13 relationships",

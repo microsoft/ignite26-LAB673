@@ -1,8 +1,8 @@
 """Restore the Cocoarynth lab indexes and their inline-ontology knowledge sources.
 
-The bundle holds three index snapshots. The four document-group indexes used in Part 1
-(origins, quality, logistics-retail, policies) are split from the chunk snapshot by domain,
-so they share its passages, chunk IDs and embeddings.
+The bundle holds three index snapshots. The three document-group indexes used in Part 1
+(production, sales, policies) are split from the chunk snapshot by its domain field, so they
+share its passages, chunk IDs and embeddings.
 """
 
 from __future__ import annotations
@@ -32,7 +32,12 @@ if TYPE_CHECKING:
 
 
 BUNDLE = Path(__file__).resolve().parents[1] / "data" / "graph-data"
-DOMAINS = ("origins", "quality", "logistics-retail", "policies")
+# Part 1 document groups, each made of one or more of the chunk snapshot's domain values
+DOCUMENT_GROUPS = {
+    "production": ("origins", "quality"),
+    "sales": ("logistics-retail",),
+    "policies": ("policies",),
+}
 SDK_VERSION = "12.1.0a20261027002"
 CLIENT_OPTIONS = {
     "retry_total": 0,
@@ -322,17 +327,18 @@ def load_bundle(prefix: str, owner: str | None) -> tuple[dict[str, Any], list[Sn
 def domain_snapshots(snapshots: list[Snapshot], prefix: str) -> list[Snapshot]:
     """Split the chunk snapshot into one index per document group, for Part 1's knowledge sources."""
     chunks = next(snapshot for snapshot in snapshots if snapshot.original_name == "cocoarynth-chunks")
-    require({record["domain"] for record in chunks.records} == set(DOMAINS),
-            "The chunk snapshot's domains differ from the four document groups.")
+    domains = [domain for group in DOCUMENT_GROUPS.values() for domain in group]
+    require({record["domain"] for record in chunks.records} == set(domains) and len(domains) == len(set(domains)),
+            "The chunk snapshot's domains differ from the document groups.")
     result = []
-    for domain in DOMAINS:
-        original = f"cocoarynth-{domain}"
+    for group, group_domains in DOCUMENT_GROUPS.items():
+        original = f"cocoarynth-{group}"
         name = f"{prefix}-{original}" if prefix else original
-        records = [record for record in chunks.records if record["domain"] == domain]
+        records = [record for record in chunks.records if record["domain"] in group_domains]
         definition = json.loads(json.dumps(chunks.definition))
         definition["name"] = name
         definition["description"] = definition["description"].replace(
-            "106 PDF passages", f"The {len(records)} {domain} PDF passages from cocoarynth-chunks", 1)
+            "106 PDF passages", f"The {len(records)} {group} PDF passages from cocoarynth-chunks", 1)
         result.append(Snapshot(original, name, chunks.key, definition, records))
     return result
 

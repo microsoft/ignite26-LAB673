@@ -11,7 +11,7 @@ This guide provisions the Cocoarynth LAB673 environment without Skillable, Fabri
 
 ## Provision resources
 
-Provisioning restores seven indexes from `data/graph-data/`: `cocoarynth-topics`, `cocoarynth-chunks`, `cocoarynth-graph`, and four document-group indexes (`cocoarynth-origins`, `cocoarynth-quality`, `cocoarynth-logistics-retail`, and `cocoarynth-policies`) split from the chunk snapshot. It also creates graph-enabled knowledge sources for the business graph and topic sitemap from the checked-in OWL files. No document ingestion is needed. The notebooks create the four document knowledge sources and knowledge bases. Maintainers who change the documents can [rebuild the snapshots](infra/README.md#rebuild-the-index-snapshots).
+Provisioning restores six indexes from `data/graph-data/`: `cocoarynth-topics`, `cocoarynth-chunks`, `cocoarynth-graph`, and three document-group indexes (`cocoarynth-production`, `cocoarynth-sales`, and `cocoarynth-policies`) split from the chunk snapshot. It also creates graph-enabled knowledge sources for the business graph and topic sitemap from the checked-in OWL files. No document ingestion is needed. The notebooks create the three document knowledge sources and knowledge bases. Maintainers who change the documents can [rebuild the snapshots](infra/README.md#rebuild-the-index-snapshots).
 
 ```sh
 git clone https://github.com/microsoft/ignite26-LAB673.git
@@ -43,7 +43,7 @@ Use a model supported by your region, subscription, and Content Understanding an
 
 ## Run the notebooks
 
-All seven indexes and both graph-enabled knowledge sources are included in setup; no separate graph restoration is needed.
+All six indexes and both graph-enabled knowledge sources are included in setup; no separate graph restoration is needed.
 
 Open the [lab notebooks](src/notebooks/lab/) in VS Code, select the root `.venv` as the kernel, and run the cells in order. See the [source guide](src/README.md) for what the notebooks create.
 

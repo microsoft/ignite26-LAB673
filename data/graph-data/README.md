@@ -53,7 +53,7 @@ field for PDF provenance.
 ## Restoration and retained captures
 
 [Lab provisioning](../../infra/README.md) restores all three indexes, splits the
-chunk snapshot into four document-group indexes for Part 1, and creates both
+chunk snapshot into three document-group indexes for Part 1, and creates both
 graph-enabled knowledge sources by default. Offline validation needs only Python:
 
 ```powershell
