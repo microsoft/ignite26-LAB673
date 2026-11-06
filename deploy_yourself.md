@@ -1,6 +1,6 @@
 # Deploy to your own Azure subscription
 
-This guide provisions the Cocoarynth LAB673 environment without Skillable, Fabric IQ, or Work IQ. The [lab notebooks](src/notebooks/lab/) use Cocoarynth's origin, quality, logistics and retail, and policy records.
+This guide provisions the Cocoarynth LAB673 environment without Skillable, Fabric IQ, or Work IQ. The [lab notebooks](src/notebooks/) use Cocoarynth's origin, quality, logistics and retail, and policy records.
 
 ## Prerequisites
 
@@ -46,7 +46,7 @@ Use a model supported by your region, subscription, and Content Understanding an
 
 All six indexes and both graph-enabled knowledge sources are included in setup; no separate graph restoration is needed.
 
-Open the [lab notebooks](src/notebooks/lab/) in VS Code, select the root `.venv` as the kernel, and run the cells in order. See the [source guide](src/README.md) for what the notebooks create.
+Open the [lab notebooks](src/notebooks/) in VS Code, select the root `.venv` as the kernel, and run the cells in order. See the [source guide](src/README.md) for what the notebooks create.
 
 ## Cleanup
 

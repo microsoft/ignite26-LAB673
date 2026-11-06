@@ -13,7 +13,7 @@ The lab corpus is Cocoarynth Chocolate Works, a fictional bean-to-bar chocolate 
 - `index-data/`: the original four-domain ingestion captures, retained as maintainer source artifacts.
 - `graph-data/`: the active three-index restore bundle, OWL files, and extraction provenance.
 
-Provisioning restores `cocoarynth-chunks`, `cocoarynth-topics`, and `cocoarynth-graph` from the [active bundle](graph-data/README.md), without running Content Understanding or inference. The chunk index combines the 106 captured passages from all 55 PDFs and adds a `domain` filter. Their text, IDs, citation fields, and embeddings are preserved. After changing the documents, [rebuild the snapshots](../infra/README.md#rebuild-the-index-snapshots).
+Provisioning restores `cocoarynth-chunks`, `cocoarynth-topics`, and `cocoarynth-graph` from the [active bundle](graph-data/README.md), without running Content Understanding or inference. The chunk index combines the 106 captured chunks from all 55 PDFs and adds a `domain` filter. Their text, IDs, citation fields, and embeddings are preserved. After changing the documents, [rebuild the snapshots](../infra/README.md#rebuild-the-index-snapshots).
 
 ## Graph index snapshots
 

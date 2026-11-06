@@ -22,7 +22,7 @@ TITLE_SIZE, BODY_SIZE, TAG_SIZE, LINE = 19, 15, 12, 1.3
 TAG_HEIGHT = TAG_SIZE + 8
 TAG_ROOM = 18  # extra height at the top of each box so the text clears the type tag
 MODELS = "MR1 + gpt-6-luna\nanswer synthesis"
-CHUNKS_BODY = "106 PDF passages\nwith text vectors"
+CHUNKS_BODY = "106 PDF chunks\nwith text vectors"
 
 
 class Diagram:
@@ -146,7 +146,7 @@ def knowledge_base_diagram(name, title, kb, kb_body, arrow_label):
     for i, (domain, count) in enumerate(counts.items()):
         x = 40 + i * 440
         d.box(f"ks-{domain}", x, 290, 420, 80, f"cocoarynth-{domain}-knowledge-source", kind="ks")
-        d.box(f"index-{domain}", x, 490, 420, 80, f"cocoarynth-{domain}", f"{count} PDF passages\nwith text vectors", kind="index")
+        d.box(f"index-{domain}", x, 490, 420, 80, f"cocoarynth-{domain}", f"{count} PDF chunks\nwith text vectors", kind="index")
         d.down(f"ks-{domain}", f"index-{domain}")
     d.down("kb", "sources", label=arrow_label)
     d.save(name)
@@ -174,7 +174,7 @@ if __name__ == "__main__":
     )
     knowledge_base_diagram(
         "notebook-01-mr1", "Notebook 01: the MR1 knowledge base searches every source",
-        "cocoarynth-mr1-knowledge-base", "MR1 only\nreturns passages, not an answer",
+        "cocoarynth-mr1-knowledge-base", "MR1 only\nreturns chunks, not an answer",
         "searches all three sources",
     )
     graph_notebook(

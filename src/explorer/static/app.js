@@ -24,7 +24,7 @@ let sources = {};
 
 const SOURCE_KINDS = { index: "Index", file: "File" };
 
-// One row per resource: "From" or "Passages", a pill colored by resource kind, and optional extras
+// One row per resource: "From" or "Chunks", a pill colored by resource kind, and optional extras
 function sourceRow(label, kind, name, extra = "") {
   return `<div class="source-row"><span class="source-label">${escapeHtml(label)}</span>
     <span class="source-pill ${kind}"><span class="source-kind">${SOURCE_KINDS[kind]}</span>${escapeHtml(name)}</span>${extra}</div>`;
@@ -39,7 +39,7 @@ function copyButton(label, value) {
   return `<button class="link" data-copy="${escapeHtml(value)}" title="${escapeHtml(value)}">${escapeHtml(label)}</button>`;
 }
 
-function passageSource(chunkId) {
+function chunkSource(chunkId) {
   return sourceBlock(sourceRow("From", "index", sources.chunks_index, copyButton("Copy ID", chunkId)));
 }
 
@@ -393,9 +393,9 @@ async function showTypeInGraph(typeName) {
 
 async function showGraphIntro() {
   panel.innerHTML = `<h2>Graph entities</h2>
-    ${sourceBlock(sourceRow("From", "index", sources.graph_index), sourceRow("Passages", "index", sources.chunks_index))}
+    ${sourceBlock(sourceRow("From", "index", sources.graph_index), sourceRow("Chunks", "index", sources.chunks_index))}
     <p class="muted">Each circle is an entity, colored by its type. Each arrow is a fact: subject → predicate → object.</p>
-    <p class="muted">Select an entity to see its properties and add its neighbors. Select an arrow to see the passages that support it. Scroll to zoom, and drag to move.</p>
+    <p class="muted">Select an entity to see its properties and add its neighbors. Select an arrow to see the chunks that support it. Scroll to zoom, and drag to move.</p>
     <div id="search-results"></div>
     <h3>Browse by type</h3>
     <div id="type-list"><p class="muted">Loading…</p></div>`;
@@ -574,11 +574,11 @@ async function showFact(factId) {
       <tr><td>Predicate</td><td>${escapeHtml(fact.predicate)}</td></tr>
       <tr><td>Object</td><td>${escapeHtml(fact.object)} ${fact.object_id ? typeBadge(fact.object_type) + `<br><code>${escapeHtml(fact.object_id)}</code>` : `<span class="muted">(literal value)</span>`}</td></tr>
     </table>
-    <h3>Evidence from ${supports.length} passage${supports.length === 1 ? "" : "s"}</h3>
+    <h3>Evidence from ${supports.length} chunk${supports.length === 1 ? "" : "s"}</h3>
     ${supports.map(({ evidence_quotes, source }) => `
       <p><strong>${escapeHtml(source?.title ?? "Unknown source")}</strong>${source ? `, pages ${escapeHtml(source.page_number_from)}–${escapeHtml(source.page_number_to)}` : ""}</p>
-      ${evidence_quotes.length ? `<p class="muted">Exact excerpts:</p><div class="passage">${evidence_quotes.map(escapeHtml).join("\n\n")}</div>` : ""}
-      ${source ? `<details><summary>Full passage</summary>${passageSource(source.chunk_id)}<div class="passage">${escapeHtml(source.chunk)}</div></details>` : ""}`).join("")}`;
+      ${evidence_quotes.length ? `<p class="muted">Exact excerpts:</p><div class="chunk-text">${evidence_quotes.map(escapeHtml).join("\n\n")}</div>` : ""}
+      ${source ? `<details><summary>Full chunk text</summary>${chunkSource(source.chunk_id)}<div class="chunk-text">${escapeHtml(source.chunk)}</div></details>` : ""}`).join("")}`;
   highlightElement(graphState.cy, graphState.cy.getElementById(factId));
 }
 
@@ -589,7 +589,7 @@ async function showFact(factId) {
 const topicState = { data: null, selected: null };
 
 async function showTopics() {
-  toolbar.innerHTML = `<span class="hint">Broad topics are on the left and their narrower child topics are on the right. Select a topic to read its member passages.</span>`;
+  toolbar.innerHTML = `<span class="hint">Broad topics are on the left and their narrower child topics are on the right. Select a topic to read its member chunks.</span>`;
   resetCanvas();
   setStatus("Loading topics…");
   try {
@@ -601,10 +601,10 @@ async function showTopics() {
   const { topics, coverage } = topicState.data;
   setStatus(`${topics.length} topics`);
   panel.innerHTML = `<h2>Topics</h2>
-    ${sourceBlock(sourceRow("From", "index", sources.topics_index), sourceRow("Passages", "index", sources.chunks_index))}
-    <p class="muted">Topics group passages with similar embeddings. Labels and descriptions were added from each topic's unchanged member passages. Some broad topics have no narrower children.</p>
+    ${sourceBlock(sourceRow("From", "index", sources.topics_index), sourceRow("Chunks", "index", sources.chunks_index))}
+    <p class="muted">Topics group chunks with similar embeddings. Labels and descriptions were added from each topic's unchanged member chunks. Some broad topics have no narrower children.</p>
     <table>
-      <tr><td>Source passages</td><td>${escapeHtml(coverage.source_document_count)}</td></tr>
+      <tr><td>Source chunks</td><td>${escapeHtml(coverage.source_document_count)}</td></tr>
       <tr><td>Assigned to a topic</td><td>${escapeHtml(coverage.assigned_node_count)}</td></tr>
       <tr><td>Not assigned</td><td>${escapeHtml(coverage.unassigned_source_document_count)}</td></tr>
     </table>
@@ -612,10 +612,10 @@ async function showTopics() {
     <p class="muted">The topic hierarchy is also stored as a navigation graph, called the sitemap, so a knowledge base can traverse it with graph search. Its schema has three relationships:</p>
     <table>
       <tr><td>${typeBadge("Topic")} → <strong>hasSubtopic</strong> → ${typeBadge("Topic")}</td></tr>
-      <tr><td>${typeBadge("Topic")} → <strong>hasMember</strong> → ${typeBadge("Passage")}</td></tr>
-      <tr><td>${typeBadge("Document")} → <strong>hasTextChunk</strong> → ${typeBadge("Passage")}</td></tr>
+      <tr><td>${typeBadge("Topic")} → <strong>hasMember</strong> → ${typeBadge("TextChunk")}</td></tr>
+      <tr><td>${typeBadge("Document")} → <strong>hasTextChunk</strong> → ${typeBadge("TextChunk")}</td></tr>
     </table>
-    <p class="muted">The arrows in the diagram are <strong>hasSubtopic</strong>. Select a topic to see its <strong>hasMember</strong> passages, grouped by their document.</p>`;
+    <p class="muted">The arrows in the diagram are <strong>hasSubtopic</strong>. Select a topic to see its <strong>hasMember</strong> chunks, grouped by their document.</p>`;
   drawTopicTree(topics);
 }
 
@@ -649,11 +649,11 @@ function drawTopicTree(topics) {
     const title = svgEl("text", { x: 12, y: 22, style: "font-size: 15px; font-weight: 600" }, group);
     title.textContent = shorten(name, 34);
     const count = svgEl("text", { x: 12, y: 44, style: "font-size: 13px" }, group);
-    count.textContent = `${topic.member_count} passages · ${topic.is_terminal ? "terminal topic" : "parent topic"}`;
+    count.textContent = `${topic.member_count} chunks · ${topic.is_terminal ? "terminal topic" : "parent topic"}`;
     const sample = svgEl("text", { x: 12, y: 62, style: "font-size: 13px" }, group);
     sample.textContent = shorten((topic.sample_titles[0] || "").replace(/\.pdf$/, ""), 40);
     svgEl("title", {}, group).textContent = `${name}\n${topic.description}`;
-    group.setAttribute("aria-label", `${name}, level ${topic.level}, ${topic.member_count} passages`);
+    group.setAttribute("aria-label", `${name}, level ${topic.level}, ${topic.member_count} chunks`);
     topic.group = group;
     group.addEventListener("click", () => showTopic(topic));
     group.addEventListener("keydown", (event) => {
@@ -668,9 +668,9 @@ async function showTopic(topic) {
   for (const t of topicState.data.topics) t.group?.classList.toggle("selected", t === topic);
   const name = topic.label || `Topic ${topic.community_id.slice(0, 8)}`;
   const header = `<h2>${escapeHtml(name)}</h2>${typeBadge(topic.parent_id ? "Child topic" : "Parent topic")}
-    ${sourceBlock(sourceRow("From", "index", sources.topics_index), sourceRow("Passages", "index", sources.chunks_index))}
+    ${sourceBlock(sourceRow("From", "index", sources.topics_index), sourceRow("Chunks", "index", sources.chunks_index))}
     <p>${escapeHtml(topic.description)}</p>`;
-  panel.innerHTML = `${header}<p class="muted">Loading member passages…</p>`;
+  panel.innerHTML = `${header}<p class="muted">Loading member chunks…</p>`;
   let members;
   try {
     members = await api(`/api/topic-members?id=${encodeURIComponent(topic.community_id)}&generation=${encodeURIComponent(topicState.data.generation_id)}`);
@@ -682,18 +682,18 @@ async function showTopic(topic) {
   for (const member of members) documents.set(member.blob_path, [...(documents.get(member.blob_path) || []), member]);
   const sorted = [...documents.entries()].sort(([, a], [, b]) => a[0].title.localeCompare(b[0].title));
   panel.innerHTML = `${header}
-    <h3>${members.length} member passages, from ${documents.size} documents</h3>
-    <p><button class="link" id="toggle-passages">Expand all passages</button></p>
-    ${sorted.map(([path, passages]) => `
-      <p class="document"><a href="/documents${escapeHtml(path)}" target="_blank" rel="noopener">${escapeHtml(passages[0].title)}</a>
-        <span class="muted">${passages.length} passage${passages.length === 1 ? "" : "s"}</span></p>
-      ${passages.map((passage, i) => `<details class="member"><summary>Passage ${i + 1}</summary>${passageSource(passage.chunk_id)}<div class="passage">${escapeHtml(passage.chunk)}</div></details>`).join("")}`).join("")}`;
-  const toggle = document.getElementById("toggle-passages");
+    <h3>${members.length} member chunks, from ${documents.size} documents</h3>
+    <p><button class="link" id="toggle-chunks">Expand all chunks</button></p>
+    ${sorted.map(([path, chunks]) => `
+      <p class="document"><a href="/documents${escapeHtml(path)}" target="_blank" rel="noopener">${escapeHtml(chunks[0].title)}</a>
+        <span class="muted">${chunks.length} chunk${chunks.length === 1 ? "" : "s"}</span></p>
+      ${chunks.map((member, i) => `<details class="member"><summary>Chunk ${i + 1}</summary>${chunkSource(member.chunk_id)}<div class="chunk-text">${escapeHtml(member.chunk)}</div></details>`).join("")}`).join("")}`;
+  const toggle = document.getElementById("toggle-chunks");
   toggle.addEventListener("click", () => {
-    const passages = panel.querySelectorAll("details.member");
-    const expand = [...passages].some((details) => !details.open);
-    passages.forEach((details) => { details.open = expand; });
-    toggle.textContent = expand ? "Collapse all passages" : "Expand all passages";
+    const chunks = panel.querySelectorAll("details.member");
+    const expand = [...chunks].some((details) => !details.open);
+    chunks.forEach((details) => { details.open = expand; });
+    toggle.textContent = expand ? "Collapse all chunks" : "Expand all chunks";
   });
 }
 

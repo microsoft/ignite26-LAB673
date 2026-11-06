@@ -45,7 +45,7 @@ try {
     Write-LabLog "Resources deployed. Preparing the lab environment."
     & (Join-Path $PSScriptRoot "setup-knowledge.ps1") `
         -SearchAdminKey $searchAdminKey `
-        -OpenAIKey $openaiKey *>> $logFile
+        -OpenAIKey $openaiKey *>&1 | Out-File -FilePath $logFile -Append -Encoding utf8
     Write-LabLog "Lab setup completed successfully."
 } catch {
     Write-LabLog "Lab setup FAILED: $($_.Exception.Message)"

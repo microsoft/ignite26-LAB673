@@ -10,14 +10,14 @@ At any point during the lab, if you need to sign in to the virtual machine (Wind
 
 If you need to sign in the virtual machine, use the following credentials:
 
-- **User name**: +++@lab.VirtualMachine(Win11-Pro-Base).Username+++  
-- **Password**: +++@lab.VirtualMachine(Win11-Pro-Base).Password+++
+- **User name**: +++@lab.VirtualMachine(ILL344:Win11).Username+++
+- **Password**: +++@lab.VirtualMachine(ILL344:Win11).Password+++
 
 ### Sign into Azure & Microsoft 365
 
 If you need to sign in to any Azure or Microsoft 365 apps, use the following credentials:
 
-- **Username**: +++@lab.CloudPortalCredential(User1).Username+++  
+- **Username**: +++@lab.CloudPortalCredential(User1).Username+++
 - **Temporary Access Pass**: +++@lab.CloudPortalCredential(User1).AccessToken+++
 
 </details>
@@ -30,14 +30,14 @@ You'll work through three notebooks:
 
 1. **Knowledge bases and Microsoft Retriever 1 (MR1)**: Ask a grounded question over three document indexes, follow the citations, and compare standard agentic retrieval with the faster MR1 retriever.
 2. **Entities and graphs**: Follow a chocolate batch back to the farms that grew its cacao, using an ontology, graph queries, and provenance.
-3. **Topics**: Browse labeled groups of passages, compare topic routing with direct vector search, and query the sitemap with GQL and a graph-enabled knowledge source.
+3. **Topics**: Browse labeled groups of chunks, compare topic routing with direct vector search, and query the sitemap with GQL and a graph-enabled knowledge source.
 
 ## Sign into Windows
 
 In the virtual machine, sign into Windows using the following credentials:
 
-- **User name**: +++@lab.VirtualMachine(Win11-Pro-Base).Username+++  
-- **Password**: +++@lab.VirtualMachine(Win11-Pro-Base).Password+++
+- **User name**: ++@lab.VirtualMachine(ILL344:Win11).Username++ 
+- **Password**: +++@lab.VirtualMachine(ILL344:Win11).Password+++
 
 ## Open the project folder in Visual Studio Code
 
@@ -58,10 +58,10 @@ All required Azure services have already been provisioned for you.
 <details>
 <summary><strong>📋 What's pre-configured (click to expand for details)</strong></summary>
 
-- **Pre-processed data**: The Foundry IQ agent plugin processed the 55 Cocoarynth PDFs ahead of time. It split them into passages with embeddings, extracted an entity graph and its ontology, and grouped the passages into topics. Setup restored its output into the indexes below.
+- **Pre-processed data**: The Foundry IQ agent plugin processed the 55 Cocoarynth PDFs ahead of time. It split them into chunks (pieces of text such as a section, a table, or a short page) with embeddings, extracted an entity graph and its ontology, and grouped the chunks into topics. Setup restored its output into the indexes below.
 - **Foundry IQ** with six pre-created indexes:
-  - **cocoarynth-production**, **cocoarynth-sales**, and **cocoarynth-policies**: The PDF passages for each document group, with embeddings
-  - **cocoarynth-chunks**: All 106 passages from the 55 original PDFs in one index, which the graph and topics link to as evidence
+  - **cocoarynth-production**, **cocoarynth-sales**, and **cocoarynth-policies**: The PDF chunks for each document group, with embeddings
+  - **cocoarynth-chunks**: All 106 chunks from the 55 original PDFs in one index, which the graph and topics link to as evidence
   - **cocoarynth-graph**: PDF-supported business triples constrained by the checked-in OWL ontology
   - **cocoarynth-topics**: Topic vectors, labels, descriptions, memberships, and sitemap relationships
 - **Graph-enabled knowledge sources** for the business graph and topic sitemap, using the November inline-ontology private preview
@@ -101,20 +101,23 @@ In this part, you'll look at the search indexes in the Azure portal, then use a 
 ## Explore the indexes in the Azure portal
 
 1. In your Foundry IQ service, select **Search management** > **Indexes** from the left pane.
-2. You should see three indexes, each with a nonzero document count. Each one holds the PDF passages for one group of documents:
+2. You should see 6 indexes, each with a nonzero document count. For this step, we are using these 3 indexes that store chunks from PDF documents:
    - **cocoarynth-production**: farm and harvest records through factory batch records
    - **cocoarynth-sales**: shipping, retailers, and customers
    - **cocoarynth-policies**: company policies
 
-   You'll also see **cocoarynth-chunks**, **cocoarynth-graph**, and **cocoarynth-topics**. You'll use those in Parts 2 and 3.
+   You'll also see **cocoarynth-chunks**, **cocoarynth-graph**, and **cocoarynth-topics**. You'll use those later.
 3. Select **cocoarynth-policies** to open it in **Search explorer**.
-4. Enter +++organic seal+++ in the search box and select **Search**. Each result is a PDF passage with *title*, *blob_path*, and *chunk* fields. The top result is the label and marketing claims policy.
-5. Open **cocoarynth-production** and search for +++EC26-0811+++. This is a chocolate batch code that you'll trace back to its farms in Part 2.
-6. Select the **Fields** tab to see how the index is structured. Notice the *chunk* text field and the vector field that holds its embedding.
+4. Enter +++organic seal+++ in the search box and select **Search**. The results are JSON, with two main parts:
+   - **@search.answers** comes first. The semantic ranker picked short extracts that it thinks directly answer the query. Each answer's *key* is the ID of the chunk it came from.
+   - **value** lists the matching chunks, best first. Each one is a chunk of a PDF: its *chunk* field holds the chunk's text, and *title* and *blob_path* identify the PDF it came from. *@search.rerankerScore* shows how relevant the semantic ranker judged the chunk, from 0 to 4, and *@search.captions* highlights the most relevant sentences.
+
+   Scroll down to **value**. The top chunk is from the label and marketing claims policy.
+5. Select the **Fields** tab to see how the index is structured. Notice the *chunk* text field and the **text_vector** field that holds its embedding.
 
 ## Run the Python notebook
 
-1. In Visual Studio Code, open **src/notebooks/lab/01-knowledge-base-and-mr1.ipynb**.
+1. In Visual Studio Code, open **src/notebooks/01-knowledge-base-and-mr1.ipynb**.
 2. Run each cell in order. When prompted to select a kernel, select **Python Environments** and then **.venv**.
 3. Follow the instructions in the notebook.
 
@@ -136,9 +139,9 @@ Select **Next** to continue to entities and graphs.
 
 # Part 2: Entities and graphs
 
-A Pantry Lane customer has a chocolate wrapper with batch code **EC26-0811** and wants to know which farms grew its cacao. A single passage can mention a batch or a farm, but a graph makes the connection explicit: **Batch → BeanLot ← Farm**.
+A Pantry Lane customer has a chocolate wrapper with batch code **EC26-0811** and wants to know which farms grew its cacao. A single chunk can mention a batch or a farm, but a graph makes the connection explicit: **Batch → BeanLot ← Farm**.
 
-The Foundry IQ agent plugin built this graph from the PDFs ahead of time. It proposed an ontology, then extracted the entities and relationships that fit it, each linked to the passage it came from.
+The Foundry IQ agent plugin built this graph from the PDFs ahead of time. It proposed an ontology, then extracted the entities and relationships that fit it, each linked to the chunk it came from.
 
 The Azure portal doesn't show graphs yet, so this lab includes a small web app, the **Cocoarynth graph explorer**, for looking at the graph visually.
 
@@ -163,7 +166,7 @@ The **Graph ontology** tab shows the graph's schema. Each circle is an entity ty
 1. Select the **Graph entities** tab. It opens with batch **EC26-0811** and the entities directly connected to it.
 2. Look at the batch-code property and the **madeFrom** relationship. The compact graph contains selected facts, not every detail in the documents.
 3. Select the **EC26-L07** bean lot circle to add its neighbors to the diagram. Find the two farms that contributed to it.
-4. Select a **contributedTo** arrow, or select it in the panel's list of relationships. The panel shows the assertion, exact evidence excerpts, and the original PDF passage it came from.
+4. Select a **contributedTo** arrow, or select it in the panel's list of relationships. The panel shows the assertion, exact evidence excerpts, and the original PDF chunk it came from.
 5. Compare the farm names with [the cooperative's collection tickets](../data/cocoarynth/documents/cocoarynth-origins/boletas-acopio-rio-claro-2026.pdf). The structured JSON used to generate the PDFs is not graph evidence.
 
 ## Read the ontology file
@@ -175,13 +178,13 @@ When the Foundry IQ agent plugin processed the documents, it came up with the on
    - Each `owl:Class` element is an entity type, with an `rdfs:label` and an `rdfs:comment` that describes it. You'll see entity types like *Batch*, *BeanLot*, and *Farm*.
    - Each `owl:ObjectProperty` element is a relationship. Its `rdfs:domain` is the subject type and its `rdfs:range` is the object type. You'll see relationships like *madeFrom*, from *Batch* to *BeanLot*, and *contributedTo*, from *Farm* to *BeanLot*.
    - Each `owl:DatatypeProperty` element is a property with a plain value, like the *batchCode* of a *Batch*.
-   - Each `rdfs:seeAlso` links to the PDF passage that the declaration is based on.
+   - Each `rdfs:seeAlso` links to the PDF chunk that the declaration is based on.
 
 ## Run the notebook
 
 In the notebook, you'll query the graph directly with GQL, then see how a knowledge base uses the graph to answer a question.
 
-1. In Visual Studio Code, open **src/notebooks/lab/02-entities-and-graphs.ipynb**.
+1. In Visual Studio Code, open **src/notebooks/02-entities-and-graphs.ipynb**.
 2. Run each cell in order, using the same **.venv** kernel.
 3. Follow the instructions in the notebook.
 
@@ -196,16 +199,16 @@ Select **Next** to continue to **Topics**.
 
 # Part 3: Topics
 
-An entity graph shows how specific things are connected. Topics group related passages so you can explore a broader area of the documents.
+An entity graph shows how specific things are connected. Topics group related chunks so you can explore a broader area of the documents.
 
-The Foundry IQ agent plugin generated these topics ahead of time. It clustered the passage embeddings into a two-level hierarchy, then labeled and described each topic from its member passages.
+The Foundry IQ agent plugin generated these topics ahead of time. It clustered the chunk embeddings into a two-level hierarchy, then labeled and described each topic from its member chunks.
 
 ## Explore topics in the graph explorer
 
 1. In the graph explorer, select the **Topics** tab. If you closed the app, start it again as described in Part 2.
-2. Look at the coverage in the panel. Not every passage was assigned to a topic.
-3. Broad topics are on the left, and narrower child topics are on the right. Each box has a label added from its member passages; select it to read the description. There are four roots and four children, and two roots have no children.
-4. Select a topic to see its member passages, grouped by document. Expand a passage to read it, or select a document name to open the original PDF. Do the passages have something in common? Labels describe the fixed groups; they do not change which passages belong to a topic.
+2. Look at the coverage in the panel. Not every chunk was assigned to a topic.
+3. Broad topics are on the left, and narrower child topics are on the right. Each box has a label added from its member chunks; select it to read the description. There are four roots and four children, and two roots have no children.
+4. Select a topic to see its member chunks, grouped by document. Expand a chunk to read it, or select a document name to open the original PDF. Do the chunks have something in common? Labels describe the fixed groups; they do not change which chunks belong to a topic.
 
 ## Read the sitemap ontology file
 
@@ -213,13 +216,13 @@ The Foundry IQ agent plugin also saved the topic hierarchy as a navigation graph
 
 1. In Visual Studio Code, open **data/graph-data/cocoarynth-sitemap.owl**. Like **cocoarynth.owl**, it's an OWL file written as XML, so it uses the same kinds of elements.
 2. Look through its elements:
-   - The `owl:Class` elements are its three entity types: *Topic*, *Document*, and *TextChunk*, a passage from a PDF.
+   - The `owl:Class` elements are its three entity types: *Topic*, *Document*, and *TextChunk*, a chunk of a PDF.
    - The `owl:ObjectProperty` elements are its three relationships: *hasSubtopic*, from *Topic* to *Topic*; *hasMember*, from *Topic* to *TextChunk*; and *hasTextChunk*, from *Document* to *TextChunk*.
-   - The `owl:DatatypeProperty` elements are plain-value properties, like a topic's *description* and a passage's *chunkId*, which matches its key in **cocoarynth-chunks**.
+   - The `owl:DatatypeProperty` elements are plain-value properties, like a topic's *description* and a chunk's *chunkId*, which matches its key in **cocoarynth-chunks**.
 
 ## Run the notebook
 
-1. In Visual Studio Code, open **src/notebooks/lab/03-topics.ipynb**.
+1. In Visual Studio Code, open **src/notebooks/03-topics.ipynb**.
 2. Run each cell in order, using the same **.venv** kernel.
 3. Follow the instructions in the notebook.
 
@@ -241,10 +244,10 @@ You've completed the lab on exploring Foundry IQ knowledge bases. You:
 
 | Need | Good starting point |
 | --- | --- |
-| Ground a direct question in original passages | Standard knowledge base |
+| Ground a direct question in original documents | Standard knowledge base |
 | Respond quickly when the app already knows which source to use | Microsoft Retriever 1 (MR1) |
 | Follow explicit relationships across records | Entity graph and GQL |
-| Explore groups of related passages and navigate their sitemap | Topics and sitemap GQL |
+| Explore groups of related chunks and navigate their sitemap | Topics and sitemap GQL |
 
 ## Continue learning
 

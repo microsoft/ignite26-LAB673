@@ -91,7 +91,7 @@ def graph_view(rows):
         nodes.setdefault(row["subject_id"], {"id": row["subject_id"], "name": row["subject"], "type": row["subject_type"]})
         if row.get("object_id"):
             nodes.setdefault(row["object_id"], {"id": row["object_id"], "name": row["object"], "type": row["object_type"]})
-            # One fact can be asserted by several passages; show it as one edge
+            # One fact can be asserted by several chunks; show it as one edge
             edge = edges.setdefault(row["fact_id"], {
                 "id": row["fact_id"], "source": row["subject_id"], "target": row["object_id"],
                 "predicate": row["predicate"], "evidence_count": 0,
@@ -139,7 +139,7 @@ def get_catalog():
 
 
 def get_evidence(fact_id):
-    """Return a fact and every passage that supports it."""
+    """Return a fact and every chunk that supports it."""
     assertions = [
         dict(row) for row in client(GRAPH_INDEX).search(
             search_text="*", filter=f"fact_id eq {odata(fact_id)}", select=ASSERTION_FIELDS, top=100,
