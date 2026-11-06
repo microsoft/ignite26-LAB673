@@ -148,9 +148,10 @@ The Azure portal doesn't show graphs yet, so this lab includes a small web app, 
 ## Start the graph explorer
 
 1. In Visual Studio Code, select **Terminal** > **New Terminal**.
+2. Wait a few seconds for the Python virtual environment to be activated in the terminal.
 2. Run this command to start the app:
 
-    +++.venv\Scripts\python.exe src\explorer\app.py+++
+    +++python src\explorer\app.py+++
 
 3. The app opens in your browser at +++http://localhost:8765+++. If it doesn't, open that address yourself. Keep the terminal running for the rest of the lab.
 
@@ -164,7 +165,7 @@ The **Graph ontology** tab shows the graph's schema. Each circle is an entity ty
 ## Explore the graph
 
 1. Select the **Graph entities** tab. It opens with batch **EC26-0811** and the entities directly connected to it.
-2. Look at the batch-code property and the **madeFrom** relationship. The compact graph contains selected facts, not every detail in the documents.
+2. In the panel, look at the **batchCode** property and the **madeFrom** relationship. The compact graph contains selected facts, not every detail in the documents.
 3. Select the **EC26-L07** bean lot circle to add its neighbors to the diagram. Find the two farms that contributed to it.
 4. Select a **contributedTo** arrow, or select it in the panel's list of relationships. The panel shows the assertion, exact evidence excerpts, and the original PDF chunk it came from.
 5. Compare the farm names with [the cooperative's collection tickets](../data/cocoarynth/documents/cocoarynth-origins/boletas-acopio-rio-claro-2026.pdf). The structured JSON used to generate the PDFs is not graph evidence.
