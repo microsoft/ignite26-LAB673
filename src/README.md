@@ -46,7 +46,7 @@ python src/explorer/app.py
 
 ## Run the notebooks
 
-1. Complete [self-paced provisioning](../deploy_yourself.md) or the [Skillable setup](../infra/README.md#skillable-setup). Setup installs [notebook requirements](notebooks/requirements.txt) into the root `.venv` and restores the three indexes and two graph-enabled knowledge sources.
+1. Complete [self-paced provisioning](../deploy_yourself.md) or the [Skillable setup](../infra/README.md#skillable-setup). Both call [setup-venv.py](../infra/setup-venv.py) to create or reuse the root `.venv` and install [notebook requirements](notebooks/requirements.txt), including the pinned alpha Search SDK. Setup also restores the three-index bundle and two graph-enabled knowledge sources.
 2. Open each notebook in VS Code, select the repository's `.venv` Python environment as its kernel, and run the cells in order.
 
 Running the notebooks creates knowledge sources and knowledge bases and makes billable retrieval and model calls. Clear all cell outputs before saving changes for a pull request, and never commit `.env`, service keys, or live model configuration.

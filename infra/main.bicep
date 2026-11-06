@@ -4,7 +4,7 @@ param principalId string
 @description('Foundry and Storage location; Search is always in West Central US')
 param location string
 
-@description('Search SKU. The preview graph features (native GQL, graph search, inline-ontology knowledge sources) currently need a dedicated SKU such as standard.')
+@description('Search SKU. Defaults to serverless; paid standard Knowledge Retrieval is enabled for every SKU.')
 @allowed([
   'serverless'
   'basic'
@@ -63,7 +63,7 @@ resource searchService 'Microsoft.Search/searchServices@2026-09-01-preview' = {
   sku: {
     name: searchSkuName
   }
-  properties: union({
+  properties: {
     publicNetworkAccess: 'enabled'
     networkRuleSet: {
       ipRules: []
@@ -75,10 +75,9 @@ resource searchService 'Microsoft.Search/searchServices@2026-09-01-preview' = {
       }
     }
     semanticSearch: 'standard'
-  }, searchSkuName == 'serverless' ? {} : {
-    // Microsoft Retriever 1 requires the paid knowledge retrieval plan, which needs Basic or higher.
+    // Microsoft Retriever 1 has no free Knowledge Retrieval tier, including on serverless.
     knowledgeRetrieval: 'standard'
-  })
+  }
   identity: createSearchGraphIdentity ? {
     type: 'SystemAssigned, UserAssigned'
     userAssignedIdentities: {

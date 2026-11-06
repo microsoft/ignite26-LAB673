@@ -6,7 +6,7 @@ This folder provisions the Foundry IQ portion of LAB673 for Skillable and self-p
 
 | Resource | Configuration |
 | --- | --- |
-| Foundry IQ (Azure AI Search) | **West Central US**, serverless by default (`searchSkuName`), using `2026-09-01-preview` |
+| Foundry IQ (Azure AI Search) | **West Central US**, serverless by default (`searchSkuName`), with paid `standard` Knowledge Retrieval, using `2026-09-01-preview` |
 | Search graph identity | Optional (`createSearchGraphIdentity`, off by default; set `CREATE_SEARCH_GRAPH_IDENTITY=true` with azd). A user-assigned identity attached to Search for managed knowledge graph builds, with Storage Blob Data Reader and Cognitive Services OpenAI User. The lab restores graphs from snapshots and doesn't need it. |
 | Blob Storage | Standard LRS account with a private `knowledge` container |
 | Foundry | An `AIServices` account and project with managed identities |
@@ -18,7 +18,7 @@ Search's region is fixed in [main.bicep](main.bicep); its SKU comes from the `se
 
 The Skillable lifecycle action passes `resourcePrefix="lab673"`, matching the Bicep default used by self-paced deployments. The repository and Desktop folder remain `ignite26-LAB673`. The target Azure policies must allow these resource names; other policy constraints still apply.
 
-`searchSkuName` defaults to `serverless`, but the serverless SKU doesn't support the preview graph features yet: native GQL, graph search, and inline-ontology knowledge sources. Until it does, deploy with a dedicated SKU, for example `azd env set AZURE_SEARCH_SKU standard` or `searchSkuName="standard"` in the Skillable deployment parameters. Search capacity and model quota must be checked in the target subscription before delivery. These files deliberately do not fall back to another Search region.
+`searchSkuName` defaults to `serverless`. The template enables the paid `standard` Knowledge Retrieval plan for every SKU because Microsoft Retriever 1 has no free tier. This plan is independent of the Search SKU; it does not change the SKU to Standard (S1). The November ontology private-preview requirement still applies. To choose a dedicated SKU, use `azd env set AZURE_SEARCH_SKU standard` or `searchSkuName="standard"` in the Skillable deployment parameters. Search capacity and model quota must be checked in the target subscription before delivery. These files deliberately do not fall back to another Search region.
 
 Content Understanding is a capability of the Foundry account, not an additional Azure resource or standalone model deployment. [setup-content-understanding.py](setup-content-understanding.py) configures model-name mappings and the prebuilt completion, mini-completion, and embedding aliases. Both completion aliases reuse the lab LLM, avoiding extra deployments. Individual analyzers must support the selected model; see [model deployment options](https://learn.microsoft.com/azure/ai-services/content-understanding/concepts/models-deployments).
 
@@ -65,7 +65,13 @@ exercise. Disabling restoration does not delete existing indexes.
 
 Follow [the self-deployment guide](../deploy_yourself.md). [main.parameters.json](main.parameters.json) supplies azd parameters; [postprovision.sh](hooks/postprovision.sh) and [postprovision.ps1](hooks/postprovision.ps1) perform environment and Content Understanding setup after provisioning.
 
-Both deployment paths install [notebook requirements](../src/notebooks/requirements.txt), which include [infrastructure requirements](requirements.txt) and `ipykernel` for the notebook kernel. The full upstream requirements, agent-framework, Fabric, and OneLake packages are not needed.
+Both deployment paths call [setup-venv.py](setup-venv.py) to create or reuse the root `.venv` and install [notebook requirements](../src/notebooks/requirements.txt). These include the pinned alpha Search SDK from [infrastructure requirements](requirements.txt) and `ipykernel` for the notebook kernel. The notebooks do not install packages themselves. The full upstream requirements, agent-framework, Fabric, and OneLake packages are not needed.
+
+To prepare only the local Python environment without provisioning Azure resources, run this from the repository root:
+
+```powershell
+python .\infra\setup-venv.py
+```
 
 ## Rebuild the index snapshots
 
