@@ -41,16 +41,6 @@ param llmModelVersion string = '2026-09-22'
 @maxValue(200)
 param llmModelCapacity int = 200
 
-@description('Microsoft-Decision-1 deployment')
-param decisionDeployment object = {
-  name: 'decision-1'
-  model: 'Microsoft-Decision-1'
-  version: '1'
-  sku: 'GlobalStandard'
-  // Requests per minute. The DIY steps make one batched call per rerank and one per routing decision.
-  capacity: 250
-}
-
 var uniqueSuffix = uniqueString(resourceGroup().id)
 var foundrySuffix = empty(foundryDeploymentSuffix) ? uniqueSuffix : '${uniqueSuffix}-${foundryDeploymentSuffix}'
 var resourceNames = {
@@ -249,17 +239,17 @@ resource llmModelDeployment 'Microsoft.CognitiveServices/accounts/deployments@20
 
 resource decisionModelDeployment 'Microsoft.CognitiveServices/accounts/deployments@2025-04-01-preview' = {
   parent: microsoftFoundryAccount
-  name: decisionDeployment.name
+  name: 'decision-1'
   properties: {
     model: {
       format: 'Microsoft'
-      name: decisionDeployment.model
-      version: decisionDeployment.version
+      name: 'Microsoft-Decision-1'
+      version: '1'
     }
   }
   sku: {
-    name: decisionDeployment.sku
-    capacity: decisionDeployment.capacity
+    name: 'GlobalStandard'
+    capacity: 250 // Requests per minute
   }
   dependsOn: [
     llmModelDeployment
