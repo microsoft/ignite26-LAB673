@@ -678,7 +678,7 @@ async function showTopic(topic) {
   panel.innerHTML = `${header}<p class="muted">Loading member chunks…</p>`;
   let members;
   try {
-    members = await api(`/api/topic-members?id=${encodeURIComponent(topic.community_id)}&generation=${encodeURIComponent(topicState.data.generation_id)}`);
+    members = await api(`/api/topic-members?id=${encodeURIComponent(topic.community_id)}`);
   } catch (error) {
     return showError(error);
   }
