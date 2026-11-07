@@ -43,13 +43,13 @@
     },
     {
       "path": "cocoarynth-topics-index.json",
-      "sha256": "259d26e6b12aaa6f201de430b1b9ee66aee42618f659137902f5465f51b153ce",
-      "bytes": 9286
+      "sha256": "bfcd67014a921bf0a2a7e2fb73e603c41fc8bb33a37e54a06d31297c08f85b1d",
+      "bytes": 9135
     },
     {
       "path": "cocoarynth-topics-exported.jsonl",
-      "sha256": "616907b189766670916b554b289df42cc09178b78dd74274b5c5020244734a01",
-      "bytes": 1208515
+      "sha256": "91c52bf3fcb214caf817abbc19bfe38f7010c2ed7afbafb6e1f5bad3ec697f78",
+      "bytes": 1172161
     },
     {
       "path": "cocoarynth-graph-index.json",

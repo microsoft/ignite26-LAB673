@@ -204,13 +204,6 @@
       "searchable": false
     },
     {
-      "name": "generation_id",
-      "type": "Edm.String",
-      "retrievable": true,
-      "filterable": true,
-      "searchable": false
-    },
-    {
       "name": "community_id",
       "type": "Edm.String",
       "retrievable": true,
