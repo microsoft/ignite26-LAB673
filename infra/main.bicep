@@ -237,6 +237,25 @@ resource llmModelDeployment 'Microsoft.CognitiveServices/accounts/deployments@20
   ]
 }
 
+resource decisionModelDeployment 'Microsoft.CognitiveServices/accounts/deployments@2025-04-01-preview' = {
+  parent: microsoftFoundryAccount
+  name: 'decision-1'
+  properties: {
+    model: {
+      format: 'Microsoft'
+      name: 'Microsoft-Decision-1'
+      version: '1'
+    }
+  }
+  sku: {
+    name: 'GlobalStandard'
+    capacity: 250 // Requests per minute
+  }
+  dependsOn: [
+    llmModelDeployment
+  ]
+}
+
 resource microsoftFoundryProject 'Microsoft.CognitiveServices/accounts/projects@2025-04-01-preview' = {
   parent: microsoftFoundryAccount
   name: resourceNames.microsoftFoundryProject
@@ -246,7 +265,7 @@ resource microsoftFoundryProject 'Microsoft.CognitiveServices/accounts/projects@
   }
   properties: {}
   dependsOn: [
-    llmModelDeployment
+    decisionModelDeployment
   ]
 }
 
@@ -323,5 +342,6 @@ output AZURE_OPENAI_SERVICE_NAME string = microsoftFoundryAccount.name
 output AZURE_OPENAI_EMBEDDING_DEPLOYMENT string = embeddingModelDeployment.name
 output AZURE_OPENAI_CHATGPT_DEPLOYMENT string = llmModelDeployment.name
 output AZURE_OPENAI_CHATGPT_MODEL_NAME string = llmModelName
+output AZURE_DECISION_DEPLOYMENT string = decisionModelDeployment.name
 output CONTENTUNDERSTANDING_ENDPOINT string = 'https://${microsoftFoundryAccount.name}.services.ai.azure.com'
 output AZURE_TENANT_ID string = tenant().tenantId
