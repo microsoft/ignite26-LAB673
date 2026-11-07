@@ -163,21 +163,19 @@ def get_topics():
     topics = client(TOPICS_INDEX)
     manifest_row = list(topics.search(search_text="*", filter="kind eq 'manifest'", select=["payload"], top=1))[0]
     manifest = json.loads(manifest_row["payload"])
-    generation = manifest["generation_id"]
     representatives = [
         dict(row)
         for row in topics.search(
             search_text="*",
-            filter=f"kind eq 'representative' and generation_id eq {odata(generation)}",
+            filter="kind eq 'representative'",
             select=["community_id", "parent_id", "level", "member_count", "label", "description", "is_terminal"],
             top=1000,
         )
     ]
     for topic in representatives:
-        titles = Counter(member["title"] for member in get_topic_members(topic["community_id"], generation))
+        titles = Counter(member["title"] for member in get_topic_members(topic["community_id"]))
         topic["sample_titles"] = [title for title, _ in titles.most_common(4)]
     return {
-        "generation_id": generation,
         "coverage": {
             key: manifest.get(key)
             for key in ("source_document_count", "assigned_node_count", "unassigned_source_document_count")
@@ -186,12 +184,12 @@ def get_topics():
     }
 
 
-def get_topic_members(community_id, generation):
+def get_topic_members(community_id):
     chunk_ids = [
         row["chunk_id"]
         for row in client(TOPICS_INDEX).search(
             search_text="*",
-            filter=f"kind eq 'membership' and community_id eq {odata(community_id)} and generation_id eq {odata(generation)}",
+            filter=f"kind eq 'membership' and community_id eq {odata(community_id)}",
             select=["chunk_id"],
             top=1000,
         )
@@ -227,7 +225,7 @@ ROUTES = {
     "/api/evidence": lambda params: get_evidence(params["id"]),
     "/api/catalog": lambda params: get_catalog(),
     "/api/topics": lambda params: get_topics(),
-    "/api/topic-members": lambda params: get_topic_members(params["id"], params["generation"]),
+    "/api/topic-members": lambda params: get_topic_members(params["id"]),
 }
 
 
