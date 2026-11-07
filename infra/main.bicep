@@ -41,6 +41,16 @@ param llmModelVersion string = '2026-09-22'
 @maxValue(200)
 param llmModelCapacity int = 200
 
+@description('Microsoft-Decision-1 deployment')
+param decisionDeployment object = {
+  name: 'decision-1'
+  model: 'Microsoft-Decision-1'
+  version: '1'
+  sku: 'GlobalStandard'
+  // Requests per minute. The DIY steps make one batched call per rerank and one per routing decision.
+  capacity: 250
+}
+
 var uniqueSuffix = uniqueString(resourceGroup().id)
 var foundrySuffix = empty(foundryDeploymentSuffix) ? uniqueSuffix : '${uniqueSuffix}-${foundryDeploymentSuffix}'
 var resourceNames = {
@@ -237,6 +247,25 @@ resource llmModelDeployment 'Microsoft.CognitiveServices/accounts/deployments@20
   ]
 }
 
+resource decisionModelDeployment 'Microsoft.CognitiveServices/accounts/deployments@2025-04-01-preview' = {
+  parent: microsoftFoundryAccount
+  name: decisionDeployment.name
+  properties: {
+    model: {
+      format: 'Microsoft'
+      name: decisionDeployment.model
+      version: decisionDeployment.version
+    }
+  }
+  sku: {
+    name: decisionDeployment.sku
+    capacity: decisionDeployment.capacity
+  }
+  dependsOn: [
+    llmModelDeployment
+  ]
+}
+
 resource microsoftFoundryProject 'Microsoft.CognitiveServices/accounts/projects@2025-04-01-preview' = {
   parent: microsoftFoundryAccount
   name: resourceNames.microsoftFoundryProject
@@ -246,7 +275,7 @@ resource microsoftFoundryProject 'Microsoft.CognitiveServices/accounts/projects@
   }
   properties: {}
   dependsOn: [
-    llmModelDeployment
+    decisionModelDeployment
   ]
 }
 
@@ -323,5 +352,6 @@ output AZURE_OPENAI_SERVICE_NAME string = microsoftFoundryAccount.name
 output AZURE_OPENAI_EMBEDDING_DEPLOYMENT string = embeddingModelDeployment.name
 output AZURE_OPENAI_CHATGPT_DEPLOYMENT string = llmModelDeployment.name
 output AZURE_OPENAI_CHATGPT_MODEL_NAME string = llmModelName
+output AZURE_DECISION_DEPLOYMENT string = decisionModelDeployment.name
 output CONTENTUNDERSTANDING_ENDPOINT string = 'https://${microsoftFoundryAccount.name}.services.ai.azure.com'
 output AZURE_TENANT_ID string = tenant().tenantId
