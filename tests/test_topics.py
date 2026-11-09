@@ -9,6 +9,7 @@ import math
 import os
 import re
 import sys
+import tempfile
 import unittest
 from pathlib import Path
 from types import SimpleNamespace
@@ -301,6 +302,7 @@ class TopicTests(unittest.TestCase):
         }
         scope = {}
         with patch.dict(os.environ, settings, clear=True), \
+                patch("dotenv.find_dotenv", return_value=str(ROOT / ".env")), \
                 patch("dotenv.load_dotenv", return_value=False), \
                 patch("azure.search.documents.SearchClient", side_effect=lambda endpoint, index, *a, **k: self.clients[index]), \
                 patch("azure.search.documents.indexes.SearchIndexClient", return_value=index_client), \
@@ -330,6 +332,36 @@ class TopicTests(unittest.TestCase):
                 self.assertEqual(topic["parent_id"], notebook_topic["parent_id"])
                 self.assertTrue(all(math.isclose(left, right, abs_tol=1e-14)
                                     for left, right in zip(topic["centroid"], notebook_topic["centroid"])))
+
+    def test_notebook_metadata_uses_settings_file_from_root_or_notebook_directory(self):
+        notebook = json.loads((ROOT / "src" / "notebooks" / "03-topics.ipynb").read_text(encoding="utf-8"))
+        cells = {cell["id"]: "".join(cell["source"]) for cell in notebook["cells"]}
+        settings = {
+            "AZURE_SEARCH_SERVICE_ENDPOINT": "https://offline.search.windows.net",
+            "AZURE_SEARCH_ADMIN_KEY": "offline-test-key",
+            "AZURE_OPENAI_ENDPOINT": "https://offline.openai.azure.com",
+            "AZURE_OPENAI_KEY": "offline-test-key",
+            "AZURE_OPENAI_CHATGPT_DEPLOYMENT": "offline",
+            "AZURE_OPENAI_CHATGPT_MODEL_NAME": "gpt-6-luna",
+        }
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            (root / ".env").write_text("\n".join(f"{key}={value}" for key, value in settings.items()),
+                                     encoding="utf-8")
+            metadata = root / "data" / "graph-data" / "manifest.json"
+            metadata.parent.mkdir(parents=True)
+            metadata.write_text(json.dumps(self.manifest), encoding="utf-8")
+            notebook_directory = root / "src" / "notebooks"
+            notebook_directory.mkdir(parents=True)
+            for directory in (root, notebook_directory):
+                with self.subTest(directory=directory), contextlib.chdir(directory), \
+                        patch.dict(os.environ, {}, clear=True), contextlib.redirect_stdout(io.StringIO()):
+                    scope = {"json": json, "Path": Path}
+                    exec(compile(cells["a027f58b"], "03-topics.ipynb:settings", "exec"), scope)
+                    exec(compile(cells["624a1a30"], "03-topics.ipynb:metadata", "exec"), scope)
+                    self.assertEqual(Path(scope["env_file"]), root / ".env")
+                    self.assertEqual(scope["metadata_file"], metadata)
+                    self.assertEqual(scope["build_metadata"]["clustered_source_document_count"], 97)
 
     def test_terminal_root_centroids_are_searchable(self):
         with patch.object(explorer, "client", side_effect=self.clients.__getitem__):
