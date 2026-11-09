@@ -12,7 +12,7 @@ main part of the lab.
 | --- | --- |
 | [Knowledge base and MR1](notebooks/01-knowledge-base-and-mr1.ipynb) | Original documents, grounded answers, activity, and a measured speed comparison with MR1 |
 | [Entities and graphs](notebooks/02-entities-and-graphs.ipynb) | Assertions and evidence, native GQL, provenance, and graph-backed retrieval |
-| [Topics](notebooks/03-topics.ipynb) | Topic coverage, centroid-nearest chunks, hierarchy GQL, and graph-enabled topic retrieval |
+| [Topics](notebooks/03-topics.ipynb) | Topic coverage, centroid-nearest chunks, hierarchy GQL, and a customer complaint investigation using topics and PDF evidence |
 
 Each notebook loads settings from the root `.env` file and uses the
 `azure-search-documents` Python SDK directly. Setup restores six indexes:

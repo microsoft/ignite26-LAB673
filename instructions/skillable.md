@@ -30,7 +30,7 @@ You'll work through three notebooks:
 
 1. **Knowledge bases and Microsoft Retriever 1 (MR1)**: Ask a grounded question over three document indexes, follow the citations, and compare standard agentic retrieval with the faster MR1 retriever.
 2. **Entities and graphs**: Follow a chocolate batch back to the farms that grew its cacao, using an ontology, graph queries, and provenance.
-3. **Topics**: Browse labeled groups of chunks, compare topic routing with direct vector search, and query the sitemap with GQL and a graph-enabled knowledge source.
+3. **Topics**: Browse labeled groups of chunks, compare topic routing with direct vector search, query the sitemap with GQL, and investigate a customer complaint with topics and PDF evidence.
 
 ## Sign into Windows
 
@@ -225,11 +225,11 @@ The sitemap connects broad topics to their children in the **cocoarynth-topics**
 
 1. In Visual Studio Code, open **src/notebooks/03-topics.ipynb**.
 2. Run each cell in order, using the same **.venv** kernel.
-3. Follow the instructions in the notebook.
+3. In the complaint investigation, compare the topic suggestions with the cited PDF evidence. Which records help distinguish a batch issue from a delivery issue?
 
 ## 🍫 Food for thought
 
-Think about the three questions from this lab: the organic seal, the farms behind batch EC26-0811, and the Madagascar bean lot. Which retrieval approach would you start with for each one, and why?
+Think about the three questions from this lab: the organic seal, the farms behind batch EC26-0811, and Larkspur's complaint. Which retrieval approach would you start with for each one, and why?
 
 Select **Next** to review key takeaways and next steps.
 
@@ -241,7 +241,7 @@ You've completed the lab on exploring Foundry IQ knowledge bases. You:
 
 - Built a knowledge base over three document indexes, followed its citations back to the original documents, and compared it with the faster Microsoft Retriever 1.
 - Followed a chocolate batch to its farms with an ontology, GQL queries, and graph provenance, and compared a graph-backed knowledge base with standard retrieval.
-- Explored labeled topic groups, compared topic-based search with direct vector search, and queried the sitemap through GQL and its inline-ontology knowledge source.
+- Explored labeled topic groups, compared topic-based search with direct vector search, queried the sitemap with GQL, and investigated a customer complaint with topics and PDF evidence.
 
 | Need | Good starting point |
 | --- | --- |

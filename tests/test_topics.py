@@ -281,11 +281,23 @@ class TopicTests(unittest.TestCase):
         def create_base(base):
             created_bases.append(base.as_dict())
 
-        def retrieve(request):
-            requests.append(request.as_dict())
+        evidence = next(row for row in self.snapshots["cocoarynth-chunks"].records
+                        if row["blob_path"].endswith("retention-check-gh26-0706.pdf"))
+
+        def retrieve(knowledge_base_name, request):
+            requests.append((knowledge_base_name, request.as_dict()))
+            is_topic = knowledge_base_name == "cocoarynth-topics-knowledge-base"
             return SimpleNamespace(
-                response=[SimpleNamespace(content=[SimpleNamespace(text="Offline topic response")])],
-                activity=[SimpleNamespace(as_dict=lambda: {"type": "graphSearch"})],
+                response=[SimpleNamespace(content=[SimpleNamespace(text="Offline response")])],
+                activity=[SimpleNamespace(as_dict=lambda: {"type": "graphSearch" if is_topic else "searchIndex"})],
+                references=[] if is_topic else [
+                    SimpleNamespace(id="0", type="searchIndex", source_data=evidence)
+                ],
+            )
+
+        def retrieval_client(*args, **kwargs):
+            return SimpleNamespace(
+                retrieve=lambda request: retrieve(kwargs["knowledge_base_name"], request)
             )
 
         index_client = SimpleNamespace(
@@ -300,16 +312,16 @@ class TopicTests(unittest.TestCase):
             "AZURE_OPENAI_CHATGPT_DEPLOYMENT": "offline",
             "AZURE_OPENAI_CHATGPT_MODEL_NAME": "gpt-6-luna",
         }
-        scope = {}
+        scope, output = {}, io.StringIO()
         with patch.dict(os.environ, settings, clear=True), \
                 patch("dotenv.find_dotenv", return_value=str(ROOT / ".env")), \
                 patch("dotenv.load_dotenv", return_value=False), \
                 patch("azure.search.documents.SearchClient", side_effect=lambda endpoint, index, *a, **k: self.clients[index]), \
                 patch("azure.search.documents.indexes.SearchIndexClient", return_value=index_client), \
                 patch("azure.search.documents.knowledgebases.KnowledgeBaseRetrievalClient",
-                      return_value=SimpleNamespace(retrieve=retrieve)), \
+                      side_effect=retrieval_client), \
                 patch("azure.core.pipeline.transport.RequestsTransport.send") as transport, \
-                contextlib.redirect_stdout(io.StringIO()):
+                contextlib.redirect_stdout(output):
             for number, cell in enumerate(notebook["cells"]):
                 if cell["cell_type"] == "code":
                     self.assertIsNone(cell["execution_count"])
@@ -323,11 +335,35 @@ class TopicTests(unittest.TestCase):
         self.assertTrue(scope["routed_ids"] <= set(scope["member_ids"]))
         self.assertEqual(len(scope["sitemap_result"].value), 2)
         self.assertEqual(len(created_bases), 1)
-        self.assertEqual(len(requests), 1)
-        topic_question = requests[0]["messages"][0]["content"][0]["text"]
-        self.assertIn(scope["parent"]["label"], topic_question)
-        self.assertIn("HasSubCommunity", topic_question)
+        self.assertEqual(len(requests), 2)
+        self.assertEqual([name for name, _ in requests], [
+            "cocoarynth-topics-knowledge-base", "cocoarynth-standard-knowledge-base",
+        ])
+        topic_request, document_request = [request for _, request in requests]
+        topic_question = topic_request["messages"][0]["content"][0]["text"]
+        self.assertIn("Larkspur", topic_question)
+        self.assertIn("grey", topic_question)
+        self.assertNotIn(scope["parent"]["label"], topic_question)
+        self.assertNotIn("HasSubCommunity", topic_question)
         self.assertNotIn(scope["PARENT_TOPIC_ID"], topic_question)
+        self.assertEqual(
+            [source["knowledgeSourceName"] for source in topic_request["knowledgeSourceParams"]],
+            ["cocoarynth-topics-knowledge-source"],
+        )
+        document_question = document_request["messages"][0]["content"][0]["text"]
+        for phrase in ("Larkspur", "GH26-0706", "batch", "delivery", "other stores"):
+            self.assertIn(phrase, document_question)
+        self.assertEqual(
+            {source["knowledgeSourceName"] for source in document_request["knowledgeSourceParams"]},
+            {f"cocoarynth-{domain}-knowledge-source" for domain in ("production", "sales", "policies")},
+        )
+        for _, request in requests:
+            for source in request["knowledgeSourceParams"]:
+                self.assertTrue(source["includeReferences"])
+                self.assertTrue(source["includeReferenceSourceData"])
+                self.assertTrue(source["alwaysQuerySource"])
+        self.assertIn(evidence["blob_path"], output.getvalue())
+        self.assertIn("Run Part 1 first", "".join(notebook["cells"][0]["source"]))
         topic_reads = [call for call in self.calls
                        if call["index"] == "cocoarynth-topics" and not call["vectors"]]
         self.assertEqual(len(topic_reads), 1)
