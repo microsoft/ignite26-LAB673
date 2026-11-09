@@ -57,10 +57,11 @@ If you're learning at your own pace:
    notebooks in [`src/notebooks/`](src/notebooks/). See the
    [source guide](src/README.md) for setup details.
 
-The lab uses three search indexes: `cocoarynth-topics` for named topic vectors
-and sitemap GQL, `cocoarynth-chunks` for PDF chunks and embeddings, and
-`cocoarynth-graph` for ontology-constrained business triples. The
-[business ontology](data/graph-data/cocoarynth.owl) is a checked-in OWL file,
+Setup restores three search indexes from snapshots: `cocoarynth-topics` for
+named topic vectors and sitemap GQL, `cocoarynth-chunks` for PDF chunks and
+embeddings, and `cocoarynth-graph` for ontology-constrained business triples.
+It also splits the chunk snapshot into three document-group indexes for Part 1.
+The [business ontology](data/graph-data/cocoarynth.owl) is a checked-in OWL file,
 not an index. Both the business graph and the topic sitemap use the November
 inline-ontology private preview; the target Search service must have access.
 

@@ -122,8 +122,7 @@ How the documents themselves are generated is in [Cocoarynth data guidance](../d
 
 [restore-graph-indexes.py](restore-graph-indexes.py) restores the three active
 indexes in [the inventory](../data/graph-data/README.md), plus both
-graph-enabled knowledge sources. This is the same loader used by default lab
-setup, not an optional seven-index add-on.
+graph-enabled knowledge sources. Default lab setup uses this same loader.
 [requirements-graph.txt](requirements-graph.txt) includes the same November
 SDK pin as the infrastructure and notebooks.
 

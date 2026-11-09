@@ -5,7 +5,7 @@
 The [lab instructions](../instructions/skillable.md) progress from a
 standard knowledge base and MR1 comparison to entity/GQL exploration,
 then a topics and sitemap exercise. All three notebooks use the same Foundry IQ
-service and the three-index snapshot loader. The entity section is the
+service and the indexes that setup restores. The entity section is the
 main part of the lab.
 
 | Notebook | Focus |
