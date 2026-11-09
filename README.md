@@ -1,29 +1,3 @@
-## Before you're done
-
-This repo has been created for your Microsoft Ignite 2026 session. Here's how to get it ready.
-
-**Easiest path — use the agent (recommended):**
-
-- Open GitHub Copilot Chat and say `help me initialize repo`. The agent will walk you through getting the README populated.
-- When you're ready to publish, say `help me finalize repo`. The agent will clean up unused folders, validate everything, and remove this "Before you're done" section and other extra stuff that attendees don't need to see.
-- Curious how it works? Read the [agent workflow](.github/AGENT-WORKFLOW.md).
-
-**Doing it manually?**
-
-Fill in the sections below yourself, then:
-
-- Delete any placeholder folders you don't need (`data/`, `infra/`, etc.)
-- Delete this "Before you're done" section
-- Delete `.github/agents/`, `.github/tests/`, `.github/copilot-instructions.md`, and `.github/AGENT-WORKFLOW.md` — these are template tooling, not part of your published repo
-
-**Folder conventions:**
-
-- Attendee step-by-step guidance goes in `instructions/`. If you use MkDocs or a docs site instead, put it in `docs/` and link to it from this README.
-- Reference material and background reading go in `docs/`.
-- You can add a `.devcontainer/` folder if needed.
-
----
-
 <a name="start-building"></a>
 
 <p align="center">
@@ -33,9 +7,10 @@ Fill in the sections below yourself, then:
 # [Microsoft Ignite 2026](https://ignite.microsoft.com)
 
 ## 🔥LAB673: Turning data into agent-ready knowledge with Foundry IQ
+
 ### Session description
 
-Use Foundry IQ to build a knowledge base for agentic retrieval over enterprise content. Connect your documents and configure retrieval to surface relevant context for complex questions. Create an agent that brings together information across sources to deliver answers grounded in your data.
+Use Foundry IQ to build a knowledge base for agentic retrieval over enterprise content. Connect your documents and configure retrieval to surface relevant context for complex questions.
 
 ### 🚀 Getting started
 
@@ -68,15 +43,15 @@ inline-ontology private preview; the target Search service must have access.
 
 By the end of this session, you will be able to:
 
-- Outcome 1
-- Outcome 2
-- Outcome 3
+- Build a Foundry IQ knowledge base over multiple indexes, follow its citations back to source documents, and compare standard agentic retrieval with Microsoft Retriever 1 (MR1)
+- Use an ontology, GQL queries, and graph provenance to answer questions that follow explicit relationships across records
+- Explore labeled topic groups and compare topic-based routing with direct vector search
 
 ### 💻 Technologies used
 
-- Technology 1
-- Technology 2
-- Technology 3
+- [Foundry IQ](https://learn.microsoft.com/azure/foundry/agents/concepts/what-is-foundry-iq)
+- [Agentic retrieval in Azure AI Search](https://learn.microsoft.com/azure/search/agentic-retrieval-overview)
+- [Microsoft Foundry Models](https://learn.microsoft.com/azure/foundry/concepts/foundry-models-overview)
 
 ### 📚 Continue your learning
 
@@ -90,8 +65,6 @@ Pick your next step based on your learning style:
 | **[Microsoft Foundry Community](https://aka.ms/MicrosoftFoundryDiscord-Ignite26)** | Connect with other learners and experts in our Discord community |
 
 ### 🌟 Microsoft Learn MCP Server
-
-<!-- Remove this section if the Microsoft Learn MCP Server is not relevant to the session. -->
 
 The Microsoft Learn MCP Server gives your AI agent direct access to Microsoft's official documentation — grounded, up-to-date answers about the topics in this session.
 
@@ -108,17 +81,22 @@ For more information, visit the [Learn MCP Server repo](https://aka.ms/learnmcp)
 
 ### 👥 Content owners
 
-<!-- TODO: Add yourself as a content owner
-1. Change the src in the image tag to {your github url}.png
-2. Change INSERT NAME HERE to your name
-3. Change the github url in the final href to your url. -->
-
 <table>
 <tr>
-    <td align="center"><a href="http://github.com/yourGitHubHandle">
-        <img src="https://github.com/yourGitHubHandle.png" width="100px;" alt="INSERT NAME HERE"/><br />
-        <sub><b>INSERT NAME HERE</b></sub></a><br />
-            <a href="https://github.com/yourGitHubHandle" title="talk">📢</a>
+    <td align="center"><a href="https://github.com/pamelafox">
+        <img src="https://github.com/pamelafox.png" width="100px;" alt="Pamela Fox"/><br />
+        <sub><b>Pamela Fox</b></sub></a><br />
+            <a href="https://github.com/pamelafox" title="talk">📢</a>
+    </td>
+    <td align="center"><a href="https://github.com/mattgotteiner">
+        <img src="https://github.com/mattgotteiner.png" width="100px;" alt="Matt Gotteiner"/><br />
+        <sub><b>Matt Gotteiner</b></sub></a><br />
+            <a href="https://github.com/mattgotteiner" title="talk">📢</a>
+    </td>
+    <td align="center"><a href="https://github.com/aycabas">
+        <img src="https://github.com/aycabas.png" width="100px;" alt="Ayca Bas"/><br />
+        <sub><b>Ayca Bas</b></sub></a><br />
+            <a href="https://github.com/aycabas" title="talk">📢</a>
     </td>
 </tr></table>
 
