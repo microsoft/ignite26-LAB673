@@ -201,25 +201,25 @@ Select **Next** to continue to **Topics**.
 
 An entity graph shows how specific things are connected. Topics group related chunks so you can explore a broader area of the documents.
 
-The Foundry IQ plugin generated these topics ahead of time. It clustered the chunk embeddings into a two-level hierarchy, then labeled and described each topic from its member chunks.
+The topics form a two-level hierarchy. Each has a title and description to help you choose an area to explore, and a centroid vector for finding similar chunks.
 
 ## Explore topics in the graph explorer
 
 1. In the graph explorer, select the **Topics** tab. If you closed the app, start it again as described in Part 2.
-2. In the **Topics** panel on the right, compare **Assigned during the build** with **Not assigned during the build**. The captured clustering assigned 97 of the 106 chunks and left 9 unassigned.
-3. Broad topics are on the left at level 0, and narrower child topics are on the right at level 1. Each box has a title added from its captured member chunks; select it to read the description. There are four roots and four children, and two roots have no children.
-4. Select a topic to see its nearest chunks, grouped by document. These are found by vector search, not an exact stored assignment list, so an originally unassigned chunk can still appear. Expand a chunk to read it, or select a document name to open the original PDF. Do the chunks have something in common?
+2. In the **Topics** panel on the right, compare **Assigned during the build** with **Not assigned during the build**. The topic groups cover 97 of the 106 chunks.
+3. Broad topics are on the left at level 0, and narrower child topics are on the right at level 1. Select a box to read its description. There are four roots and four children, and two roots stand alone.
+4. Select a topic to see its nearest chunks, grouped by document. The explorer searches the full source index with the topic's centroid. Expand a chunk to read it, or select a document name to open the original PDF. Do the chunks have something in common?
 
 ## Read the sitemap ontology file
 
-The lab stores the topic hierarchy as a navigation graph, called the sitemap, in the **cocoarynth-topics** index using the current Foundry IQ plugin's schema. That schema is in a second, smaller OWL file.
+The sitemap connects broad topics to their children in the **cocoarynth-topics** index. Open its OWL schema to see the types and relationships you'll query.
 
 1. In Visual Studio Code, open **data/graph-data/cocoarynth-sitemap.owl**. Like **cocoarynth.owl**, it's an OWL file written as XML, so it uses the same kinds of elements.
 2. Look through its elements:
    - The **owl:Class** elements are its three entity types: *CommunityGraph*, the whole sitemap; *Community*, a topic; and *Vector*, a terminal topic's centroid.
    - The **owl:ObjectProperty** elements are its three relationships: *HasRootCommunity*, from the graph to a broad topic; *HasSubCommunity*, from a parent topic to a child; and *HasCentroidVector*, from a terminal topic to its vector.
    - The **owl:DatatypeProperty** elements are plain-value properties, like a topic's *title*, *description*, *level*, and *proportion*.
-3. Notice that there are no PDF or chunk-membership relationships. GQL navigates topics; a separate vector search retrieves their nearest chunks from **cocoarynth-chunks**. The business ontology and its PDF evidence from Part 2 have not changed.
+3. In the notebook, you'll follow these links with GQL, then use topic vectors to find related chunks in **cocoarynth-chunks**.
 
 ## Run the notebook
 

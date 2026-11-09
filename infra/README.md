@@ -102,7 +102,7 @@ bundle automatically:
    On Windows, use `.venv\Scripts\python.exe`. The live-indexing tool requires Python 3.11 or newer.
 3. Retain the eight capture files in `data/index-data/`. Chunk counts come from ingestion; don't edit them by hand.
 4. Rebuild `cocoarynth-chunks` from the PDF chunk captures, preserving provenance and adding the document-group `domain`. Propose the business OWL from PDF text, then extract ontology-constrained triples with exact chunk evidence. Do not feed `world/*.json` to either step.
-5. Recompute the topic hierarchy when the corpus changes. Export the plugin's canonical `topicgraph-release-v1` edge-list schema and documents into `cocoarynth-topics`, making `object_vector` retrievable as the publisher does. Roots are level 0; only leaves store centroids. Do not add legacy `kind`/membership/manifest rows or reuse an old native generation identity for changed inputs. The current lab snapshot is a documented format adaptation of its previous capture, not a new native build.
+5. Recompute the topic hierarchy when the corpus changes. Export the plugin's `topicgraph-release-v1` edge-list schema and documents into `cocoarynth-topics`, making `object_vector` retrievable as the publisher does. Roots are level 0; only leaves store centroids. Keep the generation identity associated with the exported inputs.
 6. Capture the three definitions and record sets, both OWL files, and extraction provenance in `data/graph-data/`. Update `manifest.json` to match their LF-normalized byte counts and SHA-256 checksums. Run `python .\infra\restore-graph-indexes.py --validate-only` before committing a replacement bundle.
 7. Against the intended preview-enabled lab service, run `.venv\Scripts\python.exe infra\create-knowledge.py`. Existing destinations with different data are rejected rather than overwritten.
 
@@ -157,10 +157,8 @@ The command verifies index schemas, every document field and stored float32
 vector, vector lookup, and three known-answer business traversals with
 provenance. It also checks the canonical topic forest, coverage and proportions,
 and executes `HasRootCommunity` and `HasSubCommunity` GQL traversals.
-Topic counts and capture provenance live in the separate restore manifest,
-not an embedded topic-index manifest. The topic index stores no PDF nodes or
-membership edges; the notebook and explorer retrieve nearest source chunks by
-centroid. Both knowledge
+Topic counts and coverage are recorded in the restore manifest. The notebook
+and explorer retrieve nearest source chunks by centroid. Both knowledge
 sources are always created or verified with inline JSON-LD converted from the
 checked-in OWL files; `--graph-ks` remains a compatibility flag.
 Index restoration uses the Python SDK; REST is limited to native GQL and

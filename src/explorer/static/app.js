@@ -607,20 +607,20 @@ async function showTopics() {
   setStatus(`${topics.length} topics`);
   panel.innerHTML = `<h2>Topics</h2>
     ${sourceBlock(sourceRow("From", "index", sources.topics_index), sourceRow("Chunks", "index", sources.chunks_index))}
-    <p class="muted">Topics group chunks with similar embeddings. Titles and descriptions preserve the captured groups. Displayed chunks are nearest to the topic's centroid, not an exact assignment list. Broad roots are level 0; some have no narrower children.</p>
+    <p class="muted">Topics group chunks with similar embeddings. Choose a title to read its description and explore related chunks. The counts below show how much of the source set the topic groups cover. Broad topics are level 0.</p>
     <table>
       <tr><td>Source chunks</td><td>${escapeHtml(coverage.source_document_count)}</td></tr>
       <tr><td>Assigned during the build</td><td>${escapeHtml(coverage.assigned_node_count)}</td></tr>
       <tr><td>Not assigned during the build</td><td>${escapeHtml(coverage.unassigned_source_document_count)}</td></tr>
     </table>
     <h3>Sitemap</h3>
-    <p class="muted">The canonical topic index stores the sitemap as edge-list facts. A topic is stored as a Community. Its schema has three relationships:</p>
+    <p class="muted">The sitemap represents each topic as a Community. These relationships connect the graph, its topics, and their vectors:</p>
     <table>
       <tr><td>${typeBadge("CommunityGraph")} → <strong>HasRootCommunity</strong> → ${typeBadge("Community")}</td></tr>
       <tr><td>${typeBadge("Community")} → <strong>HasSubCommunity</strong> → ${typeBadge("Community")}</td></tr>
       <tr><td>${typeBadge("Community")} → <strong>HasCentroidVector</strong> → ${typeBadge("Vector")}</td></tr>
     </table>
-    <p class="muted">The arrows are <strong>HasSubCommunity</strong>. Only terminal topics store a vector; parent centroids are derived from their leaves. Select a topic to search the source index for its nearest chunks, grouped by document. There are no stored topic-to-chunk edges.</p>`;
+    <p class="muted">The arrows between topic boxes are <strong>HasSubCommunity</strong>. Select a topic to search the source index with its centroid and browse the nearest chunks, grouped by document.</p>`;
   drawTopicTree(topics);
 }
 
@@ -688,7 +688,7 @@ async function showTopic(topic) {
   const sorted = [...documents.entries()].sort(([, a], [, b]) => a[0].title.localeCompare(b[0].title));
   panel.innerHTML = `${header}
     <h3>${members.length} nearest chunks, from ${documents.size} documents</h3>
-    <p class="muted">These are centroid-nearest source chunks, not exact stored memberships.</p>
+    <p class="muted">Chunks are ranked by vector similarity to this topic's centroid.</p>
     <p><button class="link" id="toggle-chunks">Expand all chunks</button></p>
     ${sorted.map(([path, chunks]) => `
       <p class="document">${documentLink(path, chunks[0].title)}
