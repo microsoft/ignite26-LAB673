@@ -255,6 +255,8 @@ You've completed the lab on exploring Foundry IQ knowledge bases. You:
 - [Design an index for agentic retrieval in Foundry IQ](https://learn.microsoft.com/azure/search/search-agentic-retrieval-how-to-index) - Best practices for structuring your data for agentic retrieval.
 - [Create a knowledge base in Foundry IQ](https://learn.microsoft.com/azure/search/search-agentic-retrieval-how-to-create?tabs=rbac%2Cpython-get-agents%2Cpython-create-agent%2Cpython-query-agent%2Cpython-delete-agent) - Step-by-step guide to creating and configuring knowledge bases.
 - [Create a knowledge source](https://learn.microsoft.com/azure/search/search-knowledge-source-overview) - Understand how to create and configure different data sources.
+- [Create and query an entity graph](https://learn.microsoft.com/azure/search/agentic-knowledge-source-how-to-entity-graph) - Turn documents into entities and relationships that a knowledge base can follow.
+- [Configure topic graph retrieval](https://learn.microsoft.com/azure/search/agentic-knowledge-source-how-to-topic-graph) - Group related chunks into topics and route queries through them.
 - [Use answer synthesis for citation-backed responses in Foundry IQ](https://learn.microsoft.com/azure/search/search-agentic-retrieval-how-to-synthesize) - Learn how to generate grounded answers with citations using answer synthesis.
 
 ## Next steps
