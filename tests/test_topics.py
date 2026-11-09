@@ -324,7 +324,10 @@ class TopicTests(unittest.TestCase):
         self.assertEqual(len(scope["sitemap_result"].value), 2)
         self.assertEqual(len(created_bases), 1)
         self.assertEqual(len(requests), 1)
-        self.assertIn("no PDF membership edges", requests[0]["messages"][0]["content"][0]["text"])
+        topic_question = requests[0]["messages"][0]["content"][0]["text"]
+        self.assertIn(scope["parent"]["label"], topic_question)
+        self.assertIn("HasSubCommunity", topic_question)
+        self.assertNotIn(scope["PARENT_TOPIC_ID"], topic_question)
         topic_reads = [call for call in self.calls
                        if call["index"] == "cocoarynth-topics" and not call["vectors"]]
         self.assertEqual(len(topic_reads), 1)
