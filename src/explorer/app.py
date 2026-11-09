@@ -174,7 +174,6 @@ def get_topic_hierarchy():
     metadata = get_topic_metadata()
     rows = list(client(TOPICS_INDEX).search(
         search_text="*",
-        filter="graph_name eq 'topicgraph-community'",
         select=["subject_type", "subject_id", "predicate", "object_id", "object_string", "object_double", "object_vector"],
         top=1000,
     ))

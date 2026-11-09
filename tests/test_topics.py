@@ -261,7 +261,7 @@ class TopicTests(unittest.TestCase):
                 self.assertTrue(all(member["blob_path"].endswith(".pdf") for member in members))
             topic_calls = [call for call in self.calls if call["index"] == "cocoarynth-topics"]
             self.assertEqual(len(topic_calls), 1)
-            self.assertEqual(topic_calls[0]["filter"], "graph_name eq 'topicgraph-community'")
+            self.assertIsNone(topic_calls[0]["filter"])
             self.assertTrue(all(call["vectors"][0].fields == "text_vector"
                                 for call in self.calls if call["index"] == "cocoarynth-chunks"))
             root = next(topic for topic in hierarchy.values() if not topic["is_terminal"])
@@ -325,6 +325,10 @@ class TopicTests(unittest.TestCase):
         self.assertEqual(len(created_bases), 1)
         self.assertEqual(len(requests), 1)
         self.assertIn("no PDF membership edges", requests[0]["messages"][0]["content"][0]["text"])
+        topic_reads = [call for call in self.calls
+                       if call["index"] == "cocoarynth-topics" and not call["vectors"]]
+        self.assertEqual(len(topic_reads), 1)
+        self.assertIsNone(topic_reads[0]["filter"])
         with patch.object(explorer, "client", side_effect=self.clients.__getitem__):
             for topic_id, topic in explorer.get_topic_hierarchy().items():
                 notebook_topic = scope["topics_by_id"][topic_id]
