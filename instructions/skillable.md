@@ -251,13 +251,13 @@ You've completed the lab on exploring Foundry IQ knowledge bases. You:
 
 ## Continue learning
 
-- [Foundry IQ](https://learn.microsoft.com/azure/search/) - Explore the full capabilities of Foundry IQ and how it integrates with other Microsoft Foundry and Azure services.
-- [Design an index for agentic retrieval in Foundry IQ](https://learn.microsoft.com/azure/search/search-agentic-retrieval-how-to-index) - Best practices for structuring your data for agentic retrieval.
-- [Create a knowledge base in Foundry IQ](https://learn.microsoft.com/azure/search/search-agentic-retrieval-how-to-create?tabs=rbac%2Cpython-get-agents%2Cpython-create-agent%2Cpython-query-agent%2Cpython-delete-agent) - Step-by-step guide to creating and configuring knowledge bases.
-- [Create a knowledge source](https://learn.microsoft.com/azure/search/search-knowledge-source-overview) - Understand how to create and configure different data sources.
+- [What is Foundry IQ?](https://learn.microsoft.com/azure/foundry/agents/concepts/what-is-foundry-iq) - Explore the full capabilities of Foundry IQ and how it integrates with other Microsoft Foundry and Azure services.
+- [Design an index for agentic retrieval in Foundry IQ](https://learn.microsoft.com/azure/search/agentic-retrieval-how-to-create-index) - Best practices for structuring your data for agentic retrieval.
+- [Create a knowledge base in Foundry IQ](https://learn.microsoft.com/azure/search/agentic-retrieval-how-to-create-knowledge-base) - Step-by-step guide to creating and configuring knowledge bases.
+- [Create a knowledge source](https://learn.microsoft.com/azure/search/agentic-knowledge-source-overview) - Understand how to create and configure different data sources.
+- [Use Microsoft Retriever 1](https://learn.microsoft.com/azure/search/agentic-retrieval-how-to-use-microsoft-retriever) - Get fast agentic retrieval from a Microsoft-hosted retriever without supplying your own model capacity.
 - [Create and query an entity graph](https://learn.microsoft.com/azure/search/agentic-knowledge-source-how-to-entity-graph) - Turn documents into entities and relationships that a knowledge base can follow.
 - [Configure topic graph retrieval](https://learn.microsoft.com/azure/search/agentic-knowledge-source-how-to-topic-graph) - Group related chunks into topics and route queries through them.
-- [Use answer synthesis for citation-backed responses in Foundry IQ](https://learn.microsoft.com/azure/search/search-agentic-retrieval-how-to-synthesize) - Learn how to generate grounded answers with citations using answer synthesis.
 
 ## Next steps
 
