@@ -594,7 +594,7 @@ async function showFact(factId) {
 const topicState = { data: null, selected: null };
 
 async function showTopics() {
-  toolbar.innerHTML = `<span class="hint">Broad topics are on the left and their narrower child topics are on the right. Select a topic to read its member chunks.</span>`;
+  toolbar.innerHTML = `<span class="hint">Broad topics are on the left and their narrower child topics are on the right. Select a topic to read its nearest chunks.</span>`;
   resetCanvas();
   setStatus("Loading topics…");
   try {
@@ -607,40 +607,40 @@ async function showTopics() {
   setStatus(`${topics.length} topics`);
   panel.innerHTML = `<h2>Topics</h2>
     ${sourceBlock(sourceRow("From", "index", sources.topics_index), sourceRow("Chunks", "index", sources.chunks_index))}
-    <p class="muted">Topics group chunks with similar embeddings. Labels and descriptions were added from each topic's unchanged member chunks. Some broad topics have no narrower children.</p>
+    <p class="muted">Topics group chunks with similar embeddings. Titles and descriptions preserve the captured groups. Displayed chunks are nearest to the topic's centroid, not an exact assignment list. Broad roots are level 0; some have no narrower children.</p>
     <table>
       <tr><td>Source chunks</td><td>${escapeHtml(coverage.source_document_count)}</td></tr>
-      <tr><td>Assigned to a topic</td><td>${escapeHtml(coverage.assigned_node_count)}</td></tr>
-      <tr><td>Not assigned</td><td>${escapeHtml(coverage.unassigned_source_document_count)}</td></tr>
+      <tr><td>Assigned during the build</td><td>${escapeHtml(coverage.assigned_node_count)}</td></tr>
+      <tr><td>Not assigned during the build</td><td>${escapeHtml(coverage.unassigned_source_document_count)}</td></tr>
     </table>
     <h3>Sitemap</h3>
-    <p class="muted">The topic hierarchy is also stored as a navigation graph, called the sitemap, so a knowledge base can traverse it with graph search. Its schema has three relationships:</p>
+    <p class="muted">The canonical topic index stores the sitemap as edge-list facts. A topic is stored as a Community. Its schema has three relationships:</p>
     <table>
-      <tr><td>${typeBadge("Topic")} → <strong>hasSubtopic</strong> → ${typeBadge("Topic")}</td></tr>
-      <tr><td>${typeBadge("Topic")} → <strong>hasMember</strong> → ${typeBadge("TextChunk")}</td></tr>
-      <tr><td>${typeBadge("Document")} → <strong>hasTextChunk</strong> → ${typeBadge("TextChunk")}</td></tr>
+      <tr><td>${typeBadge("CommunityGraph")} → <strong>HasRootCommunity</strong> → ${typeBadge("Community")}</td></tr>
+      <tr><td>${typeBadge("Community")} → <strong>HasSubCommunity</strong> → ${typeBadge("Community")}</td></tr>
+      <tr><td>${typeBadge("Community")} → <strong>HasCentroidVector</strong> → ${typeBadge("Vector")}</td></tr>
     </table>
-    <p class="muted">The arrows in the diagram are <strong>hasSubtopic</strong>. Select a topic to see its <strong>hasMember</strong> chunks, grouped by their document.</p>`;
+    <p class="muted">The arrows are <strong>HasSubCommunity</strong>. Only terminal topics store a vector; parent centroids are derived from their leaves. Select a topic to search the source index for its nearest chunks, grouped by document. There are no stored topic-to-chunk edges.</p>`;
   drawTopicTree(topics);
 }
 
 function drawTopicTree(topics) {
-  const parents = topics.filter((t) => !t.parent_id).sort((a, b) => a.community_id.localeCompare(b.community_id));
+  const parents = topics.filter((t) => !t.parent_id).sort((a, b) => a.topic_id.localeCompare(b.topic_id));
   const width = 330, height = 74, rowGap = 92;
   let row = 0;
   const positions = new Map();
   for (const parent of parents) {
-    const children = topics.filter((t) => t.parent_id === parent.community_id).sort((a, b) => a.community_id.localeCompare(b.community_id));
+    const children = topics.filter((t) => t.parent_id === parent.topic_id).sort((a, b) => a.topic_id.localeCompare(b.topic_id));
     const firstRow = row;
-    for (const child of children) positions.set(child.community_id, { x: 440, y: 40 + rowGap * row++ });
+    for (const child of children) positions.set(child.topic_id, { x: 440, y: 40 + rowGap * row++ });
     if (!children.length) row++;
-    positions.set(parent.community_id, { x: 40, y: 40 + rowGap * (firstRow + Math.max(children.length - 1, 0) / 2) });
+    positions.set(parent.topic_id, { x: 40, y: 40 + rowGap * (firstRow + Math.max(children.length - 1, 0) / 2) });
     row += 0.4;
   }
   const edgeLayer = svgEl("g", {}, viewport);
   const nodeLayer = svgEl("g", {}, viewport);
   for (const topic of topics) {
-    const position = positions.get(topic.community_id);
+    const position = positions.get(topic.topic_id);
     if (!position) continue;
     const parentPosition = topic.parent_id && positions.get(topic.parent_id);
     if (parentPosition) {
@@ -650,7 +650,7 @@ function drawTopicTree(topics) {
     }
     const group = svgEl("g", { class: "topic", transform: `translate(${position.x},${position.y})`, tabindex: 0, role: "button" }, nodeLayer);
     svgEl("rect", { width, height, rx: 8, stroke: topic.parent_id ? "#146c94" : "#805124" }, group);
-    const name = topic.label || `Topic ${topic.community_id.slice(0, 8)}`;
+    const name = topic.label || topic.topic_id;
     const title = svgEl("text", { x: 12, y: 22, style: "font-size: 15px; font-weight: 600" }, group);
     title.textContent = shorten(name, 34);
     const count = svgEl("text", { x: 12, y: 44, style: "font-size: 13px" }, group);
@@ -671,14 +671,14 @@ function drawTopicTree(topics) {
 
 async function showTopic(topic) {
   for (const t of topicState.data.topics) t.group?.classList.toggle("selected", t === topic);
-  const name = topic.label || `Topic ${topic.community_id.slice(0, 8)}`;
-  const header = `<h2>${escapeHtml(name)}</h2>${typeBadge(topic.parent_id ? "Child topic" : "Parent topic")}
+  const name = topic.label || topic.topic_id;
+  const header = `<h2>${escapeHtml(name)}</h2>${typeBadge(topic.parent_id ? "Child topic" : "Root topic")}
     ${sourceBlock(sourceRow("From", "index", sources.topics_index), sourceRow("Chunks", "index", sources.chunks_index))}
     <p>${escapeHtml(topic.description)}</p>`;
-  panel.innerHTML = `${header}<p class="muted">Loading member chunks…</p>`;
+  panel.innerHTML = `${header}<p class="muted">Loading nearest chunks…</p>`;
   let members;
   try {
-    members = await api(`/api/topic-members?id=${encodeURIComponent(topic.community_id)}`);
+    members = await api(`/api/topic-members?id=${encodeURIComponent(topic.topic_id)}`);
   } catch (error) {
     return showError(error);
   }
@@ -687,7 +687,8 @@ async function showTopic(topic) {
   for (const member of members) documents.set(member.blob_path, [...(documents.get(member.blob_path) || []), member]);
   const sorted = [...documents.entries()].sort(([, a], [, b]) => a[0].title.localeCompare(b[0].title));
   panel.innerHTML = `${header}
-    <h3>${members.length} member chunks, from ${documents.size} documents</h3>
+    <h3>${members.length} nearest chunks, from ${documents.size} documents</h3>
+    <p class="muted">These are centroid-nearest source chunks, not exact stored memberships.</p>
     <p><button class="link" id="toggle-chunks">Expand all chunks</button></p>
     ${sorted.map(([path, chunks]) => `
       <p class="document">${documentLink(path, chunks[0].title)}

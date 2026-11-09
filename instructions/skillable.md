@@ -61,11 +61,11 @@ All required Azure services have already been provisioned for you.
 - **Pre-processed data**: The Foundry IQ plugin processed the 55 Cocoarynth PDFs ahead of time. It split them into chunks (pieces of text such as a section, a table, or a short page) with embeddings, extracted an entity graph and its ontology, and grouped the chunks into topics. Setup restored its output into the indexes below.
 - **Foundry IQ** with six pre-created indexes:
   - **cocoarynth-production**, **cocoarynth-sales**, and **cocoarynth-policies**: The PDF chunks for each document group, with embeddings
-  - **cocoarynth-chunks**: All 106 chunks from the 55 original PDFs in one index, which the graph and topics link to as evidence
+  - **cocoarynth-chunks**: All 106 chunks from the 55 original PDFs in one index, used for business graph evidence and topic-centroid vector searches
   - **cocoarynth-graph**: PDF-supported business triples constrained by the checked-in OWL ontology
-  - **cocoarynth-topics**: Topic vectors, labels, descriptions, memberships, and sitemap relationships
+  - **cocoarynth-topics**: Topic titles, descriptions, hierarchy facts, proportions, and terminal-topic vectors
 - **Graph-enabled knowledge sources** for the business graph and topic sitemap, using the November inline-ontology private preview
-- **Checked-in OWL files**: The ontologies that the plugin created. They're files, not additional indexes
+- **Checked-in OWL files**: The business ontology and the canonical topic navigation schema. They're files, not additional indexes
 - **Azure OpenAI** with **gpt-6-luna** for query planning and answer synthesis, and **text-embedding-3-large** for vector embeddings
 
 </details>
@@ -206,19 +206,20 @@ The Foundry IQ plugin generated these topics ahead of time. It clustered the chu
 ## Explore topics in the graph explorer
 
 1. In the graph explorer, select the **Topics** tab. If you closed the app, start it again as described in Part 2.
-2. In the **Topics** panel on the right, compare **Assigned to a topic** with **Not assigned**. 97 of the 106 chunks belong to a topic, but 9 don't, so browsing by topic would never reach those 9.
-3. Broad topics are on the left, and narrower child topics are on the right. Each box has a label added from its member chunks; select it to read the description. There are four roots and four children, and two roots have no children.
-4. Select a topic to see its member chunks, grouped by document. Expand a chunk to read it, or select a document name to open the original PDF. Do the chunks have something in common? Labels describe the fixed groups; they do not change which chunks belong to a topic.
+2. In the **Topics** panel on the right, compare **Assigned during the build** with **Not assigned during the build**. The captured clustering assigned 97 of the 106 chunks and left 9 unassigned.
+3. Broad topics are on the left at level 0, and narrower child topics are on the right at level 1. Each box has a title added from its captured member chunks; select it to read the description. There are four roots and four children, and two roots have no children.
+4. Select a topic to see its nearest chunks, grouped by document. These are found by vector search, not an exact stored assignment list, so an originally unassigned chunk can still appear. Expand a chunk to read it, or select a document name to open the original PDF. Do the chunks have something in common?
 
 ## Read the sitemap ontology file
 
-The Foundry IQ plugin also saved the topic hierarchy as a navigation graph, called the sitemap, in the **cocoarynth-topics** index. The sitemap's schema is in a second, smaller OWL file.
+The lab stores the topic hierarchy as a navigation graph, called the sitemap, in the **cocoarynth-topics** index using the current Foundry IQ plugin's schema. That schema is in a second, smaller OWL file.
 
 1. In Visual Studio Code, open **data/graph-data/cocoarynth-sitemap.owl**. Like **cocoarynth.owl**, it's an OWL file written as XML, so it uses the same kinds of elements.
 2. Look through its elements:
-   - The **owl:Class** elements are its three entity types: *Topic*, *Document*, and *TextChunk*, a chunk of a PDF.
-   - The **owl:ObjectProperty** elements are its three relationships: *hasSubtopic*, from *Topic* to *Topic*; *hasMember*, from *Topic* to *TextChunk*; and *hasTextChunk*, from *Document* to *TextChunk*.
-   - The **owl:DatatypeProperty** elements are plain-value properties, like a topic's *description* and a chunk's *chunkId*, which matches its key in **cocoarynth-chunks**.
+   - The **owl:Class** elements are its three entity types: *CommunityGraph*, the whole sitemap; *Community*, a topic; and *Vector*, a terminal topic's centroid.
+   - The **owl:ObjectProperty** elements are its three relationships: *HasRootCommunity*, from the graph to a broad topic; *HasSubCommunity*, from a parent topic to a child; and *HasCentroidVector*, from a terminal topic to its vector.
+   - The **owl:DatatypeProperty** elements are plain-value properties, like a topic's *title*, *description*, *level*, and *proportion*.
+3. Notice that there are no PDF or chunk-membership relationships. GQL navigates topics; a separate vector search retrieves their nearest chunks from **cocoarynth-chunks**. The business ontology and its PDF evidence from Part 2 have not changed.
 
 ## Run the notebook
 

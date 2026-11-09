@@ -17,6 +17,7 @@ from xml.etree import ElementTree as ET
 
 from azure.core.credentials import AzureKeyCredential
 from azure.search.documents import SearchClient
+from azure.search.documents.models import VectorizedQuery
 from dotenv import load_dotenv
 
 load_dotenv(override=True)
@@ -29,6 +30,7 @@ ONTOLOGY_FILE = Path(__file__).resolve().parents[2] / "data" / "graph-data" / "c
 DOCUMENTS_DIR = Path(__file__).resolve().parents[2] / "data" / "cocoarynth" / "documents"
 CHUNKS_INDEX = "cocoarynth-chunks"
 TOPICS_INDEX = "cocoarynth-topics"
+TOPIC_MANIFEST = Path(__file__).resolve().parents[2] / "data" / "graph-data" / "manifest.json"
 
 ASSERTION_FIELDS = ["id", "fact_id", "subject", "subject_type", "subject_id", "predicate", "object", "object_type", "object_id", "chunk_id", "evidence_quotes"]
 
@@ -159,50 +161,113 @@ def get_evidence(fact_id):
     return {"fact": fact, "supports": supports}
 
 
+@lru_cache
+def get_topic_metadata():
+    metadata = json.loads(TOPIC_MANIFEST.read_text(encoding="utf-8"))["topics"]
+    if metadata["schema_version"] != "topicgraph-release-v1":
+        raise RuntimeError("The topic snapshot is not in the canonical TopicGraph release format.")
+    return metadata
+
+
+@lru_cache
+def get_topic_hierarchy():
+    metadata = get_topic_metadata()
+    rows = list(client(TOPICS_INDEX).search(
+        search_text="*",
+        filter="graph_name eq 'topicgraph-community'",
+        select=["subject_type", "subject_id", "predicate", "object_id", "object_string", "object_double", "object_vector"],
+        top=1000,
+    ))
+    topics, roots, parents = {}, set(), {}
+    properties = {
+        "prop:title": ("label", "object_string"),
+        "prop:description": ("description", "object_string"),
+        "prop:level": ("level", "object_double"),
+        "prop:proportion": ("proportion", "object_double"),
+        "HasCentroidVector": ("centroid", "object_vector"),
+    }
+    for row in rows:
+        predicate, subject, target = row["predicate"], row["subject_id"], row.get("object_id")
+        if predicate == "HasRootCommunity":
+            roots.add(target)
+        if predicate == "HasSubCommunity":
+            if target in parents:
+                raise RuntimeError(f"{target}: more than one parent in the topic index.")
+            parents[target] = subject
+        if row["subject_type"] == "Community":
+            topic = topics.setdefault(subject, {"topic_id": subject, "children": []})
+            if predicate in properties:
+                name, field = properties[predicate]
+                if name in topic:
+                    raise RuntimeError(f"{subject}: duplicate {predicate} in the topic index.")
+                topic[name] = row[field]
+    if not topics or roots != set(topics) - set(parents):
+        raise RuntimeError("The topic index does not contain a complete rooted hierarchy.")
+    for topic_id, topic in topics.items():
+        topic["parent_id"] = parents.get(topic_id)
+        topic["member_count"] = round(topic["proportion"] * metadata["clustered_source_document_count"])
+        if topic["parent_id"] is None:
+            if topic["level"] != 0:
+                raise RuntimeError(f"{topic_id}: a root topic must have level zero.")
+        else:
+            parent = topics[topic["parent_id"]]
+            if topic["level"] != parent["level"] + 1:
+                raise RuntimeError(f"{topic_id}: topic level does not match its depth.")
+            parent["children"].append(topic_id)
+
+    def leaves(topic):
+        return [leaf for child in topic["children"] for leaf in leaves(topics[child])] if topic["children"] else [topic]
+
+    for topic in topics.values():
+        topic["is_terminal"] = not topic["children"]
+        if topic["is_terminal"]:
+            if len(topic["centroid"]) != metadata["dimension"]:
+                raise RuntimeError(f"{topic['topic_id']}: leaf centroid dimension differs.")
+        else:
+            descendants = leaves(topic)
+            total = sum(leaf["proportion"] for leaf in descendants)
+            topic["centroid"] = [
+                sum(leaf["proportion"] / total * leaf["centroid"][i] for leaf in descendants)
+                for i in range(metadata["dimension"])
+            ]
+    return topics
+
+
 def get_topics():
-    topics = client(TOPICS_INDEX)
-    manifest_row = list(topics.search(search_text="*", filter="kind eq 'manifest'", select=["payload"], top=1))[0]
-    manifest = json.loads(manifest_row["payload"])
-    representatives = [
-        dict(row)
-        for row in topics.search(
-            search_text="*",
-            filter="kind eq 'representative'",
-            select=["community_id", "parent_id", "level", "member_count", "label", "description", "is_terminal"],
-            top=1000,
-        )
-    ]
-    for topic in representatives:
-        titles = Counter(member["title"] for member in get_topic_members(topic["community_id"]))
-        topic["sample_titles"] = [title for title, _ in titles.most_common(4)]
+    metadata = get_topic_metadata()
+    summaries = []
+    for topic in get_topic_hierarchy().values():
+        summary = {key: topic[key] for key in (
+            "topic_id", "parent_id", "level", "member_count", "label", "description", "is_terminal"
+        )}
+        titles = Counter(member["title"] for member in get_topic_members(topic["topic_id"]))
+        summary["sample_titles"] = [title for title, _ in titles.most_common(4)]
+        summaries.append(summary)
     return {
         "coverage": {
-            key: manifest.get(key)
-            for key in ("source_document_count", "assigned_node_count", "unassigned_source_document_count")
+            "source_document_count": metadata["source_document_count"],
+            "assigned_node_count": metadata["clustered_source_document_count"],
+            "unassigned_source_document_count": metadata["unassigned_source_document_count"],
         },
-        "topics": representatives,
+        "topics": summaries,
     }
 
 
-def get_topic_members(community_id):
-    chunk_ids = [
-        row["chunk_id"]
-        for row in client(TOPICS_INDEX).search(
-            search_text="*",
-            filter=f"kind eq 'membership' and community_id eq {odata(community_id)}",
-            select=["chunk_id"],
-            top=1000,
-        )
-    ]
-    if not chunk_ids:
+def get_topic_members(topic_id):
+    topic = get_topic_hierarchy().get(topic_id)
+    if topic is None:
+        raise RuntimeError(f"Unknown topic: {topic_id}")
+    count = min(topic["member_count"], 1000)
+    if count == 0:
         return []
     return [
         dict(row)
         for row in client(CHUNKS_INDEX).search(
-            search_text="*",
-            filter=f"search.in(chunk_id, {odata(','.join(chunk_ids))}, ',')",
+            vector_queries=[VectorizedQuery(
+                vector=topic["centroid"], fields="text_vector", k_nearest_neighbors=count, exhaustive=True,
+            )],
             select=["chunk_id", "title", "blob_path", "chunk"],
-            top=1000,
+            top=count,
         )
     ]
 

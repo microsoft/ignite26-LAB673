@@ -43,13 +43,13 @@
     },
     {
       "path": "cocoarynth-topics-index.json",
-      "sha256": "bfcd67014a921bf0a2a7e2fb73e603c41fc8bb33a37e54a06d31297c08f85b1d",
-      "bytes": 9135
+      "sha256": "44aa0798fee00e027faabf830f810d2a7f76156f1047058fd0d80ab10c938d0c",
+      "bytes": 4568
     },
     {
       "path": "cocoarynth-topics-exported.jsonl",
-      "sha256": "91c52bf3fcb214caf817abbc19bfe38f7010c2ed7afbafb6e1f5bad3ec697f78",
-      "bytes": 1172161
+      "sha256": "8ba2005f0167c2a1630961b64e8afa05b3837a616da3b59a3576379bcc0a9fd0",
+      "bytes": 422117
     },
     {
       "path": "cocoarynth-graph-index.json",
@@ -68,8 +68,8 @@
     },
     {
       "path": "cocoarynth-sitemap.owl",
-      "sha256": "5fb80f218111af337524a399d2a91dff4d679ee0f4bcf08083506ed20b1c2a59",
-      "bytes": 3384
+      "sha256": "e736252aa84b17e7cd658d1b12e2b5fbed3835798fe68359142a4fe04a25f2a4",
+      "bytes": 5720
     },
     {
       "path": "pdf-extraction-provenance.json",
@@ -77,5 +77,39 @@
       "bytes": 17423
     }
   ],
-  "artifact_hash_basis": "SHA-256 of Git payload bytes: UTF-8 text with LF line endings."
+  "artifact_hash_basis": "SHA-256 of Git payload bytes: UTF-8 text with LF line endings.",
+  "topics": {
+    "schema_version": "topicgraph-release-v1",
+    "physical_index": "cocoarynth-topics",
+    "source_index": "cocoarynth-chunks",
+    "graph_name": "topicgraph-community",
+    "embedding_model_id": "text-embedding-3-large",
+    "dimension": 3072,
+    "source_document_count": 106,
+    "clustered_source_document_count": 97,
+    "unassigned_source_document_count": 9,
+    "node_coverage": 0.9150943396226415,
+    "assigned_chunks_by_level": {
+      "0": 97,
+      "1": 61
+    },
+    "topic_count": 8,
+    "terminal_topic_count": 6,
+    "label_stage": "pdf-member-display-enrichment",
+    "label_model": "gpt-6-luna",
+    "labels_from_native_binary": false,
+    "canonical_plugin_commit": "0e38f980c67506ebe2f81fa39af9e3a15fc4d808",
+    "source_generation_id": "bb1deb018565f895ba5615fa7b66a439eeb6d13c2e88c43adc8f86eaef992d71",
+    "representation": "Deterministic adaptation of the captured GRZ hierarchy to the canonical topic index contract, not a new native build. Labels, counts, parent-child relationships and six native leaf vectors are preserved. Levels now start at zero for roots. Parent centroids are derived at read time from proportion-weighted leaves. Nearest source chunks approximate membership; exact per-chunk memberships are not stored.",
+    "source_community_ids": {
+      "community:0": "375ca494db70a5ad8cfa981d747c90ad54a71d4628b3369ac0ed3e8379c52e6f",
+      "community:1": "7ac898f1adb4db788335ad90ce20409d5d1a7ede7eb0df642e6d68ddd0b90654",
+      "community:2": "9cb7e219ccde14089e23d531639bdc49128845b50c210e7878fa8adb774dea91",
+      "community:3": "c0604ed972c9e69bb328d1ff32a66a8fbfb3ea213236f2c3bbb98979745e9775",
+      "community:4": "5c2d5aefb03ed70492e350a0e211be79397b95ce6e4ec66ea41f8f4ef25481a3",
+      "community:5": "63888a7a331d4d08b4b4b0707722d776b7893320bbb427435bce0d31452c97c6",
+      "community:6": "d5e43f1ad6d3719ae896b1516409cc0bea8d67ebf9a858e6b054ae4138f38087",
+      "community:7": "de0666546153143fcf6e8dc0278c01d41998a3e196d607e5fbc759a6317f92f6"
+    }
+  }
 }
