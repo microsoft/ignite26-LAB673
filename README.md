@@ -51,6 +51,8 @@ By the end of this session, you will be able to:
 
 - [Foundry IQ](https://learn.microsoft.com/azure/foundry/agents/concepts/what-is-foundry-iq)
 - [Agentic retrieval in Azure AI Search](https://learn.microsoft.com/azure/search/agentic-retrieval-overview)
+- [Entity graphs in Azure AI Search](https://learn.microsoft.com/azure/search/agentic-knowledge-source-how-to-entity-graph)
+- [Topic graphs in Azure AI Search](https://learn.microsoft.com/azure/search/agentic-knowledge-source-how-to-topic-graph)
 - [Microsoft Foundry Models](https://learn.microsoft.com/azure/foundry/concepts/foundry-models-overview)
 
 ### 📚 Continue your learning
