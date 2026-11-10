@@ -341,10 +341,10 @@ class TopicTests(unittest.TestCase):
         self.assertTrue(nearest["is_terminal"])
         self.assertEqual(scope["nearest_topic"]["prop:title"], nearest["label"])
         self.assertEqual(scope["topic_size"], nearest["member_count"])
-        self.assertEqual(len(scope["member_ids"]), nearest["member_count"])
+        self.assertEqual(len(scope["candidate_ids"]), nearest["member_count"])
         self.assertEqual(len(scope["direct"]), 8)
         self.assertEqual(len(scope["routed"]), 8)
-        self.assertTrue(scope["routed_ids"] <= set(scope["member_ids"]))
+        self.assertTrue(scope["routed_ids"] <= set(scope["candidate_ids"]))
         self.assertEqual({row["topic_id"] for row in scope["root_topics"]},
                          {topic_id for topic_id, topic in hierarchy.items() if topic["level"] == 0})
         self.assertEqual({row["topic_id"]: row["parent_id"] for row in scope["subtopics"]},
