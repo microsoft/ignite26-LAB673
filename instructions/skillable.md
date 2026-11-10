@@ -30,7 +30,7 @@ You'll work through three notebooks:
 
 1. **Knowledge bases and Microsoft Retriever 1 (MR1)**: Ask a grounded question over three document indexes, follow the citations, and compare standard agentic retrieval with the faster MR1 retriever.
 2. **Entities and graphs**: Follow a chocolate batch back to the farms that grew its cacao, using an ontology, graph queries, and provenance.
-3. **Topics**: Browse labeled groups of chunks, compare topic routing with direct vector search, query the sitemap with GQL, and investigate a customer complaint with topics and PDF evidence.
+3. **Topics**: Browse labeled groups of chunks, look inside the topic graph with code and GQL to see how the chunks were grouped, and investigate a customer complaint with topics and PDF evidence.
 
 ## Sign into Windows
 
@@ -223,6 +223,8 @@ The sitemap connects broad topics to their children in the **cocoarynth-topics**
 
 ## Run the notebook
 
+In the notebook, you'll look inside the topic graph to understand how the chunks were grouped, then compare what a topic knowledge base and the standard knowledge base retrieve for a customer complaint.
+
 1. In Visual Studio Code, open **src/notebooks/03-topics.ipynb**.
 2. Run each cell in order, using the same **.venv** kernel.
 3. In the complaint investigation, compare the topic suggestions with the cited PDF evidence. Which records help distinguish a batch issue from a delivery issue?
@@ -241,7 +243,7 @@ You've completed the lab on exploring Foundry IQ knowledge bases. You:
 
 - Built a knowledge base over three document indexes, followed its citations back to the original documents, and compared it with the faster Microsoft Retriever 1.
 - Followed a chocolate batch to its farms with an ontology, GQL queries, and graph provenance, and compared a graph-backed knowledge base with standard retrieval.
-- Explored labeled topic groups, compared topic-based search with direct vector search, queried the sitemap with GQL, and investigated a customer complaint with topics and PDF evidence.
+- Explored labeled topic groups, looked inside the topic graph with code and GQL to see how the chunks were grouped, and investigated a customer complaint with topics and PDF evidence.
 
 | Need | Good starting point |
 | --- | --- |

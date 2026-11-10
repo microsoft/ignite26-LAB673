@@ -314,7 +314,6 @@ class TopicTests(unittest.TestCase):
         }
         scope, output = {}, io.StringIO()
         with patch.dict(os.environ, settings, clear=True), \
-                patch("dotenv.find_dotenv", return_value=str(ROOT / ".env")), \
                 patch("dotenv.load_dotenv", return_value=False), \
                 patch("azure.search.documents.SearchClient", side_effect=lambda endpoint, index, *a, **k: self.clients[index]), \
                 patch("azure.search.documents.indexes.SearchIndexClient", return_value=index_client), \
@@ -376,9 +375,10 @@ class TopicTests(unittest.TestCase):
                 self.assertTrue(all(math.isclose(left, right, abs_tol=1e-14)
                                     for left, right in zip(topic["centroid"], notebook_topic["centroid"])))
 
-    def test_notebook_metadata_uses_settings_file_from_root_or_notebook_directory(self):
+    def test_notebook_loads_settings_and_metadata_from_root_or_notebook_directory(self):
         notebook = json.loads((ROOT / "src" / "notebooks" / "03-topics.ipynb").read_text(encoding="utf-8"))
         cells = {cell["id"]: "".join(cell["source"]) for cell in notebook["cells"]}
+        self.assertNotIn("find_dotenv", cells["a027f58b"])
         settings = {
             "AZURE_SEARCH_SERVICE_ENDPOINT": "https://offline.search.windows.net",
             "AZURE_SEARCH_ADMIN_KEY": "offline-test-key",
@@ -398,12 +398,14 @@ class TopicTests(unittest.TestCase):
             notebook_directory.mkdir(parents=True)
             for directory in (root, notebook_directory):
                 with self.subTest(directory=directory), contextlib.chdir(directory), \
-                        patch.dict(os.environ, {}, clear=True), contextlib.redirect_stdout(io.StringIO()):
+                        patch.dict(os.environ, {}, clear=True), \
+                        patch.object(sys, "ps1", ">>>", create=True), \
+                        contextlib.redirect_stdout(io.StringIO()):
                     scope = {"json": json, "Path": Path}
                     exec(compile(cells["a027f58b"], "03-topics.ipynb:settings", "exec"), scope)
                     exec(compile(cells["624a1a30"], "03-topics.ipynb:metadata", "exec"), scope)
-                    self.assertEqual(Path(scope["env_file"]), root / ".env")
-                    self.assertEqual(scope["metadata_file"], metadata)
+                    self.assertTrue(all(scope[key] == value for key, value in settings.items()))
+                    self.assertEqual(scope["metadata_file"].resolve(), metadata)
                     self.assertEqual(scope["build_metadata"]["clustered_source_document_count"], 97)
 
     def test_terminal_root_centroids_are_searchable(self):
