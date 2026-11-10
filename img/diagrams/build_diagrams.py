@@ -251,69 +251,108 @@ def centroid(d, center_x, top):
     d.text(center_x + 22, top + 35, "centroid", size=20, color=CENTROID_COLOR, weight="600", baseline="central")
 
 
+def chunk_dot(d, x, y, dashed=False):
+    d.circle(x, y, 13, fill="#ffffff" if dashed else CHUNK_FILL, stroke=CHUNK_STROKE, stroke_width=2)
+    if dashed:
+        d.parts[-1] = d.parts[-1].replace("/>", ' stroke-dasharray="4 3"/>')
+
+
+def similarity_links(d, points, pairs):
+    for a, b in pairs:
+        d.line([points[a], points[b]], color="#adb5bd", width=3)
+
+
+def cluster_outline(d, x, y, width, height, label, broad=False):
+    d.rect(x, y, width, height, fill="none", stroke=TOPIC_COLOR, stroke_width=3 if broad else 2, dashed=True)
+    d.text(x + 16, y + 12, label, size=20 if broad else 18, color=TOPIC_COLOR, weight="600")
+
+
 def topics_chunks_diagram():
     d = Diagram(
-        TOPIC_WIDTH, 520, "Topic graph, step 1: cluster chunks based on embeddings",
-        "Chunk embeddings form a hierarchy of clusters. Two tight clusters, A and B, sit inside one broad cluster. "
-        "A separate cluster, C, stands alone. One chunk has no close match and won't join a topic. Chunks are text "
+        TOPIC_WIDTH, 570, "Topic graph, step 1: cluster chunks based on embeddings",
+        "Each chunk is linked to its most similar chunks by comparing embeddings. The clustering method groups "
+        "strongly linked chunks into a broad cluster, then splits it into tighter clusters, A and B. "
+        "It also finds a separate cluster, C. One chunk has no strong links, so it isn't clustered. Chunks are text "
         "from the original PDFs, not entities or extracted facts.",
         **TOPIC_SIZES,
     )
     panel_heading(d, 1, "Cluster chunks based on embeddings")
-    d.rect(35, 105, 570, 285, fill="#ffffff", stroke=TOPIC_COLOR, stroke_width=3, dashed=True)
-    d.text(55, 118, "broad cluster", size=20, color=TOPIC_COLOR, weight="600")
-    d.rect(60, 155, 240, 190, fill="#ffffff", stroke=TOPIC_COLOR, dashed=True)
-    d.text(80, 168, "cluster A", size=18, color=TOPIC_COLOR, weight="600")
-    d.rect(335, 155, 240, 190, fill="#ffffff", stroke=TOPIC_COLOR, dashed=True)
-    d.text(355, 168, "cluster B", size=18, color=TOPIC_COLOR, weight="600")
-    for x, y in ((80, 220), (190, 205), (135, 285), (355, 215), (465, 205), (410, 285)):
-        mini_chunk(d, x, y)
-    d.rect(650, 140, 270, 210, fill="#ffffff", stroke=TOPIC_COLOR, stroke_width=3, dashed=True)
-    d.text(670, 153, "cluster C", size=20, color=TOPIC_COLOR, weight="600")
-    chunk_card(d, 675, 205)
-    chunk_card(d, 765, 270)
-    chunk_card(d, 415, 410, dashed=True)
-    d.text(565, 425, "no close match: not in any topic", size=20, color="#868e96", baseline="central")
-    d.text(TOPIC_WIDTH / 2, 492, "Chunks are text from the original PDFs, not entities or extracted facts.",
+    points = {
+        "a1": (110, 225), "a2": (215, 215), "a3": (135, 315), "a4": (240, 305),
+        "b1": (385, 225), "b2": (490, 215), "b3": (405, 315), "b4": (510, 305),
+        "c1": (720, 220), "c2": (845, 225), "c3": (780, 310),
+    }
+    similarity_links(d, points, [
+        ("a1", "a2"), ("a1", "a3"), ("a2", "a3"), ("a2", "a4"), ("a3", "a4"), ("a1", "a4"),
+        ("b1", "b2"), ("b1", "b3"), ("b2", "b4"), ("b3", "b4"), ("b2", "b3"), ("b1", "b4"),
+        ("a2", "b1"), ("a4", "b3"),
+        ("c1", "c2"), ("c1", "c3"), ("c2", "c3"),
+    ])
+    cluster_outline(d, 35, 110, 570, 280, "broad cluster", broad=True)
+    cluster_outline(d, 70, 165, 210, 200, "cluster A")
+    cluster_outline(d, 345, 165, 210, 200, "cluster B")
+    cluster_outline(d, 660, 150, 260, 210, "cluster C", broad=True)
+    for x, y in points.values():
+        chunk_dot(d, x, y)
+    chunk_dot(d, 330, 440, dashed=True)
+    d.text(358, 440, "no strong links: not clustered", size=20, color="#868e96", baseline="central")
+    chunk_dot(d, 70, 495)
+    d.text(95, 495, "chunk", size=20, color="#495057", baseline="central")
+    d.line([(190, 495), (240, 495)], color="#adb5bd", width=3)
+    d.text(252, 495, "similar embeddings", size=20, color="#495057", baseline="central")
+    d.text(TOPIC_WIDTH - 40, 495, "large clusters are split", size=20, anchor="end", color=TOPIC_COLOR,
+           weight="600", baseline="central")
+    d.text(TOPIC_WIDTH / 2, 545, "Chunks are text from the original PDFs, not entities or extracted facts.",
            anchor="middle", weight="600", baseline="central")
     d.save("notebook-03-topics-1-chunks")
 
 
 def topics_tree_diagram():
     d = Diagram(
-        TOPIC_WIDTH, 810, "Topic graph, step 2: build topics from clusters of chunks",
-        "The broad cluster becomes a broad topic at level 0. Its tighter clusters, A and B, become subtopics at "
-        "level 1. The standalone cluster, C, becomes a broad terminal topic. Each terminal topic stores a centroid "
-        "vector. Similarity groups chunks; it doesn't assert facts.",
+        TOPIC_WIDTH, 820, "Topic graph, step 2: build topics from clusters of chunks",
+        "Each level of clusters becomes a level of topics. The broad cluster becomes a broad topic at level 0. "
+        "The tighter clusters it was split into, A and B, become subtopics at level 1. The separate cluster, C, "
+        "becomes a broad topic with no subtopics. Each terminal topic stores a centroid vector. Similarity groups "
+        "chunks; it doesn't assert facts.",
         **TOPIC_SIZES,
     )
     panel_heading(d, 2, "Build topics from clusters of chunks")
-    d.rect(35, 115, 390, 285, fill="#ffffff", stroke=TOPIC_COLOR, stroke_width=3, dashed=True)
-    d.text(55, 128, "broad cluster", size=20, color=TOPIC_COLOR, weight="600")
-    d.rect(55, 170, 165, 190, fill="#ffffff", stroke=TOPIC_COLOR, dashed=True)
-    d.text(75, 183, "cluster A", size=18, color=TOPIC_COLOR, weight="600")
-    d.rect(240, 170, 165, 190, fill="#ffffff", stroke=TOPIC_COLOR, dashed=True)
-    d.text(260, 183, "cluster B", size=18, color=TOPIC_COLOR, weight="600")
-    for x, y in ((75, 235), (120, 300), (260, 235), (305, 300)):
-        mini_chunk(d, x, y)
-    d.box("broad", 565, 115, 330, 0, "Broad topic", "formed from the broad cluster", kind="topic",
-          tag="Topic · level 0")
-    d.box("a", 460, 315, 220, 0, "Subtopic A", "from cluster A", kind="topic", tag="Topic · level 1")
-    d.box("b", 700, 315, 220, 0, "Subtopic B", "from cluster B", kind="topic", tag="Topic · level 1")
-    d.arrow([(425, 255), (535, 255), (535, 175), (563, 175)], label="creates", label_at=(480, 230))
+    d.text(205, 100, "Clusters", size=22, anchor="middle", color="#495057", weight="600")
+    d.text(730, 100, "Topics", size=22, anchor="middle", color="#495057", weight="600")
+    d.box("broad", 560, 140, 340, 0, "Broad topic", "from the broad cluster", kind="topic", tag="Level 0 topic")
+    d.box("a", 555, 340, 170, 0, "Subtopic A", "from A", kind="topic", tag="Level 1 topic")
+    d.box("b", 735, 340, 170, 0, "Subtopic B", "from B", kind="topic", tag="Level 1 topic")
+    d.box("solo", 560, 590, 340, 0, "Broad topic", "from C: no subtopics", kind="topic", tag="Level 0 topic")
+    rows = {row: d.boxes[row] for row in ("broad", "a", "solo")}
+
+    def cluster_card(x, y, width, label, dots, broad=False):
+        height = rows["broad"][3]
+        cluster_outline(d, x, y, width, height, label, broad=broad)
+        spacing = (width - 40) / max(dots - 1, 1)
+        for i in range(dots):
+            chunk_dot(d, x + 20 + i * spacing, y + height - 35)
+        return x, y, width, height
+
+    broad = cluster_card(40, 140, 330, "broad cluster", 6, broad=True)
+    cluster_a = cluster_card(40, 340, 155, "cluster A", 3)
+    cluster_b = cluster_card(215, 340, 155, "cluster B", 3)
+    cluster_card(40, 590, 330, "cluster C", 3, broad=True)
+    split_top = broad[1] + broad[3]
+    for cluster in (cluster_a, cluster_b):
+        d.line([(broad[0] + broad[2] / 2, split_top), (cluster[0] + cluster[2] / 2, cluster[1] - 2)],
+               color=TOPIC_COLOR, width=2, arrow=True)
+    d.text(broad[0] + broad[2] / 2, split_top + 20, "split", size=18, anchor="middle", color=TOPIC_COLOR,
+           weight="600")
+    for row, (_, y, _, height) in rows.items():
+        d.arrow([(372, y + height / 2), (553 if row == "a" else 558, y + height / 2)], label="becomes",
+                label_at=(462, y + height / 2 - 34))
     d.down("broad", "a")
     d.down("broad", "b")
-    d.rect(35, 575, 300, 125, fill="#ffffff", stroke=TOPIC_COLOR, stroke_width=3, dashed=True)
-    d.text(55, 588, "standalone cluster C", size=20, color=TOPIC_COLOR, weight="600")
-    mini_chunk(d, 70, 635)
-    mini_chunk(d, 180, 635)
-    d.box("solo", 565, 575, 330, 0, "Broad topic", "terminal: no subtopics", kind="topic", tag="Topic · level 0")
-    d.arrow([(335, 638), (563, 638)], label="creates", label_at=(449, 605))
     for box_id in ("a", "b", "solo"):
         x, y, width, height = d.boxes[box_id]
         centroid(d, x + width / 2 - 40, y + height)
-    d.text(TOPIC_WIDTH / 2, 780,
-           "Terminal topics have no subtopics and store a centroid.",
+    d.text(TOPIC_WIDTH / 2, 790,
+           "Each level of clusters becomes a level of topics. Terminal topics store a centroid.",
            anchor="middle", weight="600")
     d.save("notebook-03-topics-2-topics")
 
@@ -375,6 +414,29 @@ def topic_graph_notebook():
     d.save("notebook-03")
 
 
+def topic_aware_notebook():
+    """The Part 3 topic-aware knowledge source, which diversifies vector search with the topic graph."""
+    d = Diagram(
+        1100, 640, "Notebook 03: the topic-aware knowledge source",
+        "cocoarynth-topic-aware-knowledge-base uses cocoarynth-topic-aware-knowledge-source, whose topicGraph kind "
+        "is diverse. The knowledge source searches the cocoarynth-chunks index. Its text_vector field uses the "
+        "cocoarynth-topic-graph profile, which points to the topic centroids in the cocoarynth-topics index.",
+        title_size=26, body_size=22, tag_size=16,
+    )
+    d.box("kb", 40, 40, 560, 0, "cocoarynth-topic-aware-knowledge-base", MODELS, kind="kb")
+    d.box("ks", 40, 250, 560, 0, "cocoarynth-topic-aware-knowledge-source", "topicGraph: diverse", kind="ks")
+    d.box("chunks", 40, 450, 560, 0, "cocoarynth-chunks", "text_vector uses the\ncocoarynth-topic-graph profile",
+          kind="index")
+    topics_title, topics_body = "cocoarynth-topics", "centroids of the\nterminal topics"
+    chunks_mid = 450 + d.boxes["chunks"][3] / 2
+    d.box("topics", 760, round(chunks_mid - d.box_height(topics_title, topics_body) / 2), 300, 0, topics_title,
+          topics_body, kind="index")
+    d.down("kb", "ks")
+    d.down("ks", "chunks", label="diversified\nvector search")
+    d.right("chunks", "topics", label="profile", dashed=True)
+    d.save("notebook-03-topic-aware")
+
+
 if __name__ == "__main__":
     knowledge_base_diagram(
         "notebook-01-standard", "Notebook 01: the standard knowledge base chooses which sources to search",
@@ -396,3 +458,4 @@ if __name__ == "__main__":
     topics_tree_diagram()
     topic_graph_diagram()
     topic_graph_notebook()
+    topic_aware_notebook()

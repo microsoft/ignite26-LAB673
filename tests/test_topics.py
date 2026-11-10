@@ -91,6 +91,9 @@ class SnapshotClient:
             ]
             rows = [row for _, row in sorted(ranked, key=lambda pair: (-pair[0], pair[1][self.snapshot.key]))]
             rows = rows[:query.k_nearest_neighbors]
+            scores = {row[self.snapshot.key]: score for score, row in ranked}
+            return [{**{name: row.get(name) for name in selected}, "@search.score": scores[row[self.snapshot.key]]}
+                    for row in rows[:top]]
         return [{name: row.get(name) for name in selected} for row in rows[:top]]
 
     def graph(self, *, gql, include_statistics=False):
@@ -279,7 +282,7 @@ class TopicTests(unittest.TestCase):
         sources = {source["name"]: source for source in loader.graph_sources(
             self.manifest, list(self.snapshots.values()), None
         )}
-        created_bases, requests = [], []
+        created_bases, created_sources, updated_indexes, requests = [], [], [], []
 
         def create_base(base):
             created_bases.append(base.as_dict())
@@ -304,7 +307,10 @@ class TopicTests(unittest.TestCase):
             )
 
         index_client = SimpleNamespace(
+            get_index=lambda name: SearchIndex(copy.deepcopy(self.snapshots[name].definition)),
+            create_or_update_index=lambda index: updated_indexes.append(index.as_dict()),
             get_knowledge_source=lambda name: SimpleNamespace(as_dict=lambda: sources[name]),
+            create_or_update_knowledge_source=lambda source: created_sources.append(source.as_dict()),
             create_or_update_knowledge_base=create_base,
         )
         settings = {
@@ -333,7 +339,8 @@ class TopicTests(unittest.TestCase):
         topic_reads = [call["filter"] for call in self.calls
                        if call["index"] == "cocoarynth-topics" and not call["vectors"]]
         self.assertEqual(topic_reads, [
-            f"subject_id eq '{scope['NEAREST_TOPIC_ID']}'", "predicate eq 'HasCentroidVector'",
+            f"subject_id eq '{scope['NEAREST_TOPIC_ID']}'", "predicate eq 'prop:title'",
+            "predicate eq 'HasCentroidVector'",
         ])
         with patch.object(explorer, "client", side_effect=self.clients.__getitem__):
             hierarchy = explorer.get_topic_hierarchy()
@@ -344,7 +351,24 @@ class TopicTests(unittest.TestCase):
         self.assertEqual(len(scope["candidate_ids"]), nearest["member_count"])
         self.assertEqual(len(scope["direct"]), 8)
         self.assertEqual(len(scope["routed"]), 8)
-        self.assertTrue(scope["routed_ids"] <= set(scope["candidate_ids"]))
+        self.assertTrue({row["chunk_id"] for row in scope["routed"]} <= set(scope["candidate_ids"]))
+        [updated_index] = updated_indexes
+        self.assertEqual(updated_index["vectorSearch"]["topicGraphProfiles"], [{
+            "name": "cocoarynth-topic-graph", "indexName": "cocoarynth-topics", "defaultKind": "none",
+        }])
+        self.assertEqual(
+            {field["name"]: field.get("topicGraphProfile") for field in updated_index["fields"]
+             if field.get("topicGraphProfile")},
+            {"text_vector": "cocoarynth-topic-graph"},
+        )
+        compared = [call["vectors"][0].topic_graph for call in self.calls
+                    if call["index"] == "cocoarynth-chunks" and call["vectors"]
+                    and call["vectors"][0].topic_graph is not None]
+        self.assertEqual([graph.kind for graph in compared], ["none", "diverse"])
+        self.assertEqual(compared[1].diversity_factor, 0.5)
+        self.assertEqual(len(scope["non_diversified"]), 8)
+        self.assertEqual(len(scope["diversified"]), 8)
+        self.assertIn("Diversified search (kind: diverse, diversityFactor: 0.5)", output.getvalue())
         self.assertEqual({row["topic_id"] for row in scope["root_topics"]},
                          {topic_id for topic_id, topic in hierarchy.items() if topic["level"] == 0})
         self.assertEqual({row["topic_id"]: row["parent_id"] for row in scope["subtopics"]},
@@ -355,10 +379,24 @@ class TopicTests(unittest.TestCase):
         for topic_id, centroid in scope["centroids"].items():
             self.assertTrue(all(math.isclose(left, right, abs_tol=1e-14)
                                 for left, right in zip(hierarchy[topic_id]["centroid"], centroid)))
-        self.assertEqual(len(created_bases), 1)
+        self.assertEqual([base["name"] for base in created_bases], [
+            "cocoarynth-topics-knowledge-base", "cocoarynth-topic-aware-knowledge-base",
+        ])
+        self.assertEqual(created_bases[1]["knowledgeSources"], [{"name": "cocoarynth-topic-aware-knowledge-source"}])
+        [topic_aware_source] = created_sources
+        self.assertEqual(topic_aware_source["name"], "cocoarynth-topic-aware-knowledge-source")
+        parameters = topic_aware_source["searchIndexParameters"]
+        self.assertEqual(parameters["searchIndexName"], "cocoarynth-chunks")
+        self.assertEqual(parameters["topicGraph"], {"kind": "diverse"})
+        chunk_fields = {field["name"]: field for field in self.snapshots["cocoarynth-chunks"].definition["fields"]}
+        search_fields = [field["name"] for field in parameters["searchFields"]]
+        self.assertIn("text_vector", search_fields)
+        self.assertTrue(all(chunk_fields[name].get("searchable") for name in search_fields))
+        self.assertTrue(all(chunk_fields[field["name"]].get("retrievable", True)
+                            for field in parameters["sourceDataFields"]))
         self.assertEqual(len(requests), 2)
         self.assertEqual([name for name, _ in requests], [
-            "cocoarynth-topics-knowledge-base", "cocoarynth-standard-knowledge-base",
+            "cocoarynth-topics-knowledge-base", "cocoarynth-topic-aware-knowledge-base",
         ])
         topic_request, document_request = [request for _, request in requests]
         topic_question = topic_request["messages"][0]["content"][0]["text"]
@@ -376,8 +414,8 @@ class TopicTests(unittest.TestCase):
         for phrase in ("Larkspur", "GH26-0706", "batch", "delivery", "other stores"):
             self.assertIn(phrase, document_question)
         self.assertEqual(
-            {source["knowledgeSourceName"] for source in document_request["knowledgeSourceParams"]},
-            {f"cocoarynth-{domain}-knowledge-source" for domain in ("production", "sales", "policies")},
+            [source["knowledgeSourceName"] for source in document_request["knowledgeSourceParams"]],
+            ["cocoarynth-topic-aware-knowledge-source"],
         )
         for _, request in requests:
             for source in request["knowledgeSourceParams"]:
@@ -386,7 +424,7 @@ class TopicTests(unittest.TestCase):
                 self.assertTrue(source["alwaysQuerySource"])
         self.assertIn(evidence["blob_path"], output.getvalue())
         first_cell = "".join(notebook["cells"][0]["source"])
-        self.assertIn("Run Part 1 first", first_cell)
+        self.assertNotIn("Run Part 1 first", first_cell)
         self.assertLess(first_cell.index("Mission"), first_cell.index("## How the topic graph is built"))
 
     def test_notebook_loads_settings_and_metadata_from_root_or_notebook_directory(self):

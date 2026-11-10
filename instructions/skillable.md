@@ -223,11 +223,12 @@ The sitemap ontology describes the topic graph in the **cocoarynth-topics** inde
 
 ## Run the notebook
 
-In the notebook, you'll look inside the topic graph to understand how the chunks were grouped, then compare what a topic knowledge base and the standard knowledge base retrieve for a customer complaint.
+In the notebook, you'll look inside the topic graph to understand how the chunks were grouped, compare non-diversified and diversified vector search, then investigate a customer complaint with a topic knowledge base and a topic-aware knowledge source.
 
 1. In Visual Studio Code, open **src/notebooks/03-topics.ipynb**.
 2. Run each cell in order, using the same **.venv** kernel.
-3. In the complaint investigation, compare the topic suggestions with the cited PDF evidence. Which records help distinguish a batch issue from a delivery issue?
+3. In Step 6, compare how many topics the non-diversified and diversified lists cover. Which chunks did diversified search swap in?
+4. In the complaint investigation, compare the topic suggestions with the cited PDF evidence. Which records help distinguish a batch issue from a delivery issue?
 
 ## 🍫 Food for thought
 
@@ -251,6 +252,7 @@ You've completed the lab on exploring Foundry IQ knowledge bases. You:
 | Respond quickly when the app already knows which source to use | microsoft-retriever-1 |
 | Follow explicit relationships across records | Entity graph and GQL |
 | Explore groups of related chunks and navigate their hierarchy | Topic graph and GQL |
+| Retrieve evidence that spans several areas of the content | Topic-aware knowledge source |
 
 ## Continue learning
 
