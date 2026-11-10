@@ -1,396 +1,197 @@
 {
-  "name": "cocoarynth-topics",
   "fields": [
     {
+      "analyzer": "keyword",
+      "filterable": true,
+      "key": true,
       "name": "id",
-      "type": "Edm.String",
-      "retrievable": true,
-      "filterable": true,
-      "sortable": true,
-      "facetable": false,
       "searchable": true,
-      "key": true
+      "sortable": true,
+      "type": "Edm.String"
     },
     {
+      "facetable": true,
+      "filterable": true,
       "name": "subject",
-      "type": "Edm.String",
-      "retrievable": true,
-      "filterable": true,
+      "searchable": true,
       "sortable": true,
-      "facetable": true,
-      "searchable": true
+      "type": "Edm.String"
     },
     {
-      "name": "predicate",
-      "type": "Edm.String",
-      "retrievable": true,
-      "filterable": true,
-      "sortable": true,
       "facetable": true,
-      "searchable": true
-    },
-    {
-      "name": "object",
-      "type": "Edm.String",
-      "retrievable": true,
       "filterable": true,
-      "sortable": true,
-      "facetable": true,
-      "searchable": true
-    },
-    {
-      "name": "object_string",
-      "type": "Edm.String",
-      "retrievable": true,
-      "filterable": true,
-      "sortable": true,
-      "facetable": true,
-      "searchable": false
-    },
-    {
       "name": "subject_type",
-      "type": "Edm.String",
-      "retrievable": true,
-      "filterable": true,
-      "sortable": true,
-      "facetable": true,
-      "searchable": false
+      "type": "Edm.String"
     },
     {
+      "facetable": true,
+      "filterable": true,
       "name": "subject_id",
-      "type": "Edm.String",
-      "retrievable": true,
-      "filterable": true,
       "sortable": true,
-      "facetable": true,
-      "searchable": false
-    },
-    {
-      "name": "object_type",
-      "type": "Edm.String",
-      "retrievable": true,
-      "filterable": true,
-      "sortable": true,
-      "facetable": true,
-      "searchable": false
-    },
-    {
-      "name": "object_id",
-      "type": "Edm.String",
-      "retrievable": true,
-      "filterable": true,
-      "sortable": true,
-      "facetable": true,
-      "searchable": false
-    },
-    {
-      "name": "graph_name",
-      "type": "Edm.String",
-      "retrievable": true,
-      "filterable": true,
-      "sortable": true,
-      "facetable": true,
-      "searchable": false
-    },
-    {
-      "name": "namespace",
-      "type": "Edm.String",
-      "retrievable": true,
-      "filterable": true,
-      "sortable": true,
-      "facetable": true,
-      "searchable": false
-    },
-    {
-      "name": "source_parent_id",
-      "type": "Edm.String",
-      "retrievable": true,
-      "filterable": true,
-      "sortable": true,
-      "facetable": true,
-      "searchable": false
-    },
-    {
-      "name": "chunk_id",
-      "type": "Edm.String",
-      "retrievable": true,
-      "filterable": true,
-      "sortable": true,
-      "facetable": true,
-      "searchable": false
+      "type": "Edm.String"
     },
     {
       "name": "subject_id_display_name",
-      "type": "Edm.String",
-      "retrievable": true,
-      "filterable": false,
-      "sortable": true,
+      "type": "Edm.String"
+    },
+    {
+      "analyzer": "keyword",
       "facetable": true,
-      "searchable": true
+      "filterable": true,
+      "name": "predicate",
+      "searchable": true,
+      "type": "Edm.String"
+    },
+    {
+      "facetable": true,
+      "filterable": true,
+      "name": "object",
+      "searchable": true,
+      "sortable": true,
+      "type": "Edm.String"
+    },
+    {
+      "facetable": true,
+      "filterable": true,
+      "name": "object_type",
+      "type": "Edm.String"
+    },
+    {
+      "facetable": true,
+      "filterable": true,
+      "name": "object_id",
+      "sortable": true,
+      "type": "Edm.String"
     },
     {
       "name": "object_id_display_name",
-      "type": "Edm.String",
-      "retrievable": true,
-      "filterable": false,
-      "sortable": true,
+      "type": "Edm.String"
+    },
+    {
+      "analyzer": "en.microsoft",
       "facetable": true,
-      "searchable": true
+      "filterable": true,
+      "name": "object_string",
+      "searchable": true,
+      "type": "Edm.String"
     },
     {
-      "name": "object_double",
-      "type": "Edm.Double",
-      "retrievable": true,
+      "facetable": true,
       "filterable": true,
+      "name": "graph_name",
       "sortable": true,
-      "facetable": true
+      "type": "Edm.String"
     },
     {
-      "name": "object_bool",
-      "type": "Edm.Boolean",
-      "retrievable": true,
-      "filterable": true
-    },
-    {
-      "name": "object_datetime",
-      "type": "Edm.DateTimeOffset",
-      "retrievable": true,
+      "facetable": true,
       "filterable": true,
-      "sortable": true
+      "name": "object_double",
+      "sortable": true,
+      "type": "Edm.Double"
+    },
+    {
+      "filterable": true,
+      "name": "object_bool",
+      "type": "Edm.Boolean"
+    },
+    {
+      "filterable": true,
+      "name": "object_datetime",
+      "type": "Edm.DateTimeOffset"
     },
     {
       "name": "edge_confidence",
-      "type": "Edm.Double",
-      "retrievable": true,
-      "filterable": true,
-      "sortable": true,
-      "facetable": true
+      "type": "Edm.Double"
     },
     {
       "name": "s_confidence",
-      "type": "Edm.Double",
-      "retrievable": true,
-      "filterable": true,
-      "sortable": true,
-      "facetable": true
+      "type": "Edm.Double"
     },
     {
       "name": "p_confidence",
-      "type": "Edm.Double",
-      "retrievable": true,
-      "filterable": true,
-      "sortable": true,
-      "facetable": true
+      "type": "Edm.Double"
     },
     {
       "name": "o_confidence",
-      "type": "Edm.Double",
-      "retrievable": true,
-      "filterable": true,
-      "sortable": true,
-      "facetable": true
+      "type": "Edm.Double"
     },
     {
-      "name": "fact_id",
-      "type": "Edm.String",
-      "retrievable": true,
-      "filterable": true
-    },
-    {
-      "name": "kind",
-      "type": "Edm.String",
-      "retrievable": true,
-      "filterable": true,
-      "searchable": false
-    },
-    {
-      "name": "community_id",
-      "type": "Edm.String",
-      "retrievable": true,
-      "filterable": true,
-      "searchable": false
+      "name": "chunk_id",
+      "type": "Edm.String"
     },
     {
       "name": "parent_id",
-      "type": "Edm.String",
-      "retrievable": true,
-      "filterable": true,
-      "searchable": false
+      "type": "Edm.String"
     },
     {
-      "name": "level",
-      "type": "Edm.Int32",
-      "retrievable": true,
-      "filterable": true,
-      "searchable": false
-    },
-    {
-      "name": "member_count",
-      "type": "Edm.Int32",
-      "retrievable": true,
-      "filterable": true,
-      "searchable": false
-    },
-    {
-      "name": "label",
-      "type": "Edm.String",
-      "retrievable": true,
-      "filterable": true,
-      "searchable": true
-    },
-    {
-      "name": "description",
-      "type": "Edm.String",
-      "retrievable": true,
-      "filterable": true,
-      "searchable": true
-    },
-    {
-      "name": "label_status",
-      "type": "Edm.String",
-      "retrievable": true,
-      "filterable": true,
-      "searchable": false
-    },
-    {
-      "name": "label_method",
-      "type": "Edm.String",
-      "retrievable": true,
-      "filterable": true,
-      "searchable": false
-    },
-    {
-      "name": "centroid_method",
-      "type": "Edm.String",
-      "retrievable": true,
-      "filterable": true,
-      "searchable": false
-    },
-    {
-      "name": "is_terminal",
-      "type": "Edm.Boolean",
-      "retrievable": true,
-      "filterable": true,
-      "searchable": false
-    },
-    {
-      "name": "title",
-      "type": "Edm.String",
-      "retrievable": true,
-      "filterable": true,
-      "searchable": true
-    },
-    {
-      "name": "blob_path",
-      "type": "Edm.String",
-      "retrievable": true,
-      "filterable": true,
-      "searchable": false
-    },
-    {
-      "name": "payload",
-      "type": "Edm.String",
-      "retrievable": true,
-      "filterable": false,
-      "searchable": false
-    },
-    {
-      "name": "centroid",
-      "type": "Collection(Edm.Single)",
-      "searchable": true,
-      "retrievable": true,
-      "stored": true,
       "dimensions": 3072,
-      "vectorSearchProfile": "captured-cosine"
+      "name": "object_vector",
+      "retrievable": true,
+      "searchable": true,
+      "stored": true,
+      "type": "Collection(Edm.Single)",
+      "vectorSearchProfile": "chunk-vector-profile"
     }
   ],
   "graphProfile": {
-    "kind": "edgeList",
     "fields": {
       "assertionIdField": "id",
-      "factIdField": "fact_id",
-      "subjectField": "subject",
-      "predicateField": "predicate",
-      "objectField": "object",
-      "objectStringField": "object_string",
-      "objectDoubleField": "object_double",
-      "objectBoolField": "object_bool",
-      "objectDateTimeField": "object_datetime",
-      "subjectTypeField": "subject_type",
-      "subjectIdField": "subject_id",
-      "objectTypeField": "object_type",
-      "objectIdField": "object_id",
       "confidenceField": "edge_confidence",
-      "subjectConfidenceField": "s_confidence",
-      "predicateConfidenceField": "p_confidence",
-      "objectConfidenceField": "o_confidence",
-      "sourceChunkIdField": "chunk_id",
-      "sourceParentIdField": "source_parent_id",
+      "factIdField": "id",
       "graphNameField": "graph_name",
+      "objectBoolField": "object_bool",
+      "objectConfidenceField": "o_confidence",
+      "objectDateTimeField": "object_datetime",
+      "objectDoubleField": "object_double",
+      "objectField": "object",
+      "objectIdDisplayNameField": "object_id_display_name",
+      "objectIdField": "object_id",
+      "objectStringField": "object_string",
+      "objectTypeField": "object_type",
+      "predicateConfidenceField": "p_confidence",
+      "predicateField": "predicate",
+      "sourceChunkIdField": "chunk_id",
+      "sourceParentIdField": "parent_id",
+      "subjectConfidenceField": "s_confidence",
+      "subjectField": "subject",
       "subjectIdDisplayNameField": "subject_id_display_name",
-      "objectIdDisplayNameField": "object_id_display_name"
+      "subjectIdField": "subject_id",
+      "subjectTypeField": "subject_type"
     },
-    "provenanceIndexName": "cocoarynth-chunks"
-  },
-  "description": "Named topic vectors and the computed PDF sitemap, with private-preview GQL.",
-  "vectorSearch": {
-    "algorithms": [
-      {
-        "name": "captured-hnsw",
-        "kind": "hnsw",
-        "hnswParameters": {
-          "metric": "cosine",
-          "m": 4,
-          "efConstruction": 400,
-          "efSearch": 500
-        }
-      }
-    ],
-    "profiles": [
-      {
-        "name": "captured-cosine",
-        "algorithm": "captured-hnsw",
-        "vectorizer": "azure-openai-vectorizer"
-      }
-    ],
-    "vectorizers": [
-      {
-        "name": "azure-openai-vectorizer",
-        "kind": "azureOpenAI",
-        "azureOpenAIParameters": {
-          "resourceUri": null,
-          "deploymentId": "text-embedding-3-large",
-          "apiKey": null,
-          "modelName": "text-embedding-3-large",
-          "authIdentity": null
-        },
-        "customWebApiParameters": null,
-        "aiServicesVisionParameters": null,
-        "amlParameters": null
-      }
-    ]
+    "kind": "edgeList"
   },
   "semantic": {
-    "defaultConfiguration": "topics-semantic",
     "configurations": [
       {
-        "name": "topics-semantic",
+        "name": "topicgraph-community-semantic",
         "prioritizedFields": {
-          "titleField": {
-            "fieldName": "label"
-          },
           "prioritizedContentFields": [
             {
-              "fieldName": "description"
-            }
-          ],
-          "prioritizedKeywordsFields": [
-            {
-              "fieldName": "title"
+              "fieldName": "object_string"
             }
           ]
         }
       }
+    ],
+    "defaultConfiguration": "topicgraph-community-semantic"
+  },
+  "vectorSearch": {
+    "algorithms": [
+      {
+        "exhaustiveKnnParameters": {
+          "metric": "cosine"
+        },
+        "kind": "exhaustiveKnn",
+        "name": "chunk-vector-exhaustive-knn"
+      }
+    ],
+    "profiles": [
+      {
+        "algorithm": "chunk-vector-exhaustive-knn",
+        "name": "chunk-vector-profile"
+      }
     ]
-  }
+  },
+  "name": "cocoarynth-topics",
+  "description": "Canonical TopicGraph topic hierarchy and leaf centroids adapted from the captured Cocoarynth PDF topics."
 }

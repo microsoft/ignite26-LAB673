@@ -5,7 +5,7 @@ The active restore manifest contains exactly three indexes. All use the same
 
 | Index | Definition | Records |
 | --- | --- | --- |
-| `cocoarynth-topics` | [Definition](cocoarynth-topics-index.json) | [438 rows](cocoarynth-topics-exported.jsonl): eight labeled/vectorized representatives, 158 memberships, sitemap edges, and a manifest |
+| `cocoarynth-topics` | [Definition](cocoarynth-topics-index.json) | [54 canonical edge-list facts](cocoarynth-topics-exported.jsonl): eight named topics, hierarchy links, proportions, and six leaf vectors |
 | `cocoarynth-chunks` | [Definition](cocoarynth-chunks-index.json) | [106 PDF chunk and vector rows](cocoarynth-chunks-exported.jsonl) |
 | `cocoarynth-graph` | [Definition](cocoarynth-graph-index.json) | [120 PDF-supported assertions](cocoarynth-graph-exported.jsonl), representing 91 distinct facts |
 
@@ -15,16 +15,17 @@ All source and topic vectors have **3,072 dimensions**. The [manifest](manifest.
 
 [cocoarynth.owl](cocoarynth.owl) contains 13 classes and 19 properties proposed
 from PDF excerpts. [cocoarynth-sitemap.owl](cocoarynth-sitemap.owl) describes
-`Topic`, `Document`, `TextChunk`, and their navigation properties.
-Neither ontology is restored as an index.
+the canonical `CommunityGraph`, `Community`, and `Vector` navigation schema.
 
 [The loader](../../infra/restore-graph-indexes.py) converts these flat RDF/XML
 declarations to the constrained JSON-LD accepted by API `2026-11-01-preview`.
 It creates `cocoarynth-graph-knowledge-source` and `cocoarynth-topics-knowledge-source`, each an ordinary
 `searchIndex` knowledge source with `searchIndexParameters.graphOntology`
-set to `kind: inline`. Both target indexes have an edge-list graph profile
-whose provenance index is `cocoarynth-chunks`. The topic source supports
-sitemap GQL as well as ordinary topic retrieval.
+set to `kind: inline`. Both target indexes have an edge-list graph profile.
+The business graph resolves its assertion evidence through `cocoarynth-chunks`.
+The topic knowledge source supports hierarchy GQL and retrieval of topic
+titles and descriptions. Topic centroid queries retrieve related PDF chunks
+from the source index.
 
 ## Evidence and coverage
 
@@ -36,21 +37,40 @@ records declaration evidence, model identity, curation, and limitations.
 The compact ontology and graph are not exhaustive, and the extraction was not
 a managed indexer run or native ontology approval.
 
-The eight communities and 158 memberships preserve the captured native GRZ
-generation. The topic index retains six native terminal representative vectors
-and two existing derived parent centroids. Labels and descriptions are separate
-model enrichment from the unchanged member chunks, not native GRZ naming.
-There are four roots and four children; two roots have no children.
-Overall, 97 of 106 chunks are assigned and nine are unassigned.
-Only 61 chunks belong to level-0 children. Topic routing includes all six
-terminal communities, including the two terminal roots at level 1.
+## Canonical topic format
 
-The topic index stores `hasSubtopic`, `hasMember`, and `hasTextChunk` triples
-alongside the representatives. `parent_id` on a representative means its
-parent community; the graph profile uses the separate `source_parent_id`
-field for PDF provenance.
+The topic index uses the Foundry IQ plugin's
+`topicgraph-release-v1` contract. Each row is a `subject_id` / `predicate` /
+typed object statement in `topicgraph-community`.
 
-## Restoration and retained captures
+| Predicate | Object field | Meaning |
+| --- | --- | --- |
+| `HasRootCommunity` | `object_id` | `CommunityGraph` to a broad root `Community` |
+| `HasSubCommunity` | `object_id` | Parent `Community` to child `Community` |
+| `prop:title`, `prop:description` | `object_string` | Topic display text |
+| `prop:level`, `prop:proportion`, `prop:parentProportion` | `object_double` | Depth and shares of clustered chunks / parent |
+| `HasCentroidVector` | `object_vector` | A leaf's retrievable 3,072-dimensional centroid |
+
+Roots are level **0**, children level **1**. Stored IDs are opaque
+`community:<n>` values.
+Only the six terminal communities store vectors, including the two terminal
+roots. A parent's centroid is derived at read time from the
+proportion-weighted mean of its leaf centroids.
+
+The hierarchy contains eight communities and four parent-child links.
+Titles and descriptions summarize each group's chunks. The [lab metadata](manifest.json)
+records coverage and topic counts: the groups cover 97 of 106 source chunks,
+and 61 also belong to level-1 children.
+
+A topic's count is `round(proportion × 97)`, using the **clustered** source
+count rather than all 106 chunks. The explorer and notebook search
+`cocoarynth-chunks` with the topic centroid, capped at that count and at 1,000,
+to show nearest chunks. These approximate the topic's core. The search ranks
+chunks from the full source index by similarity to the centroid.
+Use GQL to navigate the topic hierarchy and source-vector queries to find PDF
+examples.
+
+## Restoration
 
 [Lab provisioning](../../infra/README.md) restores all three indexes, splits the
 chunk snapshot into three document-group indexes for Part 1, and creates both
@@ -63,7 +83,5 @@ python .\infra\restore-graph-indexes.py --validate-only
 Run the command from the repository root. See [restore guidance](../../infra/README.md#restore-graph-snapshots-private-preview)
 for service requirements and destination handling.
 
-Older ontology-index, graph-source, topic-source, separate-vector, and sitemap
-capture files remain in this folder for provenance. They are **not in the active
-manifest and are never restored by the lab loader**. In particular, the old
-generator-backed graph-source capture must not be used as PDF extraction evidence.
+Use an explicit prefix for a separate restoration on an existing service.
+The loader verifies destination schemas and data before reusing resources.

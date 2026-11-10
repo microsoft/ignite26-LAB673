@@ -1,0 +1,174 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1360 572" width="1360" height="572" font-family="Segoe UI, Helvetica, Arial, sans-serif" role="img" aria-labelledby="topics-overview-title topics-overview-desc">
+<title id="topics-overview-title">Topics overview: compare chunk embeddings, form topics and centroids, then navigate the Sitemap and read evidence</title>
+<desc id="topics-overview-desc">Three panels flow left to right. Panel 1: chunks of the original PDFs are compared by their embeddings, and similar chunks are connected; these are chunks, not entities or extracted facts. Panel 2: similar chunks form a two-level hierarchy. A broad topic at level 0 contains narrow topics A and B at level 1, and another broad topic has no children. Each terminal topic has a centroid, its representative vector; the broad topic's centroid is derived from its children. Similarity groups chunks; it does not assert facts, and titles describe a group without defining it. Panel 3: the Sitemap leads from a broad topic to narrower topics. A centroid search over all source chunks returns centroid-nearest examples for browsing, not stored membership. Reading the original chunks and source records provides the evidence. Footer: Topics guide where to look. Source chunks provide the evidence.</desc>
+<defs>
+<marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#495057"/></marker>
+<marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#1864ab"/></marker>
+<marker id="arrow-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#d9480f"/></marker>
+</defs>
+<rect width="1360" height="572" fill="#ffffff"/>
+
+<!-- Panel 1: compare chunk embeddings -->
+<rect x="24" y="24" width="340" height="456" rx="14" fill="#f8f9fa" stroke="#ced4da" stroke-width="1.5"/>
+<circle cx="52" cy="56" r="15" fill="#1864ab"/>
+<text x="52" y="56" font-size="16" font-weight="700" fill="#ffffff" text-anchor="middle" dominant-baseline="central">1</text>
+<text x="76" y="62" font-size="17" font-weight="600" fill="#212529">Compare chunk embeddings</text>
+<text x="76" y="86" font-size="14" fill="#495057">Each card is one source chunk</text>
+<g fill="none" stroke="#868e96" stroke-width="2" stroke-dasharray="6 4">
+<path d="M 86 144 L 184 128"/>
+<path d="M 86 144 L 124 214"/>
+<path d="M 184 128 L 124 214"/>
+<path d="M 284 166 L 302 252"/>
+<path d="M 104 312 L 222 298"/>
+<path d="M 184 128 L 284 166" stroke="#ced4da"/>
+<path d="M 124 214 L 104 312" stroke="#ced4da"/>
+</g>
+<g fill="#ebfbee" stroke="#2b8a3e" stroke-width="2">
+<rect x="49" y="124" width="74" height="40" rx="6"/>
+<rect x="147" y="108" width="74" height="40" rx="6"/>
+<rect x="87" y="194" width="74" height="40" rx="6"/>
+<rect x="247" y="146" width="74" height="40" rx="6"/>
+<rect x="265" y="232" width="74" height="40" rx="6"/>
+<rect x="67" y="292" width="74" height="40" rx="6"/>
+<rect x="185" y="278" width="74" height="40" rx="6"/>
+</g>
+<g font-size="13" fill="#212529" text-anchor="middle" dominant-baseline="central">
+<text x="86" y="144">chunk</text>
+<text x="184" y="128">chunk</text>
+<text x="124" y="214">chunk</text>
+<text x="284" y="166">chunk</text>
+<text x="302" y="252">chunk</text>
+<text x="104" y="312">chunk</text>
+<text x="222" y="298">chunk</text>
+</g>
+<path d="M 44 356 L 84 356" fill="none" stroke="#868e96" stroke-width="2" stroke-dasharray="6 4"/>
+<text x="94" y="361" font-size="13" fill="#495057">similar embeddings</text>
+<rect x="40" y="398" width="308" height="62" rx="8" fill="#ffffff" stroke="#adb5bd" stroke-width="1.5"/>
+<text x="194" y="423" font-size="14" fill="#212529" text-anchor="middle">Chunks are text from the original PDFs,</text>
+<text x="194" y="444" font-size="14" fill="#212529" text-anchor="middle">not entities or extracted facts.</text>
+
+<path d="M 368 252 L 400 252" fill="none" stroke="#495057" stroke-width="2.5" marker-end="url(#arrow)"/>
+
+<!-- Panel 2: form topics and centroids -->
+<rect x="404" y="24" width="450" height="456" rx="14" fill="#f8f9fa" stroke="#ced4da" stroke-width="1.5"/>
+<circle cx="432" cy="56" r="15" fill="#1864ab"/>
+<text x="432" y="56" font-size="16" font-weight="700" fill="#ffffff" text-anchor="middle" dominant-baseline="central">2</text>
+<text x="456" y="62" font-size="17" font-weight="600" fill="#212529">Form topics and centroids</text>
+<text x="456" y="86" font-size="14" fill="#495057">Similar chunks are grouped into two levels</text>
+
+<rect x="422" y="104" width="414" height="202" rx="10" fill="#f8f0fc" stroke="#862e9c" stroke-width="2"/>
+<text x="436" y="128" font-size="14" fill="#212529"><tspan font-weight="600">Broad topic</tspan><tspan fill="#495057"> · level 0</tspan></text>
+<circle cx="672" cy="123" r="8" fill="#ffffff" stroke="#d9480f" stroke-width="2" stroke-dasharray="3 2"/>
+<text x="686" y="128" font-size="12" fill="#495057">derived from children</text>
+
+<rect x="436" y="140" width="186" height="154" rx="8" fill="#ffffff" stroke="#862e9c" stroke-width="1.5"/>
+<text x="450" y="160" font-size="14" font-weight="600" fill="#212529">Narrow topic A</text>
+<text x="450" y="177" font-size="12" fill="#495057">level 1</text>
+<rect x="636" y="140" width="186" height="154" rx="8" fill="#ffffff" stroke="#862e9c" stroke-width="1.5"/>
+<text x="650" y="160" font-size="14" font-weight="600" fill="#212529">Narrow topic B</text>
+<text x="650" y="177" font-size="12" fill="#495057">level 1</text>
+
+<rect x="422" y="320" width="414" height="84" rx="10" fill="#f8f0fc" stroke="#862e9c" stroke-width="2"/>
+<text x="436" y="344" font-size="14" font-weight="600" fill="#212529">Broad topic</text>
+<text x="436" y="362" font-size="12" fill="#495057">level 0 · no children</text>
+
+<g fill="none" stroke="#d9480f" stroke-width="1.5" stroke-dasharray="2 3">
+<path d="M 529 240 L 473 221"/>
+<path d="M 529 240 L 529 221"/>
+<path d="M 529 240 L 585 221"/>
+<path d="M 729 240 L 701 221"/>
+<path d="M 729 240 L 757 221"/>
+<path d="M 744 346 Q 672 326 596 349"/>
+<path d="M 742 354 L 671 362"/>
+</g>
+<g fill="#ebfbee" stroke="#2b8a3e" stroke-width="1.5">
+<rect x="450" y="195" width="46" height="26" rx="5"/>
+<rect x="506" y="195" width="46" height="26" rx="5"/>
+<rect x="562" y="195" width="46" height="26" rx="5"/>
+<rect x="678" y="195" width="46" height="26" rx="5"/>
+<rect x="734" y="195" width="46" height="26" rx="5"/>
+<rect x="573" y="349" width="46" height="26" rx="5"/>
+<rect x="625" y="349" width="46" height="26" rx="5"/>
+</g>
+<g fill="none" stroke="#2b8a3e" stroke-width="1.5" stroke-linecap="round">
+<path d="M 458 204 H 488 M 458 212 H 480"/>
+<path d="M 514 204 H 544 M 514 212 H 536"/>
+<path d="M 570 204 H 600 M 570 212 H 592"/>
+<path d="M 686 204 H 716 M 686 212 H 708"/>
+<path d="M 742 204 H 772 M 742 212 H 764"/>
+<path d="M 581 358 H 611 M 581 366 H 603"/>
+<path d="M 633 358 H 663 M 633 366 H 655"/>
+</g>
+<g fill="#fff4e6" stroke="#d9480f" stroke-width="2.5">
+<circle cx="529" cy="250" r="10"/>
+<circle cx="729" cy="250" r="10"/>
+<circle cx="752" cy="352" r="10"/>
+</g>
+<g fill="none" stroke="#d9480f" stroke-width="2">
+<path d="M 523 250 H 535 M 529 244 V 256"/>
+<path d="M 723 250 H 735 M 729 244 V 256"/>
+<path d="M 746 352 H 758 M 752 346 V 358"/>
+</g>
+<g font-size="12" font-weight="600" fill="#c2410c" text-anchor="middle">
+<text x="529" y="282">representative vector</text>
+<text x="729" y="282">representative vector</text>
+<text x="752" y="384">representative vector</text>
+</g>
+
+<rect x="422" y="416" width="414" height="54" rx="8" fill="#ffffff" stroke="#adb5bd" stroke-width="1.5"/>
+<text x="629" y="438" font-size="14" font-weight="600" fill="#212529" text-anchor="middle">Similarity groups chunks; it does not assert facts.</text>
+<text x="629" y="458" font-size="13" fill="#495057" text-anchor="middle">Titles describe a group; they don't define it.</text>
+
+<path d="M 858 252 L 890 252" fill="none" stroke="#495057" stroke-width="2.5" marker-end="url(#arrow)"/>
+
+<!-- Panel 3: navigate the Sitemap, then read evidence -->
+<rect x="894" y="24" width="442" height="456" rx="14" fill="#f8f9fa" stroke="#ced4da" stroke-width="1.5"/>
+<circle cx="922" cy="56" r="15" fill="#1864ab"/>
+<text x="922" y="56" font-size="16" font-weight="700" fill="#ffffff" text-anchor="middle" dominant-baseline="central">3</text>
+<text x="946" y="62" font-size="17" font-weight="600" fill="#212529">Navigate the Sitemap, then read evidence</text>
+<text x="946" y="86" font-size="14" fill="#495057">The Sitemap shows where to look</text>
+
+<rect x="910" y="114" width="72" height="22" rx="11" fill="#862e9c"/>
+<text x="946" y="125" font-size="12" font-weight="600" fill="#ffffff" text-anchor="middle" dominant-baseline="central">Sitemap</text>
+<rect x="1040" y="108" width="150" height="34" rx="8" fill="#f8f0fc" stroke="#862e9c" stroke-width="2"/>
+<text x="1115" y="130" font-size="14" font-weight="600" fill="#212529" text-anchor="middle">Broad topic</text>
+<rect x="950" y="184" width="150" height="34" rx="8" fill="#f8f0fc" stroke="#862e9c" stroke-width="3.5"/>
+<text x="1025" y="206" font-size="14" font-weight="600" fill="#212529" text-anchor="middle">Narrow topic A</text>
+<rect x="1130" y="184" width="150" height="34" rx="8" fill="#f8f0fc" stroke="#862e9c" stroke-width="2"/>
+<text x="1205" y="206" font-size="14" font-weight="600" fill="#212529" text-anchor="middle">Narrow topic B</text>
+<g fill="none" stroke="#1864ab" stroke-width="2.5" marker-end="url(#arrow-blue)">
+<path d="M 1100 142 L 1040 182"/>
+<path d="M 1130 142 L 1190 182"/>
+</g>
+
+<circle cx="1025" cy="236" r="9" fill="#fff4e6" stroke="#d9480f" stroke-width="2.5"/>
+<path d="M 1020 236 H 1030 M 1025 231 V 241" fill="none" stroke="#d9480f" stroke-width="2"/>
+<path d="M 1025 246 L 1025 290" fill="none" stroke="#d9480f" stroke-width="2.5" marker-end="url(#arrow-orange)"/>
+<text x="1042" y="258" font-size="13" font-weight="600" fill="#c2410c">centroid search</text>
+<text x="1042" y="275" font-size="12" fill="#495057">over all source chunks</text>
+
+<rect x="910" y="292" width="410" height="130" rx="10" fill="#ffffff" stroke="#868e96" stroke-width="2" stroke-dasharray="7 5"/>
+<text x="926" y="315" font-size="14" font-weight="600" fill="#212529">Centroid-nearest examples</text>
+<g fill="#ebfbee" stroke="#2b8a3e" stroke-width="2">
+<rect x="926" y="328" width="110" height="46" rx="6"/>
+<rect x="1050" y="328" width="110" height="46" rx="6"/>
+<rect x="1174" y="328" width="110" height="46" rx="6"/>
+</g>
+<g text-anchor="middle">
+<text x="981" y="347" font-size="13" font-weight="600" fill="#212529">Source chunk</text>
+<text x="981" y="364" font-size="12" fill="#495057">from a PDF</text>
+<text x="1105" y="347" font-size="13" font-weight="600" fill="#212529">Source chunk</text>
+<text x="1105" y="364" font-size="12" fill="#495057">from a PDF</text>
+<text x="1229" y="347" font-size="13" font-weight="600" fill="#212529">Source chunk</text>
+<text x="1229" y="364" font-size="12" fill="#495057">from a PDF</text>
+</g>
+<text x="926" y="402" font-size="13" font-style="italic" fill="#495057">Examples for browsing, not stored membership</text>
+
+<rect x="910" y="438" width="88" height="26" rx="13" fill="#2b8a3e"/>
+<text x="954" y="451" font-size="13" font-weight="700" fill="#ffffff" text-anchor="middle" dominant-baseline="central">Evidence</text>
+<text x="1010" y="456" font-size="14" fill="#212529">Read the original chunks and source records</text>
+
+<!-- Footer -->
+<rect x="24" y="496" width="1312" height="52" rx="10" fill="#d0ebff" stroke="#1864ab" stroke-width="2"/>
+<text x="680" y="528" font-size="18" fill="#212529" text-anchor="middle"><tspan font-weight="700">Topics guide where to look.</tspan><tspan> Source chunks provide the evidence.</tspan></text>
+</svg>

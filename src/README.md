@@ -5,14 +5,14 @@
 The [lab instructions](../instructions/skillable.md) progress from a
 standard knowledge base and MR1 comparison to entity/GQL exploration,
 then a topics and sitemap exercise. All three notebooks use the same Foundry IQ
-service and the three-index snapshot loader. The entity section is the
+service and the indexes that setup restores. The entity section is the
 main part of the lab.
 
 | Notebook | Focus |
 | --- | --- |
 | [Knowledge base and MR1](notebooks/01-knowledge-base-and-mr1.ipynb) | Original documents, grounded answers, activity, and a measured speed comparison with MR1 |
 | [Entities and graphs](notebooks/02-entities-and-graphs.ipynb) | Assertions and evidence, native GQL, provenance, and graph-backed retrieval |
-| [Topics](notebooks/03-topics.ipynb) | Named hierarchy, coverage, topic-routed vectors, sitemap GQL, and graph-enabled topic retrieval |
+| [Topics](notebooks/03-topics.ipynb) | Topic coverage, centroid-nearest chunks, hierarchy GQL, and a customer complaint investigation using topics and PDF evidence |
 
 Each notebook loads settings from the root `.env` file and uses the
 `azure-search-documents` Python SDK directly. Setup restores six indexes:
@@ -31,7 +31,15 @@ three tabs:
 
 - **Graph ontology**: Entity types and relationships read from [the OWL file](../data/graph-data/cocoarynth.owl).
 - **Graph entities**: Search for an entity, expand its neighbors, and select an assertion to see its evidence.
-- **Topics**: Topic labels, descriptions, the preserved hierarchy, and member PDF chunks grouped by document, with links to the original PDFs.
+- **Topics**: Browse topic titles and descriptions, follow the hierarchy, and read centroid-nearest PDF chunks grouped by document.
+
+The topic index uses the `topicgraph-release-v1` edge-list
+contract: `HasRootCommunity`, `HasSubCommunity`, literal properties, and
+`HasCentroidVector` with retrievable `object_vector` values on leaves only.
+Roots are level 0. Parent vectors are derived from proportion-weighted leaves.
+Check coverage in `data/graph-data/manifest.json`, navigate the hierarchy with
+sitemap GQL, and search the chunk index with a topic's centroid to explore
+related source documents.
 
 Each panel starts with a "From" row that names the index or file its data comes
 from. Entity, fact, and chunk rows also have a **Copy ID**

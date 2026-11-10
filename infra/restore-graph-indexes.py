@@ -237,7 +237,7 @@ def load_bundle(prefix: str, owner: str | None) -> tuple[dict[str, Any], list[Sn
         require(definition["name"] == original, f"{original}: definition name differs.")
         definition["name"] = name
         profile = definition.get("graphProfile")
-        if profile:
+        if profile and ("provenanceIndexName" in profile or original == "cocoarynth-graph"):
             require(profile.get("provenanceIndexName") in names,
                     f"{name}: unknown provenance index.")
             profile["provenanceIndexName"] = names[profile["provenanceIndexName"]]
@@ -256,15 +256,14 @@ def load_bundle(prefix: str, owner: str | None) -> tuple[dict[str, Any], list[Sn
             require(set(record) <= set(fields), f"{name}: document contains unknown fields.")
             for field in fields.values():
                 normalized(field, record.get(field["name"]))
-        if prefix and entry["definition"] == "cocoarynth-topics-index.json":
-            sidecars = [record for record in records if record["kind"] == "manifest"]
-            require(len(sidecars) == 1, "Expected exactly one topic-sidecar manifest.")
-            binding = json.loads(sidecars[0]["payload"])
-            for key in ("physical_index", "source_index"):
-                require(binding[key] in names, f"Unknown sidecar {key} binding.")
-                binding[key] = names[binding[key]]
-            sidecars[0]["payload"] = json.dumps(binding, sort_keys=True, separators=(",", ":"))
         snapshots.append(Snapshot(original, name, entry["key"], definition, records))
+    topic_metadata = manifest.get("topics")
+    require(isinstance(topic_metadata, dict), "The canonical topic snapshot needs separate capture metadata.")
+    for key in ("physical_index", "source_index"):
+        require(topic_metadata[key] in names, f"Unknown topic {key} binding.")
+        topic_metadata[key] = names[topic_metadata[key]]
+    require(topic_metadata["source_index"] == names["cocoarynth-chunks"],
+            "The topic source must be the PDF chunk snapshot.")
     for filename in manifest["ontologies"].values():
         read_ontology(BUNDLE / filename)
     chunks = {row["chunk_id"]: row for snapshot in snapshots
@@ -305,8 +304,6 @@ def load_bundle(prefix: str, owner: str | None) -> tuple[dict[str, Any], list[Sn
                     term["rdfs:range"]["@id"].replace("schema:", ""),
                 )
         for record in snapshot.records:
-            if record.get("kind") == "manifest":
-                continue
             require(properties.get(record["predicate"]) ==
                     (record["subject_type"], record["object_type"]),
                     f"{snapshot.name}/{record['id']}: triple violates the OWL domain/range.")
@@ -321,7 +318,102 @@ def load_bundle(prefix: str, owner: str | None) -> tuple[dict[str, Any], list[Sn
                     quotes = record.get("evidence_quotes")
                     require(bool(quotes) and all(quote and quote in source["chunk"] for quote in quotes),
                             f"{snapshot.name}/{record['id']}: evidence quotations are not verbatim.")
+    topics = next(snapshot for snapshot in snapshots if snapshot.original_name == "cocoarynth-topics")
+    validate_topics(topics, topic_metadata, len(chunks))
     return manifest, snapshots + domain_snapshots(snapshots, prefix)
+
+
+def validate_topics(snapshot: Snapshot, metadata: dict[str, Any], source_count: int) -> None:
+    """Check the canonical release contract, not the retired kind/membership sidecar."""
+    fields = {field["name"]: field for field in snapshot.definition["fields"]}
+    require(set(fields) == {
+        "id", "subject", "subject_type", "subject_id", "subject_id_display_name", "predicate",
+        "object", "object_type", "object_id", "object_id_display_name", "object_string",
+        "graph_name", "object_double", "object_bool", "object_datetime", "edge_confidence",
+        "s_confidence", "p_confidence", "o_confidence", "chunk_id", "parent_id", "object_vector",
+    }, "The topic index must use the canonical TopicGraph release fields only.")
+    require(metadata["schema_version"] == "topicgraph-release-v1"
+            and metadata["physical_index"] == snapshot.name,
+            "The topic snapshot contract or physical binding differs.")
+    require(fields["object_vector"]["dimensions"] == metadata["dimension"] == 3072
+            and fields["object_vector"].get("retrievable") is True,
+            "Topic leaf centroids must be retrievable 3,072-dimensional object_vector values.")
+    profile = snapshot.definition["graphProfile"]
+    require(profile["kind"] == "edgeList" and profile["fields"]["factIdField"] == "id"
+            and "provenanceIndexName" not in profile,
+            "Canonical topic facts have no chunk-membership provenance index.")
+    clustered = metadata["clustered_source_document_count"]
+    require(isinstance(clustered, int) and not isinstance(clustered, bool) and clustered > 0
+            and metadata["source_document_count"] == source_count
+            and clustered + metadata["unassigned_source_document_count"] == source_count
+            and math.isclose(metadata["node_coverage"], clustered / source_count),
+            "Topic capture coverage differs from the PDF chunk snapshot.")
+    values: dict[str, dict[str, Any]] = {}
+    roots: set[str] = set()
+    parents: dict[str, str] = {}
+    centroids: dict[str, list[float]] = {}
+    properties = {"prop:title", "prop:description", "prop:level", "prop:proportion", "prop:parentProportion"}
+    for row in snapshot.records:
+        subject, predicate, target = row["subject_id"], row["predicate"], row.get("object_id")
+        require(row["graph_name"] == metadata["graph_name"] == "topicgraph-community"
+                and not row.get("chunk_id") and not row.get("parent_id"),
+                "Topic facts must not claim per-chunk membership or PDF provenance.")
+        if predicate == "HasRootCommunity":
+            require(subject == "communitygraph:topicgraph-community"
+                    and row["subject_type"] == "CommunityGraph" and target not in roots,
+                    "A topic root edge is invalid or duplicated.")
+            roots.add(target)
+            continue
+        require(subject.startswith("community:") and row["subject_type"] == "Community",
+                "Topic subjects must use the stored community: identity.")
+        topic = values.setdefault(subject, {})
+        if predicate == "HasSubCommunity":
+            require(target not in parents, "A topic has more than one parent.")
+            parents[target] = subject
+        elif predicate == "HasCentroidVector":
+            require(subject not in centroids and len(row.get("object_vector") or []) == metadata["dimension"]
+                    and any(row["object_vector"]), "A leaf centroid is missing, zero, or duplicated.")
+            centroids[subject] = row["object_vector"]
+        else:
+            require(predicate in properties and predicate not in topic,
+                    f"{subject}: unexpected or repeated topic property {predicate}.")
+            topic[predicate] = row.get("object_string") if predicate in {
+                "prop:title", "prop:description"
+            } else row.get("object_double")
+    ids = set(values)
+    require(ids and roots == ids - set(parents) and set(parents) <= ids
+            and set(parents.values()) <= ids and not roots & set(parents),
+            "Topic root and child edges must form one complete forest.")
+    require(set(centroids) == ids - set(parents.values()),
+            "Only leaf topics, including terminal roots, must have stored centroids.")
+    for cid, topic in values.items():
+        require(set(topic) == properties and bool(topic["prop:title"]) and bool(topic["prop:description"]),
+                f"{cid}: a canonical topic property is missing.")
+        level, proportion = topic["prop:level"], topic["prop:proportion"]
+        require(isinstance(level, (int, float)) and level >= 0 and level == int(level)
+                and isinstance(proportion, (int, float)) and 0 < proportion <= 1,
+                f"{cid}: invalid topic level or proportion.")
+    level_counts: dict[str, int] = {}
+    for cid, topic in values.items():
+        level, proportion = topic["prop:level"], topic["prop:proportion"]
+        if cid in parents:
+            parent = values[parents[cid]]
+            require(level == parent["prop:level"] + 1
+                    and math.isclose(topic["prop:parentProportion"], proportion / parent["prop:proportion"]),
+                    f"{cid}: topic depth or parent proportion differs.")
+        else:
+            require(level == 0 and math.isclose(topic["prop:parentProportion"], proportion),
+                    f"{cid}: roots must be level zero with their global proportion.")
+        children = [child for child, parent in parents.items() if parent == cid]
+        if children:
+            require(math.isclose(sum(values[child]["prop:proportion"] for child in children), proportion),
+                    f"{cid}: child proportions do not cover the parent.")
+        key = str(int(level))
+        level_counts[key] = level_counts.get(key, 0) + round(proportion * clustered)
+    require(math.isclose(sum(values[root]["prop:proportion"] for root in roots), 1)
+            and len(ids) == metadata["topic_count"] and len(centroids) == metadata["terminal_topic_count"]
+            and level_counts == metadata["assigned_chunks_by_level"],
+            "Topic counts, proportions, or per-level capture coverage differ.")
 
 
 def domain_snapshots(snapshots: list[Snapshot], prefix: str) -> list[Snapshot]:
@@ -350,11 +442,11 @@ def graph_sources(manifest: dict[str, Any], snapshots: list[Snapshot],
         filename = manifest["ontologies"].get(snapshot.original_name)
         if not filename:
             continue
-        fields = ["id", "subject", "predicate", "object", "chunk_id"]
+        fields = ["id", "subject", "predicate", "object"]
         if snapshot.original_name == "cocoarynth-topics":
-            fields += ["kind", "label", "description", "community_id", "title", "blob_path"]
+            fields += ["subject_id", "object_id", "object_string", "object_double", "graph_name"]
         else:
-            fields += ["parent_id", "evidence_quotes"]
+            fields += ["chunk_id", "parent_id", "evidence_quotes"]
         definitions.append({
             "name": snapshot.name + "-knowledge-source",
             "kind": "searchIndex",
@@ -362,7 +454,7 @@ def graph_sources(manifest: dict[str, Any], snapshots: list[Snapshot],
             "searchIndexParameters": {
                 "searchIndexName": snapshot.name,
                 "sourceDataFields": [{"name": name} for name in fields],
-                **({"semanticConfigurationName": "topics-semantic"}
+                **({"semanticConfigurationName": snapshot.definition["semantic"]["defaultConfiguration"]}
                    if snapshot.original_name == "cocoarynth-topics" else {}),
                 "graphOntology": {"kind": "inline", "name": Path(filename).stem,
                                   "value": json.dumps(read_ontology(BUNDLE / filename),
@@ -469,16 +561,17 @@ def verify_graph(indexes: SearchIndexClient, endpoint: str, api: str,
                         and item["chunkId"] in sources, f"{name}: provenance binding differs.")
         print(f"Verified native graph query: {name}.", flush=True)
     topics = by_name["cocoarynth-topics"]
-    expected_links = {(row["subject_id"], row["object_id"])
-                      for row in topics.records if row.get("predicate") == "hasSubtopic"}
-    result = preview_json(indexes, endpoint, f"indexes('{topics.name}')/docs/search.graph", api,
-                          {"gql": "MATCH (p:`Topic`)-[:`hasSubtopic`]->(c:`Topic`) "
-                                  "RETURN p.id AS parent, c.id AS child LIMIT 100",
-                           "includeStatistics": True}, 200)
-    require(result.get("@search.graphStats", {}).get("executionMode") == "execute"
-            and {(row["parent"], row["child"]) for row in result.get("value", [])} == expected_links
-            and len(result.get("value", [])) == len(expected_links),
-            "The topic index did not execute the expected sitemap GQL traversal.")
+    for predicate, subject_type in (("HasRootCommunity", "CommunityGraph"), ("HasSubCommunity", "Community")):
+        expected_links = {(row["subject_id"], row["object_id"])
+                          for row in topics.records if row["predicate"] == predicate}
+        result = preview_json(indexes, endpoint, f"indexes('{topics.name}')/docs/search.graph", api,
+                              {"gql": f"MATCH (p:`{subject_type}`)-[:`{predicate}`]->(c:`Community`) "
+                                      "RETURN p.id AS parent, c.id AS child LIMIT 100",
+                               "includeStatistics": True}, 200)
+        require(result.get("@search.graphStats", {}).get("executionMode") == "execute"
+                and {(row["parent"], row["child"]) for row in result.get("value", [])} == expected_links
+                and len(result.get("value", [])) == len(expected_links),
+                f"The topic index did not execute the expected {predicate} GQL traversal.")
     print("Verified native sitemap GQL over the topic index.", flush=True)
 
 

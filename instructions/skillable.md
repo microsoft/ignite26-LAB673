@@ -8,7 +8,7 @@ At any point during the lab, if you need to sign in to the virtual machine (Wind
 
 ### Sign into virtual machine (Windows)
 
-If you need to sign in the virtual machine, use the following credentials:
+If you need to sign in to the virtual machine, use the following credentials:
 
 - **User name**: +++@lab.VirtualMachine(ILL344:Win11).Username+++
 - **Password**: +++@lab.VirtualMachine(ILL344:Win11).Password+++
@@ -30,7 +30,7 @@ You'll work through three notebooks:
 
 1. **Knowledge bases and Microsoft Retriever 1 (MR1)**: Ask a grounded question over three document indexes, follow the citations, and compare standard agentic retrieval with the faster MR1 retriever.
 2. **Entities and graphs**: Follow a chocolate batch back to the farms that grew its cacao, using an ontology, graph queries, and provenance.
-3. **Topics**: Browse labeled groups of chunks, compare topic routing with direct vector search, and query the sitemap with GQL and a graph-enabled knowledge source.
+3. **Topics**: Browse labeled groups of chunks, look inside the topic graph with code and GQL to see how the chunks were grouped, and investigate a customer complaint with topics and PDF evidence.
 
 ## Sign into Windows
 
@@ -58,14 +58,14 @@ All required Azure services have already been provisioned for you.
 <details>
 <summary><strong>📋 What's pre-configured (click to expand for details)</strong></summary>
 
-- **Pre-processed data**: The Foundry IQ plugin processed the 55 Cocoarynth PDFs ahead of time. It split them into chunks (pieces of text such as a section, a table, or a short page) with embeddings, extracted an entity graph and its ontology, and grouped the chunks into topics. Setup restored its output into the indexes below.
+- **Prepared data**: The lab includes 55 Cocoarynth PDFs and their chunks (pieces of text such as a section, a table, or a short page), embeddings, topics, and a PDF-supported entity graph with its ontology. Setup restores the prepared snapshots into the indexes below.
 - **Foundry IQ** with six pre-created indexes:
   - **cocoarynth-production**, **cocoarynth-sales**, and **cocoarynth-policies**: The PDF chunks for each document group, with embeddings
-  - **cocoarynth-chunks**: All 106 chunks from the 55 original PDFs in one index, which the graph and topics link to as evidence
+  - **cocoarynth-chunks**: All 106 chunks from the 55 original PDFs in one index, used for business graph evidence and topic-centroid vector searches
   - **cocoarynth-graph**: PDF-supported business triples constrained by the checked-in OWL ontology
-  - **cocoarynth-topics**: Topic vectors, labels, descriptions, memberships, and sitemap relationships
+  - **cocoarynth-topics**: Topic titles, descriptions, hierarchy facts, proportions, and terminal-topic vectors
 - **Graph-enabled knowledge sources** for the business graph and topic sitemap, using the November inline-ontology private preview
-- **Checked-in OWL files**: The ontologies that the plugin created. They're files, not additional indexes
+- **Checked-in OWL files**: The business ontology and the canonical topic navigation schema. They're files, not additional indexes
 - **Azure OpenAI** with **gpt-6-luna** for query planning and answer synthesis, and **text-embedding-3-large** for vector embeddings
 
 </details>
@@ -96,12 +96,12 @@ Select **Next** to start exploring the indexes.
 
 # Part 1: Knowledge bases and Microsoft Retriever 1
 
-In this part, you'll look at the search indexes in the Azure portal, then use a notebook to build a knowledge base over them and ask a grounded question. Finally, you'll return to the portal to see the knowledge base you created.
+In this part, you'll look at the search indexes in the Azure portal, then use a notebook to build a knowledge base over the three document indexes, ask it a grounded question, and compare standard agentic retrieval with Microsoft Retriever 1 (MR1). Finally, you'll return to the portal to see the knowledge sources and knowledge bases you created.
 
 ## Explore the indexes in the Azure portal
 
 1. In your Foundry IQ service, select **Search management** > **Indexes** from the left pane.
-2. You should see 6 indexes, each with a nonzero document count. For this step, we are using these 3 indexes that store chunks from PDF documents:
+2. You should see six indexes, each with a nonzero document count. Part 1 uses these three, which store the PDF chunks for each document group:
    - **cocoarynth-production**: farm and harvest records through factory batch records
    - **cocoarynth-sales**: shipping, retailers, and customers
    - **cocoarynth-policies**: company policies
@@ -124,7 +124,7 @@ In this part, you'll look at the search indexes in the Azure portal, then use a 
 ## See your knowledge base in the Azure portal
 
 1. Return to your Foundry IQ service in the Azure portal.
-2. From the left pane, select **Agentic retrieval** > **Knowledge sources**. Find the three document knowledge sources that the notebook created, such as **cocoarynth-production-knowledge-source**. Each one targets the index with the same name, such as **cocoarynth-production**. The two graph-enabled sources were created during setup.
+2. From the left pane, select **Agentic retrieval** > **Knowledge sources**. Find the three document knowledge sources that the notebook created, such as **cocoarynth-production-knowledge-source**. Each one targets the matching index, such as **cocoarynth-production**. The two graph-enabled sources were created during setup.
 3. Select **Agentic retrieval** > **Knowledge bases**. Open **cocoarynth-standard-knowledge-base**.
 4. Look at which knowledge sources it uses, which chat completion model it uses for query planning and answer synthesis, and its retrieval reasoning effort.
 5. Open **cocoarynth-mr1-knowledge-base** too. Notice that it uses the same three sources, but no chat completion model.
@@ -141,7 +141,7 @@ Select **Next** to continue to entities and graphs.
 
 A Pantry Lane customer has a chocolate wrapper with batch code **EC26-0811** and wants to know which farms grew its cacao. A single chunk can mention a batch or a farm, but a graph makes the connection explicit: **Batch → BeanLot ← Farm**.
 
-The Foundry IQ plugin built this graph from the PDFs ahead of time. It proposed an ontology, then extracted the entities and relationships that fit it, each linked to the chunk it came from.
+The lab includes an ontology and entity graph prepared from the source PDFs. The ontology defines entity types and relationships, and each graph assertion links back to a source chunk.
 
 The Azure portal doesn't show graphs yet, so this lab includes a small web app, the **Cocoarynth graph explorer**, for looking at the graph visually.
 
@@ -171,7 +171,7 @@ The **Graph ontology** tab shows the graph's schema. Each circle is an entity ty
 
 ## Read the ontology file
 
-When the Foundry IQ plugin processed the documents, it came up with the ontology schema. That schema is saved in an OWL file, written as XML. The **Graph ontology** tab draws its diagram from the same file.
+The ontology is saved in an OWL file, written as XML. The **Graph ontology** tab draws its diagram from the same file.
 
 1. In Visual Studio Code, open **data/graph-data/cocoarynth.owl**.
 2. Look through its elements:
@@ -201,34 +201,37 @@ Select **Next** to continue to **Topics**.
 
 An entity graph shows how specific things are connected. Topics group related chunks so you can explore a broader area of the documents.
 
-The Foundry IQ plugin generated these topics ahead of time. It clustered the chunk embeddings into a two-level hierarchy, then labeled and described each topic from its member chunks.
+The topics form a two-level hierarchy. Each has a title and description to help you choose an area to explore, and a centroid vector for finding similar chunks.
 
 ## Explore topics in the graph explorer
 
 1. In the graph explorer, select the **Topics** tab. If you closed the app, start it again as described in Part 2.
-2. In the **Topics** panel on the right, compare **Assigned to a topic** with **Not assigned**. 97 of the 106 chunks belong to a topic, but 9 don't, so browsing by topic would never reach those 9.
-3. Broad topics are on the left, and narrower child topics are on the right. Each box has a label added from its member chunks; select it to read the description. There are four roots and four children, and two roots have no children.
-4. Select a topic to see its member chunks, grouped by document. Expand a chunk to read it, or select a document name to open the original PDF. Do the chunks have something in common? Labels describe the fixed groups; they do not change which chunks belong to a topic.
+2. In the **Topics** panel on the right, compare **Assigned during the build** with **Not assigned during the build**. The topic groups cover 97 of the 106 chunks.
+3. Broad topics are on the left at level 0, and narrower child topics are on the right at level 1. Select a box to read its description. There are four roots and four children; two of the roots have no children.
+4. Below the description, the panel lists the topic's nearest chunks, grouped by document. To find them, the explorer searches the full source index with the topic's centroid. Expand a chunk to read it, or select a document name to open the original PDF. Do the chunks have something in common?
 
 ## Read the sitemap ontology file
 
-The Foundry IQ plugin also saved the topic hierarchy as a navigation graph, called the sitemap, in the **cocoarynth-topics** index. The sitemap's schema is in a second, smaller OWL file.
+The sitemap connects broad topics to their children in the **cocoarynth-topics** index. Open its OWL schema to see the types and relationships you'll query.
 
 1. In Visual Studio Code, open **data/graph-data/cocoarynth-sitemap.owl**. Like **cocoarynth.owl**, it's an OWL file written as XML, so it uses the same kinds of elements.
 2. Look through its elements:
-   - The **owl:Class** elements are its three entity types: *Topic*, *Document*, and *TextChunk*, a chunk of a PDF.
-   - The **owl:ObjectProperty** elements are its three relationships: *hasSubtopic*, from *Topic* to *Topic*; *hasMember*, from *Topic* to *TextChunk*; and *hasTextChunk*, from *Document* to *TextChunk*.
-   - The **owl:DatatypeProperty** elements are plain-value properties, like a topic's *description* and a chunk's *chunkId*, which matches its key in **cocoarynth-chunks**.
+   - The **owl:Class** elements are its three entity types: *CommunityGraph*, the whole sitemap; *Community*, a topic; and *Vector*, a terminal topic's centroid.
+   - The **owl:ObjectProperty** elements are its three relationships: *HasRootCommunity*, from the graph to a broad topic; *HasSubCommunity*, from a parent topic to a child; and *HasCentroidVector*, from a terminal topic to its vector.
+   - The **owl:DatatypeProperty** elements are plain-value properties, like a topic's *title*, *description*, *level*, and *proportion*.
+3. In the notebook, you'll follow these links with GQL, then use topic vectors to find related chunks in **cocoarynth-chunks**.
 
 ## Run the notebook
 
+In the notebook, you'll look inside the topic graph to understand how the chunks were grouped, then compare what a topic knowledge base and the standard knowledge base retrieve for a customer complaint.
+
 1. In Visual Studio Code, open **src/notebooks/03-topics.ipynb**.
 2. Run each cell in order, using the same **.venv** kernel.
-3. Follow the instructions in the notebook.
+3. In the complaint investigation, compare the topic suggestions with the cited PDF evidence. Which records help distinguish a batch issue from a delivery issue?
 
 ## 🍫 Food for thought
 
-Think about the three questions from this lab: the organic seal, the farms behind batch EC26-0811, and a broad topic browse. Which retrieval approach would you start with for each one, and why?
+Think about the three questions from this lab: the organic seal, the farms behind batch EC26-0811, and Larkspur's complaint. Which retrieval approach would you start with for each one, and why?
 
 Select **Next** to review key takeaways and next steps.
 
@@ -240,7 +243,7 @@ You've completed the lab on exploring Foundry IQ knowledge bases. You:
 
 - Built a knowledge base over three document indexes, followed its citations back to the original documents, and compared it with the faster Microsoft Retriever 1.
 - Followed a chocolate batch to its farms with an ontology, GQL queries, and graph provenance, and compared a graph-backed knowledge base with standard retrieval.
-- Explored labeled topic groups, compared topic-based search with direct vector search, and queried the sitemap through GQL and its inline-ontology knowledge source.
+- Explored labeled topic groups, looked inside the topic graph with code and GQL to see how the chunks were grouped, and investigated a customer complaint with topics and PDF evidence.
 
 | Need | Good starting point |
 | --- | --- |

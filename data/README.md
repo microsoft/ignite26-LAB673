@@ -2,7 +2,7 @@
 
 The lab corpus is Cocoarynth Chocolate Works, a fictional bean-to-bar chocolate maker that buys cacao from farms in five countries and sells through several retailers. All documents are generated: no real company, person, or record is described.
 
-- [Corpus manifest](cocoarynth/corpora.json): the PDFs in each of the four document groups, plus the label claims policy used for the file-source exercise.
+- [Corpus manifest](cocoarynth/corpora.json): the PDFs in each of the four document groups, plus the label claims policy.
 - `cocoarynth/documents/<index>/`: 55 PDFs, the indexed inputs.
   - `cocoarynth-origins`: farm and supplier records, partly in Spanish.
   - `cocoarynth-quality`: factory receiving, testing, tasting, and batch records.
@@ -17,7 +17,7 @@ Provisioning restores `cocoarynth-chunks`, `cocoarynth-topics`, and `cocoarynth-
 
 ## Graph index snapshots
 
-The [graph index snapshots](graph-data/README.md) contain exactly three active indexes; setup also splits the chunk snapshot into three document-group indexes. The topic index combines eight representative vectors, labels, descriptions, memberships, and sitemap triples. The business graph contains 120 assertions for 91 distinct facts, with verbatim evidence excerpts resolving to the PDF-only chunk index.
+The [graph index snapshots](graph-data/README.md) contain exactly three active indexes; setup also splits the chunk snapshot into three document-group indexes. The topic index stores eight named communities, their hierarchy and proportions, and six leaf centroids as edge-list facts. Roots are level 0; centroid queries retrieve similar chunks from the source index. The business graph contains 120 assertions for 91 distinct facts, with verbatim evidence excerpts resolving to the PDF-only chunk index.
 
 [cocoarynth.owl](graph-data/cocoarynth.owl) records the compact PDF-derived business ontology; [cocoarynth-sitemap.owl](graph-data/cocoarynth-sitemap.owl) describes topic navigation. They are files, not indexes. Setup serializes their flat declarations as inline JSON-LD for the November ontology private preview.
 
@@ -91,7 +91,7 @@ All from Cocoarynth.
 
 | Document | Visuals | Clues |
 |---|---|---|
-| POL-03 Label and marketing claims policy (also the Part A file source) | | M4 |
+| POL-03 Label and marketing claims policy | | M4 |
 | POL-05 Traceability data-sharing policy | | M2 |
 | Chocolate storage and handling guide | photo | M1 |
 | Sourcing principles | | |
@@ -125,7 +125,7 @@ uv pip install --python .venv-cocoarynth -r scripts/cocoarynth/requirements.txt
 
 `validate.py` checks that the facts are consistent, that each mystery's answer follows from them, that every cited document exists, and that `corpora.json` lists every document. `render.py` builds the PDFs and rewrites `corpora.json`. New photos need MAI image credentials in `.env` and `images.py photos`.
 
-The existing `scripts/cocoarynth/ask_mysteries.py` measures evidence recall against the original four-index ingestion captures, not the consolidated lab setup. Keep that maintainer evaluation in a separate capture environment. The lab notebooks use four filtered knowledge sources over `cocoarynth-chunks` instead.
+The existing `scripts/cocoarynth/ask_mysteries.py` measures evidence recall against the original four-index ingestion captures, not the consolidated lab setup. Keep that maintainer evaluation in a separate capture environment. The lab notebooks instead create three knowledge sources over the document-group indexes that setup splits from `cocoarynth-chunks`.
 
 ### Authoring conventions
 
