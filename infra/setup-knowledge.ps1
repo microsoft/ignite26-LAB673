@@ -39,8 +39,6 @@ try {
     python (Join-Path $PSScriptRoot "setup-venv.py")
     if ($LASTEXITCODE -ne 0) { throw "Virtual environment setup failed." }
     $venvPython = Join-Path $repoRoot ".venv\Scripts\python.exe"
-    & $venvPython (Join-Path $PSScriptRoot "setup-content-understanding.py")
-    if ($LASTEXITCODE -ne 0) { throw "Content Understanding setup failed." }
     if ($env:RESTORE_INDEX_SNAPSHOTS -eq "true") {
         & $venvPython (Join-Path $PSScriptRoot "create-knowledge.py")
         if ($LASTEXITCODE -ne 0) { throw "Snapshot restoration failed." }
