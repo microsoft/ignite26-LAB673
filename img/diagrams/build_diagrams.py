@@ -281,7 +281,7 @@ def topics_chunks_diagram():
 
 def topics_tree_diagram():
     d = Diagram(
-        TOPIC_WIDTH, 720, "Topic graph, step 2: build topics from clusters of chunks",
+        TOPIC_WIDTH, 810, "Topic graph, step 2: build topics from clusters of chunks",
         "The broad cluster becomes a broad topic at level 0. Its tighter clusters, A and B, become subtopics at "
         "level 1. The standalone cluster, C, becomes a broad terminal topic. Each terminal topic stores a centroid "
         "vector. Similarity groups chunks; it doesn't assert facts.",
@@ -298,21 +298,21 @@ def topics_tree_diagram():
         mini_chunk(d, x, y)
     d.box("broad", 565, 115, 330, 0, "Broad topic", "formed from the broad cluster", kind="topic",
           tag="Topic · level 0")
-    d.box("a", 485, 315, 205, 0, "Subtopic A", "formed from cluster A", kind="topic", tag="Topic · level 1")
-    d.box("b", 715, 315, 205, 0, "Subtopic B", "formed from cluster B", kind="topic", tag="Topic · level 1")
+    d.box("a", 460, 315, 220, 0, "Subtopic A", "from cluster A", kind="topic", tag="Topic · level 1")
+    d.box("b", 700, 315, 220, 0, "Subtopic B", "from cluster B", kind="topic", tag="Topic · level 1")
     d.arrow([(425, 255), (535, 255), (535, 175), (563, 175)], label="creates", label_at=(480, 230))
     d.down("broad", "a")
     d.down("broad", "b")
-    d.rect(35, 500, 300, 125, fill="#ffffff", stroke=TOPIC_COLOR, stroke_width=3, dashed=True)
-    d.text(55, 513, "standalone cluster C", size=20, color=TOPIC_COLOR, weight="600")
-    mini_chunk(d, 70, 560)
-    mini_chunk(d, 180, 560)
-    d.box("solo", 565, 500, 330, 0, "Broad topic", "terminal: no subtopics", kind="topic", tag="Topic · level 0")
-    d.arrow([(335, 563), (563, 563)], label="creates", label_at=(449, 530))
+    d.rect(35, 575, 300, 125, fill="#ffffff", stroke=TOPIC_COLOR, stroke_width=3, dashed=True)
+    d.text(55, 588, "standalone cluster C", size=20, color=TOPIC_COLOR, weight="600")
+    mini_chunk(d, 70, 635)
+    mini_chunk(d, 180, 635)
+    d.box("solo", 565, 575, 330, 0, "Broad topic", "terminal: no subtopics", kind="topic", tag="Topic · level 0")
+    d.arrow([(335, 638), (563, 638)], label="creates", label_at=(449, 605))
     for box_id in ("a", "b", "solo"):
         x, y, width, height = d.boxes[box_id]
         centroid(d, x + width / 2 - 40, y + height)
-    d.text(TOPIC_WIDTH / 2, 685,
+    d.text(TOPIC_WIDTH / 2, 780,
            "Terminal topics have no subtopics and store a centroid.",
            anchor="middle", weight="600")
     d.save("notebook-03-topics-2-topics")
