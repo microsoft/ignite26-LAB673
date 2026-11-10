@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 930" width="960" height="930" font-family="Segoe UI, Helvetica, Arial, sans-serif" role="img">
+<title>Topic graph, step 3: navigate the topic graph, then read the evidence</title>
+<desc>The topic index stores the topic graph as facts. The TopicGraph topicgraph-topic points to each level-0 topic through HasRootTopic. A broad topic points to each subtopic at level 1 through HasSubTopic. Each terminal topic points to its centroid Vector through HasCentroidVector. A vector search with a centroid over cocoarynth-chunks returns the nearest PDF chunks: examples for browsing, not stored membership. Topics guide where to look. Source chunks provide the evidence.</desc>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#495057"/></marker></defs>
+<rect width="960" height="930" fill="#ffffff"/>
+<circle cx="52" cy="46" r="22" fill="#0b7285" stroke="none" stroke-width="2"/>
+<text x="52" y="47" font-size="24" font-weight="700" fill="#ffffff" text-anchor="middle" dominant-baseline="central"><tspan x="52" dy="0">3</tspan></text>
+<text x="90" y="47" font-size="28" font-weight="600" fill="#212529" text-anchor="start" dominant-baseline="central"><tspan x="90" dy="0">Navigate the topic graph, then read the evidence</tspan></text>
+<text x="90" y="82" font-size="22" font-weight="normal" fill="#495057" text-anchor="start" dominant-baseline="hanging"><tspan x="90" dy="0">The topic index stores the graph as facts. Chunks stay in the source index.</tspan></text>
+<rect x="60" y="140" width="400" height="126.80000000000001" rx="10" fill="#f3f0ff" stroke="#5f3dc4" stroke-width="2"/>
+<text x="260.0" y="185.0" font-size="24" font-weight="600" fill="#212529" text-anchor="middle" dominant-baseline="hanging"><tspan x="260.0" dy="0">topicgraph-topic</tspan></text>
+<text x="260.0" y="220.2" font-size="22" font-weight="normal" fill="#495057" text-anchor="middle" dominant-baseline="hanging"><tspan x="260.0" dy="0">the whole topic graph</tspan></text>
+<rect x="196" y="127.0" width="128" height="26" rx="13.0" fill="#5f3dc4"/>
+<text x="260" y="140" font-size="18" font-weight="600" fill="#ffffff" text-anchor="middle" dominant-baseline="central">TopicGraph</text>
+<rect x="60" y="330" width="400" height="126.80000000000001" rx="10" fill="#e3fafc" stroke="#0b7285" stroke-width="2"/>
+<text x="260.0" y="375.0" font-size="24" font-weight="600" fill="#212529" text-anchor="middle" dominant-baseline="hanging"><tspan x="260.0" dy="0">Broad topic</tspan></text>
+<text x="260.0" y="410.2" font-size="22" font-weight="normal" fill="#495057" text-anchor="middle" dominant-baseline="hanging"><tspan x="260.0" dy="0">level 0</tspan></text>
+<rect x="224" y="317.0" width="72" height="26" rx="13.0" fill="#0b7285"/>
+<text x="260" y="330" font-size="18" font-weight="600" fill="#ffffff" text-anchor="middle" dominant-baseline="central">Topic</text>
+<rect x="60" y="520" width="400" height="126.80000000000001" rx="10" fill="#e3fafc" stroke="#0b7285" stroke-width="2"/>
+<text x="260.0" y="565.0" font-size="24" font-weight="600" fill="#212529" text-anchor="middle" dominant-baseline="hanging"><tspan x="260.0" dy="0">Subtopic</tspan></text>
+<text x="260.0" y="600.2" font-size="22" font-weight="normal" fill="#495057" text-anchor="middle" dominant-baseline="hanging"><tspan x="260.0" dy="0">level 1 · terminal</tspan></text>
+<rect x="224" y="507.0" width="72" height="26" rx="13.0" fill="#0b7285"/>
+<text x="260" y="520" font-size="18" font-weight="600" fill="#ffffff" text-anchor="middle" dominant-baseline="central">Topic</text>
+<rect x="60" y="710" width="400" height="126.80000000000001" rx="10" fill="#fff9db" stroke="#e67700" stroke-width="2"/>
+<text x="260.0" y="755.0" font-size="24" font-weight="600" fill="#212529" text-anchor="middle" dominant-baseline="hanging"><tspan x="260.0" dy="0">Centroid</tspan></text>
+<text x="260.0" y="790.2" font-size="22" font-weight="normal" fill="#495057" text-anchor="middle" dominant-baseline="hanging"><tspan x="260.0" dy="0">terminal topics only</tspan></text>
+<rect x="219" y="697.0" width="83" height="26" rx="13.0" fill="#e67700"/>
+<text x="260" y="710" font-size="18" font-weight="600" fill="#ffffff" text-anchor="middle" dominant-baseline="central">Vector</text>
+<rect x="580" y="710" width="340" height="155.4" rx="10" fill="#ebfbee" stroke="#2b8a3e" stroke-width="2"/>
+<text x="750.0" y="755.0" font-size="24" font-weight="600" fill="#212529" text-anchor="middle" dominant-baseline="hanging"><tspan x="750.0" dy="0">cocoarynth-chunks</tspan></text>
+<text x="750.0" y="790.2" font-size="22" font-weight="normal" fill="#495057" text-anchor="middle" dominant-baseline="hanging"><tspan x="750.0" dy="0">nearest PDF chunks:</tspan><tspan x="750.0" dy="28.6">examples, not membership</tspan></text>
+<rect x="675" y="697.0" width="150" height="26" rx="13.0" fill="#2b8a3e"/>
+<text x="750" y="710" font-size="18" font-weight="600" fill="#ffffff" text-anchor="middle" dominant-baseline="central">Search index</text>
+<path d="M 260.0 266.8 L 260.0 315.0" fill="none" stroke="#495057" stroke-width="2" marker-end="url(#arrow)"/>
+<text x="274.0" y="276.59999999999997" font-size="22" font-weight="normal" fill="#495057" text-anchor="start" dominant-baseline="hanging"><tspan x="274.0" dy="0">HasRootTopic</tspan></text>
+<path d="M 260.0 456.8 L 260.0 505.0" fill="none" stroke="#495057" stroke-width="2" marker-end="url(#arrow)"/>
+<text x="274.0" y="466.59999999999997" font-size="22" font-weight="normal" fill="#495057" text-anchor="start" dominant-baseline="hanging"><tspan x="274.0" dy="0">HasSubTopic</tspan></text>
+<path d="M 260.0 646.8 L 260.0 695.0" fill="none" stroke="#495057" stroke-width="2" marker-end="url(#arrow)"/>
+<text x="274.0" y="656.6" font-size="22" font-weight="normal" fill="#495057" text-anchor="start" dominant-baseline="hanging"><tspan x="274.0" dy="0">HasCentroidVector</tspan></text>
+<path d="M 460 787.7 L 578 787.7" fill="none" stroke="#495057" stroke-width="2" marker-end="url(#arrow)"/>
+<text x="519.0" y="722.5" font-size="22" font-weight="normal" fill="#495057" text-anchor="middle" dominant-baseline="hanging"><tspan x="519.0" dy="0">vector</tspan><tspan x="519.0" dy="28.6">search</tspan></text>
+<rect x="580" y="140" width="340" height="150" rx="10" fill="#f8f9fa" stroke="#dee2e6" stroke-width="2"/>
+<text x="600" y="158" font-size="20" font-weight="normal" fill="#343a40" text-anchor="start" dominant-baseline="hanging"><tspan x="600" dy="0">GQL follows HasRootTopic</tspan><tspan x="600" dy="26.0">and HasSubTopic to walk</tspan><tspan x="600" dy="26.0">from broad topics to</tspan><tspan x="600" dy="26.0">their subtopics.</tspan></text>
+<rect x="580" y="330" width="340" height="150" rx="10" fill="#f8f9fa" stroke="#dee2e6" stroke-width="2"/>
+<text x="600" y="348" font-size="20" font-weight="normal" fill="#343a40" text-anchor="start" dominant-baseline="hanging"><tspan x="600" dy="0">A broad topic with no</tspan><tspan x="600" dy="26.0">subtopics is also terminal,</tspan><tspan x="600" dy="26.0">so it has its own</tspan><tspan x="600" dy="26.0">centroid.</tspan></text>
+<text x="480.0" y="892" font-size="22" font-weight="600" fill="#212529" text-anchor="middle" dominant-baseline="central"><tspan x="480.0" dy="0">Topics guide where to look. Source chunks provide the evidence.</tspan></text>
+</svg>

@@ -330,12 +330,31 @@ class TopicTests(unittest.TestCase):
                     self.assertEqual(cell["outputs"], [])
                     exec(compile("".join(cell["source"]), f"03-topics.ipynb:cell-{number}", "exec"), scope)
             transport.assert_not_called()
-        self.assertEqual(len(scope["topics_by_id"]), 8)
-        self.assertTrue(scope["nearest_topic"]["is_terminal"])
+        topic_reads = [call["filter"] for call in self.calls
+                       if call["index"] == "cocoarynth-topics" and not call["vectors"]]
+        self.assertEqual(topic_reads, [
+            f"subject_id eq '{scope['NEAREST_TOPIC_ID']}'", "predicate eq 'HasCentroidVector'",
+        ])
+        with patch.object(explorer, "client", side_effect=self.clients.__getitem__):
+            hierarchy = explorer.get_topic_hierarchy()
+        nearest = hierarchy[scope["NEAREST_TOPIC_ID"]]
+        self.assertTrue(nearest["is_terminal"])
+        self.assertEqual(scope["nearest_topic"]["prop:title"], nearest["label"])
+        self.assertEqual(scope["topic_size"], nearest["member_count"])
+        self.assertEqual(len(scope["member_ids"]), nearest["member_count"])
         self.assertEqual(len(scope["direct"]), 8)
         self.assertEqual(len(scope["routed"]), 8)
         self.assertTrue(scope["routed_ids"] <= set(scope["member_ids"]))
-        self.assertEqual(len(scope["sitemap_result"].value), 2)
+        self.assertEqual({row["topic_id"] for row in scope["root_topics"]},
+                         {topic_id for topic_id, topic in hierarchy.items() if topic["level"] == 0})
+        self.assertEqual({row["topic_id"]: row["parent_id"] for row in scope["subtopics"]},
+                         {topic_id: topic["parent_id"] for topic_id, topic in hierarchy.items() if topic["parent_id"]})
+        self.assertEqual(len(scope["root_topics"]) + len(scope["subtopics"]), 8)
+        self.assertEqual(set(scope["centroids"]),
+                         {topic_id for topic_id, topic in hierarchy.items() if topic["is_terminal"]})
+        for topic_id, centroid in scope["centroids"].items():
+            self.assertTrue(all(math.isclose(left, right, abs_tol=1e-14)
+                                for left, right in zip(hierarchy[topic_id]["centroid"], centroid)))
         self.assertEqual(len(created_bases), 1)
         self.assertEqual(len(requests), 2)
         self.assertEqual([name for name, _ in requests], [
@@ -345,9 +364,10 @@ class TopicTests(unittest.TestCase):
         topic_question = topic_request["messages"][0]["content"][0]["text"]
         self.assertIn("Larkspur", topic_question)
         self.assertIn("grey", topic_question)
-        self.assertNotIn(scope["parent"]["label"], topic_question)
+        for topic in scope["root_topics"] + scope["subtopics"]:
+            self.assertNotIn(topic["title"], topic_question)
+            self.assertNotIn(topic["topic_id"], topic_question)
         self.assertNotIn("HasSubTopic", topic_question)
-        self.assertNotIn(scope["PARENT_TOPIC_ID"], topic_question)
         self.assertEqual(
             [source["knowledgeSourceName"] for source in topic_request["knowledgeSourceParams"]],
             ["cocoarynth-topics-knowledge-source"],
@@ -365,18 +385,9 @@ class TopicTests(unittest.TestCase):
                 self.assertTrue(source["includeReferenceSourceData"])
                 self.assertTrue(source["alwaysQuerySource"])
         self.assertIn(evidence["blob_path"], output.getvalue())
-        self.assertIn("Run Part 1 first", "".join(notebook["cells"][0]["source"]))
-        topic_reads = [call for call in self.calls
-                       if call["index"] == "cocoarynth-topics" and not call["vectors"]]
-        self.assertEqual(len(topic_reads), 1)
-        self.assertIsNone(topic_reads[0]["filter"])
-        with patch.object(explorer, "client", side_effect=self.clients.__getitem__):
-            for topic_id, topic in explorer.get_topic_hierarchy().items():
-                notebook_topic = scope["topics_by_id"][topic_id]
-                self.assertEqual(topic["member_count"], notebook_topic["member_count"])
-                self.assertEqual(topic["parent_id"], notebook_topic["parent_id"])
-                self.assertTrue(all(math.isclose(left, right, abs_tol=1e-14)
-                                    for left, right in zip(topic["centroid"], notebook_topic["centroid"])))
+        first_cell = "".join(notebook["cells"][0]["source"])
+        self.assertIn("Run Part 1 first", first_cell)
+        self.assertLess(first_cell.index("Mission"), first_cell.index("## How the topic graph is built"))
 
     def test_notebook_loads_settings_and_metadata_from_root_or_notebook_directory(self):
         notebook = json.loads((ROOT / "src" / "notebooks" / "03-topics.ipynb").read_text(encoding="utf-8"))

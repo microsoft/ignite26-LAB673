@@ -4,15 +4,15 @@
 
 The [lab instructions](../instructions/skillable.md) progress from a
 standard knowledge base and MR1 comparison to entity/GQL exploration,
-then a topics and sitemap exercise. All three notebooks use the same Foundry IQ
+then a topic graph exercise. All three notebooks use the same Foundry IQ
 service and the indexes that setup restores. The entity section is the
 main part of the lab.
 
 | Notebook | Focus |
 | --- | --- |
 | [Knowledge base and MR1](notebooks/01-knowledge-base-and-mr1.ipynb) | Original documents, grounded answers, activity, and a measured speed comparison with MR1 |
-| [Entities and graphs](notebooks/02-entities-and-graphs.ipynb) | Assertions and evidence, native GQL, provenance, and graph-backed retrieval |
-| [Topics](notebooks/03-topics.ipynb) | Topic coverage, centroid-nearest chunks, hierarchy GQL, and a customer complaint investigation using topics and PDF evidence |
+| [Entity graph](notebooks/02-entities-and-graphs.ipynb) | Assertions and evidence, native GQL, provenance, and graph-backed retrieval |
+| [Topic graph](notebooks/03-topics.ipynb) | Topic coverage, centroid-nearest chunks, hierarchy GQL, and a customer complaint investigation using topics and PDF evidence |
 
 Each notebook loads settings from the root `.env` file and uses the
 `azure-search-documents` Python SDK directly. Setup restores six indexes:
@@ -35,10 +35,10 @@ three tabs:
 
 The topic index uses the TopicGraph 2.3.0 `topicgraph-release-v2` edge-list
 contract: `HasRootTopic`, `HasSubTopic`, literal properties, and
-`HasCentroidVector` with retrievable `object_vector` values on leaves only.
-Roots are level 0. Parent vectors are derived from proportion-weighted leaves.
+`HasCentroidVector` with retrievable `object_vector` values on terminal topics only.
+Roots are level 0. The explorer derives parent vectors from proportion-weighted terminal topics.
 Check coverage in `data/graph-data/manifest.json`, navigate the hierarchy with
-sitemap GQL, and search the chunk index with a topic's centroid to explore
+topic graph GQL, and search the chunk index with a topic's centroid to explore
 related source documents.
 
 Each panel starts with a "From" row that names the index or file its data comes

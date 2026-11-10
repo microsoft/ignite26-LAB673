@@ -29,8 +29,8 @@ In this hands-on lab, you'll explore Foundry IQ knowledge bases for Cocoarynth C
 You'll work through three notebooks:
 
 1. **Knowledge bases and Microsoft Retriever 1 (MR1)**: Ask a grounded question over three document indexes, follow the citations, and compare standard agentic retrieval with the faster MR1 retriever.
-2. **Entities and graphs**: Follow a chocolate batch back to the farms that grew its cacao, using an ontology, graph queries, and provenance.
-3. **Topics**: Browse labeled groups of chunks, look inside the topic graph with code and GQL to see how the chunks were grouped, and investigate a customer complaint with topics and PDF evidence.
+2. **Entity graph**: Follow a chocolate batch back to the farms that grew its cacao, using an ontology, graph queries, and provenance.
+3. **Topic graph**: Browse labeled groups of chunks, look inside the topic graph with code and GQL to see how the chunks were grouped, and investigate a customer complaint with topics and PDF evidence.
 
 ## Sign into Windows
 
@@ -133,11 +133,11 @@ In this part, you'll look at the search indexes in the Azure portal, then use a 
 
 If you built a knowledge base over your own documents, how would you split them into knowledge sources? By team, by document type, or by who's allowed to see them?
 
-Select **Next** to continue to entities and graphs.
+Select **Next** to continue to the entity graph.
 
 ===
 
-# Part 2: Entities and graphs
+# Part 2: Entity graph
 
 A Pantry Lane customer has a chocolate wrapper with batch code **EC26-0811** and wants to know which farms grew its cacao. A single chunk can mention a batch or a farm, but a graph makes the connection explicit: **Batch → BeanLot ← Farm**.
 
@@ -193,13 +193,13 @@ In the notebook, you'll query the graph directly with GQL, then see how a knowle
 - What would the ontology for your organization's documents look like? Think of two entity types and a relationship between them, like *Batch → madeFrom → BeanLot*.
 - Which questions do your users ask that need two or more records connected, like the batch-to-farm question in this part?
 
-Select **Next** to continue to **Topics**.
+Select **Next** to continue to the topic graph.
 
 ===
 
-# Part 3: Topics
+# Part 3: Topic graph
 
-An entity graph shows how specific things are connected. Topics group related chunks so you can explore a broader area of the documents.
+An entity graph shows how specific things are connected. A topic graph groups related chunks into topics so you can explore a broader area of the documents.
 
 The topics form a two-level hierarchy. Each has a title and description to help you choose an area to explore, and a centroid vector for finding similar chunks.
 
@@ -207,17 +207,17 @@ The topics form a two-level hierarchy. Each has a title and description to help 
 
 1. In the graph explorer, select the **Topics** tab. If you closed the app, start it again as described in Part 2.
 2. In the **Topics** panel on the right, compare **Assigned during the build** with **Not assigned during the build**. The topic groups cover 97 of the 106 chunks.
-3. Broad topics are on the left at level 0, and narrower child topics are on the right at level 1. Select a box to read its description. There are four roots and four children; two of the roots have no children.
+3. Broad topics are on the left at level 0, and subtopics are on the right at level 1. Select a box to read its description. There are four broad topics and four subtopics; two of the broad topics have no subtopics.
 4. Below the description, the panel lists the topic's nearest chunks, grouped by document. To find them, the explorer searches the full source index with the topic's centroid. Expand a chunk to read it, or select a document name to open the original PDF. Do the chunks have something in common?
 
 ## Read the sitemap ontology file
 
-The sitemap connects broad topics to their children in the **cocoarynth-topics** index. Open its OWL schema to see the types and relationships you'll query.
+The sitemap ontology describes the topic graph in the **cocoarynth-topics** index. Open its OWL schema to see the types and relationships you'll query.
 
 1. In Visual Studio Code, open **data/graph-data/cocoarynth-sitemap.owl**. Like **cocoarynth.owl**, it's an OWL file written as XML, so it uses the same kinds of elements.
 2. Look through its elements:
-   - The **owl:Class** elements are its three entity types: *TopicGraph*, the whole sitemap; *Topic*, a topic; and *Vector*, a terminal topic's centroid.
-   - The **owl:ObjectProperty** elements are its three relationships: *HasRootTopic*, from the graph to a broad topic; *HasSubTopic*, from a parent topic to a child; and *HasCentroidVector*, from a terminal topic to its vector.
+   - The **owl:Class** elements are its three entity types: *TopicGraph*, the whole topic graph; *Topic*, a topic; and *Vector*, a terminal topic's centroid.
+   - The **owl:ObjectProperty** elements are its three relationships: *HasRootTopic*, from the graph to a broad topic; *HasSubTopic*, from a broad topic to a subtopic; and *HasCentroidVector*, from a terminal topic to its vector.
    - The **owl:DatatypeProperty** elements are plain-value properties, like a topic's *title*, *description*, *level*, and *proportion*.
 3. In the notebook, you'll follow these links with GQL, then use topic vectors to find related chunks in **cocoarynth-chunks**.
 
@@ -250,7 +250,7 @@ You've completed the lab on exploring Foundry IQ knowledge bases. You:
 | Ground a direct question in original documents | Standard knowledge base |
 | Respond quickly when the app already knows which source to use | Microsoft Retriever 1 (MR1) |
 | Follow explicit relationships across records | Entity graph and GQL |
-| Explore groups of related chunks and navigate their sitemap | Topics and sitemap GQL |
+| Explore groups of related chunks and navigate their hierarchy | Topic graph and GQL |
 
 ## Continue learning
 
