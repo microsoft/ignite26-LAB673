@@ -4,7 +4,7 @@
 <rect width="1380" height="640" fill="#ffffff"/>
 <rect x="330" y="30" width="720" height="121.7" rx="10" fill="#d0ebff" stroke="#1864ab" stroke-width="2"/>
 <text x="690.0" y="66.0" font-size="19" font-weight="600" fill="#212529" text-anchor="middle" dominant-baseline="hanging"><tspan x="690.0" dy="0">cocoarynth-standard-knowledge-base</tspan></text>
-<text x="690.0" y="94.7" font-size="15" font-weight="normal" fill="#495057" text-anchor="middle" dominant-baseline="hanging"><tspan x="690.0" dy="0">MR1 + gpt-6-luna</tspan><tspan x="690.0" dy="19.5">plans queries and writes a cited answer</tspan></text>
+<text x="690.0" y="94.7" font-size="15" font-weight="normal" fill="#495057" text-anchor="middle" dominant-baseline="hanging"><tspan x="690.0" dy="0">MR1 + gpt-6-luna configured</tspan><tspan x="690.0" dy="19.5">Low uses gpt-6-luna to plan and answer</tspan></text>
 <rect x="630" y="20.0" width="120" height="20" rx="10.0" fill="#1864ab"/>
 <text x="690" y="30" font-size="12" font-weight="600" fill="#ffffff" text-anchor="middle" dominant-baseline="central">Knowledge base</text>
 <rect x="20" y="255" width="1340" height="165" rx="14" fill="none" stroke="#868e96" stroke-width="2" stroke-dasharray="8 6"/>
