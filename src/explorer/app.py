@@ -164,7 +164,7 @@ def get_evidence(fact_id):
 @lru_cache
 def get_topic_metadata():
     metadata = json.loads(TOPIC_MANIFEST.read_text(encoding="utf-8"))["topics"]
-    if metadata["schema_version"] != "topicgraph-release-v1":
+    if metadata["schema_version"] != "topicgraph-release-v2":
         raise RuntimeError("The topic snapshot is not in the canonical TopicGraph release format.")
     return metadata
 
@@ -187,13 +187,13 @@ def get_topic_hierarchy():
     }
     for row in rows:
         predicate, subject, target = row["predicate"], row["subject_id"], row.get("object_id")
-        if predicate == "HasRootCommunity":
+        if predicate == "HasRootTopic":
             roots.add(target)
-        if predicate == "HasSubCommunity":
+        if predicate == "HasSubTopic":
             if target in parents:
                 raise RuntimeError(f"{target}: more than one parent in the topic index.")
             parents[target] = subject
-        if row["subject_type"] == "Community":
+        if row["subject_type"] == "Topic":
             topic = topics.setdefault(subject, {"topic_id": subject, "children": []})
             if predicate in properties:
                 name, field = properties[predicate]

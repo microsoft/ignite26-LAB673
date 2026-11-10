@@ -216,8 +216,8 @@ The sitemap connects broad topics to their children in the **cocoarynth-topics**
 
 1. In Visual Studio Code, open **data/graph-data/cocoarynth-sitemap.owl**. Like **cocoarynth.owl**, it's an OWL file written as XML, so it uses the same kinds of elements.
 2. Look through its elements:
-   - The **owl:Class** elements are its three entity types: *CommunityGraph*, the whole sitemap; *Community*, a topic; and *Vector*, a terminal topic's centroid.
-   - The **owl:ObjectProperty** elements are its three relationships: *HasRootCommunity*, from the graph to a broad topic; *HasSubCommunity*, from a parent topic to a child; and *HasCentroidVector*, from a terminal topic to its vector.
+   - The **owl:Class** elements are its three entity types: *TopicGraph*, the whole sitemap; *Topic*, a topic; and *Vector*, a terminal topic's centroid.
+   - The **owl:ObjectProperty** elements are its three relationships: *HasRootTopic*, from the graph to a broad topic; *HasSubTopic*, from a parent topic to a child; and *HasCentroidVector*, from a terminal topic to its vector.
    - The **owl:DatatypeProperty** elements are plain-value properties, like a topic's *title*, *description*, *level*, and *proportion*.
 3. In the notebook, you'll follow these links with GQL, then use topic vectors to find related chunks in **cocoarynth-chunks**.
 

@@ -102,7 +102,7 @@ bundle automatically:
    On Windows, use `.venv\Scripts\python.exe`. The live-indexing tool requires Python 3.11 or newer.
 3. Retain the eight capture files in `data/index-data/`. Chunk counts come from ingestion; don't edit them by hand.
 4. Rebuild `cocoarynth-chunks` from the PDF chunk captures, preserving provenance and adding the document-group `domain`. Propose the business OWL from PDF text, then extract ontology-constrained triples with exact chunk evidence. Do not feed `world/*.json` to either step.
-5. Recompute the topic hierarchy when the corpus changes. Export the plugin's `topicgraph-release-v1` edge-list schema and documents into `cocoarynth-topics`, making `object_vector` retrievable as the publisher does. Roots are level 0; only leaves store centroids. Keep the generation identity associated with the exported inputs.
+5. Recompute the topic hierarchy when the corpus changes. Export the plugin's TopicGraph 2.3.0 `topicgraph-release-v2` edge-list schema and documents into `cocoarynth-topics`, making `object_vector` retrievable as the publisher does. Roots are level 0; only leaves store centroids. Keep the generation identity associated with the exported inputs.
 6. Capture the three definitions and record sets, both OWL files, and extraction provenance in `data/graph-data/`. Update `manifest.json` to match their LF-normalized byte counts and SHA-256 checksums. Run `python .\infra\restore-graph-indexes.py --validate-only` before committing a replacement bundle.
 7. Against the intended preview-enabled lab service, run `.venv\Scripts\python.exe infra\create-knowledge.py`. Existing destinations with different data are rejected rather than overwritten.
 
@@ -155,7 +155,7 @@ For a temporary end-to-end check, add `--prefix <unique-prefix> --cleanup`. Clea
 The command verifies index schemas, every document field and stored float32
 vector, vector lookup, and three known-answer business traversals with
 provenance. It also checks the canonical topic forest, coverage and proportions,
-and executes `HasRootCommunity` and `HasSubCommunity` GQL traversals.
+and executes `HasRootTopic` and `HasSubTopic` GQL traversals.
 Topic counts and coverage are recorded in the restore manifest. The notebook
 and explorer retrieve nearest source chunks by centroid. Both knowledge
 sources are always created or verified with inline JSON-LD converted from the

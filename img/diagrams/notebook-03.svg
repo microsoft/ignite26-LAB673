@@ -14,12 +14,12 @@
 <text x="240" y="240" font-size="12" font-weight="600" fill="#ffffff" text-anchor="middle" dominant-baseline="central">Knowledge source</text>
 <rect x="580" y="245" width="260" height="121.7" rx="10" fill="#f8f0fc" stroke="#862e9c" stroke-width="2"/>
 <text x="710.0" y="281.0" font-size="19" font-weight="600" fill="#212529" text-anchor="middle" dominant-baseline="hanging"><tspan x="710.0" dy="0">cocoarynth-sitemap.owl</tspan></text>
-<text x="710.0" y="309.7" font-size="15" font-weight="normal" fill="#495057" text-anchor="middle" dominant-baseline="hanging"><tspan x="710.0" dy="0">CommunityGraph,</tspan><tspan x="710.0" dy="19.5">Community, Vector</tspan></text>
+<text x="710.0" y="309.7" font-size="15" font-weight="normal" fill="#495057" text-anchor="middle" dominant-baseline="hanging"><tspan x="710.0" dy="0">TopicGraph,</tspan><tspan x="710.0" dy="19.5">Topic, Vector</tspan></text>
 <rect x="654" y="235.0" width="113" height="20" rx="10.0" fill="#862e9c"/>
 <text x="710" y="245" font-size="12" font-weight="600" fill="#ffffff" text-anchor="middle" dominant-baseline="central">Ontology file</text>
 <rect x="40" y="430" width="400" height="141.2" rx="10" fill="#ebfbee" stroke="#2b8a3e" stroke-width="2"/>
 <text x="240.0" y="466.0" font-size="19" font-weight="600" fill="#212529" text-anchor="middle" dominant-baseline="hanging"><tspan x="240.0" dy="0">cocoarynth-topics</tspan></text>
-<text x="240.0" y="494.7" font-size="15" font-weight="normal" fill="#495057" text-anchor="middle" dominant-baseline="hanging"><tspan x="240.0" dy="0">8 named topics; 6 leaf vectors</tspan><tspan x="240.0" dy="19.5">HasRootCommunity,</tspan><tspan x="240.0" dy="19.5">HasSubCommunity</tspan></text>
+<text x="240.0" y="494.7" font-size="15" font-weight="normal" fill="#495057" text-anchor="middle" dominant-baseline="hanging"><tspan x="240.0" dy="0">8 named topics; 6 leaf vectors</tspan><tspan x="240.0" dy="19.5">HasRootTopic,</tspan><tspan x="240.0" dy="19.5">HasSubTopic</tspan></text>
 <rect x="187" y="420.0" width="105" height="20" rx="10.0" fill="#2b8a3e"/>
 <text x="240" y="430" font-size="12" font-weight="600" fill="#ffffff" text-anchor="middle" dominant-baseline="central">Search index</text>
 <rect x="580" y="450" width="260" height="121.7" rx="10" fill="#ebfbee" stroke="#2b8a3e" stroke-width="2"/>

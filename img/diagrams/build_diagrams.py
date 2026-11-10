@@ -185,7 +185,7 @@ if __name__ == "__main__":
     )
     graph_notebook(
         "notebook-03", "Notebook 03: the topics knowledge source and the sitemap ontology",
-        "cocoarynth-topics-knowledge-base", "cocoarynth-topics-knowledge-source", "cocoarynth-sitemap.owl", "CommunityGraph,\nCommunity, Vector",
-        "cocoarynth-topics", "8 named topics; 6 leaf vectors\nHasRootCommunity,\nHasSubCommunity",
+        "cocoarynth-topics-knowledge-base", "cocoarynth-topics-knowledge-source", "cocoarynth-sitemap.owl", "TopicGraph,\nTopic, Vector",
+        "cocoarynth-topics", "8 named topics; 6 leaf vectors\nHasRootTopic,\nHasSubTopic",
         "centroid search\n(separate source\nquery)",
     )

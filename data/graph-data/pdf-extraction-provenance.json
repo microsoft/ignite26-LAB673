@@ -297,9 +297,9 @@
   "topic_generation": {
     "generation_id": "bb1deb018565f895ba5615fa7b66a439eeb6d13c2e88c43adc8f86eaef992d71",
     "native_memberships_preserved": 158,
-    "native_communities_preserved": 8,
     "native_vectors_preserved": 6,
     "existing_derived_parent_vectors_preserved": 2,
-    "labels": "GPT display enrichment from the unchanged PDF member sets; not native GRZ naming."
+    "labels": "GPT display enrichment from the unchanged PDF member sets; not native GRZ naming.",
+    "native_topics_preserved": 8
   }
 }

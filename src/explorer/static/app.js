@@ -614,13 +614,13 @@ async function showTopics() {
       <tr><td>Not assigned during the build</td><td>${escapeHtml(coverage.unassigned_source_document_count)}</td></tr>
     </table>
     <h3>Sitemap</h3>
-    <p class="muted">The sitemap represents each topic as a Community. These relationships connect the graph, its topics, and their vectors:</p>
+    <p class="muted">The sitemap uses the TopicGraph 2.3.0 topic contract. These relationships connect the graph, its topics, and their vectors:</p>
     <table>
-      <tr><td>${typeBadge("CommunityGraph")} → <strong>HasRootCommunity</strong> → ${typeBadge("Community")}</td></tr>
-      <tr><td>${typeBadge("Community")} → <strong>HasSubCommunity</strong> → ${typeBadge("Community")}</td></tr>
-      <tr><td>${typeBadge("Community")} → <strong>HasCentroidVector</strong> → ${typeBadge("Vector")}</td></tr>
+      <tr><td>${typeBadge("TopicGraph")} → <strong>HasRootTopic</strong> → ${typeBadge("Topic")}</td></tr>
+      <tr><td>${typeBadge("Topic")} → <strong>HasSubTopic</strong> → ${typeBadge("Topic")}</td></tr>
+      <tr><td>${typeBadge("Topic")} → <strong>HasCentroidVector</strong> → ${typeBadge("Vector")}</td></tr>
     </table>
-    <p class="muted">The arrows between topic boxes are <strong>HasSubCommunity</strong>. Select a topic to search the source index with its centroid and browse the nearest chunks, grouped by document.</p>`;
+    <p class="muted">The arrows between topic boxes are <strong>HasSubTopic</strong>. Select a topic to search the source index with its centroid and browse the nearest chunks, grouped by document.</p>`;
   drawTopicTree(topics);
 }
 

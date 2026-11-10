@@ -1,6 +1,6 @@
 <svg viewBox="0 0 960 580" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="sitemap-graph-title sitemap-graph-desc">
   <title id="sitemap-graph-title">How the Sitemap connects broad topics, narrow topics, and centroid vectors</title>
-  <desc id="sitemap-graph-desc">At the top, the Sitemap, a CommunityGraph, points to two level-0 communities through HasRootCommunity. The first is a broad topic that points to narrow topics A and B, both level-1 communities, through HasSubCommunity. The second is a broad topic with no children, so it is a terminal topic. Each of the three terminal topics, narrow topic A, narrow topic B, and the standalone broad topic, points to its centroid Vector through HasCentroidVector. A note says that chunks stay in the source index and that a centroid search finds the chunks nearest each topic.</desc>
+  <desc id="sitemap-graph-desc">At the top, the Sitemap, a TopicGraph, points to two level-0 topics through HasRootTopic. The first is a broad topic that points to narrow topics A and B, both level-1 topics, through HasSubTopic. The second is a broad topic with no children, so it is a terminal topic. Each of the three terminal topics, narrow topic A, narrow topic B, and the standalone broad topic, points to its centroid Vector through HasCentroidVector. A note says that chunks stay in the source index and that a centroid search finds the chunks nearest each topic.</desc>
   <defs>
     <marker id="sitemap-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
       <path d="M 0 0 L 10 5 L 0 10 z" fill="#24292f" />
@@ -19,15 +19,15 @@
     <rect x="705" y="458" width="150" height="64" rx="32" />
   </g>
   <g fill="#24292f" font-family="Segoe UI, sans-serif" font-size="20" text-anchor="middle">
-    <text x="545" y="52">CommunityGraph</text>
+    <text x="545" y="52">TopicGraph</text>
     <text x="545" y="80" font-weight="600">Sitemap</text>
-    <text x="330" y="198">Community · level 0</text>
+    <text x="330" y="198">Topic · level 0</text>
     <text x="330" y="226" font-weight="600">Broad topic</text>
-    <text x="780" y="198">Community · level 0</text>
+    <text x="780" y="198">Topic · level 0</text>
     <text x="780" y="226" font-weight="600">Broad topic, no children</text>
-    <text x="170" y="344">Community · level 1</text>
+    <text x="170" y="344">Topic · level 1</text>
     <text x="170" y="372" font-weight="600">Narrow topic A</text>
-    <text x="490" y="344">Community · level 1</text>
+    <text x="490" y="344">Topic · level 1</text>
     <text x="490" y="372" font-weight="600">Narrow topic B</text>
     <text x="170" y="485">Vector</text>
     <text x="170" y="510" font-weight="600">Centroid</text>
@@ -46,10 +46,10 @@
     <path d="M 780 242 L 780 455" />
   </g>
   <g fill="#24292f" font-family="Segoe UI, sans-serif" font-size="15">
-    <text x="418" y="126" text-anchor="end">HasRootCommunity</text>
-    <text x="682" y="126">HasRootCommunity</text>
-    <text x="212" y="282" text-anchor="end">HasSubCommunity</text>
-    <text x="448" y="282">HasSubCommunity</text>
+    <text x="418" y="126" text-anchor="end">HasRootTopic</text>
+    <text x="682" y="126">HasRootTopic</text>
+    <text x="212" y="282" text-anchor="end">HasSubTopic</text>
+    <text x="448" y="282">HasSubTopic</text>
     <text x="182" y="427">HasCentroidVector</text>
     <text x="502" y="427">HasCentroidVector</text>
     <text x="792" y="355">HasCentroidVector</text>

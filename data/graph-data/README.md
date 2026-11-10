@@ -15,7 +15,7 @@ All source and topic vectors have **3,072 dimensions**. The [manifest](manifest.
 
 [cocoarynth.owl](cocoarynth.owl) contains 13 classes and 19 properties proposed
 from PDF excerpts. [cocoarynth-sitemap.owl](cocoarynth-sitemap.owl) describes
-the canonical `CommunityGraph`, `Community`, and `Vector` navigation schema.
+the TopicGraph 2.3.0 `TopicGraph`, `Topic`, and `Vector` navigation schema.
 
 [The loader](../../infra/restore-graph-indexes.py) converts these flat RDF/XML
 declarations to the constrained JSON-LD accepted by API `2026-11-01-preview`.
@@ -40,24 +40,24 @@ a managed indexer run or native ontology approval.
 ## Canonical topic format
 
 The topic index uses the Foundry IQ plugin's
-`topicgraph-release-v1` contract. Each row is a `subject_id` / `predicate` /
-typed object statement in `topicgraph-community`.
+`topicgraph-release-v2` contract. Each row is a `subject_id` / `predicate` /
+typed object statement in `topicgraph-topic`.
 
 | Predicate | Object field | Meaning |
 | --- | --- | --- |
-| `HasRootCommunity` | `object_id` | `CommunityGraph` to a broad root `Community` |
-| `HasSubCommunity` | `object_id` | Parent `Community` to child `Community` |
+| `HasRootTopic` | `object_id` | `TopicGraph` to a broad root `Topic` |
+| `HasSubTopic` | `object_id` | Parent `Topic` to child `Topic` |
 | `prop:title`, `prop:description` | `object_string` | Topic display text |
 | `prop:level`, `prop:proportion`, `prop:parentProportion` | `object_double` | Depth and shares of clustered chunks / parent |
 | `HasCentroidVector` | `object_vector` | A leaf's retrievable 3,072-dimensional centroid |
 
 Roots are level **0**, children level **1**. Stored IDs are opaque
-`community:<n>` values.
-Only the six terminal communities store vectors, including the two terminal
+`topic:<n>` values.
+Only the six terminal topics store vectors, including the two terminal
 roots. A parent's centroid is derived at read time from the
 proportion-weighted mean of its leaf centroids.
 
-The hierarchy contains eight communities and four parent-child links.
+The hierarchy contains eight topics and four parent-child links.
 Titles and descriptions summarize each group's chunks. The [lab metadata](manifest.json)
 records coverage and topic counts: the groups cover 97 of 106 source chunks,
 and 61 also belong to level-1 children.
