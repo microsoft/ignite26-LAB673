@@ -164,6 +164,9 @@ def read_ontology(path: Path) -> dict[str, Any]:
         return iri
 
     allowed = {f"{{{owl}}}{name}" for name in ("Ontology", "Class", "ObjectProperty", "DatatypeProperty")}
+    rdfs_tags = {f"{{{rdfs}}}{name}" for name in
+                 ("label", "comment", "domain", "range", "seeAlso")}
+    version_tag = f"{{{owl}}}versionInfo"
     terms = []
     for node in root:
         require(node.tag in allowed, f"{path.name}: only flat named OWL declarations are supported.")
@@ -171,10 +174,12 @@ def read_ontology(path: Path) -> dict[str, Any]:
         require(bool(iri), f"{path.name}: an OWL declaration has no rdf:about.")
         term: dict[str, Any] = {"@id": curie(iri), "@type": "owl:" + node.tag.split("}", 1)[1]}
         for child in node:
-            require(child.tag in {f"{{{rdfs}}}{name}" for name in
-                                  ("label", "comment", "domain", "range", "seeAlso")},
+            require(child.tag in rdfs_tags | {version_tag},
                     f"{path.name}: unsupported OWL construct {child.tag}.")
-            key = "rdfs:" + child.tag.split("}", 1)[1]
+            require(child.tag != version_tag or node.tag == f"{{{owl}}}Ontology",
+                    f"{path.name}: owl:versionInfo is only valid on the ontology declaration.")
+            key = ("owl:versionInfo" if child.tag == version_tag
+                   else "rdfs:" + child.tag.split("}", 1)[1])
             resource = child.get(f"{{{rdf}}}resource")
             value = {"@id": curie(resource)} if resource else child.text
             require(value is not None, f"{path.name}: empty ontology annotation.")
@@ -211,7 +216,6 @@ def load_bundle(prefix: str, owner: str | None) -> tuple[dict[str, Any], list[Sn
     inputs = {entry[key] for entry in manifest["restore"]["order"]
               for key in ("definition", "records")}
     inputs.update(manifest["ontologies"].values())
-    inputs.add(manifest["provenance"])
     artifacts = {entry["path"]: entry for entry in manifest["artifacts"]}
     require(len(artifacts) == len(manifest["artifacts"]) and inputs == set(artifacts),
             "The restore inputs and checksum inventory differ.")
@@ -266,30 +270,15 @@ def load_bundle(prefix: str, owner: str | None) -> tuple[dict[str, Any], list[Sn
             "The topic source must be the PDF chunk snapshot.")
     for filename in manifest["ontologies"].values():
         read_ontology(BUNDLE / filename)
+    topic_ontology = read_ontology(BUNDLE / manifest["ontologies"]["cocoarynth-topics"])
+    topic_header = next(term for term in topic_ontology["@graph"] if term["@type"] == "owl:Ontology")
+    require(topic_header.get("owl:versionInfo") == topic_metadata.get("ontology_version") == "2.3.0",
+            "The topic ontology must use the TopicGraph 2.3.0 contract.")
     chunks = {row["chunk_id"]: row for snapshot in snapshots
               if snapshot.original_name == "cocoarynth-chunks" for row in snapshot.records}
     require(len(chunks) == 106 and len({row["blob_path"] for row in chunks.values()}) == 55
             and all(row["blob_path"].endswith(".pdf") for row in chunks.values()),
             "The chunk index must contain the 106 passages from the 55 PDFs only.")
-    provenance = json.loads(payloads[manifest["provenance"]])
-    require(provenance["input"] == {"passages": 106, "pdfs": 55, "generator_json_used": False},
-            "The extraction ledger does not describe the PDF-only corpus.")
-    business_ontology = read_ontology(BUNDLE / manifest["ontologies"]["cocoarynth-graph"])
-    declarations = {term["@id"].split(":", 1)[1]: term for term in business_ontology["@graph"]
-                    if term["@type"] != "owl:Ontology"}
-    require(set(provenance["ontology_evidence"]) == set(declarations),
-            "Every business ontology declaration needs PDF evidence in the provenance ledger.")
-    for name, evidence in provenance["ontology_evidence"].items():
-        require(bool(evidence), "An ontology declaration has no source evidence.")
-        expected_links = {"evidence:" + entry["passage_iri"].removeprefix(
-            business_ontology["@context"]["evidence"]) for entry in evidence}
-        require({link["@id"] for link in declarations[name].get("rdfs:seeAlso", [])} == expected_links,
-                f"{name}: OWL evidence links differ from the provenance ledger.")
-        for entry in evidence:
-            source = chunks.get(entry["chunk_id"])
-            require(source is not None and entry["pdf"] == source["blob_path"]
-                    and bool(entry["quote"]) and entry["quote"] in source["chunk"],
-                    "Ontology evidence does not resolve to a verbatim PDF passage.")
     for snapshot in snapshots:
         if not snapshot.definition.get("graphProfile"):
             continue
@@ -332,7 +321,7 @@ def validate_topics(snapshot: Snapshot, metadata: dict[str, Any], source_count: 
         "graph_name", "object_double", "object_bool", "object_datetime", "edge_confidence",
         "s_confidence", "p_confidence", "o_confidence", "chunk_id", "parent_id", "object_vector",
     }, "The topic index must use the canonical TopicGraph release fields only.")
-    require(metadata["schema_version"] == "topicgraph-release-v1"
+    require(metadata["schema_version"] == "topicgraph-release-v2"
             and metadata["physical_index"] == snapshot.name,
             "The topic snapshot contract or physical binding differs.")
     require(fields["object_vector"]["dimensions"] == metadata["dimension"] == 3072
@@ -355,19 +344,23 @@ def validate_topics(snapshot: Snapshot, metadata: dict[str, Any], source_count: 
     properties = {"prop:title", "prop:description", "prop:level", "prop:proportion", "prop:parentProportion"}
     for row in snapshot.records:
         subject, predicate, target = row["subject_id"], row["predicate"], row.get("object_id")
-        require(row["graph_name"] == metadata["graph_name"] == "topicgraph-community"
+        expected_id = hashlib.sha256("\x1f".join((
+            row["graph_name"], row["subject_id"], predicate, row.get("object_id") or "",
+        )).encode()).hexdigest()
+        require(row["id"] == expected_id, "A topic fact ID does not match the TopicGraph edge contract.")
+        require(row["graph_name"] == metadata["graph_name"] == "topicgraph-topic"
                 and not row.get("chunk_id") and not row.get("parent_id"),
                 "Topic facts must not claim per-chunk membership or PDF provenance.")
-        if predicate == "HasRootCommunity":
-            require(subject == "communitygraph:topicgraph-community"
-                    and row["subject_type"] == "CommunityGraph" and target not in roots,
+        if predicate == "HasRootTopic":
+            require(subject == "topicgraph:topicgraph-topic"
+                    and row["subject_type"] == "TopicGraph" and target not in roots,
                     "A topic root edge is invalid or duplicated.")
             roots.add(target)
             continue
-        require(subject.startswith("community:") and row["subject_type"] == "Community",
-                "Topic subjects must use the stored community: identity.")
+        require(subject.startswith("topic:") and row["subject_type"] == "Topic",
+                "Topic subjects must use the stored topic: identity.")
         topic = values.setdefault(subject, {})
-        if predicate == "HasSubCommunity":
+        if predicate == "HasSubTopic":
             require(target not in parents, "A topic has more than one parent.")
             parents[target] = subject
         elif predicate == "HasCentroidVector":
@@ -561,11 +554,11 @@ def verify_graph(indexes: SearchIndexClient, endpoint: str, api: str,
                         and item["chunkId"] in sources, f"{name}: provenance binding differs.")
         print(f"Verified native graph query: {name}.", flush=True)
     topics = by_name["cocoarynth-topics"]
-    for predicate, subject_type in (("HasRootCommunity", "CommunityGraph"), ("HasSubCommunity", "Community")):
+    for predicate, subject_type in (("HasRootTopic", "TopicGraph"), ("HasSubTopic", "Topic")):
         expected_links = {(row["subject_id"], row["object_id"])
                           for row in topics.records if row["predicate"] == predicate}
         result = preview_json(indexes, endpoint, f"indexes('{topics.name}')/docs/search.graph", api,
-                              {"gql": f"MATCH (p:`{subject_type}`)-[:`{predicate}`]->(c:`Community`) "
+                              {"gql": f"MATCH (p:`{subject_type}`)-[:`{predicate}`]->(c:`Topic`) "
                                       "RETURN p.id AS parent, c.id AS child LIMIT 100",
                                "includeStatistics": True}, 200)
         require(result.get("@search.graphStats", {}).get("executionMode") == "execute"

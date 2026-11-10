@@ -153,6 +153,9 @@ class TopicTests(unittest.TestCase):
         for snapshot in self.snapshots.values():
             loader.assert_subset(snapshot.definition, SearchIndex(snapshot.definition).as_dict(exclude_readonly=True),
                                  snapshot.name)
+        ontology = loader.read_ontology(ROOT / "data" / "graph-data" / "cocoarynth-sitemap.owl")
+        header = next(term for term in ontology["@graph"] if term["@type"] == "owl:Ontology")
+        self.assertEqual(header["owl:versionInfo"], "2.3.0")
         topics = self.snapshots["cocoarynth-topics"]
         counts = {}
         for row in topics.records:
@@ -161,7 +164,7 @@ class TopicTests(unittest.TestCase):
             self.assertFalse(row.get("chunk_id") or row.get("parent_id"))
         self.assertEqual(len(topics.records), 54)
         self.assertEqual(counts, {
-            "HasRootCommunity": 4, "HasSubCommunity": 4, "HasCentroidVector": 6,
+            "HasRootTopic": 4, "HasSubTopic": 4, "HasCentroidVector": 6,
             "prop:title": 8, "prop:description": 8, "prop:level": 8,
             "prop:proportion": 8, "prop:parentProportion": 8,
         })
@@ -184,7 +187,7 @@ class TopicTests(unittest.TestCase):
             self.assertTrue({field["name"] for field in parameters["sourceDataFields"]} <= fields)
         topic_source = next(source for source in sources if source["name"] == "cocoarynth-topics-knowledge-source")
         self.assertEqual(topic_source["searchIndexParameters"]["semanticConfigurationName"],
-                         "topicgraph-community-semantic")
+                         "topicgraph-topic-semantic")
         graph = self.snapshots["cocoarynth-graph"].records
         chunks = {row["chunk_id"]: row for row in self.snapshots["cocoarynth-chunks"].records}
         self.assertEqual((len(graph), len({row["fact_id"] for row in graph})), (120, 91))
@@ -202,7 +205,7 @@ class TopicTests(unittest.TestCase):
             "short leaf vector": lambda snapshot: next(
                 row for row in snapshot.records if row["predicate"] == "HasCentroidVector").update(object_vector=[1.0]),
             "duplicate parent": lambda snapshot: snapshot.records.append(copy.deepcopy(next(
-                row for row in snapshot.records if row["predicate"] == "HasSubCommunity"))),
+                row for row in snapshot.records if row["predicate"] == "HasSubTopic"))),
             "missing title": lambda snapshot: snapshot.records.remove(next(
                 row for row in snapshot.records if row["predicate"] == "prop:title")),
             "wrong level": lambda snapshot: next(
@@ -244,8 +247,8 @@ class TopicTests(unittest.TestCase):
             loader.verify_graph(None, "https://offline.search.windows.net", "2026-11-01-preview",
                                 list(self.snapshots.values()))
         self.assertEqual(len(requests), 5)
-        self.assertIn("HasRootCommunity", requests[-2][1]["gql"])
-        self.assertIn("HasSubCommunity", requests[-1][1]["gql"])
+        self.assertIn("HasRootTopic", requests[-2][1]["gql"])
+        self.assertIn("HasSubTopic", requests[-1][1]["gql"])
 
     def test_explorer_reads_canonical_facts_and_uses_source_vector_queries(self):
         with patch.object(explorer, "client", side_effect=self.clients.__getitem__):
@@ -269,7 +272,7 @@ class TopicTests(unittest.TestCase):
             explorer.get_topic_members(root["topic_id"])
             self.assertEqual(self.calls[-1]["vectors"][0].k_nearest_neighbors, 1000)
             with self.assertRaisesRegex(RuntimeError, "Unknown topic"):
-                explorer.get_topic_members("community:missing")
+                explorer.get_topic_members("topic:missing")
 
     def test_notebook_executes_in_order_with_only_offline_sdk_doubles(self):
         notebook = json.loads((ROOT / "src" / "notebooks" / "03-topics.ipynb").read_text(encoding="utf-8"))
@@ -343,7 +346,7 @@ class TopicTests(unittest.TestCase):
         self.assertIn("Larkspur", topic_question)
         self.assertIn("grey", topic_question)
         self.assertNotIn(scope["parent"]["label"], topic_question)
-        self.assertNotIn("HasSubCommunity", topic_question)
+        self.assertNotIn("HasSubTopic", topic_question)
         self.assertNotIn(scope["PARENT_TOPIC_ID"], topic_question)
         self.assertEqual(
             [source["knowledgeSourceName"] for source in topic_request["knowledgeSourceParams"]],

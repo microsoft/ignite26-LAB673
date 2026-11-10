@@ -13,7 +13,7 @@
       "facetable": false
     },
     {
-      "name": "community_id",
+      "name": "topic_id",
       "type": "Edm.String",
       "key": false,
       "retrievable": true,
@@ -33,7 +33,7 @@
       "facetable": false
     },
     {
-      "name": "native_community_id",
+      "name": "native_topic_id",
       "type": "Edm.String",
       "key": false,
       "retrievable": true,

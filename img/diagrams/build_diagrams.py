@@ -169,7 +169,7 @@ def graph_notebook(name, title, kb, ks, owl, owl_body, index, index_body, link_l
 if __name__ == "__main__":
     knowledge_base_diagram(
         "notebook-01-standard", "Notebook 01: the standard knowledge base chooses which sources to search",
-        "cocoarynth-standard-knowledge-base", "MR1 + gpt-6-luna\nplans queries and writes a cited answer",
+        "cocoarynth-standard-knowledge-base", "MR1 + gpt-6-luna configured\nLow uses gpt-6-luna to plan and answer",
         "chooses which sources to search",
     )
     knowledge_base_diagram(
@@ -185,7 +185,7 @@ if __name__ == "__main__":
     )
     graph_notebook(
         "notebook-03", "Notebook 03: the topics knowledge source and the sitemap ontology",
-        "cocoarynth-topics-knowledge-base", "cocoarynth-topics-knowledge-source", "cocoarynth-sitemap.owl", "CommunityGraph,\nCommunity, Vector",
-        "cocoarynth-topics", "8 named topics; 6 leaf vectors\nHasRootCommunity,\nHasSubCommunity",
+        "cocoarynth-topics-knowledge-base", "cocoarynth-topics-knowledge-source", "cocoarynth-sitemap.owl", "TopicGraph,\nTopic, Vector",
+        "cocoarynth-topics", "8 named topics; 6 leaf vectors\nHasRootTopic,\nHasSubTopic",
         "centroid search\n(separate source\nquery)",
     )

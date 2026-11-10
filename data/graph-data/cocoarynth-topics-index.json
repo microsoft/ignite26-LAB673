@@ -163,7 +163,7 @@
   "semantic": {
     "configurations": [
       {
-        "name": "topicgraph-community-semantic",
+        "name": "topicgraph-topic-semantic",
         "prioritizedFields": {
           "prioritizedContentFields": [
             {
@@ -173,7 +173,7 @@
         }
       }
     ],
-    "defaultConfiguration": "topicgraph-community-semantic"
+    "defaultConfiguration": "topicgraph-topic-semantic"
   },
   "vectorSearch": {
     "algorithms": [

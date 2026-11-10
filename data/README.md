@@ -17,11 +17,11 @@ Provisioning restores `cocoarynth-chunks`, `cocoarynth-topics`, and `cocoarynth-
 
 ## Graph index snapshots
 
-The [graph index snapshots](graph-data/README.md) contain exactly three active indexes; setup also splits the chunk snapshot into three document-group indexes. The topic index stores eight named communities, their hierarchy and proportions, and six leaf centroids as edge-list facts. Roots are level 0; centroid queries retrieve similar chunks from the source index. The business graph contains 120 assertions for 91 distinct facts, with verbatim evidence excerpts resolving to the PDF-only chunk index.
+The [graph index snapshots](graph-data/README.md) contain exactly three active indexes; setup also splits the chunk snapshot into three document-group indexes. The topic index stores eight named topics, their hierarchy and proportions, and six leaf centroids as edge-list facts. Roots are level 0; centroid queries retrieve similar chunks from the source index. The business graph contains 120 assertions for 91 distinct facts, with verbatim evidence excerpts resolving to the PDF-only chunk index.
 
 [cocoarynth.owl](graph-data/cocoarynth.owl) records the compact PDF-derived business ontology; [cocoarynth-sitemap.owl](graph-data/cocoarynth-sitemap.owl) describes topic navigation. They are files, not indexes. Setup serializes their flat declarations as inline JSON-LD for the November ontology private preview.
 
-`world/*.json` remains source material for generating the PDFs. It is **not** indexed as evidence and was not used to propose this ontology or extract the active business graph. The proposal and extraction are bounded model-generated artifacts, not a managed extraction run or a native ontology approval. Their evidence and limits are in [the provenance ledger](graph-data/pdf-extraction-provenance.json).
+`world/*.json` remains source material for generating the PDFs. It is **not** indexed as evidence and was not used to propose this ontology or extract the active business graph. The proposal and extraction are bounded model-generated artifacts, not a managed extraction run or a native ontology approval.
 
 The hypothetical questions below remain future work; their placeholder entities and answers were not added to the graph.
 

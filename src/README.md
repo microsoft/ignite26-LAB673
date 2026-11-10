@@ -33,8 +33,8 @@ three tabs:
 - **Graph entities**: Search for an entity, expand its neighbors, and select an assertion to see its evidence.
 - **Topics**: Browse topic titles and descriptions, follow the hierarchy, and read centroid-nearest PDF chunks grouped by document.
 
-The topic index uses the `topicgraph-release-v1` edge-list
-contract: `HasRootCommunity`, `HasSubCommunity`, literal properties, and
+The topic index uses the TopicGraph 2.3.0 `topicgraph-release-v2` edge-list
+contract: `HasRootTopic`, `HasSubTopic`, literal properties, and
 `HasCentroidVector` with retrievable `object_vector` values on leaves only.
 Roots are level 0. Parent vectors are derived from proportion-weighted leaves.
 Check coverage in `data/graph-data/manifest.json`, navigate the hierarchy with
