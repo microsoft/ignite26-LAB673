@@ -357,6 +357,62 @@ def topics_tree_diagram():
     d.save("notebook-03-topics-2-topics")
 
 
+TOPIC_CHIPS = {"A": ("#0072B2", "#ffffff"), "B": ("#E69F00", "#212529"),
+               "C": ("#009E73", "#ffffff"), "D": ("#CC79A7", "#212529")}
+
+
+def topic_chip(d, x, center_y, letter, width=44, height=32):
+    """A colored, lettered chip for a chunk's nearest topic; the letter carries the meaning without color."""
+    fill, ink = TOPIC_CHIPS[letter]
+    d.rect(x, center_y - height / 2, width, height, fill=fill, stroke="none", rx=8)
+    d.text(x + width / 2, center_y + 1, letter, size=20, anchor="middle", weight="700", color=ink,
+           baseline="central")
+
+
+def result_list(d, x, heading, subheading, rows):
+    d.rect(x, 176, 430, 420, fill="#ffffff", stroke="#adb5bd")
+    d.text(x + 20, 192, heading, size=22, weight="600")
+    d.text(x + 20, 222, subheading, size=18, color="#495057")
+    for i, (letter, score) in enumerate(rows):
+        center_y = 290 + i * 52
+        d.text(x + 30, center_y, str(i + 1), size=20, anchor="middle", weight="600", baseline="central")
+        chunk_dot(d, x + 70, center_y)
+        topic_chip(d, x + 100, center_y, letter)
+        d.rect(x + 160, center_y - 8, 180, 16, fill="#f1f3f5", stroke="none", rx=8)
+        d.rect(x + 160, center_y - 8, round(180 * (score - 0.7) / 0.25), 16, fill="#868e96", stroke="none", rx=8)
+        d.text(x + 410, center_y, f"{score:.2f}", size=18, anchor="end", baseline="central")
+
+
+def diversified_search_diagram():
+    d = Diagram(
+        TOPIC_WIDTH, 720, "Non-diversified and diversified vector search with the topic graph",
+        "One query vector feeds two result lists of six chunks. Each chunk is labeled with its nearest topic "
+        "centroid, A to D, found at query time. The non-diversified list is ranked by similarity score, and four "
+        "of its six chunks are nearest topic A. The diversified search gathers a larger pool of similar chunks and "
+        "picks from the topics in rounds, so its list covers topics A, B, C, and D. It keeps each chunk's original "
+        "score and returns chunks in pick order, so two close topic A matches are replaced by chunks nearest other "
+        "topics.",
+        **TOPIC_SIZES,
+    )
+    d.box("query", 300, 30, 360, 0, "Same query vector", "the starting chunk's embedding", kind="vector",
+          tag="Vector")
+    x, y, width, height = d.boxes["query"]
+    d.arrow([(x + 100, y + height), (245, 172)])
+    d.arrow([(x + width - 100, y + height), (715, 172)])
+    result_list(d, 30, "Non-diversified", "kind: none · ranked by score",
+                [("A", 0.91), ("A", 0.89), ("A", 0.88), ("B", 0.87), ("A", 0.86), ("C", 0.85)])
+    result_list(d, 500, "Diversified", "kind: diverse · topics take turns",
+                [("A", 0.91), ("B", 0.87), ("C", 0.85), ("D", 0.81), ("A", 0.89), ("B", 0.83)])
+    d.rect(30, 612, 900, 48, fill="#f8f9fa", stroke="#dee2e6")
+    for i, letter in enumerate(TOPIC_CHIPS):
+        topic_chip(d, 50 + i * 52, 636, letter)
+    d.text(270, 636, "= the chunk's nearest topic, found at query time", size=20, color="#343a40",
+           baseline="central")
+    d.text(TOPIC_WIDTH / 2, 692, "Diversified search keeps each chunk's score but picks from topics in turns.",
+           anchor="middle", weight="600", baseline="central")
+    d.save("notebook-03-diversified-search")
+
+
 def topic_graph_diagram():
     d = Diagram(
         TOPIC_WIDTH, 930, "Topic graph, step 3: navigate the topic graph, then read the evidence",
@@ -456,6 +512,7 @@ if __name__ == "__main__":
     )
     topics_chunks_diagram()
     topics_tree_diagram()
+    diversified_search_diagram()
     topic_graph_diagram()
     topic_graph_notebook()
     topic_aware_notebook()

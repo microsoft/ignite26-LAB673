@@ -1,0 +1,114 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 720" width="960" height="720" font-family="Segoe UI, Helvetica, Arial, sans-serif" role="img">
+<title>Non-diversified and diversified vector search with the topic graph</title>
+<desc>One query vector feeds two result lists of six chunks. Each chunk is labeled with its nearest topic centroid, A to D, found at query time. The non-diversified list is ranked by similarity score, and four of its six chunks are nearest topic A. The diversified search gathers a larger pool of similar chunks and picks from the topics in rounds, so its list covers topics A, B, C, and D. It keeps each chunk&#x27;s original score and returns chunks in pick order, so two close topic A matches are replaced by chunks nearest other topics.</desc>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#495057"/></marker></defs>
+<rect width="960" height="720" fill="#ffffff"/>
+<rect x="300" y="30" width="360" height="126.80000000000001" rx="10" fill="#fff9db" stroke="#e67700" stroke-width="2"/>
+<text x="480.0" y="75.0" font-size="24" font-weight="600" fill="#212529" text-anchor="middle" dominant-baseline="hanging"><tspan x="480.0" dy="0">Same query vector</tspan></text>
+<text x="480.0" y="110.2" font-size="22" font-weight="normal" fill="#495057" text-anchor="middle" dominant-baseline="hanging"><tspan x="480.0" dy="0">the starting chunk&#x27;s embedding</tspan></text>
+<rect x="439" y="17.0" width="83" height="26" rx="13.0" fill="#e67700"/>
+<text x="480" y="30" font-size="18" font-weight="600" fill="#ffffff" text-anchor="middle" dominant-baseline="central">Vector</text>
+<path d="M 400 156.8 L 245 172" fill="none" stroke="#495057" stroke-width="2" marker-end="url(#arrow)"/>
+<path d="M 560 156.8 L 715 172" fill="none" stroke="#495057" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="30" y="176" width="430" height="420" rx="10" fill="#ffffff" stroke="#adb5bd" stroke-width="2"/>
+<text x="50" y="192" font-size="22" font-weight="600" fill="#212529" text-anchor="start" dominant-baseline="hanging"><tspan x="50" dy="0">Non-diversified</tspan></text>
+<text x="50" y="222" font-size="18" font-weight="normal" fill="#495057" text-anchor="start" dominant-baseline="hanging"><tspan x="50" dy="0">kind: none · ranked by score</tspan></text>
+<text x="60" y="290" font-size="20" font-weight="600" fill="#212529" text-anchor="middle" dominant-baseline="central"><tspan x="60" dy="0">1</tspan></text>
+<circle cx="100" cy="290" r="13" fill="#f8f9fa" stroke="#868e96" stroke-width="2"/>
+<rect x="130" y="274.0" width="44" height="32" rx="8" fill="#0072B2" stroke="none" stroke-width="2"/>
+<text x="152.0" y="291" font-size="20" font-weight="700" fill="#ffffff" text-anchor="middle" dominant-baseline="central"><tspan x="152.0" dy="0">A</tspan></text>
+<rect x="190" y="282" width="180" height="16" rx="8" fill="#f1f3f5" stroke="none" stroke-width="2"/>
+<rect x="190" y="282" width="151" height="16" rx="8" fill="#868e96" stroke="none" stroke-width="2"/>
+<text x="440" y="290" font-size="18" font-weight="normal" fill="#212529" text-anchor="end" dominant-baseline="central"><tspan x="440" dy="0">0.91</tspan></text>
+<text x="60" y="342" font-size="20" font-weight="600" fill="#212529" text-anchor="middle" dominant-baseline="central"><tspan x="60" dy="0">2</tspan></text>
+<circle cx="100" cy="342" r="13" fill="#f8f9fa" stroke="#868e96" stroke-width="2"/>
+<rect x="130" y="326.0" width="44" height="32" rx="8" fill="#0072B2" stroke="none" stroke-width="2"/>
+<text x="152.0" y="343" font-size="20" font-weight="700" fill="#ffffff" text-anchor="middle" dominant-baseline="central"><tspan x="152.0" dy="0">A</tspan></text>
+<rect x="190" y="334" width="180" height="16" rx="8" fill="#f1f3f5" stroke="none" stroke-width="2"/>
+<rect x="190" y="334" width="137" height="16" rx="8" fill="#868e96" stroke="none" stroke-width="2"/>
+<text x="440" y="342" font-size="18" font-weight="normal" fill="#212529" text-anchor="end" dominant-baseline="central"><tspan x="440" dy="0">0.89</tspan></text>
+<text x="60" y="394" font-size="20" font-weight="600" fill="#212529" text-anchor="middle" dominant-baseline="central"><tspan x="60" dy="0">3</tspan></text>
+<circle cx="100" cy="394" r="13" fill="#f8f9fa" stroke="#868e96" stroke-width="2"/>
+<rect x="130" y="378.0" width="44" height="32" rx="8" fill="#0072B2" stroke="none" stroke-width="2"/>
+<text x="152.0" y="395" font-size="20" font-weight="700" fill="#ffffff" text-anchor="middle" dominant-baseline="central"><tspan x="152.0" dy="0">A</tspan></text>
+<rect x="190" y="386" width="180" height="16" rx="8" fill="#f1f3f5" stroke="none" stroke-width="2"/>
+<rect x="190" y="386" width="130" height="16" rx="8" fill="#868e96" stroke="none" stroke-width="2"/>
+<text x="440" y="394" font-size="18" font-weight="normal" fill="#212529" text-anchor="end" dominant-baseline="central"><tspan x="440" dy="0">0.88</tspan></text>
+<text x="60" y="446" font-size="20" font-weight="600" fill="#212529" text-anchor="middle" dominant-baseline="central"><tspan x="60" dy="0">4</tspan></text>
+<circle cx="100" cy="446" r="13" fill="#f8f9fa" stroke="#868e96" stroke-width="2"/>
+<rect x="130" y="430.0" width="44" height="32" rx="8" fill="#E69F00" stroke="none" stroke-width="2"/>
+<text x="152.0" y="447" font-size="20" font-weight="700" fill="#212529" text-anchor="middle" dominant-baseline="central"><tspan x="152.0" dy="0">B</tspan></text>
+<rect x="190" y="438" width="180" height="16" rx="8" fill="#f1f3f5" stroke="none" stroke-width="2"/>
+<rect x="190" y="438" width="122" height="16" rx="8" fill="#868e96" stroke="none" stroke-width="2"/>
+<text x="440" y="446" font-size="18" font-weight="normal" fill="#212529" text-anchor="end" dominant-baseline="central"><tspan x="440" dy="0">0.87</tspan></text>
+<text x="60" y="498" font-size="20" font-weight="600" fill="#212529" text-anchor="middle" dominant-baseline="central"><tspan x="60" dy="0">5</tspan></text>
+<circle cx="100" cy="498" r="13" fill="#f8f9fa" stroke="#868e96" stroke-width="2"/>
+<rect x="130" y="482.0" width="44" height="32" rx="8" fill="#0072B2" stroke="none" stroke-width="2"/>
+<text x="152.0" y="499" font-size="20" font-weight="700" fill="#ffffff" text-anchor="middle" dominant-baseline="central"><tspan x="152.0" dy="0">A</tspan></text>
+<rect x="190" y="490" width="180" height="16" rx="8" fill="#f1f3f5" stroke="none" stroke-width="2"/>
+<rect x="190" y="490" width="115" height="16" rx="8" fill="#868e96" stroke="none" stroke-width="2"/>
+<text x="440" y="498" font-size="18" font-weight="normal" fill="#212529" text-anchor="end" dominant-baseline="central"><tspan x="440" dy="0">0.86</tspan></text>
+<text x="60" y="550" font-size="20" font-weight="600" fill="#212529" text-anchor="middle" dominant-baseline="central"><tspan x="60" dy="0">6</tspan></text>
+<circle cx="100" cy="550" r="13" fill="#f8f9fa" stroke="#868e96" stroke-width="2"/>
+<rect x="130" y="534.0" width="44" height="32" rx="8" fill="#009E73" stroke="none" stroke-width="2"/>
+<text x="152.0" y="551" font-size="20" font-weight="700" fill="#ffffff" text-anchor="middle" dominant-baseline="central"><tspan x="152.0" dy="0">C</tspan></text>
+<rect x="190" y="542" width="180" height="16" rx="8" fill="#f1f3f5" stroke="none" stroke-width="2"/>
+<rect x="190" y="542" width="108" height="16" rx="8" fill="#868e96" stroke="none" stroke-width="2"/>
+<text x="440" y="550" font-size="18" font-weight="normal" fill="#212529" text-anchor="end" dominant-baseline="central"><tspan x="440" dy="0">0.85</tspan></text>
+<rect x="500" y="176" width="430" height="420" rx="10" fill="#ffffff" stroke="#adb5bd" stroke-width="2"/>
+<text x="520" y="192" font-size="22" font-weight="600" fill="#212529" text-anchor="start" dominant-baseline="hanging"><tspan x="520" dy="0">Diversified</tspan></text>
+<text x="520" y="222" font-size="18" font-weight="normal" fill="#495057" text-anchor="start" dominant-baseline="hanging"><tspan x="520" dy="0">kind: diverse · topics take turns</tspan></text>
+<text x="530" y="290" font-size="20" font-weight="600" fill="#212529" text-anchor="middle" dominant-baseline="central"><tspan x="530" dy="0">1</tspan></text>
+<circle cx="570" cy="290" r="13" fill="#f8f9fa" stroke="#868e96" stroke-width="2"/>
+<rect x="600" y="274.0" width="44" height="32" rx="8" fill="#0072B2" stroke="none" stroke-width="2"/>
+<text x="622.0" y="291" font-size="20" font-weight="700" fill="#ffffff" text-anchor="middle" dominant-baseline="central"><tspan x="622.0" dy="0">A</tspan></text>
+<rect x="660" y="282" width="180" height="16" rx="8" fill="#f1f3f5" stroke="none" stroke-width="2"/>
+<rect x="660" y="282" width="151" height="16" rx="8" fill="#868e96" stroke="none" stroke-width="2"/>
+<text x="910" y="290" font-size="18" font-weight="normal" fill="#212529" text-anchor="end" dominant-baseline="central"><tspan x="910" dy="0">0.91</tspan></text>
+<text x="530" y="342" font-size="20" font-weight="600" fill="#212529" text-anchor="middle" dominant-baseline="central"><tspan x="530" dy="0">2</tspan></text>
+<circle cx="570" cy="342" r="13" fill="#f8f9fa" stroke="#868e96" stroke-width="2"/>
+<rect x="600" y="326.0" width="44" height="32" rx="8" fill="#E69F00" stroke="none" stroke-width="2"/>
+<text x="622.0" y="343" font-size="20" font-weight="700" fill="#212529" text-anchor="middle" dominant-baseline="central"><tspan x="622.0" dy="0">B</tspan></text>
+<rect x="660" y="334" width="180" height="16" rx="8" fill="#f1f3f5" stroke="none" stroke-width="2"/>
+<rect x="660" y="334" width="122" height="16" rx="8" fill="#868e96" stroke="none" stroke-width="2"/>
+<text x="910" y="342" font-size="18" font-weight="normal" fill="#212529" text-anchor="end" dominant-baseline="central"><tspan x="910" dy="0">0.87</tspan></text>
+<text x="530" y="394" font-size="20" font-weight="600" fill="#212529" text-anchor="middle" dominant-baseline="central"><tspan x="530" dy="0">3</tspan></text>
+<circle cx="570" cy="394" r="13" fill="#f8f9fa" stroke="#868e96" stroke-width="2"/>
+<rect x="600" y="378.0" width="44" height="32" rx="8" fill="#009E73" stroke="none" stroke-width="2"/>
+<text x="622.0" y="395" font-size="20" font-weight="700" fill="#ffffff" text-anchor="middle" dominant-baseline="central"><tspan x="622.0" dy="0">C</tspan></text>
+<rect x="660" y="386" width="180" height="16" rx="8" fill="#f1f3f5" stroke="none" stroke-width="2"/>
+<rect x="660" y="386" width="108" height="16" rx="8" fill="#868e96" stroke="none" stroke-width="2"/>
+<text x="910" y="394" font-size="18" font-weight="normal" fill="#212529" text-anchor="end" dominant-baseline="central"><tspan x="910" dy="0">0.85</tspan></text>
+<text x="530" y="446" font-size="20" font-weight="600" fill="#212529" text-anchor="middle" dominant-baseline="central"><tspan x="530" dy="0">4</tspan></text>
+<circle cx="570" cy="446" r="13" fill="#f8f9fa" stroke="#868e96" stroke-width="2"/>
+<rect x="600" y="430.0" width="44" height="32" rx="8" fill="#CC79A7" stroke="none" stroke-width="2"/>
+<text x="622.0" y="447" font-size="20" font-weight="700" fill="#212529" text-anchor="middle" dominant-baseline="central"><tspan x="622.0" dy="0">D</tspan></text>
+<rect x="660" y="438" width="180" height="16" rx="8" fill="#f1f3f5" stroke="none" stroke-width="2"/>
+<rect x="660" y="438" width="79" height="16" rx="8" fill="#868e96" stroke="none" stroke-width="2"/>
+<text x="910" y="446" font-size="18" font-weight="normal" fill="#212529" text-anchor="end" dominant-baseline="central"><tspan x="910" dy="0">0.81</tspan></text>
+<text x="530" y="498" font-size="20" font-weight="600" fill="#212529" text-anchor="middle" dominant-baseline="central"><tspan x="530" dy="0">5</tspan></text>
+<circle cx="570" cy="498" r="13" fill="#f8f9fa" stroke="#868e96" stroke-width="2"/>
+<rect x="600" y="482.0" width="44" height="32" rx="8" fill="#0072B2" stroke="none" stroke-width="2"/>
+<text x="622.0" y="499" font-size="20" font-weight="700" fill="#ffffff" text-anchor="middle" dominant-baseline="central"><tspan x="622.0" dy="0">A</tspan></text>
+<rect x="660" y="490" width="180" height="16" rx="8" fill="#f1f3f5" stroke="none" stroke-width="2"/>
+<rect x="660" y="490" width="137" height="16" rx="8" fill="#868e96" stroke="none" stroke-width="2"/>
+<text x="910" y="498" font-size="18" font-weight="normal" fill="#212529" text-anchor="end" dominant-baseline="central"><tspan x="910" dy="0">0.89</tspan></text>
+<text x="530" y="550" font-size="20" font-weight="600" fill="#212529" text-anchor="middle" dominant-baseline="central"><tspan x="530" dy="0">6</tspan></text>
+<circle cx="570" cy="550" r="13" fill="#f8f9fa" stroke="#868e96" stroke-width="2"/>
+<rect x="600" y="534.0" width="44" height="32" rx="8" fill="#E69F00" stroke="none" stroke-width="2"/>
+<text x="622.0" y="551" font-size="20" font-weight="700" fill="#212529" text-anchor="middle" dominant-baseline="central"><tspan x="622.0" dy="0">B</tspan></text>
+<rect x="660" y="542" width="180" height="16" rx="8" fill="#f1f3f5" stroke="none" stroke-width="2"/>
+<rect x="660" y="542" width="94" height="16" rx="8" fill="#868e96" stroke="none" stroke-width="2"/>
+<text x="910" y="550" font-size="18" font-weight="normal" fill="#212529" text-anchor="end" dominant-baseline="central"><tspan x="910" dy="0">0.83</tspan></text>
+<rect x="30" y="612" width="900" height="48" rx="10" fill="#f8f9fa" stroke="#dee2e6" stroke-width="2"/>
+<rect x="50" y="620.0" width="44" height="32" rx="8" fill="#0072B2" stroke="none" stroke-width="2"/>
+<text x="72.0" y="637" font-size="20" font-weight="700" fill="#ffffff" text-anchor="middle" dominant-baseline="central"><tspan x="72.0" dy="0">A</tspan></text>
+<rect x="102" y="620.0" width="44" height="32" rx="8" fill="#E69F00" stroke="none" stroke-width="2"/>
+<text x="124.0" y="637" font-size="20" font-weight="700" fill="#212529" text-anchor="middle" dominant-baseline="central"><tspan x="124.0" dy="0">B</tspan></text>
+<rect x="154" y="620.0" width="44" height="32" rx="8" fill="#009E73" stroke="none" stroke-width="2"/>
+<text x="176.0" y="637" font-size="20" font-weight="700" fill="#ffffff" text-anchor="middle" dominant-baseline="central"><tspan x="176.0" dy="0">C</tspan></text>
+<rect x="206" y="620.0" width="44" height="32" rx="8" fill="#CC79A7" stroke="none" stroke-width="2"/>
+<text x="228.0" y="637" font-size="20" font-weight="700" fill="#212529" text-anchor="middle" dominant-baseline="central"><tspan x="228.0" dy="0">D</tspan></text>
+<text x="270" y="636" font-size="20" font-weight="normal" fill="#343a40" text-anchor="start" dominant-baseline="central"><tspan x="270" dy="0">= the chunk&#x27;s nearest topic, found at query time</tspan></text>
+<text x="480.0" y="692" font-size="22" font-weight="600" fill="#212529" text-anchor="middle" dominant-baseline="central"><tspan x="480.0" dy="0">Diversified search keeps each chunk&#x27;s score but picks from topics in turns.</tspan></text>
+</svg>

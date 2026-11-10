@@ -425,6 +425,12 @@ class TopicTests(unittest.TestCase):
         self.assertIn(evidence["blob_path"], output.getvalue())
         first_cell = "".join(notebook["cells"][0]["source"])
         self.assertNotIn("Run Part 1 first", first_cell)
+        step_6 = next("".join(cell["source"]) for cell in notebook["cells"]
+                      if "".join(cell["source"]).startswith("### Step 6:"))
+        diagram = "](../../img/diagrams/notebook-03-diversified-search.svg)"
+        self.assertRegex(step_6, r"one dominant topic doesn't fill every slot\.\n\n!\[Diagram: [^\]]+"
+                         + re.escape(diagram))
+        self.assertTrue((ROOT / "img" / "diagrams" / "notebook-03-diversified-search.svg").is_file())
         self.assertLess(first_cell.index("Mission"), first_cell.index("## How the topic graph is built"))
 
     def test_notebook_loads_settings_and_metadata_from_root_or_notebook_directory(self):
