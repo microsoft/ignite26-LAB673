@@ -6,11 +6,11 @@
 
 # [Microsoft Ignite 2026](https://ignite.microsoft.com)
 
-## 🔥LAB673: Turning data into agent-ready knowledge with Foundry IQ
+## 🔥LAB673: Foundry IQ: Hands-on with knowledge graphs and agentic retrieval
 
 ### Session description
 
-Use Foundry IQ to build a knowledge base for agentic retrieval over enterprise content. Connect your documents and configure retrieval to surface relevant context for complex questions.
+Get hands-on with what's next in Foundry IQ. Build a knowledge base that grounds answers in your documents with citations. Then go beyond classic RAG with a Microsoft-hosted agentic retriever, graph structures that connect entities and relationships across records, and topics that reveal themes across a corpus. Compare the results side by side and learn when to use each approach.
 
 ### 🚀 Getting started
 
