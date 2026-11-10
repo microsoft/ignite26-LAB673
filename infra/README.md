@@ -12,7 +12,6 @@ This folder provisions the Foundry IQ portion of LAB673 for Skillable and self-p
 | Foundry | An `AIServices` account and project with managed identities |
 | Chat/reasoning | `gpt-6-luna`, version `2026-09-22`, Global Standard, capacity 200 |
 | Embeddings | `text-embedding-3-large`, version `1`, Global Standard, capacity 30 |
-| Content Understanding | Resource defaults mapped to the existing completion and embedding deployments |
 
 Search's region is fixed in [main.bicep](main.bicep); its SKU comes from the `searchSkuName` parameter. The `location` parameter controls Foundry and Storage independently. The Skillable flow uses `westus3`, preserving the source lab's Foundry location; Content Understanding is supported there, not in West Central US. Self-paced deployment should also select a Content Understanding-supported region.
 
@@ -20,7 +19,7 @@ The Skillable lifecycle action passes `resourcePrefix="lab673"`, matching the Bi
 
 `searchSkuName` defaults to `serverless`. The template enables the paid `standard` Knowledge Retrieval plan for every SKU because Microsoft Retriever 1 has no free tier. This plan is independent of the Search SKU; it does not change the SKU to Standard (S1). The November ontology private-preview requirement still applies. To choose a dedicated SKU, use `azd env set AZURE_SEARCH_SKU standard` or `searchSkuName="standard"` in the Skillable deployment parameters. Search capacity and model quota must be checked in the target subscription before delivery. These files deliberately do not fall back to another Search region.
 
-Content Understanding is a capability of the Foundry account, not an additional Azure resource or standalone model deployment. [setup-content-understanding.py](setup-content-understanding.py) configures model-name mappings and the prebuilt completion, mini-completion, and embedding aliases. Both completion aliases reuse the lab LLM, avoiding extra deployments. Individual analyzers must support the selected model; see [model deployment options](https://learn.microsoft.com/azure/ai-services/content-understanding/concepts/models-deployments).
+Content Understanding is a capability of the Foundry account, not an additional Azure resource or standalone model deployment. The lab doesn't use it: only the maintainer snapshot rebuild does. [setup-content-understanding.py](setup-content-understanding.py) configures its model-name mappings and the prebuilt completion, mini-completion, and embedding aliases for that rebuild. Both completion aliases reuse the lab LLM, avoiding extra deployments. Individual analyzers must support the selected model; see [model deployment options](https://learn.microsoft.com/azure/ai-services/content-understanding/concepts/models-deployments).
 
 ## Skillable setup
 
@@ -30,7 +29,7 @@ Use the existing Windows lab image with Azure CLI and Python available. The opti
 2. Run that deployment action after the download action. Like the original ILL344 action, it writes its embedded background script to `C:\Users\LabUser\Desktop\deploy-background.ps1`, signs in with the lab service principal, resolves the attendee object ID, and launches that generated script. The foreground action exits while provisioning continues; the repository's separate `infra/deploy-background.ps1` is not used by this action.
 3. Monitor `C:\Users\LabUser\Desktop\lifecycle-log.txt`. Wait for `=== Background deploy script completed ===` before releasing the environment to the attendee. A background launch alone does not mean setup succeeded.
 
-The background script reuses the foreground Azure CLI login, retrieves Search and Foundry API keys directly with `az rest` and `az cognitiveservices account keys list`, and passes the keys to [setup-knowledge.ps1](setup-knowledge.ps1). That script writes `.env` from the keys and inherited Bicep outputs using PowerShell, prepares the local virtual environment, configures Content Understanding, and restores six indexes by default:
+The background script reuses the foreground Azure CLI login, retrieves Search and Foundry API keys directly with `az rest` and `az cognitiveservices account keys list`, and passes the keys to [setup-knowledge.ps1](setup-knowledge.ps1). That script writes `.env` from the keys and inherited Bicep outputs using PowerShell, prepares the local virtual environment, and restores six indexes by default:
 
 | Index | Role |
 | --- | --- |
@@ -63,7 +62,7 @@ exercise. Disabling restoration does not delete existing indexes.
 
 ## Self-paced deployment
 
-Follow [the self-deployment guide](../deploy_yourself.md). [main.parameters.json](main.parameters.json) supplies azd parameters; [postprovision.sh](hooks/postprovision.sh) and [postprovision.ps1](hooks/postprovision.ps1) perform environment and Content Understanding setup after provisioning.
+Follow [the self-deployment guide](../deploy_yourself.md). [main.parameters.json](main.parameters.json) supplies azd parameters; [postprovision.sh](hooks/postprovision.sh) and [postprovision.ps1](hooks/postprovision.ps1) perform environment setup and snapshot restoration after provisioning.
 
 Both deployment paths call [setup-venv.py](setup-venv.py) to create or reuse the root `.venv` and install [notebook requirements](../src/notebooks/requirements.txt). These include the pinned alpha Search SDK from [infrastructure requirements](requirements.txt) and `ipykernel` for the notebook kernel. The notebooks do not install packages themselves. The full upstream requirements, agent-framework, Fabric, and OneLake packages are not needed.
 
@@ -84,6 +83,7 @@ bundle automatically:
 
 | Tool | Purpose |
 | --- | --- |
+| [setup-content-understanding.py](setup-content-understanding.py) | Map Content Understanding's default models to the lab's completion and embedding deployments |
 | [create-index-snapshots.py](create-index-snapshots.py) | Upload the 55 Cocoarynth PDFs and build Blob data sources, Content Understanding skillsets, embedding skills, indexes, and indexers |
 | [export-search-index.py](../scripts/export-search-index.py) | Export portable index definitions and document/vector snapshots |
 | [validate-index-snapshots.py](../scripts/validate-index-snapshots.py) | Validate committed snapshots without Azure access |
@@ -94,6 +94,7 @@ bundle automatically:
 2. Sign in as the attendee identity that has Blob Data Contributor access; the upload tool uses `DefaultAzureCredential` rather than a service principal's management-plane access. From the repository root, run:
 
    ```sh
+   .venv/bin/python infra/setup-content-understanding.py
    .venv/bin/python infra/create-index-snapshots.py
    .venv/bin/python scripts/export-search-index.py
    .venv/bin/python scripts/validate-index-snapshots.py

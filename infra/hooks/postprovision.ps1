@@ -8,8 +8,6 @@ try {
     $venvPython = Join-Path $repoRoot ".venv\Scripts\python.exe"
     & $venvPython infra/setup-env.py
     if ($LASTEXITCODE -ne 0) { throw "Environment setup failed." }
-    & $venvPython infra/setup-content-understanding.py
-    if ($LASTEXITCODE -ne 0) { throw "Content Understanding setup failed." }
     if ($env:RESTORE_INDEX_SNAPSHOTS -eq "true") {
         & $venvPython infra/create-knowledge.py
         if ($LASTEXITCODE -ne 0) { throw "Snapshot restoration failed." }
