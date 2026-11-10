@@ -28,7 +28,7 @@ In this hands-on lab, you'll explore Foundry IQ knowledge bases for Cocoarynth C
 
 You'll work through three notebooks:
 
-1. **Knowledge bases and Microsoft Retriever 1 (MR1)**: Ask a grounded question over three document indexes, follow the citations, and compare standard agentic retrieval with the faster MR1 retriever.
+1. **Knowledge bases and Microsoft Retriever 1**: Ask a grounded question over three document indexes, follow the citations, and compare standard agentic retrieval with the faster microsoft-retriever-1 retriever.
 2. **Entity graph**: Follow a chocolate batch back to the farms that grew its cacao, using an ontology, graph queries, and provenance.
 3. **Topic graph**: Browse labeled groups of chunks, look inside the topic graph with code and GQL to see how the chunks were grouped, and investigate a customer complaint with topics and PDF evidence.
 
@@ -96,7 +96,7 @@ Select **Next** to start exploring the indexes.
 
 # Part 1: Knowledge bases and Microsoft Retriever 1
 
-In this part, you'll look at the search indexes in the Azure portal, then use a notebook to build a knowledge base over the three document indexes, ask it a grounded question, and compare standard agentic retrieval with Microsoft Retriever 1 (MR1). Finally, you'll return to the portal to see the knowledge sources and knowledge bases you created.
+In this part, you'll look at the search indexes in the Azure portal, then use a notebook to build a knowledge base over the three document indexes, ask it a grounded question, and compare standard agentic retrieval with microsoft-retriever-1. Finally, you'll return to the portal to see the knowledge sources and knowledge bases you created.
 
 ## Explore the indexes in the Azure portal
 
@@ -241,14 +241,14 @@ Select **Next** to review key takeaways and next steps.
 
 You've completed the lab on exploring Foundry IQ knowledge bases. You:
 
-- Built a knowledge base over three document indexes, followed its citations back to the original documents, and compared it with the faster Microsoft Retriever 1.
+- Built a knowledge base over three document indexes, followed its citations back to the original documents, and compared it with the faster microsoft-retriever-1.
 - Followed a chocolate batch to its farms with an ontology, GQL queries, and graph provenance, and compared a graph-backed knowledge base with standard retrieval.
 - Explored labeled topic groups, looked inside the topic graph with code and GQL to see how the chunks were grouped, and investigated a customer complaint with topics and PDF evidence.
 
 | Need | Good starting point |
 | --- | --- |
 | Ground a direct question in original documents | Standard knowledge base |
-| Respond quickly when the app already knows which source to use | Microsoft Retriever 1 (MR1) |
+| Respond quickly when the app already knows which source to use | microsoft-retriever-1 |
 | Follow explicit relationships across records | Entity graph and GQL |
 | Explore groups of related chunks and navigate their hierarchy | Topic graph and GQL |
 
@@ -258,7 +258,7 @@ You've completed the lab on exploring Foundry IQ knowledge bases. You:
 - [Design an index for agentic retrieval in Foundry IQ](https://learn.microsoft.com/azure/search/agentic-retrieval-how-to-create-index) - Best practices for structuring your data for agentic retrieval.
 - [Create a knowledge base in Foundry IQ](https://learn.microsoft.com/azure/search/agentic-retrieval-how-to-create-knowledge-base) - Step-by-step guide to creating and configuring knowledge bases.
 - [Create a knowledge source](https://learn.microsoft.com/azure/search/agentic-knowledge-source-overview) - Understand how to create and configure different data sources.
-- [Use Microsoft Retriever 1](https://learn.microsoft.com/azure/search/agentic-retrieval-how-to-use-microsoft-retriever) - Get fast agentic retrieval from a Microsoft-hosted retriever without supplying your own model capacity.
+- [Use microsoft-retriever-1](https://learn.microsoft.com/azure/search/agentic-retrieval-how-to-use-microsoft-retriever) - Get fast agentic retrieval from a Microsoft-hosted retriever without supplying your own model capacity.
 - [Create and query an entity graph](https://learn.microsoft.com/azure/search/agentic-knowledge-source-how-to-entity-graph) - Turn documents into entities and relationships that a knowledge base can follow.
 - [Configure topic graph retrieval](https://learn.microsoft.com/azure/search/agentic-knowledge-source-how-to-topic-graph) - Group related chunks into topics and route queries through them.
 

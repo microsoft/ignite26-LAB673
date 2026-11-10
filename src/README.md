@@ -3,14 +3,14 @@
 ## Lab notebooks
 
 The [lab instructions](../instructions/skillable.md) progress from a
-standard knowledge base and MR1 comparison to entity/GQL exploration,
+standard knowledge base and microsoft-retriever-1 comparison to entity/GQL exploration,
 then a topic graph exercise. All three notebooks use the same Foundry IQ
 service and the indexes that setup restores. The entity section is the
 main part of the lab.
 
 | Notebook | Focus |
 | --- | --- |
-| [Knowledge base and MR1](notebooks/01-knowledge-base-and-mr1.ipynb) | Original documents, grounded answers, activity, and a measured speed comparison with MR1 |
+| [Knowledge base and Microsoft Retriever 1](notebooks/01-knowledge-base-and-mr1.ipynb) | Original documents, grounded answers, activity, and a measured speed comparison with microsoft-retriever-1 |
 | [Entity graph](notebooks/02-entities-and-graphs.ipynb) | Assertions and evidence, native GQL, provenance, and graph-backed retrieval |
 | [Topic graph](notebooks/03-topics.ipynb) | Topic coverage, centroid-nearest chunks, hierarchy GQL, and a customer complaint investigation using topics and PDF evidence |
 
