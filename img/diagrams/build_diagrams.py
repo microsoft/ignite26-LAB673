@@ -221,12 +221,13 @@ CHUNK_STROKE, CHUNK_FILL = "#868e96", "#f8f9fa"
 TOPIC_COLOR, CENTROID_COLOR = COLORS["topic"][0], COLORS["vector"][0]
 
 
-def panel_heading(d, number, heading, subheading):
+def panel_heading(d, number, heading, subheading=None):
     """A numbered heading for one of the stacked topic graph panels."""
     d.circle(52, 46, 22, fill=TOPIC_COLOR)
     d.text(52, 47, str(number), size=24, anchor="middle", weight="700", color="#ffffff", baseline="central")
     d.text(90, 47, heading, size=28, weight="600", baseline="central")
-    d.text(90, 82, subheading, color="#495057")
+    if subheading:
+        d.text(90, 82, subheading, color="#495057")
 
 
 def note(d, x, y, width, height, text):
@@ -239,6 +240,11 @@ def chunk_card(d, x, y, dashed=False):
     d.text(x + 65, y + 31, "chunk", size=20, anchor="middle", color="#495057", baseline="central")
 
 
+def mini_chunk(d, x, y):
+    d.rect(x, y, 82, 36, fill=CHUNK_FILL, stroke=CHUNK_STROKE, rx=8)
+    d.text(x + 41, y + 19, "chunk", size=14, anchor="middle", color="#495057", baseline="central")
+
+
 def centroid(d, center_x, top):
     d.line([(center_x, top), (center_x, top + 22)], color=CENTROID_COLOR, width=2)
     d.circle(center_x, top + 34, 12, fill=CENTROID_COLOR)
@@ -247,50 +253,67 @@ def centroid(d, center_x, top):
 
 def topics_chunks_diagram():
     d = Diagram(
-        TOPIC_WIDTH, 490, "Topic graph, step 1: compare chunk embeddings",
-        "Seven chunk cards from the PDFs. Chunks with similar embeddings sit close together and are joined by dashed "
-        "lines, forming two loose groups. One chunk has no close match and won't join a topic. Chunks are text from "
-        "the original PDFs, not entities or extracted facts.",
+        TOPIC_WIDTH, 520, "Topic graph, step 1: cluster chunks based on embeddings",
+        "Chunk embeddings form a hierarchy of clusters. Two tight clusters, A and B, sit inside one broad cluster. "
+        "A separate cluster, C, stands alone. One chunk has no close match and won't join a topic. Chunks are text "
+        "from the original PDFs, not entities or extracted facts.",
         **TOPIC_SIZES,
     )
-    panel_heading(d, 1, "Compare chunk embeddings", "Each card is one chunk of text from a PDF.")
-    d.line([(640, 128), (700, 128)], color=TOPIC_COLOR, width=3, dash="7 6")
-    d.text(712, 128, "similar embeddings", size=20, color=TOPIC_COLOR, baseline="central")
-    groups = [[(70, 170), (250, 150), (160, 270)], [(570, 160), (760, 170), (660, 275)]]
-    for cards in groups:
-        for i, (x0, y0) in enumerate(cards):
-            x1, y1 = cards[(i + 1) % len(cards)]
-            d.line([(x0 + 65, y0 + 30), (x1 + 65, y1 + 30)], color=TOPIC_COLOR, width=3, dash="7 6")
-    for cards in groups:
-        for x, y in cards:
-            chunk_card(d, x, y)
-    chunk_card(d, 415, 300, dashed=True)
-    d.text(480, 372, "no close match:\nnot in any topic", size=20, anchor="middle", color="#868e96")
-    d.text(TOPIC_WIDTH / 2, 458, "Chunks are text from the original PDFs, not entities or extracted facts.",
+    panel_heading(d, 1, "Cluster chunks based on embeddings")
+    d.rect(35, 105, 570, 285, fill="#ffffff", stroke=TOPIC_COLOR, stroke_width=3, dashed=True)
+    d.text(55, 118, "broad cluster", size=20, color=TOPIC_COLOR, weight="600")
+    d.rect(60, 155, 240, 190, fill="#ffffff", stroke=TOPIC_COLOR, dashed=True)
+    d.text(80, 168, "cluster A", size=18, color=TOPIC_COLOR, weight="600")
+    d.rect(335, 155, 240, 190, fill="#ffffff", stroke=TOPIC_COLOR, dashed=True)
+    d.text(355, 168, "cluster B", size=18, color=TOPIC_COLOR, weight="600")
+    for x, y in ((80, 220), (190, 205), (135, 285), (355, 215), (465, 205), (410, 285)):
+        mini_chunk(d, x, y)
+    d.rect(650, 140, 270, 210, fill="#ffffff", stroke=TOPIC_COLOR, stroke_width=3, dashed=True)
+    d.text(670, 153, "cluster C", size=20, color=TOPIC_COLOR, weight="600")
+    chunk_card(d, 675, 205)
+    chunk_card(d, 765, 270)
+    chunk_card(d, 415, 410, dashed=True)
+    d.text(565, 425, "no close match: not in any topic", size=20, color="#868e96", baseline="central")
+    d.text(TOPIC_WIDTH / 2, 492, "Chunks are text from the original PDFs, not entities or extracted facts.",
            anchor="middle", weight="600", baseline="central")
     d.save("notebook-03-topics-1-chunks")
 
 
 def topics_tree_diagram():
     d = Diagram(
-        TOPIC_WIDTH, 600, "Topic graph, step 2: group similar chunks into topics",
-        "A broad topic at level 0 has two subtopics, A and B, at level 1. A second broad topic at level 0 has no "
-        "subtopics. Topics without subtopics are terminal topics, and each terminal topic stores a centroid vector. "
-        "Similarity groups chunks; it doesn't assert facts. Titles describe a topic; they don't define it.",
+        TOPIC_WIDTH, 720, "Topic graph, step 2: build topics from clusters of chunks",
+        "The broad cluster becomes a broad topic at level 0. Its tighter clusters, A and B, become subtopics at "
+        "level 1. The standalone cluster, C, becomes a broad terminal topic. Each terminal topic stores a centroid "
+        "vector. Similarity groups chunks; it doesn't assert facts.",
         **TOPIC_SIZES,
     )
-    panel_heading(d, 2, "Group similar chunks into topics", "Topics have two levels. Terminal topics have no subtopics.")
-    d.box("broad", 40, 150, 440, 0, "Broad topic", "has subtopics", kind="topic", tag="Topic · level 0")
-    d.box("solo", 560, 150, 360, 0, "Broad topic", "no subtopics: terminal", kind="topic", tag="Topic · level 0")
-    d.box("a", 40, 340, 210, 0, "Subtopic A", "terminal", kind="topic", tag="Topic · level 1")
-    d.box("b", 270, 340, 210, 0, "Subtopic B", "terminal", kind="topic", tag="Topic · level 1")
+    panel_heading(d, 2, "Build topics from clusters of chunks")
+    d.rect(35, 115, 390, 285, fill="#ffffff", stroke=TOPIC_COLOR, stroke_width=3, dashed=True)
+    d.text(55, 128, "broad cluster", size=20, color=TOPIC_COLOR, weight="600")
+    d.rect(55, 170, 165, 190, fill="#ffffff", stroke=TOPIC_COLOR, dashed=True)
+    d.text(75, 183, "cluster A", size=18, color=TOPIC_COLOR, weight="600")
+    d.rect(240, 170, 165, 190, fill="#ffffff", stroke=TOPIC_COLOR, dashed=True)
+    d.text(260, 183, "cluster B", size=18, color=TOPIC_COLOR, weight="600")
+    for x, y in ((75, 235), (120, 300), (260, 235), (305, 300)):
+        mini_chunk(d, x, y)
+    d.box("broad", 565, 115, 330, 0, "Broad topic", "formed from the broad cluster", kind="topic",
+          tag="Topic · level 0")
+    d.box("a", 485, 315, 205, 0, "Subtopic A", "formed from cluster A", kind="topic", tag="Topic · level 1")
+    d.box("b", 715, 315, 205, 0, "Subtopic B", "formed from cluster B", kind="topic", tag="Topic · level 1")
+    d.arrow([(425, 255), (535, 255), (535, 175), (563, 175)], label="creates", label_at=(480, 230))
     d.down("broad", "a")
     d.down("broad", "b")
+    d.rect(35, 500, 300, 125, fill="#ffffff", stroke=TOPIC_COLOR, stroke_width=3, dashed=True)
+    d.text(55, 513, "standalone cluster C", size=20, color=TOPIC_COLOR, weight="600")
+    mini_chunk(d, 70, 560)
+    mini_chunk(d, 180, 560)
+    d.box("solo", 565, 500, 330, 0, "Broad topic", "terminal: no subtopics", kind="topic", tag="Topic · level 0")
+    d.arrow([(335, 563), (563, 563)], label="creates", label_at=(449, 530))
     for box_id in ("a", "b", "solo"):
         x, y, width, height = d.boxes[box_id]
         centroid(d, x + width / 2 - 40, y + height)
-    d.text(TOPIC_WIDTH / 2, 538,
-           "Similarity groups chunks; it doesn't assert facts.\nTitles describe a topic; they don't define it.",
+    d.text(TOPIC_WIDTH / 2, 685,
+           "Terminal topics have no subtopics and store a centroid.",
            anchor="middle", weight="600")
     d.save("notebook-03-topics-2-topics")
 
