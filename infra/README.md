@@ -110,9 +110,8 @@ Ingestion uploads the PDFs listed in [the corpus manifest](../data/cocoarynth/co
 
 Those four ingestion indexes are capture inputs, not the attendee layout.
 The active restore manifest contains only the chunk, topic, and business graph
-indexes. The current model-generated ontology, extraction, and naming receipts
-are summarized in [the provenance ledger](../data/graph-data/pdf-extraction-provenance.json);
-they are not represented as a managed extraction run or a native ontology approval.
+indexes. The current model-generated ontology and extraction are not represented
+as a managed extraction run or a native ontology approval.
 Setting `RESTORE_INDEX_SNAPSHOTS=false` skips restoration and does not clear
 existing indexes.
 

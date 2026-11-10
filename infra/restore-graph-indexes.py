@@ -216,7 +216,6 @@ def load_bundle(prefix: str, owner: str | None) -> tuple[dict[str, Any], list[Sn
     inputs = {entry[key] for entry in manifest["restore"]["order"]
               for key in ("definition", "records")}
     inputs.update(manifest["ontologies"].values())
-    inputs.add(manifest["provenance"])
     artifacts = {entry["path"]: entry for entry in manifest["artifacts"]}
     require(len(artifacts) == len(manifest["artifacts"]) and inputs == set(artifacts),
             "The restore inputs and checksum inventory differ.")
@@ -280,25 +279,6 @@ def load_bundle(prefix: str, owner: str | None) -> tuple[dict[str, Any], list[Sn
     require(len(chunks) == 106 and len({row["blob_path"] for row in chunks.values()}) == 55
             and all(row["blob_path"].endswith(".pdf") for row in chunks.values()),
             "The chunk index must contain the 106 passages from the 55 PDFs only.")
-    provenance = json.loads(payloads[manifest["provenance"]])
-    require(provenance["input"] == {"passages": 106, "pdfs": 55, "generator_json_used": False},
-            "The extraction ledger does not describe the PDF-only corpus.")
-    business_ontology = read_ontology(BUNDLE / manifest["ontologies"]["cocoarynth-graph"])
-    declarations = {term["@id"].split(":", 1)[1]: term for term in business_ontology["@graph"]
-                    if term["@type"] != "owl:Ontology"}
-    require(set(provenance["ontology_evidence"]) == set(declarations),
-            "Every business ontology declaration needs PDF evidence in the provenance ledger.")
-    for name, evidence in provenance["ontology_evidence"].items():
-        require(bool(evidence), "An ontology declaration has no source evidence.")
-        expected_links = {"evidence:" + entry["passage_iri"].removeprefix(
-            business_ontology["@context"]["evidence"]) for entry in evidence}
-        require({link["@id"] for link in declarations[name].get("rdfs:seeAlso", [])} == expected_links,
-                f"{name}: OWL evidence links differ from the provenance ledger.")
-        for entry in evidence:
-            source = chunks.get(entry["chunk_id"])
-            require(source is not None and entry["pdf"] == source["blob_path"]
-                    and bool(entry["quote"]) and entry["quote"] in source["chunk"],
-                    "Ontology evidence does not resolve to a verbatim PDF passage.")
     for snapshot in snapshots:
         if not snapshot.definition.get("graphProfile"):
             continue

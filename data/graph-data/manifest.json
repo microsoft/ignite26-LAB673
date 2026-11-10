@@ -29,7 +29,6 @@
     "cocoarynth-graph": "cocoarynth.owl",
     "cocoarynth-topics": "cocoarynth-sitemap.owl"
   },
-  "provenance": "pdf-extraction-provenance.json",
   "artifacts": [
     {
       "path": "cocoarynth-chunks-index.json",
@@ -70,11 +69,6 @@
       "path": "cocoarynth-sitemap.owl",
       "sha256": "79c53491cff84700b998b24f4154cbc5196f50db07911b7f48c8456259cac031",
       "bytes": 5610
-    },
-    {
-      "path": "pdf-extraction-provenance.json",
-      "sha256": "021663192f9f479e5f470d00383baca0764451724e08123649c5412f876193a4",
-      "bytes": 17418
     }
   ],
   "artifact_hash_basis": "SHA-256 of Git payload bytes: UTF-8 text with LF line endings.",

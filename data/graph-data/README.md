@@ -32,10 +32,8 @@ from the source index.
 Business assertions contain `chunk_id`, the PDF's `parent_id`, and verbatim
 `evidence_quotes`. `fact_id` identifies a distinct triple; `id` identifies
 one assertion of that fact from a particular chunk. Confidence fields are
-unset rather than invented. The [provenance ledger](pdf-extraction-provenance.json)
-records declaration evidence, model identity, curation, and limitations.
-The compact ontology and graph are not exhaustive, and the extraction was not
-a managed indexer run or native ontology approval.
+unset rather than invented. The compact ontology and graph are not exhaustive,
+and the extraction was not a managed indexer run or native ontology approval.
 
 ## Canonical topic format
 
