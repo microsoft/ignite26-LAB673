@@ -219,16 +219,14 @@ The sitemap ontology describes the topic graph in the **cocoarynth-topics** inde
    - The **owl:Class** elements are its three entity types: *TopicGraph*, the whole topic graph; *Topic*, a topic; and *Vector*, a terminal topic's centroid.
    - The **owl:ObjectProperty** elements are its three relationships: *HasRootTopic*, from the graph to a broad topic; *HasSubTopic*, from a broad topic to a subtopic; and *HasCentroidVector*, from a terminal topic to its vector.
    - The **owl:DatatypeProperty** elements are plain-value properties, like a topic's *title*, *description*, *level*, and *proportion*.
-3. In the notebook, you'll follow these links with GQL, then use topic vectors to find related chunks in **cocoarynth-chunks**.
 
 ## Run the notebook
 
-In the notebook, you'll look inside the topic graph to understand how the chunks were grouped, compare non-diversified and diversified vector search, then investigate a customer complaint with a topic knowledge base and a topic-aware knowledge source.
+In the notebook, you'll look inside the topic graph to understand how the chunks were grouped, compare non-diversified and diversified vector search, ask a topic knowledge base what the documents cover, then investigate a customer complaint with a topic-aware knowledge source.
 
 1. In Visual Studio Code, open **src/notebooks/03-topics.ipynb**.
 2. Run each cell in order, using the same **.venv** kernel.
-3. In Step 6, compare how many topics the non-diversified and diversified lists cover. Which chunks did diversified search swap in?
-4. In the complaint investigation, compare the topic suggestions with the cited PDF evidence. Which records help distinguish a batch issue from a delivery issue?
+3. Follow the instructions in the notebook.
 
 ## 🍫 Food for thought
 
@@ -249,10 +247,10 @@ You've completed the lab on exploring Foundry IQ knowledge bases. You:
 | Need | Good starting point |
 | --- | --- |
 | Ground a direct question in original documents | Standard knowledge base |
-| Respond quickly when the app already knows which source to use | microsoft-retriever-1 |
-| Follow explicit relationships across records | Entity graph and GQL |
-| Explore groups of related chunks and navigate their hierarchy | Topic graph and GQL |
-| Retrieve evidence that spans several areas of the content | Topic-aware knowledge source |
+| Retrieve chunks quickly | microsoft-retriever-1 |
+| Follow explicit relationships across records | Entity graph: GQL or a graph knowledge base |
+| Find out what the documents cover | Topic graph: GQL or a topic knowledge base |
+| Answer a question whose evidence spans several areas | Topic-aware knowledge source |
 
 ## Continue learning
 
