@@ -1,0 +1,27 @@
+<svg viewBox="0 0 920 180" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="ontology-title ontology-desc">
+  <title id="ontology-title">Three entity types and two relationships from the ontology</title>
+  <desc id="ontology-desc">The Batch type points to the BeanLot type through madeFrom. The Farm type points to the BeanLot type through contributedTo.</desc>
+  <defs>
+    <marker id="ontology-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#24292f" />
+    </marker>
+  </defs>
+  <g fill="#ffffff" stroke="#24292f" stroke-width="3">
+    <circle cx="145" cy="90" r="65" />
+    <circle cx="460" cy="90" r="65" />
+    <circle cx="775" cy="90" r="65" />
+  </g>
+  <g fill="#24292f" font-family="Segoe UI, sans-serif" font-size="20" font-weight="600" text-anchor="middle">
+    <text x="145" y="97">Batch</text>
+    <text x="460" y="97">BeanLot</text>
+    <text x="775" y="97">Farm</text>
+  </g>
+  <g fill="none" stroke="#24292f" stroke-width="3" marker-end="url(#ontology-arrow)">
+    <path d="M 210 90 L 393 90" />
+    <path d="M 710 90 L 527 90" />
+  </g>
+  <g fill="#24292f" font-family="Segoe UI, sans-serif" font-size="15" text-anchor="middle">
+    <text x="302" y="76">madeFrom</text>
+    <text x="618" y="76">contributedTo</text>
+  </g>
+</svg>
