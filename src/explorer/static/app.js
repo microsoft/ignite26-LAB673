@@ -384,12 +384,25 @@ async function showTypeInGraph(typeName) {
   }
   if (activeTab !== "graph") return;  // The user switched tabs while this loaded
   const type = catalog.types.find((t) => t.name === typeName);
-  for (const entity of type?.entities || []) if (!graphState.nodes.has(entity.id)) graphState.nodes.set(entity.id, entity);
-  // Connect the new entities to anything already shown
+  const entities = new Set((type?.entities || []).map((entity) => entity.id));
+  const neighbors = new Set();
+  for (const edge of catalog.edges) {
+    if (entities.has(edge.source) || entities.has(edge.target)) {
+      neighbors.add(edge.source);
+      neighbors.add(edge.target);
+    }
+  }
+  for (const group of catalog.types) {
+    for (const entity of group.entities) {
+      if (neighbors.has(entity.id) && !graphState.nodes.has(entity.id)) graphState.nodes.set(entity.id, entity);
+    }
+  }
   for (const edge of catalog.edges) {
     if (graphState.nodes.has(edge.source) && graphState.nodes.has(edge.target)) graphState.edges.set(edge.id, edge);
   }
   renderGraph();
+  const hidden = [...entities].filter((id) => !neighbors.has(id)).length;
+  if (hidden) setStatus(`${statusText.textContent}. ${hidden} ${typeName} entities with no relationships are listed under Browse by type.`);
   await showGraphIntro();
   document.querySelectorAll("#type-list details").forEach((details) => {
     details.open = details.dataset.type === typeName;
