@@ -47,10 +47,6 @@ The lab repository is already cloned on your desktop in the **Desktop > ignite26
 2. Select **File > Open Folder**.
 3. Navigate to **Desktop**, select the **ignite26-LAB673** folder, and then select **Select Folder**.
 
-> [!TIP]
->
-> When prompted whether to trust the authors of the files, select **Yes, I trust the authors**.
-
 ## Verify environment variables
 
 All required Azure services have already been provisioned for you.
