@@ -47,10 +47,6 @@ The lab repository is already cloned on your desktop in the **Desktop > ignite26
 2. Select **File > Open Folder**.
 3. Navigate to **Desktop**, select the **ignite26-LAB673** folder, and then select **Select Folder**.
 
-> [!TIP]
->
-> When prompted whether to trust the authors of the files, select **Yes, I trust the authors**.
-
 ## Verify environment variables
 
 All required Azure services have already been provisioned for you.
@@ -64,6 +60,7 @@ All required Azure services have already been provisioned for you.
   - **cocoarynth-chunks**: All 106 chunks from the 55 original PDFs in one index, used for business graph evidence and topic-centroid vector searches
   - **cocoarynth-graph**: PDF-supported business triples constrained by the checked-in OWL ontology
   - **cocoarynth-topics**: Topic titles, descriptions, hierarchy facts, proportions, and terminal-topic vectors
+  ⚠️ You may see 0 document count for several indexes - this is due to a known issue in the Foundry IQ service region.
 - **Graph-enabled knowledge sources** for the business graph and topic sitemap, using the November inline-ontology private preview
 - **Checked-in OWL files**: The business ontology and the canonical topic navigation schema. They're files, not additional indexes
 - **Azure OpenAI** with **gpt-6-luna** for query planning and answer synthesis, and **text-embedding-3-large** for vector embeddings
@@ -107,6 +104,7 @@ In this part, you'll look at the search indexes in the Azure portal, then use a 
    - **cocoarynth-policies**: company policies
 
    You'll also see **cocoarynth-chunks**, **cocoarynth-graph**, and **cocoarynth-topics**. You'll use those later.
+
 3. Select **cocoarynth-policies** to open it in **Search explorer**.
 4. Enter +++organic seal+++ in the search box and select **Search**. The results are JSON, with two main parts:
    - **@search.answers** comes first. The semantic ranker picked short extracts that it thinks directly answer the query. Each answer's *key* is the ID of the chunk it came from.
@@ -125,9 +123,8 @@ In this part, you'll look at the search indexes in the Azure portal, then use a 
 
 1. Return to your Foundry IQ service in the Azure portal.
 2. From the left pane, select **Agentic retrieval** > **Knowledge sources**. Find the three document knowledge sources that the notebook created, such as **cocoarynth-production-knowledge-source**. Each one targets the matching index, such as **cocoarynth-production**. The two graph-enabled sources were created during setup.
-3. Select **Agentic retrieval** > **Knowledge bases**. Open **cocoarynth-standard-knowledge-base**.
-4. Look at which knowledge sources it uses, which chat completion model it uses for query planning and answer synthesis, and its retrieval reasoning effort.
-5. Open **cocoarynth-mr1-knowledge-base** too. Notice that it uses the same three sources, but no chat completion model.
+3. Select **Agentic retrieval** > **Knowledge bases**. Open **cocoarynth-standard-knowledge-base**. Look at the configuration of its knowledge sources and retrieval reasoning effort, and try sending a question over.
+4. You may open **cocoarynth-mr1-knowledge-base** too. The playground does not currently support sending questions to knowledge bases that use microsoft-retriever-1, but it should in the near future.
 
 ## 🍫 Food for thought
 
