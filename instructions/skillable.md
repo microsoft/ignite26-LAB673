@@ -47,10 +47,6 @@ The lab repository is already cloned on your desktop in the **Desktop > ignite26
 2. Select **File > Open Folder**.
 3. Navigate to **Desktop**, select the **ignite26-LAB673** folder, and then select **Select Folder**.
 
-> [!TIP]
->
-> When prompted whether to trust the authors of the files, select **Yes, I trust the authors**.
-
 ## Verify environment variables
 
 All required Azure services have already been provisioned for you.
@@ -125,9 +121,8 @@ In this part, you'll look at the search indexes in the Azure portal, then use a 
 
 1. Return to your Foundry IQ service in the Azure portal.
 2. From the left pane, select **Agentic retrieval** > **Knowledge sources**. Find the three document knowledge sources that the notebook created, such as **cocoarynth-production-knowledge-source**. Each one targets the matching index, such as **cocoarynth-production**. The two graph-enabled sources were created during setup.
-3. Select **Agentic retrieval** > **Knowledge bases**. Open **cocoarynth-standard-knowledge-base**.
-4. Look at which knowledge sources it uses, which chat completion model it uses for query planning and answer synthesis, and its retrieval reasoning effort.
-5. Open **cocoarynth-mr1-knowledge-base** too. Notice that it uses the same three sources, but no chat completion model.
+3. Select **Agentic retrieval** > **Knowledge bases**. Open **cocoarynth-standard-knowledge-base**. Look at the configuration of its knowledge sources and retrieval reasoning effort, and try sending a question over.
+4. You may open **cocoarynth-mr1-knowledge-base** too. The playground does not currently support sending questions to knowledge bases that use microsoft-retriever-1, but it should in the near future.
 
 ## 🍫 Food for thought
 
