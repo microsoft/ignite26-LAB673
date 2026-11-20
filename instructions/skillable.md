@@ -60,7 +60,6 @@ All required Azure services have already been provisioned for you.
   - **cocoarynth-chunks**: All 106 chunks from the 55 original PDFs in one index, used for business graph evidence and topic-centroid vector searches
   - **cocoarynth-graph**: PDF-supported business triples constrained by the checked-in OWL ontology
   - **cocoarynth-topics**: Topic titles, descriptions, hierarchy facts, proportions, and terminal-topic vectors
-
 - **Graph-enabled knowledge sources** for the business graph and topic sitemap, using the November inline-ontology private preview
 - **Checked-in OWL files**: The business ontology and the canonical topic navigation schema. They're files, not additional indexes
 - **Azure OpenAI** with **gpt-6-luna** for query planning and answer synthesis, and **text-embedding-3-large** for vector embeddings
