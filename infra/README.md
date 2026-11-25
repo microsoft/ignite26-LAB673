@@ -13,6 +13,8 @@ This folder provisions the Foundry IQ portion of LAB673 for Skillable and self-p
 | Chat/reasoning | `gpt-6-luna`, version `2026-09-22`, Global Standard, capacity 200 |
 | Embeddings | `text-embedding-3-large`, version `1`, Global Standard, capacity 30 |
 
+The lab does not use or deploy `Microsoft-Decision-1`. Azure rejects new deployments of that model with `ServiceModelDeprecating`; it is not required for the Search-hosted `microsoft-retriever-1`.
+
 Search's region is fixed in [main.bicep](main.bicep); its SKU comes from the `searchSkuName` parameter. The `location` parameter controls Foundry and Storage independently. The Skillable flow uses `westus3`, preserving the source lab's Foundry location; Content Understanding is supported there, not in West Central US. Self-paced deployment should also select a Content Understanding-supported region.
 
 The Skillable lifecycle action passes `resourcePrefix="lab673"`, matching the Bicep default used by self-paced deployments. The repository and Desktop folder remain `ignite26-LAB673`. The target Azure policies must allow these resource names; other policy constraints still apply.
